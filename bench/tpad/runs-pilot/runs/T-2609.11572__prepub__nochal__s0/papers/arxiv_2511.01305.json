@@ -1,0 +1,36 @@
+{
+  "id": "arxiv:2511.01305",
+  "title": "DeepSpecs: Expert-Level Questions Answering in 5G",
+  "authors": [
+    "Aman Ganapathy Manvattira",
+    "Yifei Xu",
+    "Ziyue Dang",
+    "Songwu Lu"
+  ],
+  "year": 2025,
+  "published": "2025-11-03",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2511.01305",
+  "pdf_url": "https://arxiv.org/pdf/2511.01305v1",
+  "abstract": "5G technology enables mobile Internet access for billions of users. Answering expert-level questions about 5G specifications requires navigating thousands of pages of cross-referenced standards that evolve across releases. Existing retrieval-augmented generation (RAG) frameworks, including telecom-specific approaches, rely on semantic similarity and cannot reliably resolve cross-references or reason about specification evolution. We present DeepSpecs, a RAG system enhanced by structural and temporal reasoning via three metadata-rich databases: SpecDB (clause-aligned specification text), ChangeDB (line-level version diffs), and TDocDB (standardization meeting documents). DeepSpecs explicitly resolves cross-references by recursively retrieving referenced clauses through metadata lookup, and traces specification evolution by mining changes and linking them to Change Requests that document design rationale. We curate two 5G QA datasets: 573 expert-annotated real-world questions from practitioner forums and educational resources, and 350 evolution-focused questions derived from approved Change Requests. Across multiple LLM backends, DeepSpecs outperforms base models and state-of-the-art telecom RAG systems; ablations confirm that explicit cross-reference resolution and evolution-aware retrieval substantially improve answer quality, underscoring the value of modeling the structural and temporal properties of 5G standards.",
+  "doi": null,
+  "arxiv_id": "2511.01305",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T10:31:11.109393Z",
+  "relevance": 0.4,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal document versioning question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

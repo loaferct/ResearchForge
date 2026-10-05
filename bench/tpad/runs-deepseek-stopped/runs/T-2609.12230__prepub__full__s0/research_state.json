@@ -1,0 +1,676 @@
+{
+  "project": "T-2609.12230__prepub__full__s0",
+  "idea": "Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model training typically uses isolated head‑relation‑tail triples, depriving the model of the surrounding context that supports multi‑step inference. We propose to enrich each target triple (or path) with additional triples drawn from the same source passage, forming a local context subgraph that is presented together with the primary supervision signal. The model will be fine‑tuned under two regimes: one using only the target triple/path and another that also incorporates the supporting context. To improve the reliability of the base facts, we will introduce an adaptive repair loop that detects one‑hop failures, generates corrective examples, and iteratively refines the model. After this cleaning stage, we will apply reinforcement‑learning‑based optimization on lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.",
+  "created_at": "2026-09-30T04:59:23.068423Z",
+  "updated_at": "2026-09-30T05:29:20.168443Z",
+  "status": "running",
+  "dsh_session_id": "session-e09d5f6f-f976-4793-8414-7f7f3a17d89b",
+  "provider": "ollama-cloud",
+  "model": "deepseek-v4.1-flash",
+  "phases": [
+    {
+      "name": "formalize",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T04:59:23.086131Z",
+      "finished_at": "2026-09-30T05:06:17.111249Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 20,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "literature",
+      "status": "complete",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": "2026-09-30T05:06:17.113204Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "analysis",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T05:06:45.443118Z",
+      "finished_at": "2026-09-30T05:11:58.460111Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 28,
+      "failed_tool_calls": 4
+    },
+    {
+      "name": "landscape",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T05:11:58.480024Z",
+      "finished_at": "2026-09-30T05:14:04.552208Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 3,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "critique",
+      "status": "complete",
+      "attempts": 5,
+      "started_at": "2026-09-30T05:14:04.575843Z",
+      "finished_at": "2026-09-30T05:17:12.081999Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 56,
+      "failed_tool_calls": 9
+    },
+    {
+      "name": "gaps",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T05:25:03.150204Z",
+      "finished_at": "2026-09-30T05:26:43.742509Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 16,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "modifications",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T05:25:03.150226Z",
+      "finished_at": "2026-09-30T05:26:43.742626Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 16,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "experiments",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least one experiment plan (call record_experiment_plan)"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "report",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    }
+  ],
+  "error": null,
+  "loop_phase": "UNCERTAINTY",
+  "current_action": "COMPARE",
+  "current_focus": "U017: Is 'applying text-graph/self-bootstrapping mechanisms as fine-tuning supervision for multi-hop KGQA' a sufficient contribution, or must the research question be repositioned?",
+  "budget": {
+    "iterations": 10,
+    "tool_calls": 123,
+    "failed_tool_calls": 13,
+    "runtime_failures": 0,
+    "seconds": 1796.13,
+    "tokens": 4677854
+  },
+  "decisions": [
+    {
+      "iteration": 0,
+      "phase": "INTAKE",
+      "action": "INTAKE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Research idea received.",
+      "evidence": "idea: Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model training typically uses isolated head‑relation‑tail triples, depriving the",
+      "expected_outcome": "",
+      "outcome": "idea stored in the workspace",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T04:59:23.070482Z"
+    },
+    {
+      "iteration": 1,
+      "phase": "FORMALIZE",
+      "action": "FORMALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been formalized into a testable research question.",
+      "evidence": "0 papers from 0 searches, 0 analyzed, 0 claims (0 verified), 0 open uncertainties",
+      "expected_outcome": "Problem, hypothesis, variables, assumptions and search queries recorded.",
+      "outcome": "+83 papers; +7 searches; +5 uncertainties; idea formalized",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_paper",
+        "record_idea_analysis",
+        "record_uncertainty",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 83,
+        "relevant_papers": 66,
+        "searches": 7,
+        "uncertainties_created": 5,
+        "idea_formalized": 1
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T04:59:23.084383Z"
+    },
+    {
+      "iteration": 2,
+      "phase": "PLAN",
+      "action": "PLAN",
+      "focus": null,
+      "focus_id": null,
+      "reason": "No investigation plan exists yet, so it is unclear what must be determined.",
+      "evidence": "83 papers from 7 searches, 0 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Questions to answer, search topics and initial uncertainties recorded.",
+      "outcome": "+2 uncertainties; investigation plan recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_investigation_plan",
+        "record_uncertainty"
+      ],
+      "state_changes": {
+        "uncertainties_created": 2,
+        "plan_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:06:17.130227Z"
+    },
+    {
+      "iteration": 3,
+      "phase": "INVESTIGATE",
+      "action": "READ",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Retrieved papers have not been analyzed enough to judge overlap.",
+      "evidence": "83 papers from 7 searches, 0 analyzed, 0 claims (0 verified), 7 open uncertainties",
+      "expected_outcome": "Structured analyses of the most relevant papers.",
+      "outcome": "+10 analyses; +2 uncertainties",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "inspect_repository",
+        "list_papers",
+        "record_paper_analysis",
+        "record_uncertainty",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "analyses": 10,
+        "uncertainties_created": 2
+      },
+      "info_gain": 5.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:06:45.434974Z"
+    },
+    {
+      "iteration": 4,
+      "phase": "SYNTHESIZE",
+      "action": "SYNTHESIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Analyses exist but the field has not been mapped.",
+      "evidence": "83 papers from 7 searches, 10 analyzed, 0 claims (0 verified), 9 open uncertainties",
+      "expected_outcome": "A landscape placing the idea among approaches.",
+      "outcome": "+1 uncertainties; landscape recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_records",
+        "record_landscape",
+        "record_uncertainty"
+      ],
+      "state_changes": {
+        "uncertainties_created": 1,
+        "landscape_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:11:58.471710Z"
+    },
+    {
+      "iteration": 5,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been challenged yet.",
+      "evidence": "83 papers from 7 searches, 10 analyzed, 0 claims (0 verified), 10 open uncertainties",
+      "expected_outcome": "Strongest objections recorded as critique and uncertainties.",
+      "outcome": "+14 claims; +7 verified claims; +1 contradicted conclusions; +2 uncertainties; +1 resolved uncertainties; critique recorded; uncertainties updated: U001, U003, U004, U008",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_challenge_result",
+        "record_claim",
+        "record_critique",
+        "record_uncertainty",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 14,
+        "verified_claims": 7,
+        "contradicted": 1,
+        "uncertainties_created": 2,
+        "uncertainties_resolved": 1,
+        "critique_recorded": 1
+      },
+      "info_gain": 12.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:14:04.565903Z"
+    },
+    {
+      "iteration": 6,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": "Does evidence that non-answer-path context triples barely affect inference-time multi-hop accuracy contradict the hypothesis that same-passage context triples improve training-time multi-hop KGQA?",
+      "focus_id": null,
+      "reason": "The current critique predates contradicting evidence (U008 weakened); the assessment must be revised before continuing.",
+      "evidence": "83 papers from 7 searches, 10 analyzed, 14 claims (7 verified), 13 open uncertainties",
+      "expected_outcome": "A critique that accounts for the contradicting work.",
+      "outcome": "+1 claims; +2 uncertainties; critique recorded; uncertainties updated: U008",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_claim",
+        "record_critique",
+        "record_uncertainty",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 1,
+        "uncertainties_created": 2,
+        "critique_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:17:12.095921Z"
+    },
+    {
+      "iteration": 7,
+      "phase": "CHALLENGE",
+      "action": "CHALLENGE",
+      "focus": "U013: Does published work contradict the current assessment: The distinctions are (1) training-time vs inference-time manipulation of the context, (2) same-source-passage provenance of the added triples rather than KG-neighborhood retrieval, (3) an explicit one-hop failure detector/repair loop producing corrective training examples, and (4) a hop-depth transfer protocol where the model is RL-optimized only on lower-hop instances and evaluated on deeper hops. Points (1) and (4) are conceptual rather than implementation-level; points (2) and (3) are currently under-specified and may reduce to existing KG-neighborhood augmentation and generic iterative self-training if not formalized precisely.?",
+      "focus_id": "U013",
+      "reason": "Most valuable next step for high-importance contradiction question U013: score 1.4 = importance 3 x expected gain 0.7 x relevance 1 x evidence deficiency 1 / cost 1.5. Next best: SEARCH on U015 (1.08).",
+      "evidence": "83 papers from 7 searches, 10 analyzed, 15 claims (7 verified), 16 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U013.",
+      "outcome": "+12 papers; +2 searches; +6 claims; +6 verified claims; +1 contradicted conclusions; +1 uncertainties; uncertainties updated: U013",
+      "candidates": [
+        {
+          "action": "CHALLENGE",
+          "uncertainty_id": "U013",
+          "target": "Does published work contradict the current assessment: The distinctions are (1) training-time vs inference-time manipulation of the context, (2) same-source-passage provenance of the added triples rather than KG-neighborhood retrieval, (3) an explicit one-hop failure detector/repair loop producing corrective training examples, and (4) a hop-depth transfer protocol where the model is RL-optimized only on lower-hop instances and evaluated on deeper hops. Points (1) and (4) are conceptual rather than implementation-level; points (2) and (3) are currently under-specified and may reduce to existing KG-neighborhood augmentation and generic iterative self-training if not formalized precisely.?",
+          "importance": 3.0,
+          "expected_gain": 0.7,
+          "gain_basis": "prior 0.7",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.4
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U015",
+          "target": "Does the idea reduce to established path-based supervision once the answer chain is recognized as the effective ingredient, leaving no novel contribution from peripheral context?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 1.08
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U010",
+          "target": "Does training-time supervision enrichment add value beyond training-free inference-time context construction for multi-hop KGQA?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.9
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U015",
+          "target": "Does the idea reduce to established path-based supervision once the answer chain is recognized as the effective ingredient, leaving no novel contribution from peripheral context?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.9
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U006",
+          "target": "Do the chosen benchmarks' deep-hop splits actually test transfer, or are 3+ hop items systematically composed from relations and entities seen at lower hops (benchmark-construction confound)?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.8,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.864
+        },
+        {
+          "action": "CHALLENGE",
+          "uncertainty_id": "U010",
+          "target": "Does training-time supervision enrichment add value beyond training-free inference-time context construction for multi-hop KGQA?",
+          "importance": 3.0,
+          "expected_gain": 0.7,
+          "gain_basis": "prior 0.7",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.5,
+          "score": 0.84
+        }
+      ],
+      "expected_gain": 0.7,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "expand_citations",
+        "get_paper",
+        "record_challenge_result",
+        "record_claim",
+        "record_uncertainty",
+        "search_papers",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "papers": 12,
+        "relevant_papers": 4,
+        "searches": 2,
+        "claims": 6,
+        "verified_claims": 6,
+        "contradicted": 1,
+        "uncertainties_created": 1
+      },
+      "info_gain": 10.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:18:28.773429Z"
+    },
+    {
+      "iteration": 8,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": "Does published work contradict the current assessment: The distinctions are (1) training-time vs inference-time manipulation of the context, (2) same-source-passage provenance of the added triples rather than KG-neighborhood retrieval, (3) an explicit one-hop failure detector/repair loop producing c",
+      "focus_id": null,
+      "reason": "The current critique predates contradicting evidence (U013 weakened); the assessment must be revised before continuing.",
+      "evidence": "95 papers from 9 searches, 10 analyzed, 21 claims (13 verified), 18 open uncertainties",
+      "expected_outcome": "A critique that accounts for the contradicting work.",
+      "outcome": "+2 claims; +1 verified claims; +1 uncertainties; critique recorded; uncertainties updated: U002",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_claim",
+        "record_critique",
+        "record_uncertainty",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 2,
+        "verified_claims": 1,
+        "uncertainties_created": 1,
+        "critique_recorded": 1
+      },
+      "info_gain": 2.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:23:45.372632Z"
+    },
+    {
+      "iteration": 9,
+      "phase": "UNCERTAINTY",
+      "action": "REFINE",
+      "focus": "U010: Does training-time supervision enrichment add value beyond training-free inference-time context construction for multi-hop KGQA?",
+      "focus_id": "U010",
+      "reason": "Most valuable next step for high-importance novelty question U010: score 0.9 = importance 3 x expected gain 0.5 x relevance 1 x evidence deficiency 0.6 / cost 1. Next best: REFINE on U015 (0.9).",
+      "evidence": "95 papers from 9 searches, 10 analyzed, 23 claims (14 verified), 19 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U010.",
+      "outcome": "+3 gaps; +4 modifications; +1 directions; uncertainties updated: U010",
+      "candidates": [
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U010",
+          "target": "Does training-time supervision enrichment add value beyond training-free inference-time context construction for multi-hop KGQA?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.9
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U015",
+          "target": "Does the idea reduce to established path-based supervision once the answer chain is recognized as the effective ingredient, leaving no novel contribution from peripheral context?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.9
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U017",
+          "target": "Is 'applying text-graph/self-bootstrapping mechanisms as fine-tuning supervision for multi-hop KGQA' a sufficient contribution, or must the research question be repositioned?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.9
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U009",
+          "target": "Does context enrichment risk adding distractor triples that hurt performance, and how should the context subgraph be selected and size-controlled?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.81
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U012",
+          "target": "Should the idea be narrowed to a single well-controlled supervision experiment before adding the repair loop and RL stages?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.81
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U014",
+          "target": "The conclusion behind U008 was weakened by contradicting work; how should the direction change?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.81
+        }
+      ],
+      "expected_gain": 0.5,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "record_direction",
+        "record_gap",
+        "record_modification",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "gaps": 3,
+        "modifications": 4,
+        "directions": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:25:03.140480Z"
+    },
+    {
+      "iteration": 10,
+      "phase": "UNCERTAINTY",
+      "action": "REFINE",
+      "focus": "U015: Does the idea reduce to established path-based supervision once the answer chain is recognized as the effective ingredient, leaving no novel contribution from peripheral context?",
+      "focus_id": "U015",
+      "reason": "Most valuable next step for high-importance overlap question U015: score 0.751 = importance 3 x expected gain 0.417 x relevance 1 x evidence deficiency 0.6 / cost 1. Next best: REFINE on U017 (0.751).",
+      "evidence": "95 papers from 9 searches, 10 analyzed, 23 claims (14 verified), 23 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U015.",
+      "outcome": "+1 modifications; +1 directions; +1 uncertainties; uncertainties updated: U015",
+      "candidates": [
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U015",
+          "target": "Does the idea reduce to established path-based supervision once the answer chain is recognized as the effective ingredient, leaving no novel contribution from peripheral context?",
+          "importance": 3.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.751
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U017",
+          "target": "Is 'applying text-graph/self-bootstrapping mechanisms as fine-tuning supervision for multi-hop KGQA' a sufficient contribution, or must the research question be repositioned?",
+          "importance": 3.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.751
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U015",
+          "target": "Does the idea reduce to established path-based supervision once the answer chain is recognized as the effective ingredient, leaving no novel contribution from peripheral context?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.5,
+          "score": 0.72
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U017",
+          "target": "Is 'applying text-graph/self-bootstrapping mechanisms as fine-tuning supervision for multi-hop KGQA' a sufficient contribution, or must the research question be repositioned?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.5,
+          "score": 0.72
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U009",
+          "target": "Does context enrichment risk adding distractor triples that hurt performance, and how should the context subgraph be selected and size-controlled?",
+          "importance": 3.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.676
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U012",
+          "target": "Should the idea be narrowed to a single well-controlled supervision experiment before adding the repair loop and RL stages?",
+          "importance": 3.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.676
+        }
+      ],
+      "expected_gain": 0.417,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "get_records",
+        "get_research_state",
+        "record_direction",
+        "record_modification",
+        "record_uncertainty",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "modifications": 1,
+        "directions": 1,
+        "uncertainties_created": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:26:43.763442Z"
+    }
+  ],
+  "no_progress": {},
+  "blocked_actions": [],
+  "critiques": 3,
+  "papers_at_last_critique": 95,
+  "finalize_reason": null,
+  "awaiting_approval": [],
+  "investigation_closed": null,
+  "investigation_closed_at": null,
+  "challenged_refs": [
+    "critique",
+    "G001",
+    "G002",
+    "G003",
+    "D001",
+    "D002"
+  ],
+  "research_decision": null,
+  "research_decision_basis": ""
+}

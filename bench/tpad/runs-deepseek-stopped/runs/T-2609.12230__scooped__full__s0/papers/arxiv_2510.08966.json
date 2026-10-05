@@ -1,0 +1,41 @@
+{
+  "id": "arxiv:2510.08966",
+  "title": "Beyond Prefixes: Graph-as-Memory Cross-Attention for Knowledge Graph Completion with Large Language Models",
+  "authors": [
+    "Ruitong Liu",
+    "Boxu Lin",
+    "Peize Li",
+    "Siyuan Li",
+    "Yunjia Wu",
+    "Te Sun",
+    "Chaohan Wu"
+  ],
+  "year": 2025,
+  "published": "2025-10-10",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2510.08966",
+  "pdf_url": "https://arxiv.org/pdf/2510.08966v2",
+  "abstract": "Fusing Knowledge Graphs with Large Language Models (LLMs) is crucial for knowledge-intensive tasks like knowledge graph completion. Existing LLM-based approaches typically inject graph information via prefix concatenation, resulting in shallow interactions that fail to support fine-grained evidence retrieval during generation. Beyond prefixes, we propose Graph-as-Memory Tuning (GMT), a new paradigm that represents local graph structure as explicit graph memory and injects it into LLMs via deep, token-wise cross-attention. Specifically, GMT first employs a Semantic Graph Module to encode context-aware semantics from local neighborhoods guided by knowledge-enhanced relations, and compresses them into a fixed number of graph memory tokens. A Graph-as-Memory Cross-Attention Fusion Module then integrates these tokens into multiple Transformer layers, allowing LLM hidden state to dynamically retrieve relevant graph evidence. To enable efficient adaptation, GMT applies LoRA only to the memory cross-attention while keeping the base LLM frozen. Extensive experiments show that GMT significantly outperforms prefix-tuning and other strong baselines, providing more potent signals for robust reasoning. The code is published at https://github.com/tongruiliu/GMT.",
+  "doi": null,
+  "arxiv_id": "2510.08966",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:17:13.971772Z",
+  "relevance": 0.1296,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "structure-aware graph tokens fine-tuning LLM knowledge graph reasoning supervision neighbor context"
+  ],
+  "code_urls": [
+    "https://github.com/tongruiliu/GMT"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

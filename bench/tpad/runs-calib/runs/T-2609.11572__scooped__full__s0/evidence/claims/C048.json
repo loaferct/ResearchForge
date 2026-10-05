@@ -1,0 +1,43 @@
+{
+  "id": "C048",
+  "statement": "Resolution of U039: neither definition should be discarded, but they must be matched to different claims rather than averaged into one score. Retrieval-level claims - whether a retriever resolves version ambiguity - are scored by version identity, that is, whether the returned passage was in force at the target date, because that is the criterion legal analysis prescribes and what a legal benchmark encoding temporal validity measures; content scoring cannot detect contamination when successive versions share wording. End-to-end claims about user-visible harm are scored by answer accuracy restricted to the answer-differential stratum, because only there can a wrong version change the answer. Consequences: report the contamination rate, the screen pass rate and the conditional accuracy together, never a single aggregate; state in advance which metric adjudicates which claim so the dual reporting cannot be read as metric-shopping; and expect the two definitions to yield different magnitudes, with citation-validity failure more frequent than content failure. A residual definitional question arises for versions whose text is unchanged, where version-identity scoring would penalize retrieving an equivalent passage.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "improves answer accuracy from 66.7% to 78.9% over hybrid RAG while reducing temporal evidence leakage from 10.8% to 1.7% and hallucination from 17.3% to 7.9%",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2608.21409",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "a new benchmark that encodes temporal validity",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "RAG-augmented legal AI tends instead to cite real documents in ways that are anachronistic",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "U039",
+    "claim-matched scoring",
+    "dual metrics",
+    "construct validity"
+  ],
+  "recorded_at": "2026-09-30T04:44:38.888640Z"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "C014",
+  "statement": "TempRALM sets its temporal weight through a single scaling factor alpha chosen 'to tune the temporal score's importance relative to the importance of the semantic score'; the paper reports no held-out validation split, no cross-validation and no leakage control for this temporal hyperparameter.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "importance relative to the importance of the semantic score",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "confounder",
+    "hyperparameter",
+    "leakage"
+  ],
+  "recorded_at": "2026-09-30T05:22:53.783937Z"
+}

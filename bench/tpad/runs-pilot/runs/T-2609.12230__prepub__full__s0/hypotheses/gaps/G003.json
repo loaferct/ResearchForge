@@ -1,0 +1,36 @@
+{
+  "id": "G003",
+  "gap": "Lack of evaluation of transfer from lower-hop QA instances to deeper multi-hop queries after a cleaning stage (e.g., adaptive repair loop).",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2212.00959",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Extensive experiments on three benchmark datasets have demonstrated the effectiveness of our method on the multi-hop KGQA task.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2601.01195",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Experimental results on two TKGQA benchmarks indicate that the proposed MRE-based model consistently surpasses state-of-the-art (SOTA) approaches in handling complex multi-hop queries.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2212.00959",
+    "arxiv:2601.01195",
+    "doi:10.1016/j.eswa.2024.124652",
+    "doi:10.1016/j.ins.2022.11.042"
+  ],
+  "why_unaddressed": "Existing work evaluates performance on standard multi-hop benchmarks or ablation studies, but none explicitly assesses whether a cleaning stage (e.g., repairing one‑hop failures) improves transfer from lower‑hop to higher‑hop question answering.",
+  "research_question": "Does applying an adaptive repair loop on lower‑hop QA instances lead to statistically significant gains in Hits@1 on higher‑hop test sets compared to training without such a cleaning stage?",
+  "potential_experiment": "Train a model on 1‑hop questions, apply an adaptive repair loop to refine the model, then evaluate on 2‑hop and 3‑hop test sets; compare against a baseline that skips the repair loop and goes directly to RL transfer or standard fine‑tuning.",
+  "confidence": "medium",
+  "verification_required": "Search for any work that examines transfer learning across hop counts after a model‑refinement stage in KGQA.",
+  "recorded_at": "2026-09-30T07:59:33.049966Z"
+}

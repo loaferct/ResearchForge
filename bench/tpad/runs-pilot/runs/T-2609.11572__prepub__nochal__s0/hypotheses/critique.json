@@ -1,0 +1,23 @@
+{
+  "strongest_for": "The idea addresses a well-documented problem: temporal degradation of retrieval signals in evolving regulatory texts, evidenced by significant decay in co-citation predictability (C001, C003). A retrieval-agnostic temporal relevance component offers a principled way to mitigate this degradation while preserving semantic similarity, potentially improving version-specific question answering.",
+  "strongest_against": "The closest existing work already analyzes temporal decay in legal statutes (C001) and applies temporal weighting in other domains (e.g., recommendation, knowledge graphs), suggesting the core concept may not be novel. Moreover, the approach faces technical risks due to non-uniform decay patterns (C004) and a major experimental confounder: retrieval often matches meaning rather than time (C006), making it difficult to isolate the true effect of temporal weighting on version selection.",
+  "most_important_unresolved_question": "How to construct a realistic benchmark of versioned regulatory documents with time-stamped queries that adequately tests temporal relevance, and what is the optimal form and parameterization of the temporal weighting function for this setting?",
+  "most_dangerous_confounder": "The confounding effect where retrieval systems match semantic meaning rather than temporal correctness (C006), which could lead to spurious improvements attributed to temporal weighting when gains are actually due to better semantic matching.",
+  "closest_paper_ids": [
+    "arxiv:2605.17639",
+    "arxiv:2608.08512",
+    "doi:10.33480/jitk.v12i1.8240",
+    "arxiv:2604.26970"
+  ],
+  "closest_work_explanation": "These papers study temporal aspects in retrieval or related fields: arxiv:2605.17639 analyzes temporal decay of co-citation predictability in Ukrainian statutes; arxiv:2608.08512 presents a benchmark for version resolution in evolving documents and identifies retrieval matching meaning as a key challenge; doi:10.33480/jitk.v12i1.8240 applies temporal decay weighting to mitigate popularity bias in recommendation systems; arxiv:2604.26970 proposes adaptive temporal decay for knowledge graphs. None propose a retrieval-agnostic temporal relevance component for open-domain question answering over evolving regulatory texts.",
+  "potential_contribution": "A novel temporal relevance weighting scheme that can be combined with any standard retriever to improve retrieval of time-specific versions; a benchmark comprising versioned regulatory documents (e.g., statutes, policies) with timestamped questions; empirical demonstration that temporal-semantic ranking improves answer accuracy (Exact Match, F1) over strong baselines.",
+  "overlap_summary": "Overlap exists in the problem domain (legal/statutory texts that evolve over time) and the observation that retrieval signals degrade temporally (C001, C003). The proposed work shares the assumption that temporal proximity correlates with relevance (C008) and that standard retrievers provide combinable semantic scores (C009).",
+  "distinction_summary": "Unlike prior work that merely diagnoses decay (arxiv:2605.17639) or applies temporal weighting to other modalities (recommendation, knowledge graphs, video), this work proposes a retrieval-agnostic framework specifically for open-domain question answering that adjusts retriever rankings based on elapsed time between query target date and passage version timestamp, while preserving semantic similarity. It targets end-to-end QA accuracy rather than retrieval-only metrics or proxy tasks.",
+  "novelty": [],
+  "technical_validity": [],
+  "experimental_validity": [],
+  "practicality": [],
+  "overall_status": "promising_needs_validation",
+  "status_rationale": "The idea is grounded in empirical evidence of temporal decay and addresses a clear gap in mitigating this decay for version-specific QA. However, key uncertainties remain regarding benchmark feasibility, optimal temporal weighting function, and confounding factors (e.g., retrieval matching meaning). Without empirical validation demonstrating improved QA accuracy, the contribution remains promising but unproven.",
+  "recorded_at": "2026-09-30T10:47:10.469542Z"
+}

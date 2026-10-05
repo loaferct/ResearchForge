@@ -1,0 +1,31 @@
+{
+  "id": "U021",
+  "question": "Does the already-published recency-decay hybrid already match valid-time (as-of) gating on clause-versioned amended regulatory text, making the validity-versus-recency distinction immaterial in practice?",
+  "description": "The published three-signal hybrid already reaches 99.8% temporal accuracy on its ESG benchmark using exponential decay. If a decay-based hybrid reaches a similar level on clause-versioned regulatory text, the valid-time gate adds nothing and the proposed mechanism is unnecessary - recency is a sufficient proxy for validity there. Conversely, if decay fails specifically on long-lived in-force clauses and superseded-but-recent amendments, the gate is necessary and the failure is localized and reportable.",
+  "category": "contradiction",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "SEARCH"
+  ],
+  "confidence": 0.5,
+  "confidence_basis": "The accessible record shows the decay hybrid reaching near-ceiling temporal accuracy and decay integrated in another system, but neither the benchmark's temporal-accuracy definition nor any non-latest-authoritative breakdown is verifiable from the retrievable text, so the answer depends on the planned discriminating-case measurement.",
+  "rationale": "The strongest existing system uses decay and reports near-ceiling temporal accuracy on its own benchmark; whether that transfers to amended clauses with non-latest authoritative versions is the decisive empirical question for the whole direction.",
+  "resolution": "Partially resolved by argument and design, not by data: decay-based ranking demonstrably reaches near-ceiling temporal accuracy on its own benchmark (99.8%), which establishes only that decay can be sufficient where the temporally correct evidence is also recent. Because decay is monotone in document age, it and an as-of gate make opposite predictions exactly when the in-force version is old while a recent near-duplicate exists - a case that figure does not isolate and that no retrieved work reports. The literature therefore cannot settle this; experiment plan E002 is designed as the minimal discriminator, restricted to those discriminating queries, and includes tuning the decay rate per query type as an ablation so that a decay win is not dismissed as an artifact of a fixed rate. Expected outcome if the concern is real: high decay contamination on old-window queries with equivalence on latest-gold queries.",
+  "paper_ids": [
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.3390/sym18091498"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T04:38:03.015151Z",
+  "updated_at": "2026-09-30T04:40:20.832957Z"
+}

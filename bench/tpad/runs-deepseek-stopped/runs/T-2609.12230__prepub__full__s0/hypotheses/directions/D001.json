@@ -1,0 +1,32 @@
+{
+  "id": "D001",
+  "direction": "Narrow to a single, hop-depth-conditional, matched-budget training-time experiment that separates the reasoning chain from peripheral same-passage context, and evaluate it under matched inference-time context against a training-free context baseline. Drop the repair loop and RL stage from the primary contribution (or demote them to clearly labeled secondary experiments), and treat the outcome as a pre-registered boundary/negative result about when context supervision helps rather than as a new state-of-the-art method.",
+  "hypothesis": "H1': Under a matched supervision token budget and identical inference-time context, supervision that exposes the full reasoning chain improves multi-hop (>=2-hop) KGQA over isolated-triple supervision, while adding peripheral same-passage triples beyond the chain yields no measurable improvement (and a matched-budget shuffled-triple arm performs no better than peripheral same-passage triples). H2': Any advantage of context-enriched training disappears when test-time context is held constant across arms. H3': Per-hop failure attribution (one-hop failure rate) and a hop-depth transfer gap can be measured reliably and characterize where errors originate.",
+  "rationale": "The evidence supports neither the original bundled scope nor rejecting the direction. The premise is challenged (non-chain context triples contribute only +0.003 F1 at inference; over-retrieval introduces distractors), the mechanism is largely prior art (path supervision, text graphs, self-bootstrapping), and H2 is unsupported - so continuing as proposed would be uninterpretable. But one unoccupied and inexpensive question survives: no retrieved work tests context-enriched supervision versus triple-only supervision under a matched budget and matched inference context, and the hop-depth-conditional prediction gives a falsifiable form that distinguishes chain effects from peripheral-context effects. This deserves investigation next because it is cheap, decisive for the original premise, and yields a useful boundary result either way. It is not claimed to be the best possible direction for the field, only the most informative next step for this idea.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": null,
+  "research_question": "Under a matched supervision token budget and identical inference-time context, does training-time exposure to the full reasoning chain (and, separately, to peripheral same-passage context triples) change multi-hop KGQA accuracy by hop depth relative to isolated-triple supervision, and does any gain survive controlling for test-time context and token budget?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "arxiv:2609.10237",
+    "doi:10.18653/v1/2020.emnlp-main.99",
+    "doi:10.1609/aaai.v32i1.12057",
+    "arxiv:2607.23278",
+    "arxiv:2509.21035",
+    "arxiv:2505.20245",
+    "doi:10.24963/kr.2020/77",
+    "doi:10.18653/v1/2020.eval4nlp-1.14"
+  ],
+  "uncertainty_ids": [
+    "U008",
+    "U010",
+    "U013",
+    "U004",
+    "U015",
+    "U016",
+    "U017",
+    "U002"
+  ],
+  "recorded_at": "2026-09-30T05:26:11.464349Z"
+}

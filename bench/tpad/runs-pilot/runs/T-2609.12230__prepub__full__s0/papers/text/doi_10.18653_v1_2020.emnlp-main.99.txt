@@ -1,0 +1,1430 @@
+[[page 1]]
+Scalable Multi-Hop Relational Reasoning for
+Knowledge-Aware Question Answering
+Yanlin Feng♣∗ Xinyue Chen♠∗ Bill Yuchen Lin♥ Peifeng Wang♥ Jun Yan♥ Xiang Ren♥
+fengyanlin@pku.edu.cn, kiwisher@sjtu.edu.cn,
+{yuchen.lin, peifengw, yanjun, xiangren }@usc.edu
+♥University of Southern California
+♣Peking University ♠Shanghai Jiao Tong University
+Abstract
+While ﬁne-tuning pre-trained language mod-
+els (PTLMs) has yielded strong results on
+a range of question answering (QA) bench-
+marks, these methods still suffer in cases when
+external knowledge are needed to infer the
+right answer. Existing work on augment-
+ing QA models with external knowledge (e.g.,
+knowledge graphs) either struggle to model
+multi-hop relations efﬁciently, or lack trans-
+parency into the model’s prediction rationale.
+In this paper, we propose a novel knowledge-
+aware approach that equips PTLMs with a
+multi-hop relational reasoning module, named
+multi-hop graph relation networks (MHGRN).
+It performs multi-hop, multi-relational reason-
+ing over subgraphs extracted from external
+knowledge graphs. The proposed reasoning
+module uniﬁes path-based reasoning methods
+and graph neural networks to achieve better in-
+terpretability and scalability. We also empiri-
+cally show its effectiveness and scalability on
+CommonsenseQA and OpenbookQA datasets,
+and interpret its behaviors with case studies. In
+particular, MHGRN achieves the state-of-the-
+art performance (76.5% accuracy) on the Com-
+monsenseQA ofﬁcial test set. 1
+1 Introduction
+Many recently proposed question answering tasks
+require not only machine comprehension of the
+question and context, but also relational reason-
+ing over entities (concepts) and their relationships
+based by referencing external knowledge (Talmor
+et al., 2019; Sap et al., 2019; Clark et al., 2018;
+Mihaylov et al., 2018). For example, the question
+in Fig. 1 requires a model to perform relational rea-
+soning over mentioned entities,i.e., to infer latent
+relations among the concepts:{CHILD , SIT, DESK,
+∗ The ﬁrst two authors contributed equally. The major
+work was done when both authors interned at USC.
+1https://github.com/INK-USC/MHGRN.
+Desires
+Learn
+Child
+Schoolroom
+Classroom
+Sit
+Desk
+AtLocation
+Where does a child likely sit at a desk?
+A. Schoolroom * B. Furniture store C. Patio
+D. Office building  E. Library
+Figure 1: Illustration of knowledge-aware QA. A
+sample question from CommonsenseQA can be better
+answered if a relevant subgraph of ConceptNet is pro-
+vided as evidence. Blue nodes correspond to entities
+mentioned in the question, pink nodes correspond to
+those in the answer. The other nodes are some associ-
+ated entities introduced when extracting the subgraph.
+⋆ indicates the correct answer.
+SCHOOLROOM }. Background knowledge such as
+“a child is likely to appear in a schoolroom”may not
+be readily contained in the questions themselves,
+but are commonsensical to humans.
+Despite the success of large-scale pre-trained
+language models (PTLMs) (Devlin et al., 2019;
+Liu et al., 2019b), there is still a large performance
+gap between ﬁne-tuned models and human perfor-
+mance on datasets that probe relational reasoning.
+These models also fall short of providing inter-
+pretable predictions as the knowledge in their pre-
+training corpus is not explicitly stated, but rather is
+implicitly learned. It is thus difﬁcult to recover the
+knowledge used in the reasoning process.
+This has led many works to leverage knowl-
+edge graphs to improve machine reasoning abil-
+ity to infer these latent relations for answering
+arXiv:2005.00646v1  [cs.CL]  1 May 2020
+
+[[page 2]]
+0 80#node
+3.1e3
+#path
+K=2
+0 80#node
+6.3e4
+K=2
+K=3
+Figure 2: Number of K-hop relational paths w.r.t.
+the node count in extracted graphs on Common-
+senseQA. Left: The path count is polynomial w.r.t. the
+number of nodes. Right: The path count is exponential
+w.r.t. the number of hops.
+this kind of questions (Mihaylov and Frank, 2018;
+Lin et al., 2019; Wang et al., 2019; Yang et al.,
+2019). Knowledge graphs represent relational
+knowledge between entities into multi-relational
+edges, thus making it easier for a model to acquire
+relational knowledge and improve its reasoning
+ability. Moreover, incorporating knowledge graphs
+brings the potential of interpretable and trustwor-
+thy predictions, as the knowledge is now explicitly
+stated. For example, in Fig. 1, the relational path
+(CHILD → AtLocation → CLASSROOM →
+Synonym→ SCHOOLROOM ) naturally provides
+evidence for the answer SCHOOLROOM .
+A straightforward approach to leveraging a
+knowledge graph is to directly model these rela-
+tional paths. KagNet (Lin et al., 2019) and MH-
+PGM (Bauer et al., 2018) extract relational paths
+from knowledge graph and encode them with se-
+quence models, resulting in multi-hop relations
+being explicitly modeled. Application of attention
+mechanisms upon these relational paths can further
+offer good interpretability. However, these models
+are hardly scalable because the number of possible
+paths in a graph is (1) polynomial w.r.t. the num-
+ber of nodes (2) exponential w.r.t. the path length
+(see Fig. 2). Therefore, some (Weissenborn et al.,
+2017; Mihaylov and Frank, 2018) resort to only
+using one-hop paths, namely, triples, to balance
+scalability and reasoning capacities.
+Graph neural networks (GNN), in contrast, enjoy
+better scalability via their message passing formula-
+tion, but usually lack transparency. The most com-
+monly used GNN variant, Graph Convolutional
+Network (GCN) (Kipf and Welling, 2017), per-
+forms message passing by aggregating neighbor-
+hood information for each node, but ignores the re-
+lation types. RGCN (Schlichtkrull et al., 2018) gen-
+eralizes GCN by performing relation-speciﬁc ag-
+GCN RGCN KagNet MHGRN
+Multi-Relational Encoding    
+Interpretable    
+Scalable w.r.t. #node    
+Scalable w.r.t. #hop    
+Table 1: Properties of our MHGRN and other repre-
+sentative models for graph encoding.
+gregation, making it applicable to encoding multi-
+relational graphs. However, these models do not
+distinguish the importance of different neighbors
+or relation types and thus cannot provide explicit
+relational paths for model behavior interpretation.
+In this paper, we propose a novel graph encod-
+ing architecture, Multi-hop Graph Relation Net-
+works (MHGRN), which combines the strengths
+of path-based models and GNNs. Our model in-
+herits scalability from GNNs by preserving the
+message passing formulation. It also enjoys inter-
+pretability of path-based models by incorporating
+structured relational attention mechanism to model
+message passing routes. Our key motivation is to
+perform multi-hop message passing within a sin-
+gle layer to allow each node to directly attend to
+its multi-hop neighbours, thus enabling multi-hop
+relational reasoning with MHGRN. We outline the
+favorable features of knowledge-aware QA models
+in Table 1 and compare our MHGRN with repre-
+sentative GNNs and path-based methods.
+We summarize the main contributions of this
+work as follows: 1) We propose MHGRN, a novel
+model architecture tailored to multi-hop relational
+reasoning. Our model is capable of explicitly mod-
+eling multi-hop relational paths at scale. 2) We
+propose structured relational attention mechanism
+for efﬁcient and interpretable modeling of multi-
+hop reasoning paths, along with its training and
+inference algorithms. 3) We conduct extensive ex-
+periments on two question answering datasets and
+show that our models bring signiﬁcant improve-
+ments compared to knowledge-agnostic pre-trained
+language models, and outperform other graph en-
+coding methods by a large margin.
+2 Problem Formulation and Overview
+In this paper, we limit the scope to the task of
+multiple-choice question answering, although it
+can be easily generalized to other knowledge-
+guided tasks (e.g., natural language inference). The
+overall paradigm of knowledge-aware QA is illus-
+trated in Fig. 3. Formally, given an external knowl-
+edge graph (KG) as the knowledge source and a
+
+[[page 3]]
+Plausibility
+Score
+Graph Extraction
+From KG
+Graph 
+Encoder
+Text 
+Encoder
+𝓖
+𝒔𝒒
+𝒂
+Figure 3: Overview of the knowledge-aware QA
+framework. It integrates the output from graph en-
+coder (for relational reasoning over contextual sub-
+graphs) and text encoder (for textual understanding) to
+generate the plausibility score for an answer option.
+questionq, our goal is to identify the correct answer
+from a set C of given choices. We turn this prob-
+lem into measuring the plausibility score between
+q and each answer choicea∈ C then selecting the
+answer with the highest plausibility score.
+We use q and a to denote the representation
+vectors of question q and option a. To measure
+the score for q and a, we ﬁrst concatenate them to
+form a statement s= [q; a]. Then we extract from
+the external KG a subgraph G (i.e., schema graph
+in KagNet (Lin et al., 2019)), with the guidance of
+s (detailed in §5.1). This contextualized subgraph
+is deﬁned as a multi-relational graph G = (V, E,φ).
+Here V is a subset of entity nodes in the external
+KG, containing only entities relevant to s. E ⊆
+V× R× V is the set of edges that connect nodes in
+V, where R= {1,⋯,m} are ids of all pre-deﬁned
+relation types. The mapping functionφ(i)∶ V→
+T = {Eq, Ea, Eo} takes nodei ∈ V as input and
+outputs Eq ifi is an entity mentioned in q, Ea if
+it is mentioned in a, or Eo otherwise. We ﬁnally
+encode the statement to s, G to g, concatenate s
+and g, for calculating the plausibility score.
+3 Background: Multi-Relational Graph
+Encoding Methods
+We leave encoding of s to pre-trained language
+models which have shown powerful text represen-
+tation ability, while we focus on the challenge
+of encoding graph G to capture latent relations
+between entities. Current methods for encoding
+multi-relational graphs mainly fall into two cat-
+egories: graph neural networks and path-based
+models. Graph neural networks encode structured
+information by passing messages between nodes,
+directly operating on the graph structure, while
+path-based methods ﬁrst decompose the graph into
+paths and then pool features over all the paths.
+Graph Encoding with GNNs. For a graph with
+n nodes, a graph neural network (GNN) takes a
+set of node features{h1, h2,..., hn} as input, and
+computes their corresponding node embeddings
+{h′
+1, h′
+2,..., h′
+n} via message passing (Gilmer
+et al., 2017). A compact graph representation for
+G can thus be obtained by pooling over the node
+embeddings {h′
+i}:
+GNN(G)= Pool({h′
+1, h′
+2,..., h′
+n}). (1)
+As a notable variant of GNNs, graph convo-
+lutional networks (GCNs) (Kipf and Welling,
+2017) additionally update node embeddings by
+aggregating messages from its direct neighbors.
+RGCNs (Schlichtkrull et al., 2018) extend GCNs to
+encode multi-relational graphs by deﬁning relation-
+speciﬁc weight matrix Wr for each edge type:
+h′
+i=σ
+⎛
+⎜
+⎝
+ =
+r∈R
+∣Nr
+i ∣
+−1
+=
+r∈R
+=
+j∈Nr
+i
+Wrhj
+⎞
+⎟
+⎠
+, (2)
+where Nr
+i denotes neighbors of nodei under rela-
+tionr.2
+While GNNs have proved to have good scalabil-
+ity, their reasoning is done at the node level, thus
+making them incompatible with modeling path-
+level reasoning chains-a crucial component for QA
+tasks that require relational reasoning. This prop-
+erty also hinders the model’s decisions from being
+interpreted at the path level.
+Graph Encoding with Path-Based Models. In
+addition to directly modeling the graph with GNNs,
+one can also view a graph as a set of relational
+paths connecting pairs of entities.
+Relation Networks (RN) (Santoro et al., 2017)
+can be adapted to multi-relational graph encoding
+under QA settings. RNs use MLPs to encode all
+triples (one-hop paths) in G whose head entity is
+in Q = {j ∣ φ(j) = Eq} and tail entity is in
+A = {i ∣ φ(i) = Ea}. It then pools the triple
+embeddings to generate a vector for G as follows.
+RN(G)= Pool{MLP(hj⊕ er⊕
+hi) ∣j ∈ Q,i ∈ A,(j,r,i )∈ E}	. (3)
+Here hj and hi are features for nodesj andi, er is
+the embedding of relationr∈ R,⊕ denotes vector
+concatenation.
+2For simplicity, we assume a single graph convolutional
+layer. In practice, multiple layers are stacked to enable mes-
+sage passing from multi-hop neighbors.
+
+[[page 4]]
+Attentive
+Pooling
+2. Multi-hop 
+Message Passing
+Node 
+Features
+Text Encoder
+e.g. BERT
+1. Node Type 
+Specific Transform
+3. Nonlinear 
+Activation
+×#Layer
+Plausibility
+Score
+MLP
+𝓖 𝒔
+Aggregate
+Messages
+𝜶(𝒋, 𝒓𝟏, … , 𝒓𝒌, 𝒊)
+Structured 
+Relational Att.
+Learn
+Child
+Child CapableOf UsedFor−1 AtLocation
+Desires UsedFor−1 Synonym
+AtLocation Synonym
+Sit AtLocationUsedFor−1
+Desk AtLocation
+…Multi-hop 
+Message Passing
+Figure 4: Our proposed MHGRN architecture
+for relational reasoning. MHGRN takes a multi-
+relational graph G and a (question-answer) statement
+vector s as input, and outputs a scalar that represent the
+plausibility score of this statement.
+To further equip RN with the ability of model-
+ing nondegenerate paths, KagNet (Lin et al., 2019)
+adopts LSTMs to encode all paths connecting ques-
+tion entities and answer entities with lengths no
+more than K. It then aggregates all path embed-
+dings via attention mechanism:
+KAGNET(G)= Pool{LSTM(j,r 1,...,r k,i) ∣
+(j,r 1,j 1),⋯,(jk−1,rk,i)∈ E, 1≤k≤K}	.
+(4)
+4 Proposed Method: Multi-Hop Graph
+Relation Networks (MHGRN)
+This section presents Multi-hop Graph Relation
+Network (MHGRN), a novel graph neural network
+architecture that uniﬁes both GNN and RN, for
+encoding multi-relational graphs to augment text
+comprehension. MHGRN inherits the capability of
+path reasoning and interpretabilty from path-based
+models, while preserving good scalability of GNN
+with the message passing formulation.
+4.1 MHGRN: Model Architecture
+Following the introduction to GNN in Sec. 3, we
+consider encoding a multi-relational graph G =
+(V, E,φ) into a ﬁxed size vector g conditioned on
+textual representation s, by ﬁrst transforming input
+node features {h1,..., hn} into node embeddings
+{h′
+1,..., h′
+n}, and then pooling these embeddings.
+Node features can be initialized with pre-trained
+weights (details in Appendix A) and we focus on
+the computation of node embeddings.
+Type-Speciﬁc Transformation. To make our
+model aware of the node type information φ, we
+ﬁrst perform node type speciﬁc linear transforma-
+tion on the input node features:
+xi= Uφ(i)hi+ bφ(i), (5)
+where the learnable parametersU and b are speciﬁc
+to the type of nodei.
+Multi-Hop Message Passing. As mentioned be-
+fore, our motivation is to endow GNN with the
+capability of directly modeling paths. To this end,
+we propose to pass messages directly over all the
+relational paths of lengths up toK, whereK is a
+hyper-parameter. The set of validk-hop relational
+paths is deﬁned as:
+Φk = {(j,r 1,...,r k,i) ∣ (j,r 1,j 1),
+⋯,(jk−1,rk,i)∈ E} ( 1≤k≤K). (6)
+We perform k-hop (1 ≤ k ≤ K) message passing
+over these paths, which is a generalization of the
+single-hop message passing in RGCN (see Eq. 2):
+zk
+i = =
+(j,r1,...,rk,i)∈Φk
+α(j,r 1,...,r k,i)/dk
+i ⋅ WK
+0
+⋯Wk+1
+0 Wk
+rk⋯W 1
+r1xj (1≤k≤K), (7)
+where the Wt
+r(1 ≤ t ≤ K, 0 ≤ r ≤ m) matrices
+are learnable 3, α(j,r 1,...,r k,i) is an attention
+score elaborated in §4.2 anddk
+i = ∑(j⋯i)∈Φkα(j⋯i)
+is the normalization factor. The {Wk
+rk⋯W 1
+r1 ∣ 1 ≤
+r1,...,r k ≤ m} matrices can be interpreted as the
+low rank approximation of a{m×⋯×m}k×d×d
+tensor that assigns a separate transformation for
+eachk-hop relation, whered is the dim. of xi.
+Incoming messages from paths of different
+lengths are aggregated via attention mecha-
+nism (Vaswani et al., 2017):
+zi=
+K
+=
+k=1
+softmaxbilinears, zk
+i ⋅ zk
+i. (8)
+3Wt
+0(0 ≤ t ≤ K) are introduced as padding matrices
+so that K transformations are applied regardless of k, thus
+ensuring comparable scale of zk
+i across differentk.
+
+[[page 5]]
+Non-linear Activation. Finally, we apply shortcut
+connection and nonlinear activation to obtain the
+output node embeddings.
+h′
+i=σV hi+ V′zi, (9)
+where V and V′ are learnable model parameters,
+andσ is a non-linear activation function.
+4.2 Structured Relational Attention
+The remaining problem becomes how to effectively
+parameterize the attention scoreα(j,r 1,...,r k,i) in
+Eq. 7 for all possiblek-hop paths without introduc-
+ing O(mk) parameters. We ﬁrst regard it as the prob-
+ability of a relation sequence (φ(j),r 1,...,r k,φ(i))
+conditioned on s:
+α(j,r 1,...,r k,i)=p(φ(j),r 1,...,r k,φ(i) ∣ s),
+(10)
+which can naturally be modeled by a probabilistic
+graphical model, such as conditional random ﬁeld
+(Lafferty et al., 2001):
+p(⋯ ∣s)∝ expf(φ(j), s)+
+k
+=
+t=1
+δ(rt, s)
++
+k−1
+=
+t=1
+τ(rt,rt+1)+g(φ(i), s)
+∆
+= β(r1,...,r k, s)
+˝ÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÑÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒˇ
+Relation Type Attention
+⋅γ(φ(j),φ(i), s)
+˝ÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÑÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒÒˇ
+Node Type Attention
+, (11)
+where f(⋅), δ(⋅) and g(⋅) are parameterized by
+two-layer MLPs and τ(⋅) by a transition matrix
+of shapem×m. Intuitively,β(⋅) models the im-
+portance of ak-hop relation whileγ(⋅) models the
+importance of messages from node type φ(j) to
+node type φ(i) (e.g. the model can learn to pass
+messages only from question entities to answer
+entities).
+Our model scores a k-hop relation by decom-
+posing it into both context-aware single-hop re-
+lations (modeled by δ) and two-hop relations
+(modeled by τ). We argue that τ is indis-
+pensable, without which the model may assign
+high importance to illogical multi-hop relations
+(e.g., [AtLocation, CapableOf]) or noisy re-
+lations (e.g., [RelatedTo, RelatedTo]).
+4.3 Computation Complexity Analysis
+Although the multi-hop message passing process
+in Eq. 7 and the structured relational attention mod-
+ule in Eq.11 handles potentially exponential num-
+ber of paths, we show that it can be computed in
+Model Time Space
+G is a dense graph
+K-hop KagNet OmKnK+1K OmKnK+1K
+K-layer RGCN Omn2K O(mnK)
+MHGRN Om2n2K O(mnK)
+G is a sparse graph with maximum node degree ∆≪n
+K-hop KagNet OmKnK∆K OmKnK∆K
+K-layer RGCN O(mnK∆) O(mnK)
+MHGRN Om2nK∆ O(mnK)
+Table 2: Computation complexity of differentK-hop
+reasoning models on a dense/sparse multi-relational
+graph with n nodes and m relation types. Despite the
+quadratic complexity w.r.t. m, MHGRN’s time cost is
+similar to RGCN on GPUs with parallelizable matrix
+multiplications (cf. Fig. 7).
+linear time using dynamic programming (see Ap-
+pendix B). As summarized in Table 2, the time
+complexity and space complexity of our model on
+a sparse graph are Om2nK∆ and O(mnK)
+respectively, both of which are linear with respect
+to either the path lengthK or the number of nodes
+n.
+4.4 Expressive Power of MHGRN
+In addition to the efﬁciency and scalability, we
+now discuss the modeling capacity of our model.
+With the message passing formulation and relation-
+speciﬁc transformations, MHGRN is by nature the
+generalization of RGCN. Furthermore, it is capable
+of directly modeling paths, making it interpretable
+as are path-based models like RN and KagNet. To
+show this, we ﬁrst generalize RN (Eq. 3) to the
+multi-hop setting and introduce K-hop RN (see
+Appendix C for a formal deﬁnition). K-hop RN
+models multi-hop relation as the composition of
+single-hop relations with element-wise multiplica-
+tion. We show that MHGRN is capable of repre-
+sentingK-hop RN (see Appendix D for the proof).
+4.5 Learning, Inference and Path Decoding
+We now discuss the learning and inference process
+of MHGRN instantiated for the task of multiple-
+choice question answering. Following the prob-
+lem formulation in Sec. 2, we aim to determine
+the plausibility of an answer candidate a ∈ C
+given the question q with the information from
+both text s and graph G. We ﬁrst obtained the graph
+representation g by performing attentive pooling
+over the output node embeddings of answer enti-
+
+[[page 6]]
+Methods BERT-Base BERT-Large RoBERTa-Large
+IHdev-Acc.(%) IHtest-Acc.(%) IHdev-Acc.(%) IHtest-Acc.(%) IHdev-Acc.(%) IHtest-Acc.(%)
+w/o KG 57.31 ( ±1.07) 53.47 ( ±0.87) 61.06 ( ±0.85) 55.39 ( ±0.40) 73.07 ( ±0.45) 68.69( ±0.56)
+RGCN (Schlichtkrull et al., 2018) 56.94 ( ±0.38) 54.50 ( ±0.56) 62.98 ( ±0.82) 57.13 ( ±0.36) 72.69 ( ±0.19) 68.41 ( ±0.66)
+GconAttn (Wang et al., 2019) 57.29 ( ±0.62) 54.41 ( ±0.50) 62.98 ( ±0.17) 56.94 ( ±0.77) 73.38( ±0.27) 69.88 ( ±0.47)
+KagNet† (Lin et al., 2019) 55.57 56.19 62.35 57.16 - -
+RN (1-hop) 58.27 ( ±0.22) 56.20 ( ±0.45) 63.04 ( ±0.58) 58.46 ( ±0.71) 74.57 ( ±0.91) 70.08 ( ±0.21)
+RN (2-hop) 59.81 ( ±0.76) 56.61 ( ±0.68) 63.36 ( ±0.26) 58.92 ( ±0.14) 73.65 ( ±3.09) 69.59 ( ±3.80)
+MHGRN 60.36 ( ±0.23) 57.23 (±0.82) 63.29( ±0.51) 60.59 (±0.58) 74.45 ( ±0.10) 71.11 (±0.81)
+Table 3: Performance comparison on CommonsenseQA in-house split. We report in-house Dev (IHdev) and
+Test (IHtest) accuracy (mean and standard deviation of four runs) using the data split of Lin et al. (2019) on
+CommonsenseQA. † indicates reported results in its paper.
+ties {h′
+i ∣ i ∈ A}. Next we simply concatenate
+it with the text representation s and compute the
+plausibility score byρ(q, a)= MLP(s⊕ g).
+During training, we maximize the plausibility
+score of the correct answer ˆa by minimizing the
+cross-entropy loss:
+L= Eq,ˆa,C − log exp(ρ(q, ˆa))
+∑a∈C exp(ρ(q, a)). (12)
+The whole model is trainedend-to-end jointly with
+the text encoder (e.g., RoBERTa).
+During inference, we predict the most plau-
+sible answer by argmaxa∈C ρ(q, a). Addition-
+ally, we can decode a reasoning path as evidence
+for model predictions, endowing our model with
+the interpretability enjoyed by path-based mod-
+els. Speciﬁcally, we ﬁrst determine the answer
+entityi∗ with the highest score in the pooling layer
+and the path length k* with the highest score in
+Eq. 8. Then the reasoning path is decoded by
+argmax α(j,r 1,...,r k∗,i∗), which can be com-
+puted in linear time using dynamic programming.
+5 Experimental Setup
+We introduce how we construct G (§5.1), the
+datasets (§5.2), as well as the baseline methods
+(§5.3). Appendix A shows more implementation
+and experimental details for reproducibility.
+5.1 Extracting G from External KG
+We use ConceptNet (Speer et al., 2017), a general-
+domain knowledge graph as our external KG to test
+models’ ability to harness structured knowledge
+source. Following KagNet (Lin et al., 2019), we
+merge relation types to increase graph density and
+add reverse relations to construct a multi-relational
+graph with 34 relation types. To extract an informa-
+tive contextual graph G from the KG, we recognize
+entity mentions in s and link them to entities in
+Methods Single Ensemble
+RoBERTa† 72.1 72.5
+ALBERT† (Lan et al., 2019) - 76.5
+XLNet + GR† (Lv et al., 2019) 75.3 -
+RoBERTa+KEDGN† 72.5 74.4
+RoBERTa + KE† 73.3 -
+RoBERTa+HyKAS 2.0† (Ma et al., 2019) 73.2 -
+XLNet+DREAM† 66.9 73.3
+RoBERTa+KEDGN† 72.5 74.4
+RoBERTa+FreeLB†(Zhu et al., 2020) 72.2 73.1
+MHGRN (RoBERTa,K = 2) 75.4 76.5
+Table 4: Performance comparison on ofﬁcial test of
+CommonsenseQA with leaderboard SoTAs4 (accuracy
+in %). † indicates reported results on the leaderboard.
+MHGRN achieves state-of-the-art on both single and
+ensemble settings with RoBERTa-large encoder.
+ConceptNet, with which we initialize our node set
+V. We then add to V all the entities that appear
+in any two-hop paths between pairs of mentioned
+entities. Unlike KagNet, we do not perform any
+pruning but instead reserve all the edges between
+nodes in V, forming our G.
+5.2 Datasets
+We evaluate models on two multiple-choice ques-
+tion answering datasets, CommonsenseQA and
+OpenbookQA. Both require world knowledge be-
+yond textual understanding to perform well.
+CommonsenseQA (Talmor et al., 2019) neces-
+sitates various commonsense reasoning skills. The
+questions are created with entities fromConceptNet
+and they are designed to probe latent compositional
+relations between entities in ConceptNet.
+OpenBookQA (Mihaylov et al., 2018) provides
+elementary science questions together with an open
+4Models based on ConceptNet are no longer shown on the
+leaderboard, and thus we got ours’ results directly from the
+organizers.
+
+[[page 7]]
+book of science facts. This dataset also probes gen-
+eral commonsense knowledge beyond the provided
+facts. As our model is orthogonal to text-form
+knowledge retrieval, we do not utilize the provided
+open book and instead use ConceptNet. Conse-
+quently, we do not compare our methods with those
+using the open book.
+5.3 Compared Methods
+We implement both knowledge-agnostic ﬁne-
+tuning of pre-trained LMs and models that incor-
+porate KG as external sources as our baselines.
+Additionally, we directly compare our model with
+the results from corresponding leaderboard. These
+methods typically leverage textual knowledge or ex-
+tra training data, as opposed to external KG. In all
+our implemented models, we use pre-trained LMs
+as text encoders for s for fair comparison. We stick
+to our focus of encoding structured KG and there-
+fore do not compare our models with those (Pan
+et al., 2019; Zhang et al., 2018; Sun et al., 2019;
+Banerjee et al., 2019) augmented by other text-form
+external knowledge (e.g., Wikipedia).
+Speciﬁcally, we ﬁne-tune BERT-BASE, BERT-
+LARGE (Devlin et al., 2019), and ROBERTA (Liu
+et al., 2019b) for multiple-choice questions. We
+take RGCN (Eq. 2 in Sec. 3), RN5 (Eq. 3 in Sec. 3),
+KagNet (Eq. 4 in Sec. 3) and GconAttn (Wang
+et al., 2019) as baselines. GconAttn general-
+izes match-LSTM (Wang and Jiang, 2016) from
+sequence modeling to entity set modeling and
+achieves success in language inference tasks.
+6 Results and Discussions
+In this section, we present the results of our models
+in comparison with baselines as well as methods
+on the leaderboards for both CommonsenseQA and
+OpenbookQA. We also provide analysis of models’
+components and characteristics.
+6.1 Main Results
+For CommonsenseQA (Table 3), we ﬁrst use the in-
+house data split of Lin et al. (2019) to compare our
+models with our implemented baselines. In this set-
+ting, we take 1,241 examples from ofﬁcial training
+examples as our in-house test examples and regard
+the remaining 8,500 ones as our in-house train-
+ing examples. Almost all KG-augmented models
+achieve performance gain over vanilla pre-trained
+5We use mean pooling for 1-hop RN and attentive pooling
+for 2-hop RN (detailed in Appendix C).
+Methods Dev (%) Test (%)
+BERT (w/o KG)† 60.4 60.4
+BERT Multi-Task (w/o KG)† - 63.8
+GapQA† (Khot et al., 2019) - 59.4 ( ±1.30)
+RoBERTa-Large (w/o KG) 66.76 ( ±1.14) 64.80 ( ±2.37)
++ RGCN 64.65 ( ±1.96) 62.45 ( ±1.57)
++ GconAttn 66.85 ( ±1.82) 64.75 ( ±1.48)
++ RN (1-hop) 64.85 ( ±1.11) 63.65 ( ±2.31)
++ RN (2-hop) 67.00 ( ±0.71) 65.20 ( ±1.18)
++ MHGRN (K = 3) 68.10 (±1.02) 66.85 (±1.19)
+Table 5: Dev and Test accuracy on OpenbookQA. †
+indicates reported results on the leaderboard.
+Methods IHdev-Acc. (%)
+MHGRN (K = 3) 74.45 (±0.10)
+- Type-speciﬁc transformation (§4.1) 73.16 ( ±0.28)
+- Structured relational attention (§4.2) 73.26 ( ±0.31)
+- Relation type attention (§4.2) 73.55 ( ±0.68)
+- Node type attention (§4.2) 73.92 ( ±0.65)
+Table 6: Ablation study on model components (re-
+moving one component each time) using R OBERTA -
+LARGE as the text encoder. We report the IHdev ac-
+curacy on CommonsenseQA.
+LMs, demonstrating the value of external knowl-
+edge on this dataset. Additionally, we evaluate our
+MHGRN (with the text encoder being ROBERTA-
+LARGE ) on ofﬁcial split (Table 4) for fair compar-
+ison with other methods on leaderboard, in both
+single-model setting and ensemble-model setting.
+In both cases, we achieve state-of-the-art perfor-
+mances across all existing models.
+For OpenbookQA (Table 5), we use ofﬁcial split
+and build models with ROBERTA-L ARGE as text
+encoder. Overall, external knowledge still brings
+beneﬁt to this task. Our model surpasses all base-
+lines, with an absolute increase of∼2% on Test. As
+we seek to evaluate the performance of models in
+terms of encoding external knowledge graphs, we
+did not compare with other models based on doc-
+ument retrieval and reading comprehension. Note
+that other submissions on OBQA leaderboard usu-
+ally were ﬁne-tuned on external question answer-
+ing datasets or using large corpus via information
+retrieval. As we seek to systematically examine
+knowledge-aware reasoning methods by reason-
+ing over interpretable structures, we do not include
+comparisons with models that are beyond the scope.
+Other ﬁne-tuned PTLMs can be simply incorpo-
+rated as well whenever they are available.
+
+[[page 8]]
+6.2 Performance Analysis
+Ablation Study on Model Components. We as-
+sess the impact of our models’ components, shown
+in Table 6. Disabling type-speciﬁc transformation
+results in∼ 1.3% drop in performance, demonstrat-
+ing the need for distinguishing node type for QA
+tasks. Our structured relational attention mecha-
+nism is also critical, with its two sub-components
+contributing almost equally.
+Impact of the Amount of Training Data. We
+use different fractions of training data of Common-
+senseQA and report results of ﬁne-tuning text en-
+coders alone and jointly training text encoder and
+graph encoder in Fig. 5. Regardless of training data
+fraction, our model shows consistently more per-
+formance improvement over knowledge-agnostic
+ﬁne-tuning compared with the other graph encod-
+ing methods, indicating MHGRN’s complementary
+strengths to text encoders.
+20 40 60 80 100
+Percentage of Training Data
+45
+50
+55
+60
+65Accuracy (%)
+MultiGRN
+GconAttn
+w/o KG
+Figure 5: Performance change (accuracy in %) w.r.t.
+the amounts of training data on CommonsenseQA IHT-
+est set (same as Lin et al. (2019)).
+Impact of Number of Hops (K). We investigate
+the impact of hyperparameterK for MHGRN by
+its performance on CommonsenseQA (shown in
+Fig. 6). The increase ofK continues to bring ben-
+eﬁt until K = 4. However, performance begins
+to drop when K > 3. This might be attributed
+to exponential noise in longer relational paths in
+knowledge graph.
+6.3 Model Scalability
+Fig. 7 presents the computation cost of MultiRGN
+and RGCN (measured by training time). The com-
+putation cost of both models grow linearly w.r.t. to
+K. Although the theoretical complexity of Multi-
+RGN ism times that of RGCN, the ratio of their
+empirical cost only approaches 2, demonstrating
+that our model can be parallelized.
+65
+70
+75
+ Accuracy (%)
+K=1
+K=2
+K=3
+K=4
+K=5
+# Reasoning 
+Hops
+73.24
+73.93
+74.65
+73.65
+74.16
+Figure 6: Effect of K in MHGRN. We show IHDev
+accuracy of MHGRN on CommonsenseQA using the
+data split of Lin et al. (2019) with different # hops.
+2
+4
+6
+8
+0.0
+0.5
+1.0
+1.5
+2.0
+s/batch
+K
+: # Reasoning Hops
+RGCN
+�����
+Figure 7: Analysis of model scalability. Comparison
+of per-batch training efﬁciency w.r.t. # hopsK.
+6.4 Model Interpretability
+We can analyze our model’s reasoning process by
+decoding the reasoning path using the method de-
+scribed in §4.5. Fig. 8 shows two examples from
+CommonsenseQA, where our model correctly an-
+swers the questions and provides reasonable path
+evidences. In the example on the left, the model
+links question entities and answer entity in a chain
+to support reasoning, while the example on the
+right provides a case where our model leverage un-
+mentioned entities to bridge the reasoning gap be-
+tween question entity and answer entities, in a way
+that is coherent with the implied relation between
+CHAPEL and the desired answer in the question.
+Where is known 
+for a multitude of 
+wedding chapels?
+A. town B. texas
+C. city 
+D. church 
+building 
+E. Nevada*
+RenoChapel
+PartOf
+AtLocation
+UsedFor−1 Synonym
+AtLocation Synonym
+Neveda
+Baseball
+Play_Baseball
+HasProperty
+UsedFor−1
+Fun_to_Play
+Why do parents 
+encourage their 
+kids to play 
+baseball?
+A. round B. 
+cheap C. break 
+window D. hard
+E. fun to play* Fun_to_Play
+HasProperty
+Reno
+Chapel
+AtLocation
+Neveda
+PartOf
+MultiGRN
+Figure 8: Case study on model interpretability. We
+present two sampled questions from CommonsenseQA
+with the reasoning paths output by MHGRN.
+6.5 Potential Compatibility with Other
+Methods
+In theory, our approach is naturally compatible
+with the methods that utilize textual knowledge
+
+[[page 9]]
+or extra data (such as leaderboard methods in
+Table 4), because in our paradigm the encoding
+of textual statement and graph are structurally-
+decoupled (Fig. 3). We can take, for example, the
+ﬁne-tuned RoBERTa+KE6 system as our text en-
+coder and leave the rest of our model architecture
+unchanged.
+7 Related Work
+Knowledge-Aware Methods for NLP Various
+work have investigated the potential to empower
+NLP models with external knowledge. Many at-
+tempt to extract structured knowledge, either in the
+form of nodes (Yang and Mitchell, 2017; Wang
+et al., 2019), triples (Weissenborn et al., 2017;
+Mihaylov and Frank, 2018), paths (Bauer et al.,
+2018; Kundu et al., 2019; Lin et al., 2019), or sub-
+graphs (Li and Clark, 2015), and encode them to
+augment textual understanding.
+Recent success of pre-trained LMs motivates
+many (Pan et al., 2019; Ye et al., 2019; Zhang et al.,
+2018; Li et al., 2019; Banerjee et al., 2019) to probe
+LMs’ potential as latent knowledge bases. This line
+of work turn to textual knowledge (e.g. Wikipedia)
+to directly impart knowledge to pre-trained LMs.
+They generally fall into two paradigms: 1) Fine-
+tuning LMs on large-scale general-domain datasets
+(e.g. RACE (Lai et al., 2017)) or on knowledge-rich
+text. 2) Providing LMs with evidence via informa-
+tion retrieval techniques. However, these models
+cannot provide explicit reasoning and evidence,
+thus hardly trustworthy. They are also subject to
+the availability of in-domain datasets and maxi-
+mum input token of pre-trained LMs.
+Neural Graph Encoding Graph Attention Net-
+works (GAT) (Velickovic et al., 2018) incorpo-
+rates attention mechanism in feature aggregation,
+RGCN (Schlichtkrull et al., 2018) proposes rela-
+tional message passing which makes it applicable
+to multi-relational graphs. However they only per-
+form single-hop message passing and cannot be
+interpreted at path level. Other work (Abu-El-Haija
+et al., 2019; Nikolentzos et al., 2019) aggregate for
+a node its K-hop neighbors based on node-wise
+distances, but they are designed for non-relational
+graphs. MHGRN addresses these issues by rea-
+soning on multi-relational graphs and being inter-
+pretable via maintaining paths as reasoning chains.
+6https://github.com/jose77/csqa/
+8 Conclusion
+We present a principled, scalable method, MHGRN,
+that can leverage general knowledge by multi-hop
+reasoning over interpretable structures (e.g. Con-
+ceptNet). The proposed MHGRN generalizes and
+combines the advantages of GNNs and path-based
+reasoning models. It explicitly performs multi-hop
+relational reasoning and is empirically shown to
+outperform existing methods with superior scal-
+ablility and interpretability. Our extensive experi-
+ments systematically compare MHGRN and other
+existing methods on knowledge-aware methods.
+Particularly, we achieve the state-of-the-art perfor-
+mance on the CommonsenseQA dataset.
+References
+Sami Abu-El-Haija, Bryan Perozzi, Amol Kapoor,
+Nazanin Alipourfard, Kristina Lerman, Hrayr Haru-
+tyunyan, Greg Ver Steeg, and Aram Galstyan. 2019.
+Mixhop: Higher-order graph convolutional architec-
+tures via sparsiﬁed neighborhood mixing. In Pro-
+ceedings of the 36th International Conference on
+Machine Learning, ICML 2019, 9-15 June 2019,
+Long Beach, California, USA , volume 97 of Pro-
+ceedings of Machine Learning Research , pages 21–
+29. PMLR.
+Pratyay Banerjee, Kuntal Kumar Pal, Arindam Mi-
+tra, and Chitta Baral. 2019. Careful selection of
+knowledge to solve open book question answering.
+In Proceedings of the 57th Annual Meeting of the
+Association for Computational Linguistics , pages
+6120–6129, Florence, Italy. Association for Compu-
+tational Linguistics.
+Lisa Bauer, Yicheng Wang, and Mohit Bansal. 2018.
+Commonsense for generative multi-hop question an-
+swering tasks. In Proceedings of the 2018 Confer-
+ence on Empirical Methods in Natural Language
+Processing, Brussels, Belgium, October 31 - Novem-
+ber 4, 2018, pages 4220–4230. Association for Com-
+putational Linguistics.
+Peter Clark, Isaac Cowhey, Oren Etzioni, Tushar Khot,
+Ashish Sabharwal, Carissa Schoenick, and Oyvind
+Tafjord. 2018. Think you have solved question
+answering? try arc, the AI2 reasoning challenge.
+CoRR, abs/1803.05457.
+Jacob Devlin, Ming-Wei Chang, Kenton Lee, and
+Kristina Toutanova. 2019. BERT: Pre-training of
+deep bidirectional transformers for language under-
+standing. In Proceedings of the 2019 Conference
+of the North American Chapter of the Association
+for Computational Linguistics: Human Language
+Technologies, Volume 1 (Long and Short Papers) ,
+pages 4171–4186, Minneapolis, Minnesota. Associ-
+ation for Computational Linguistics.
+
+[[page 10]]
+Justin Gilmer, Samuel S. Schoenholz, Patrick F. Riley,
+Oriol Vinyals, and George E. Dahl. 2017. Neural
+message passing for quantum chemistry. In Pro-
+ceedings of the 34th International Conference on
+Machine Learning, ICML 2017, Sydney, NSW, Aus-
+tralia, 6-11 August 2017, volume 70 of Proceedings
+of Machine Learning Research , pages 1263–1272.
+PMLR.
+Tushar Khot, Ashish Sabharwal, and Peter Clark. 2019.
+What’s missing: A knowledge gap guided approach
+for multi-hop question answering. In Proceedings of
+the 2019 Conference on Empirical Methods in Nat-
+ural Language Processing and the 9th International
+Joint Conference on Natural Language Processing
+(EMNLP-IJCNLP), pages 2814–2828, Hong Kong,
+China. Association for Computational Linguistics.
+Thomas N. Kipf and Max Welling. 2017. Semi-
+supervised classiﬁcation with graph convolutional
+networks. In 5th International Conference on Learn-
+ing Representations, ICLR 2017, Toulon, France,
+April 24-26, 2017, Conference Track Proceedings .
+OpenReview.net.
+Souvik Kundu, Tushar Khot, Ashish Sabharwal, and
+Peter Clark. 2019. Exploiting explicit paths for
+multi-hop reading comprehension. In Proceedings
+of the 57th Annual Meeting of the Association for
+Computational Linguistics , pages 2737–2747, Flo-
+rence, Italy. Association for Computational Linguis-
+tics.
+John D. Lafferty, Andrew McCallum, and Fernando
+C. N. Pereira. 2001. Conditional random ﬁelds:
+Probabilistic models for segmenting and labeling se-
+quence data. In Proceedings of the Eighteenth Inter-
+national Conference on Machine Learning (ICML
+2001), Williams College, Williamstown, MA, USA,
+June 28 - July 1, 2001 , pages 282–289. Morgan
+Kaufmann.
+Guokun Lai, Qizhe Xie, Hanxiao Liu, Yiming Yang,
+and Eduard Hovy. 2017. RACE: Large-scale ReAd-
+ing comprehension dataset from examinations. In
+Proceedings of the 2017 Conference on Empirical
+Methods in Natural Language Processing , pages
+785–794, Copenhagen, Denmark. Association for
+Computational Linguistics.
+Zhen-Zhong Lan, Mingda Chen, Sebastian Good-
+man, Kevin Gimpel, Piyush Sharma, and Radu
+Soricut. 2019. Albert: A lite bert for self-
+supervised learning of language representations.
+ArXiv, abs/1909.11942.
+Shiyang Li, Jianshu Chen, and Dian Yu. 2019. Teach-
+ing pretrained models with commonsense reason-
+ing: A preliminary kb-based approach. CoRR,
+abs/1909.09743.
+Yang Li and Peter Clark. 2015. Answering elementary
+science questions by constructing coherent scenes
+using background knowledge. In Proceedings of
+the 2015 Conference on Empirical Methods in Nat-
+ural Language Processing , pages 2007–2012, Lis-
+bon, Portugal. Association for Computational Lin-
+guistics.
+Bill Yuchen Lin, Xinyue Chen, Jamin Chen, and Xi-
+ang Ren. 2019. KagNet: Knowledge-aware graph
+networks for commonsense reasoning. In Proceed-
+ings of the 2019 Conference on Empirical Methods
+in Natural Language Processing and the 9th Inter-
+national Joint Conference on Natural Language Pro-
+cessing (EMNLP-IJCNLP), pages 2829–2839, Hong
+Kong, China. Association for Computational Lin-
+guistics.
+Liyuan Liu, Haoming Jiang, Pengcheng He, Weizhu
+Chen, Xiaodong Liu, Jianfeng Gao, and Jiawei Han.
+2019a. On the variance of the adaptive learning rate
+and beyond. CoRR, abs/1908.03265.
+Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Man-
+dar Joshi, Danqi Chen, Omer Levy, Mike Lewis,
+Luke Zettlemoyer, and Veselin Stoyanov. 2019b.
+Roberta: A robustly optimized BERT pretraining ap-
+proach. CoRR, abs/1907.11692.
+Shangwen Lv, Daya Guo, Jingjing Xu, Duyu Tang,
+Nan Duan, Ming Gong, Linjun Shou, Daxin Jiang,
+Guihong Cao, and Songlin Hu. 2019. Graph-
+based reasoning over heterogeneous external knowl-
+edge for commonsense question answering. CoRR,
+abs/1909.05311.
+Kaixin Ma, Jonathan Francis, Quanyang Lu, Eric Ny-
+berg, and Alessandro Oltramari. 2019. Towards
+generalizable neuro-symbolic systems for common-
+sense question answering. In Proceedings of the
+First Workshop on Commonsense Inference in Natu-
+ral Language Processing, pages 22–32, Hong Kong,
+China. Association for Computational Linguistics.
+Todor Mihaylov, Peter Clark, Tushar Khot, and Ashish
+Sabharwal. 2018. Can a suit of armor conduct elec-
+tricity? a new dataset for open book question an-
+swering. In Proceedings of the 2018 Conference on
+Empirical Methods in Natural Language Processing,
+pages 2381–2391, Brussels, Belgium. Association
+for Computational Linguistics.
+Todor Mihaylov and Anette Frank. 2018. Knowledge-
+able reader: Enhancing cloze-style reading compre-
+hension with external commonsense knowledge. In
+Proceedings of the 56th Annual Meeting of the As-
+sociation for Computational Linguistics (Volume 1:
+Long Papers), pages 821–832, Melbourne, Australia.
+Association for Computational Linguistics.
+Giannis Nikolentzos, George Dasoulas, and Michalis
+Vazirgiannis. 2019. k-hop graph neural networks.
+CoRR, abs/1907.06051.
+Xiaoman Pan, Kai Sun, Dian Yu, Heng Ji, and Dong Yu.
+2019. Improving question answering with external
+knowledge. CoRR, abs/1902.00993.
+
+[[page 11]]
+Adam Santoro, David Raposo, David G. T. Barrett,
+Mateusz Malinowski, Razvan Pascanu, Peter W.
+Battaglia, and Tim Lillicrap. 2017. A simple neu-
+ral network module for relational reasoning. In Ad-
+vances in Neural Information Processing Systems
+30: Annual Conference on Neural Information Pro-
+cessing Systems 2017, 4-9 December 2017, Long
+Beach, CA, USA, pages 4967–4976.
+Maarten Sap, Hannah Rashkin, Derek Chen, Ronan
+Le Bras, and Yejin Choi. 2019. Social IQa: Com-
+monsense reasoning about social interactions. In
+Proceedings of the 2019 Conference on Empirical
+Methods in Natural Language Processing and the
+9th International Joint Conference on Natural Lan-
+guage Processing (EMNLP-IJCNLP) , pages 4463–
+4473, Hong Kong, China. Association for Computa-
+tional Linguistics.
+Michael Sejr Schlichtkrull, Thomas N. Kipf, Peter
+Bloem, Rianne van den Berg, Ivan Titov, and Max
+Welling. 2018. Modeling relational data with graph
+convolutional networks. In The Semantic Web - 15th
+International Conference, ESWC 2018, Heraklion,
+Crete, Greece, June 3-7, 2018, Proceedings, volume
+10843 of Lecture Notes in Computer Science, pages
+593–607. Springer.
+Robyn Speer, Joshua Chin, and Catherine Havasi. 2017.
+Conceptnet 5.5: An open multilingual graph of gen-
+eral knowledge. In Proceedings of the Thirty-First
+AAAI Conference on Artiﬁcial Intelligence, Febru-
+ary 4-9, 2017, San Francisco, California, USA ,
+pages 4444–4451. AAAI Press.
+Kai Sun, Dian Yu, Dong Yu, and Claire Cardie. 2019.
+Improving machine reading comprehension with
+general reading strategies. In Proceedings of the
+2019 Conference of the North American Chapter of
+the Association for Computational Linguistics: Hu-
+man Language Technologies, Volume 1 (Long and
+Short Papers), pages 2633–2643, Minneapolis, Min-
+nesota. Association for Computational Linguistics.
+Alon Talmor, Jonathan Herzig, Nicholas Lourie, and
+Jonathan Berant. 2019. CommonsenseQA: A ques-
+tion answering challenge targeting commonsense
+knowledge. In Proceedings of the 2019 Conference
+of the North American Chapter of the Association
+for Computational Linguistics: Human Language
+Technologies, Volume 1 (Long and Short Papers) ,
+pages 4149–4158, Minneapolis, Minnesota. Associ-
+ation for Computational Linguistics.
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob
+Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz
+Kaiser, and Illia Polosukhin. 2017. Attention is all
+you need. In Advances in Neural Information Pro-
+cessing Systems 30: Annual Conference on Neural
+Information Processing Systems 2017, 4-9 Decem-
+ber 2017, Long Beach, CA, USA, pages 5998–6008.
+Petar Velickovic, Guillem Cucurull, Arantxa Casanova,
+Adriana Romero, Pietro Li `o, and Yoshua Bengio.
+2018. Graph attention networks. In 6th Inter-
+national Conference on Learning Representations,
+ICLR 2018, Vancouver, BC, Canada, April 30 - May
+3, 2018, Conference Track Proceedings . OpenRe-
+view.net.
+Shuohang Wang and Jing Jiang. 2016. Learning nat-
+ural language inference with LSTM. In Proceed-
+ings of the 2016 Conference of the North Ameri-
+can Chapter of the Association for Computational
+Linguistics: Human Language Technologies , pages
+1442–1451, San Diego, California. Association for
+Computational Linguistics.
+Xiaoyan Wang, Pavan Kapanipathi, Ryan Musa,
+Mo Yu, Kartik Talamadupula, Ibrahim Abdelaziz,
+Maria Chang, Achille Fokoue, Bassem Makni,
+Nicholas Mattei, and Michael Witbrock. 2019. Im-
+proving natural language inference using external
+knowledge in the science questions domain. In The
+Thirty-Third AAAI Conference on Artiﬁcial Intelli-
+gence, AAAI 2019, The Thirty-First Innovative Ap-
+plications of Artiﬁcial Intelligence Conference, IAAI
+2019, The Ninth AAAI Symposium on Educational
+Advances in Artiﬁcial Intelligence, EAAI 2019, Hon-
+olulu, Hawaii, USA, January 27 - February 1, 2019,
+pages 7208–7215. AAAI Press.
+Dirk Weissenborn, Tom ´aˇs Ko ˇcisk`y, and Chris Dyer.
+2017. Dynamic integration of background knowl-
+edge in neural nlu systems. arXiv preprint
+arXiv:1706.02596.
+An Yang, Quan Wang, Jing Liu, Kai Liu, Yajuan Lyu,
+Hua Wu, Qiaoqiao She, and Sujian Li. 2019. En-
+hancing pre-trained language representations with
+rich knowledge for machine reading comprehension.
+In Proceedings of the 57th Annual Meeting of the
+Association for Computational Linguistics , pages
+2346–2357, Florence, Italy. Association for Compu-
+tational Linguistics.
+Bishan Yang and Tom Mitchell. 2017. Leveraging
+knowledge bases in LSTMs for improving machine
+reading. In Proceedings of the 55th Annual Meet-
+ing of the Association for Computational Linguistics
+(Volume 1: Long Papers) , pages 1436–1446, Van-
+couver, Canada. Association for Computational Lin-
+guistics.
+Zhi-Xiu Ye, Qian Chen, Wen Wang, and Zhen-Hua
+Ling. 2019. Align, mask and select: A sim-
+ple method for incorporating commonsense knowl-
+edge into language representation models. CoRR,
+abs/1908.06725.
+Yuyu Zhang, Hanjun Dai, Kamil Toraman, and
+Le Song. 2018. Kgˆ2: Learning to reason science
+exam questions with contextual knowledge graph
+embeddings. CoRR, abs/1805.12393.
+Chen Zhu, Yu Cheng, Zhe Gan, Siqi Sun, Tom Gold-
+stein, and Jingjing Liu. 2020. Freelb: Enhanced ad-
+versarial training for natural language understanding.
+In International Conference on Learning Represen-
+tations.
+
+[[page 12]]
+A Implementation Details
+CommonsenseQA OpenbookQA
+BERT-BASE 3× 10−5 -
+BERT-LARGE 2× 10−5 -
+ROBERTA-LARGE 1× 10−5 1× 10−5
+Table 7: Learning rate for text encoders on different
+datasets.
+CommonsenseQA OpenbookQA
+RN 3× 10−4 3× 10−4
+RGCN 1× 10−3 1× 10−3
+GconAttn 3× 10−4 1× 10−4
+KV-Memory 1× 10−3 1× 10−3
+MultiGRN 1× 10−3 1× 10−3
+Table 8: Learning rate for graph encoders on different
+datasets.
+Our models are implemented inPyTorch. We use
+cross-entropy loss and RAdam (Liu et al., 2019a)
+optimizer. We ﬁnd it beneﬁcial to use separate
+learning rates for the text encoder and the graph en-
+coder. We tune learning rates for text encoders and
+graph encoders on two datasets. We ﬁrst ﬁne-tune
+ROBERTA-L ARGE , BERT-L ARGE , BERT-BASE
+on CommonsenseQA and ROBERTA-L ARGE on
+OpenbookQA respectively, and choose a dataset-
+speciﬁc learning rate from{1×10−5, 2×10−5, 3×
+10−5, 6× 10−5, 1× 10−4} for each text encoder,
+based on the best performance on development set,
+as listed in Table 7. We report the performance of
+these ﬁne-tuned text encoders and also adopt their
+dataset-speciﬁc optimal learning rates in joint train-
+ing with graph encoders. For models that involve
+KG, the learning rate of their graph encoders 7 are
+chosen from {1× 10−4, 3× 10−4, 1× 10−3, 3×
+10−3}, based on their best development set perfor-
+mance with ROBERTA-LARGE as the text encoder.
+We report the optimal learning rates for graph en-
+coders in Table 8. In training, we set the maximum
+input sequence length to text encoders to 64, batch
+size to 32, and perform early stopping.
+For the input node features, we ﬁrst use tem-
+plates to turn knowledge triples in Common-
+senseQA into sentences and feed them into pre-
+trained BERT-L ARGE , obtaining a sequence of
+7KV-memory actually encode triples to enhance token
+representations of s instead of encoding graph alone. But for
+simplicity, we also refer to it as a graph encoder.
+token embeddings from the last layer of BERT-
+LARGE for each triple. For each entity in Com-
+monsenseQA, we perform mean pooling over the
+tokens of the entity’s occurrences across all the sen-
+tences to form a 1024d vector as its corresponding
+node feature. We use this set of features for all our
+implemented models.
+We use 2-layer RGCN and single-layer Multi-
+GRN across our experiments.
+B Dynamic Programming Algorithm for
+Eq. 7
+To show that multi-hop message passing can be
+computed in linear time, we observe that Eq. 7 can
+be re-written in matrix form:
+Zk = (Dk)−1 =
+(r1,...,rk)∈Rk
+β(r1,...,r k, s)
+⋅ GArk⋯Ar1F XW 1
+r1
+⊤
+⋯Wk
+rk
+⊤
+⋅ Wk+1
+0
+⊤
+⋯WK
+0
+⊤
+(1≤k≤K), (13)
+where G= diag(exp([g(φ(v1), s),...,g (φ(vn),
+s)]) (F is similarly deﬁned), Ar is the adjacency
+matrix for relationr and Dk is deﬁned as follows:
+Dk = diag =
+(r1,...,rk)∈Rk
+β(r1,...,r k, s)
+⋅ GArk⋯Ar1F X1 (1≤k≤K) (14)
+Using this matrix formulation, we can compute
+Eq. 7 using dynamic programming:
+C Formal Deﬁnition of K-hop RN
+Deﬁnition 1 (K-hop Relation Network) A multi-
+hop relation network is a function that maps a
+multi-relational graph to a ﬁxed size vector:
+KHopRN(G; ˜W, ˜E, ˜H)=
+K
+=
+k=1
+=
+(j,r1,...,rk,i)∈Φk
+j∈Q i∈A
+˜β(j,r 1,...,r k,i)⋅ ˜W(˜hj⊕(˜er1◦⋯◦˜erk)⊕˜hi),
+(15)
+where◦ denotes element-wise product and ˜β(⋯)=
+1/(K∣A∣⋅ ∣{(j′,...,i ) ∈ G ∣ j′ ∈ Q}∣) deﬁnes the
+pooling weights.
+
+[[page 13]]
+Algorithm 1 Dynamic programming algorithm for
+multi-hop message passing.
+Input: s, X, Ar(1 ≤ r ≤ m), Wt
+r(r ∈ R, 1 ≤ t ≤
+k), F, G,δ,τ
+Output: Z
+1: ˆWK← I
+2: fork←K− 1 to 1 do
+3: ˆWk← Wk+1
+0 ˆWk+1
+4: end for
+5: forr∈ R do
+6: Mr← F X
+7: end for
+8: fork← 1 toK do
+9: ifk> 1 then
+10: forr∈ R do
+11: M′
+r←eδ(r,s)Ar ∑r′∈Reτ(r′,r,s)Mr′ Wk
+r
+⊤
+12: end for
+13: forr∈ R do
+14: Mr← M′
+r
+15: end for
+16: else
+17: forr∈ R do
+18: Mr←eδ(r,s)⋅ ArMrWk
+r
+⊤
+19: end for
+20: end if
+21: Zk← G ∑r∈R Mr ˆWk
+22: end for
+23: Replace Wt
+r(0 ≤ r ≤ m, 1 ≤ t ≤ k) with identity
+matrices and X with 1 and re-run line 1 - line 19 to
+compute d1,..., dK
+24: fork← 1 toK do
+25: Zk← (diag(dk))−1Zk
+26: end for
+27: return Z1, Z2,..., Zk
+D Expressing K-hop RN with MultiGRN
+Theorem 1 Given any ˜W, ˜E, ˜H, there exists a pa-
+rameter setting such that the output of the model
+becomes KHopRN(G; ˜W, ˜E, ˜H) for arbitrary G.
+Proof. Suppose ˜W = [ ˜W1, ˜W2, ˜W3], where
+˜W1, ˜W3 ∈ Rd3×d1, ˜W2 ∈ Rd3×d2. For
+MultiRGN, we set the parameters as follows:
+H = ˜H, U∗ = [I; 0] ∈ R(d1+d2)×d1, b∗ =
+[0, 1]⊤ ∈ Rd1+d2, Wt
+r = diag(1 ⊕ ˜er) ∈
+R(d1+d2)×(d1+d2)(r∈ R, 1≤t≤K), V = ˜W3 ∈
+Rd3×d1, V′ = [ ˜W1, ˜W2] ∈ Rd3×(d1+d2). We dis-
+able the relation type attention module and enable
+message passing only from Q to A. By further
+choosingσ as the identity function and perform-
+ing pooling over A, we observe that the output of
+MultiGRN becomes:
+1
+∣A∣ =
+i∈A
+h′
+i
+= 1
+∣A∣ V hi+ V′zi
+= 1
+K∣A∣
+K
+=
+k=1
+V hi+ V′zk
+i 
+=
+K
+=
+k=1
+=
+(j,r1,...,rk,i)∈Φk
+j∈Q, i∈A
+˜β(j,r 1,...,r k,i)V hi+
+V′Wk
+rk⋯W 1
+r1xj	
+=
+K
+=
+k=1
+=
+(j,r1,...,rk,i)∈Φk
+j∈Q
+˜β(⋯)V hi+ V′Wk
+rk
+⋯W 1
+r1Uφ(j)hj+ V′Wk
+rk⋯W 1
+r1bφ(j)	
+=
+K
+=
+k=1
+=
+(j,r1,...,rk,i)∈Φk
+j∈Q, i∈A
+˜β(⋯) ˜W3hi+ ˜W1hj
++ ˜W2( ˜er1◦⋯◦ ˜erk)	
+=
+K
+=
+k=1
+=
+(j,r1,...,rk,i)∈Φk
+j∈Q, i∈A
+˜β(⋯) ˜W˜hj⊕
+(˜er1◦⋯◦ ˜erk)⊕ ˜hi	
+= RN(G; ˜W, ˜E, ˜H)
+(16)

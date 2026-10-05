@@ -1,0 +1,29 @@
+{
+  "id": "M005",
+  "title": "Train for context use (position-agnostic, distractor-robust) rather than only adding context",
+  "description": "Treat the ability to use supplied context as a trainable skill, not a free by-product of more tokens. Randomise the position and composition of context triples during training (shuffled contexts, distractors, variable context size) so the model learns to locate the relevant triples, following the position-agnostic decompositional-training evidence. Evaluate on shuffled-context and long-context versions of the held-out deeper-hop split, and report robustness to context position as a primary metric alongside accuracy.",
+  "why_differs": "The closest works add or retrieve context but do not train the model to be robust to context position or to distractor triples; this turns 'context use' into the dependent variable and is grounded in the measured 'lost in the middle' degradation rather than in an assumption that more context is better.",
+  "technical_mechanism": "During fine-tuning, sample the order and subset of context triples uniformly at random (including distractor triples) while keeping the target triple/path and answer fixed. At evaluation, hold out a shuffled-context and a long-context variant of the same questions and compare degradation curves against the natural-order baseline.",
+  "expected_benefit": "Addresses the demonstrated 'lost in the middle' failure directly within the idea's training regime, and creates a metric (context-position robustness) on which the idea can show a distinctive gain even if raw accuracy differences are small.",
+  "potential_novelty": "Hedged: position-agnostic context training is established for long-context multi-doc QA, so novelty depends on showing it changes multi-hop KGQA hop transfer specifically; it is best framed as a robustness analysis within modification 1 rather than a standalone claim.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "Context serialization is already parameterised; position shuffling and distractor injection are simple transformations of existing supervision data.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Adds shuffled/position-randomised evaluation variants and a few training configurations; standard fine-tuning infrastructure suffices, but the robustness metric must be pre-registered.",
+  "main_risk": "Position-robustness training may trade away peak in-context accuracy, and the effect may be confounded with data augmentation volume; the augmented arms need matched augmentation budgets.",
+  "required_baselines": [
+    "Natural-order context training",
+    "Randomised-position context training",
+    "Matched augmentation-volume control (same number of examples, no reordering)"
+  ],
+  "related_paper_ids": [
+    "arxiv:2307.03172",
+    "arxiv:2311.09198",
+    "arxiv:2506.00708"
+  ],
+  "addresses_gap_ids": [
+    "G003"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:28:13.513118Z"
+}

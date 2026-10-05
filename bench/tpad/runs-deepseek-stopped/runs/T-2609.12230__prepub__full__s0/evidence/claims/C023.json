@@ -1,0 +1,33 @@
+{
+  "id": "C023",
+  "statement": "A feasibility risk for the same-passage mechanism: passage-derived triples may not align to the KG used for QA evaluation, since text extractions are often more specific than KB facts and such mappings are not always possible (C016). The 'local context subgraph' may therefore have to be a text graph rather than a KG subgraph, changing the method's object and evaluation assumptions.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.18653/v1/2020.eval4nlp-1.14",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "We found that such mappings are not always possible because the information in the OIE triples tends to be more specific.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2410.08475",
+      "experiment_run_id": null,
+      "location": "full_text",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "feasibility",
+    "passage-alignment",
+    "method-identity"
+  ],
+  "recorded_at": "2026-09-30T05:24:13.395354Z"
+}

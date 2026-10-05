@@ -1,0 +1,26 @@
+{
+  "id": "C013",
+  "statement": "TempRALM's evaluation results counter the recency bias confound concern: temporal augmentation improves performance most when querying about past events where semantic matching to current text fails (different years), showing the temporal component helps select passages from the correct time period rather than simply preferring recent documents. When query and passage time periods match, semantic alone suffices; when they don't match, temporal augmentation is needed to recover the correct temporal context.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 6",
+      "quote": "We observe that when the timestamp year of the query matches that of the event (and thus the date referenced in the corresponding text passage), the unmodified Atlas model performs comparably to TempRALM. In these scenarios, the semantic score captures the matching date pattern between the query and the passage. However, when the year in the timestamp of the query does not match that in the text passage (TPQ-2020 experiments), TempRALM outperforms unmodified Atlas by 49% in the 32 few-shot learning experiment, 67% in the 64 few-shot learning experiment, and 74% in the 128 few-shot learning experiment.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "TempRALM",
+    "temporal augmentation",
+    "time-period matching",
+    "semantic matching",
+    "temporal relevance benefit"
+  ],
+  "recorded_at": "2026-09-30T10:19:01.500037Z"
+}

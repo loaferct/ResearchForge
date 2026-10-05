@@ -1,0 +1,32 @@
+{
+  "id": "U025",
+  "question": "What is the natural prevalence of queries whose authoritative clause version is not the latest, and does heavy oversampling of that stratum make the reported failure rates unrepresentative of deployed legal QA?",
+  "description": "The recency-decoupled design deliberately oversamples queries whose authoritative version is not the latest, because natural user queries about law mostly concern current law. If the non-latest stratum is heavily oversampled relative to its natural frequency, the reported failure rates may overstate the problem in deployment, and reviewers may treat the benchmark as artificial. The natural prevalence of non-latest-version information needs in a legal QA corpus is unknown.",
+  "category": "evaluation",
+  "importance": "medium",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "SEARCH"
+  ],
+  "confidence": 0.55,
+  "confidence_basis": "The only prevalence evidence is from web QA and covers temporal plus geographical dependence, so it bounds rather than determines the legal figure; the design consequence (reweighting plus stratum-separated reporting) follows regardless of the exact number.",
+  "rationale": "SituatedQA reports context-dependent questions as a modest fraction of a natural corpus, so artificial enrichment could inflate the apparent severity of version confusion; report weighted and unweighted estimates to keep the claim honest.",
+  "resolution": "Partially resolved: the natural prevalence in legal QA is not established by any retrieved work, and the closest analogue (roughly 16.5% of NQ-Open context-dependent, up to 30% judged answer-changing) mixes temporal with geographical dependence and comes from web QA, so it is an upper bound rather than the legal rate. The concern about oversampling is valid by construction: an oversampled non-latest stratum cannot represent deployment prevalence. The design response, recorded in plan E007, is to report stratum-separated rates that need no assumption, to reweight to prevalence with a swept range and sensitivity curve rather than a single number, and to include contamination on latest-gold queries in the weighted estimate - since a superseded near-duplicate can outrank the current version even for current-law questions, meaning deployment impact is not confined to the oversampled stratum. If the weighted rate is negligible across all plausible prevalences, the practical-significance claim fails.",
+  "paper_ids": [
+    "arxiv:2109.06157",
+    "arxiv:2608.21409",
+    "arxiv:2606.09724",
+    "doi:10.3390/sym18091498"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T04:38:53.688423Z",
+  "updated_at": "2026-09-30T04:42:48.885452Z"
+}

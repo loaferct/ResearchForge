@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2604.19298",
+  "title": "IndiaFinBench: An Evaluation Benchmark for Large Language Model Performance on Indian Financial Regulatory Text",
+  "authors": [
+    "Rajveer Singh Pall"
+  ],
+  "year": 2026,
+  "published": "2026-04-21",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2604.19298",
+  "pdf_url": "https://arxiv.org/pdf/2604.19298v2",
+  "abstract": "We introduce IndiaFinBench, to our knowledge the first publicly available evaluation benchmark for assessing large language model (LLM) performance on Indian financial regulatory text. Existing financial NLP benchmarks draw exclusively from Western financial corpora (SEC filings, US earnings reports, English-language financial news), leaving a significant gap in coverage of non-Western regulatory frameworks. IndiaFinBench addresses this gap with 406 expert-annotated question-answer pairs drawn from 192 documents sourced from the Securities and Exchange Board of India (SEBI) and the Reserve Bank of India (RBI), spanning four task types: regulatory interpretation (174 items), numerical reasoning (92 items), contradiction detection (62 items), and temporal reasoning (78 items). Annotation quality is validated through a model-based secondary pass (kappa=0.918 on contradiction detection; 90.7% overall agreement on a 150-item subset) and a 180-item human inter-annotator agreement study across three annotation rounds (kappa=0.645 on contradiction detection; 77.2% overall agreement; 44.3% benchmark coverage). We evaluate twelve models under zero-shot conditions, with accuracy ranging from 70.4% (Gemma 4 E4B) to 89.7% (Gemini 2.5 Flash). All models substantially outperform a non-specialist human baseline of 69.0%. Numerical reasoning is the most discriminative task, with a 35.9 percentage-point spread across models. Bootstrap significance testing (10,000 resamples) reveals three statistically distinct performance tiers. The dataset, evaluation code, and all model outputs are available at https://github.com/rajveerpall/IndiaFinBench",
+  "doi": null,
+  "arxiv_id": "2604.19298",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T10:10:42.510592Z",
+  "relevance": 0.4,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal question answering regulatory documents"
+  ],
+  "code_urls": [
+    "https://github.com/rajveerpall/IndiaFinBench"
+  ],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

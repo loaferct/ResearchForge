@@ -1,0 +1,39 @@
+{
+  "id": "doi:10.1609/aaai.v32i1.11918",
+  "title": "Knowledge Graph Embedding With Iterative Guidance From Soft Rules",
+  "authors": [
+    "Shu Guo",
+    "Quan Wang",
+    "Lihong Wang",
+    "Bin Wang",
+    "Li Guo"
+  ],
+  "year": 2018,
+  "published": "2018-04-26",
+  "venue": "Proceedings of the AAAI Conference on Artificial Intelligence",
+  "url": "https://doi.org/10.1609/aaai.v32i1.11918",
+  "pdf_url": null,
+  "abstract": "Embedding knowledge graphs (KGs) into continuous vector spaces is a focus of current research. Combining such an embedding model with logic rules has recently attracted increasing attention. Most previous attempts made a one-time injection of logic rules, ignoring the interactive nature between embedding learning and logical inference. And they focused only on hard rules, which always hold with no exception and usually require extensive manual effort to create or validate. In this paper, we propose Rule-Guided Embedding (RUGE), a novel paradigm of KG embedding with iterative guidance from soft rules. RUGE enables an embedding model to learn simultaneously from 1) labeled triples that have been directly observed in a given KG, 2) unlabeled triples whose labels are going to be predicted iteratively, and 3) soft rules with various confidence levels extracted automatically from the KG. In the learning process, RUGE iteratively queries rules to obtain soft labels for unlabeled triples, and integrates such newly labeled triples to update the embedding model. Through this iterative procedure, knowledge embodied in logic rules may be better transferred into the learned embeddings. We evaluate RUGE in link prediction on Freebase and YAGO. Experimental results show that: 1) with rule knowledge injected iteratively, RUGE achieves significant and consistent improvements over state-of-the-art baselines; and 2) despite their uncertainties, automatically extracted soft rules are highly beneficial to KG embedding, even those with moderate confidence levels. The code and data used for this paper can be obtained from https://github.com/iieir-km/RUGE.",
+  "doi": "10.1609/aaai.v32i1.11918",
+  "arxiv_id": null,
+  "openalex_id": "W2963359213",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 215,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T07:30:48.490812Z",
+  "relevance": 0.2857,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "local context subgraph knowledge graph training triple"
+  ],
+  "code_urls": [
+    "https://github.com/iieir-km/RUGE"
+  ],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

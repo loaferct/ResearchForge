@@ -1,0 +1,33 @@
+{
+  "id": "C016",
+  "statement": "The difference between the idea and these works is not an implementation detail but an assumption about the dose-response: the idea assumes same-passage context is (at least weakly) monotonically beneficial and bounds it only by a similarity threshold, whereas the closest work in practice tunes that threshold on 1-hop accuracy and the adjacent works report optimal or harmful context sizes. Crucially, no retrieved paper runs a supervised context-size dose-response in LLM KGQA, and the closest work's sweep maximizes 1-hop accuracy rather than deeper-hop accuracy, so the inverted-U hypothesis remains untested in this setting and may itself be hop-depth dependent rather than global.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 41",
+      "quote": "These thresholds give the highest 1-hop accuracy in the corresponding CG-grounded setting while retaining a moderate number of context triples per primary triple.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2202.13296",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "the QA performance drops dramatically when the subgraph includes more than 5,000 nodes",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "U009",
+    "comparison",
+    "dose-response"
+  ],
+  "recorded_at": "2026-09-30T05:27:06.181855Z"
+}

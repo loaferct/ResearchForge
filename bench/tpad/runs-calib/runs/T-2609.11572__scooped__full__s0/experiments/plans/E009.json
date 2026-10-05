@@ -1,0 +1,86 @@
+{
+  "id": "E009",
+  "title": "Version-substitution intervention: isolating the answer-level effect of retrieving the wrong clause version",
+  "research_question": "Holding the query, reader and prompt fixed and changing only which clause version is supplied as context, how much does retrieving a superseded or not-yet-in-force version reduce answer correctness, and how much of the failure is content harm versus citation of a provision not in force?",
+  "hypothesis": "Retrieving a superseded version causes measurable but partial answer harm: accuracy falls relative to a gold in-force context but stays well above the no-context floor because near-duplicate wording lets the reader recover the answer in many cases, the fall is concentrated in the answer-differential subset, and a residual normative failure persists in which the cited provision is out of force even when the answer content matches.",
+  "proposed_method": "A controlled version-substitution intervention on a fixed query set. For every pre-screened query, build matched single-clause contexts that differ only in which version of the clause is supplied: the version in force at the target date (gold), a superseded version, the latest version, both in-force and superseded, and no context. Hold the reader, prompt, decoding settings and context length fixed, and score each answer against the as-of gold derived from the in-force clause. Report paired accuracy differences, and decompose the outcome into a content channel - measured on queries whose operative answer differs between versions - and a normative channel, scored as whether the cited provision was in force irrespective of whether the answer matched. Ablate the prompt's inclusion of the target date and the reader's capacity to test whether readers self-correct.",
+  "baselines": [
+    "Gold-context arm: the reader receives the clause version in force at the target date - the ceiling and the budget-matched upper bound",
+    "Superseded-context arm: the reader receives a superseded version with identical prompt and query - the treatment",
+    "Latest-context arm: the reader receives the latest version regardless of the target date, matching a recency-only retriever",
+    "Mixed-context arm: both the in-force and a superseded version are supplied, as a top-k retriever would",
+    "No-context arm: the reader answers without evidence, to estimate the guessing floor",
+    "Budget-matched comparison: all arms use the same single reader, same prompt, same query set and the same single-clause context length"
+  ],
+  "datasets": [
+    "Clause version chains from the Stage-0 corpus with at least two versions and documented validity dates",
+    "Pre-screened subset where the operative answer differs between successive versions (answer-differential), plus the complementary subset where it does not",
+    "A sample of gold answers derived from the in-force clause text, hand-adjudicated",
+    "Not used: financial filings and ESG disclosures, where the as-of semantics and version structure differ"
+  ],
+  "workloads": [
+    "Pre-screened answer-differential queries where the operative answer changed between versions",
+    "Complementary queries where the answer did not change, to bound self-healing by near-duplicate wording",
+    "Superseded-version context as the treatment arm",
+    "Latest-version context as a recency-only retriever analogue",
+    "Mixed in-force plus superseded context as a top-k retriever analogue",
+    "Prompt with and without the target date, and a weak versus strong reader"
+  ],
+  "hardware": "CPU for data preparation; one GPU or a hosted reader LLM with cached, temperature-0 responses. The design is small: a few hundred queries times roughly five context arms, with single-clause contexts, so inference cost is modest.",
+  "software_environment": "",
+  "metrics": [
+    "Accuracy of the reader against the as-of gold answer, per context arm, with paired confidence intervals",
+    "Conditional correctness: probability of a correct answer given a superseded version versus given the in-force version (paired)",
+    "Version-answer divergence rate: fraction of screened queries whose operative answer differs between successive versions",
+    "Normative failure rate: fraction of responses whose cited provision was not in force at the target date, scored independently of answer content",
+    "Self-correction rate: improvement attributable to including the target date in the prompt, and to reader capacity",
+    "Abstention rate per arm",
+    "Contamination-to-error ratio: the fraction of contaminated retrievals that translate into an incorrect answer",
+    "Hand-adjudicated agreement rate on the scored gold answers"
+  ],
+  "ablations": [
+    "Prompt includes the target date vs omits it, to test whether readers self-correct when told the as-of date",
+    "Single-clause context vs several versions of the same clause supplied together",
+    "Near-duplicate amendments vs amendments that materially rewrite the operative text",
+    "Answer type: numeric/date answers vs entity answers vs procedural or obligation answers",
+    "Reader capacity: a small model vs a strong frontier model, to test whether self-healing is a capability effect",
+    "Superseded version chosen as the immediately preceding version vs a much older version, to test whether distance from the in-force text matters"
+  ],
+  "controls": [
+    "Same reader, decoding settings and prompt template across all arms",
+    "Same query set, with the versions varied only in the context field",
+    "Answers scored against the as-of gold answer derived from the in-force clause",
+    "Paired analysis: every query contributes to every arm, so between-query variation cancels",
+    "Pre-screened divergence subset reported alongside the full set",
+    "Hand adjudication of a sample of scored answers with agreement reported",
+    "Citation validity scored separately from answer content, so the two channels never collapse into one number"
+  ],
+  "confounders_addressed": [
+    "Near-duplicate wording may let the reader recover the answer even from the wrong version - this is the phenomenon under test, isolated because the context is substituted while everything else is held fixed",
+    "Answer-differential rate could be near zero, leaving no room for content harm - addressed by pre-screening queries for version-answer divergence and reporting the divergence rate first",
+    "Reader stochasticity could mask small differences - addressed by temperature 0, repetition, and paired analysis on identical queries",
+    "The query may itself mention the target date, cueing the reader - addressed by the with-date vs without-date ablation",
+    "Context length differences could confound arms - addressed by fixed single-clause context with matched length, and by reporting clause lengths",
+    "Gold answer ambiguity could inflate disagreement - addressed by deriving answers from the clause text itself and adjudicating a sample by hand"
+  ],
+  "expected_outcomes": "Content harm is real but smaller than the contamination rate: accuracy with a superseded version is expected to fall by a moderate amount relative to the gold-context arm (a few to roughly fifteen points, in line with the reported difficulty with frequently-updated answers) while remaining well above the no-context floor, because near-duplicate wording lets the reader recover the answer in many cases. The with-date and with-capacity ablations should reduce the gap, and the normative channel should persist as a measurable rate of out-of-force citations even where the answer content matches. The key deliverable is the ratio between contamination rate and induced error rate, which quantifies how much of the retrieval failure is user-visible.",
+  "failure_conditions": [
+    "Accuracy is statistically indistinguishable between the gold-context and superseded-context arms - contamination is benign for content, and the case for the benchmark must rest on the normative channel alone",
+    "Version-answer divergence is near zero across the corpus, leaving no room for any content harm and making the non-latest stratum trivial",
+    "Readers detect the mismatch and abstain or correct themselves whenever the date is supplied, so contamination is self-healing in realistic prompts",
+    "The measured gap between arms is within reader stochasticity, so no informative paired comparison is possible",
+    "Only the no-context arm differs, showing that any retrieved clause - right or wrong - is sufficient, which would undercut version-level discrimination as the mechanism"
+  ],
+  "reproducibility_notes": "No execution spec is attached: the study needs a clause-versioned corpus with documented validity dates that does not yet exist in the workspace, and no public implementation provides version-substitution arms over legal clauses. The design is deliberately cheap and replicable: one reader, temperature 0, five paired context arms, single-clause contexts. Release the query set with strata, the version metadata, the exact contexts supplied in each arm, the frozen reader outputs, the prompt including the with-date and without-date variants, the gold answers with hand adjudication records, and the scoring code that keeps content and normative scoring separate so either can be recomputed under a different definition of correctness.",
+  "related_modification_id": "M005",
+  "related_paper_ids": [
+    "arxiv:2109.06157",
+    "arxiv:2606.09724",
+    "doi:10.3390/sym18091498",
+    "arxiv:2608.21409",
+    "doi:10.2139/ssrn.7087840"
+  ],
+  "execution": null,
+  "status": "planned",
+  "recorded_at": "2026-09-30T04:44:14.059565Z"
+}

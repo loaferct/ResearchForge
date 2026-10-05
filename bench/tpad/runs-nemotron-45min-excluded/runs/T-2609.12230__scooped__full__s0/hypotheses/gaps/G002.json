@@ -1,0 +1,25 @@
+{
+  "id": "G002",
+  "gap": "Identifying the most suitable reinforcement learning algorithm for optimizing lower-hop QA instances to transfer to deeper multi-hop queries in the context of knowledge graph question answering.",
+  "evidence": [
+    {
+      "paper_id": "doi:10.1109/tpami.2023.3292075",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "related_paper_ids": [
+    "doi:10.1109/tpami.2023.3292075",
+    "arxiv:2605.16598"
+  ],
+  "why_unaddressed": "While transfer learning in deep reinforcement learning has been surveyed, specific applications to knowledge graph question answering for transferring policies from lower-hop to higher-hop reasoning tasks remain unexplored, particularly in combination with context-enriched training and adaptive repair loops.",
+  "research_question": "Which reinforcement learning algorithm (e.g., PPO, REINFORCE, Q-learning) is most effective for optimizing lower-hop QA instances to learn transferable policies for deeper multi-hop queries when combined with local context subgraph enrichment and adaptive repair mechanisms?",
+  "potential_experiment": "Comparative study of different RL algorithms (PPO, A2C, DQN) applied to lower-hop QA optimization, measuring transfer gain to higher-hop QA performance on HotpotQA and 2WikiMultiHopQA.",
+  "confidence": "medium",
+  "verification_required": "Empirical comparison of RL algorithms in the KGQA transfer optimization setting.",
+  "recorded_at": "2026-09-30T06:19:32.171010Z"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "D002",
+  "direction": "Decouple the bundled pipeline hypothesis. The primary hypothesis is now single-component and carries the contribution (under matched example counts and supervision tokens, does context *relevance* drive any multi-hop KGQA and deeper-hop transfer benefit?). The repair loop becomes a conditional second hypothesis with its own diagnostic (does a one-hop failure localize a base-fact error, and are those failures repairable?), and the lower-hop RL stage becomes a deferred third hypothesis tested only if supervised fine-tuning on lower-hop data leaves a transfer gap. Components are executed in gated stages (revised M001) and reported separately, so a null primary result does not invalidate the diagnostics, and a positive primary result is not contaminated by an unverified repair or RL stage.",
+  "hypothesis": "Stage 1 (primary): Under matched example counts and total supervision tokens, relevance-selected co-passage context triples outperform an equal-length irrelevant-context control on multi-hop KGQA and held-out deeper-hop transfer; the isolated-triple and irrelevant-context arms do not differ beyond noise. Stage 2 (conditional): one-hop failures are predominantly caused by incorrect base facts rather than entity-linking/retrieval or composition errors, and targeted corrective examples for those failures improve accuracy without degrading unrelated questions. Stage 3 (deferred): RL on lower-hop instances improves deeper-hop transfer beyond what supervised fine-tuning on lower-hop instances already provides.",
+  "rationale": "U007 asked whether the three-component pipeline is too confounded for a clean claim; the evidence says yes. The auxiliary components are separately precedented — intermediate supervision is NSM's contribution and RL for multi-hop KG reasoning is KG-Hopper's (C012) — while the pipeline rests on two unevidenced assumptions: that one-hop failures localize base-fact errors (C010) and that the three stages can each be ablated independently under a fixed budget (C011). The stage-1 confound is itself component-specific and unresolved: the context arm necessarily adds tokens, and the literature disagrees on whether extra context helps or injects noise (C003 vs. C004, C014), while newly retrieved evidence shows imprecise KG context can fall below the no-context baseline (C015) and that context use is trainable (C018), so the relevance question is both sharper and more informative than the bundled claim. Decoupling the hypothesis makes each claim attributable and preserves a clean negative-result path; it also reduces the feasibility burden flagged in U011 because only Stage 1 must be fully resourced up front. This is worth doing next because it converts an un-attributable bundle into one causally testable claim with pre-registered controls.",
+  "change_type": "CHANGE_HYPOTHESIS",
+  "previous_direction_id": "D001",
+  "research_question": "Holding the number of training examples and total supervision tokens fixed, does adding co-passage context triples to triple/path supervision improve multi-hop KGQA and held-out deeper-hop transfer because of the relevance of those triples rather than the mere presence of extra context?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "doi:10.1109/ickg66886.2025.00020",
+    "arxiv:2506.00708",
+    "doi:10.20944/preprints202505.1992.v1",
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "arxiv:2101.03737",
+    "arxiv:2603.21440",
+    "arxiv:2307.03172"
+  ],
+  "uncertainty_ids": [
+    "U003",
+    "U005",
+    "U007",
+    "U010",
+    "U011",
+    "U012"
+  ],
+  "recorded_at": "2026-09-30T05:30:14.624305Z"
+}

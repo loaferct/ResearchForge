@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2403.19631",
+  "title": "Retrieval-enhanced Knowledge Editing in Language Models for Multi-Hop Question Answering",
+  "authors": [
+    "Yucheng Shi",
+    "Qiaoyu Tan",
+    "Xuansheng Wu",
+    "Shao-Chen Zhong",
+    "Kaixiong Zhou",
+    "Ning-Hao Liu"
+  ],
+  "year": 2024,
+  "published": "2024-03-28",
+  "venue": "International Conference on Information and Knowledge Management",
+  "url": "https://www.semanticscholar.org/paper/d24013cc145edc491504c9a39bf9cc3af275a99e",
+  "pdf_url": "https://doi.org/10.1145/3627673.3679722",
+  "abstract": "Large Language Models (LLMs) have shown proficiency in question-answering tasks but often struggle to integrate real-time knowledge, leading to potentially outdated or inaccurate responses. This problem becomes even more challenging when dealing with multi-hop questions, since they require LLMs to update and integrate multiple knowledge pieces relevant to the questions. To tackle the problem, we propose the Retrieval-Augmented model Editing (RAE) framework for multi-hop question answering. RAE first retrieves edited facts and then refines the language model through in-context learning. Specifically, our retrieval approach, based on mutual information maximization, leverages the reasoning abilities of LLMs to identify chain facts that traditional similarity-based searches might miss. In addition, our framework includes a pruning strategy to eliminate redundant information from the retrieved facts, which enhances the editing accuracy and mitigates the hallucination problem. Our framework is supported by theoretical justification for its fact retrieval efficacy. Finally, comprehensive evaluation across various LLMs validates RAE's ability in providing accurate answers with updated knowledge. Our code is available at: https://github.com/sycny/RAE.",
+  "doi": "10.1145/3627673.3679722",
+  "arxiv_id": "2403.19631",
+  "openalex_id": null,
+  "s2_id": "d24013cc145edc491504c9a39bf9cc3af275a99e",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 38,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:41:42.905326Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "subgraph size multi-hop question answering context"
+  ],
+  "code_urls": [
+    "https://github.com/sycny/RAE"
+  ],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

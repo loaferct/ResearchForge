@@ -1,0 +1,37 @@
+{
+  "id": "arxiv:2209.10754",
+  "title": "INFINITY: A Simple Yet Effective Unsupervised Framework for Graph-Text Mutual Conversion",
+  "authors": [
+    "Yi Xu",
+    "Luoyi Fu",
+    "Zhouhan Lin",
+    "Jiexing Qi",
+    "Xinbing Wang"
+  ],
+  "year": 2022,
+  "published": "2022-09-22",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2209.10754",
+  "pdf_url": "https://arxiv.org/pdf/2209.10754v1",
+  "abstract": "Graph-to-text (G2T) generation and text-to-graph (T2G) triple extraction are two essential tasks for constructing and applying knowledge graphs. Existing unsupervised approaches turn out to be suitable candidates for jointly learning the two tasks due to their avoidance of using graph-text parallel data. However, they are composed of multiple modules and still require both entity information and relation type in the training process. To this end, we propose INFINITY, a simple yet effective unsupervised approach that does not require external annotation tools or additional parallel information. It achieves fully unsupervised graph-text mutual conversion for the first time. Specifically, INFINITY treats both G2T and T2G as a bidirectional sequence generation task by fine-tuning only one pretrained seq2seq model. A novel back-translation-based framework is then designed to automatically generate continuous synthetic parallel data. To obtain reasonable graph sequences with structural information from source texts, INFINITY employs reward-based training loss by leveraging the advantage of reward augmented maximum likelihood. As a fully unsupervised framework, INFINITY is empirically verified to outperform state-of-the-art baselines for G2T and T2G tasks.",
+  "doi": null,
+  "arxiv_id": "2209.10754",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:00:07.310001Z",
+  "relevance": 0.3125,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "knowledge graph augmented language model pretraining triple knowledge injection"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

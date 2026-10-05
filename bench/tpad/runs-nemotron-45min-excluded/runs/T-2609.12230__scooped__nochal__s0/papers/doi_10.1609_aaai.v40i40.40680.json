@@ -1,0 +1,37 @@
+{
+  "id": "doi:10.1609/aaai.v40i40.40680",
+  "title": "Reinforcement Learning Enhanced Muti-hop Reasoning for Temporal Knowledge Question Answering",
+  "authors": [
+    "Wuzhenghong Wen",
+    "Chao Xue",
+    "Su Pan",
+    "Yuwei Sun",
+    "Minlong Peng"
+  ],
+  "year": 2026,
+  "published": "2026-03-14",
+  "venue": "Proceedings of the AAAI Conference on Artificial Intelligence",
+  "url": "https://doi.org/10.1609/aaai.v40i40.40680",
+  "pdf_url": null,
+  "abstract": "Temporal knowledge graph question answering (TKGQA) involves multi-hop reasoning over temporally constrained entity relationships in the knowledge graph to answer a given question. However, at each hop, large language models (LLMs) retrieve subgraphs with numerous temporally similar and semantically complex relations, increasing the risk of suboptimal decisions and error propagation. To address these challenges, we propose the multi-hop reasoning enhanced (MRE) framework, which enhances both forward and backward reasoning to improve the identification of globally optimal reasoning trajectories. Specifically, MRE begins with prompt engineering to guide LLM in generating diverse reasoning trajectories for the given question. Valid reasoning trajectories are then selected for supervised fine-tuning, serving as a cold-start strategy. Finally, we introduce Tree-Group Relative Policy Optimization (T-GRPO)—a recursive, tree-structured learning-by-exploration approach. At each hop, exploration establishes strong causal dependencies on the previous hop, while evaluation is informed by multi-path exploration feedback from subsequent hops. Experimental results on two TKGQA benchmarks indicate that the proposed MRE-based model consistently surpasses state-of-the-art (SOTA) approaches in handling complex multi-hop queries. Further analysis highlights improved interpretability and robustness to noisy temporal annotations.",
+  "doi": "10.1609/aaai.v40i40.40680",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 1,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T06:03:29.204998Z",
+  "relevance": 0.4,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "reinforcement learning transfer lower-hop higher-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

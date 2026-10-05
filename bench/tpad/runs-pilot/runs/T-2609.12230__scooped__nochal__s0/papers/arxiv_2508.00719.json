@@ -1,0 +1,38 @@
+{
+  "id": "arxiv:2508.00719",
+  "title": "DAMR: Efficient and Adaptive Context-Aware Knowledge Graph Question Answering with LLM-Guided MCTS",
+  "authors": [
+    "Ying-Xu Wang",
+    "Shi-Qi Fan",
+    "Mengzhu Wang",
+    "Si-Yang Gao",
+    "Chao Wang",
+    "Nan Yin"
+  ],
+  "year": 2025,
+  "published": "2025-08-01",
+  "venue": null,
+  "url": "https://www.semanticscholar.org/paper/0a3dc3ae3ff4e9300c303675bed01f3732f9d249",
+  "pdf_url": null,
+  "abstract": "Knowledge Graph Question Answering (KGQA) aims to interpret natural language queries and perform structured reasoning over knowledge graphs by leveraging their relational and semantic structures to retrieve accurate answers. Existing methods primarily follow either the retrieve-then-reason paradigm, which relies on Graph Neural Networks or heuristic rules to extract static candidate paths, or dynamic path generation strategies that employ LLMs with prompting to jointly perform retrieval and reasoning. However, the former lacks adaptability due to static path extraction and the absence of contextual refinement, while the latter suffers from high computational costs and limited evaluation accuracy because of their dependence on fixed scoring functions and repeated LLM calls. To address these issues, this paper proposes Dynamically Adaptive MCTS-based Reasoning (DAMR), a novel framework that integrates LLM-guided Monte Carlo Tree Search (MCTS) with adaptive path evaluation to enable efficient and context-aware KGQA. DAMR leverages MCTS as a backbone, where an LLM-based planner selects the top-$k$ semantically relevant relations at each expansion step to effectively reduce the search space. To enhance evaluation accuracy, we introduce a lightweight Transformer-based scorer that performs context-aware plausibility estimation by jointly encoding the question and relation sequence through cross-attention, thereby capturing fine-grained semantic shifts during multi-hop reasoning. Furthermore, to mitigate the scarcity of high-quality supervision, DAMR incorporates a dynamic pseudo-path refinement mechanism that periodically generates training signals from partial paths explored during search, enabling the scorer to continually adapt to the evolving distribution of reasoning trajectories. Extensive experiments on multiple KGQA benchmarks show that DAMR significantly outperforms SOTA methods.",
+  "doi": null,
+  "arxiv_id": "2508.00719",
+  "openalex_id": null,
+  "s2_id": "0a3dc3ae3ff4e9300c303675bed01f3732f9d249",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 7,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T06:51:45.980568Z",
+  "relevance": 0.3421,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "passage context enrichment knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

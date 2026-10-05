@@ -1,0 +1,33 @@
+{
+  "id": "doi:10.2139/ssrn.7201500",
+  "title": "Agent-trace Fine-Tuning of Small Language Models under Constrained Compute",
+  "authors": [
+    "Ankit Aglawe"
+  ],
+  "year": 2026,
+  "published": null,
+  "venue": null,
+  "url": "https://doi.org/10.2139/ssrn.7201500",
+  "pdf_url": null,
+  "abstract": "<div> Small language models (SLMs, 3-8B) are increasingly fine-tuned on agent traces (recorded multi-step sessions of a frontier model using tools) in the hope of transferring agentic behavior at a fraction of the serving cost. In practice these fine-tunes are usually released with either loss-only evidence or self-reported, non-reproducible benchmark tables, and almost never with a baseline measured under the same conditions. We ask whether a single practitioner, using only individual 16 GB-class GPUs, can produce agent-trace fine-tunes that are useful and honestly characterized, and we document what it takes to get there. </div> <div> <br> </div> <div> Our first, literature-naive recipe reduced held-out trace loss substantially on every model trained, by 47 to 87% depending on size, measured against that corpus's own held-out split and therefore not comparable to the losses in this report's tables, yet regressed general coding ability by 18.9 points on HumanEval and 18.3 on HumanEval+ relative to the base model: a textbook case of catastrophic forgetting that its loss curve completely hid. We rebuild the pipeline around three evidence-backed changes: completion-only loss masking, mixed-domain replay, and fuzzy train/test decontamination on the trace split with post-hoc containment measurement against both reported benchmarks (Section 3). We had also claimed checkpoint selection on a held-out development benchmark as a fourth lever; auditing the released training scripts for this report showed it was never implemented, and Section 5 records what the code actually does. On Granite-3B, our primary study model, the revised recipe recovers roughly half of the lost coding ability (mean 71.7/67.3 HumanEval/HumanEval+ over three training runs, vs base 81.7/76.2), scores 25/34 against the base's 27/34 on a strict qualitative set, a two-item difference we treat as unresolved at this sample size, and reduces to zero on our probe a distribution-mismatch failure we name and characterize as session leakage, in which a session-conditioned model reproduces agent scaffolding (tool-call JSON, hallucinated prior turns, and verbatim training-workspace paths) when prompted standalone. </div> <div> <br> </div> <div> A cross-family run on Qwen3-4B reproduces the recipe's behavior (73.2 HumanEval against base 76.8, a gap inside the sampling interval at this sample size and from a single benchmarked seed, so smaller than Granite-3B's 10-point mean gap only in the sense of not being larger) and surfaces a failure class benchmarks do not measure: the v1 fine-tune returned an empty answer on 21% of ordinary prompts by exhausting its token budget inside the base model's thinking block, invisible to HumanEval and to loss curves alike; the corrected recipe reduces this to zero. A masking-only ablation shows the reverse trap: removing completion masking improves held-out trace loss by 46% while training on exactly the tokens the metric scores, so the niche's favorite metric cannot adjudicate its recipes. Six of our headline \"results\" were artifacts of the apparatus or of our own process: a contaminated capture harness, an under-powered proxy metric, a best benchmark score that did not survive identical-configuration retraining, a missing base row, a thinking-mode mismatch, and a publish gate we relaxed after seeing the result it governed. Each was caught only by re-measurement against a same-instrument baseline, or by review. We therefore argue that at this scale the binding constraint on useful specialization is evaluation discipline, not compute, and we release the full recipe, the 10.6k-trace corpus, the harness, and a complete experiment log to make the claim checkable. </div>",
+  "doi": "10.2139/ssrn.7201500",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T05:15:59.796403Z",
+  "relevance": 0.1207,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "token-matched compute-matched control context augmentation fine-tuning ablation language model"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

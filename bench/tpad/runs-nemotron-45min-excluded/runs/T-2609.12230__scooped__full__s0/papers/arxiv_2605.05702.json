@@ -1,0 +1,38 @@
+{
+  "id": "arxiv:2605.05702",
+  "title": "Knowledge-Graph Paths as Intermediate Supervision for Self-Evolving Search Agents",
+  "authors": [
+    "Huyu Wu",
+    "Jun Liu",
+    "Xiaochi Wei",
+    "Yan Gao",
+    "Yi Wu",
+    "Yao Hu"
+  ],
+  "year": 2026,
+  "published": "2026-05-07",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2605.05702",
+  "pdf_url": "https://arxiv.org/pdf/2605.05702v1",
+  "abstract": "Self-evolving search agents reduce reliance on human-written training questions by generating and solving their own search tasks. We build on Search Self-Play (SSP), a representative Proposer and Solver framework in which questions are generated and answered via multi-step search and reasoning. In practice, however, SSP faces two bottlenecks: the Proposer constructs questions from isolated answer entities without relational context, yielding many invalid or unverifiable questions in early self-play training, while the Solver receives only a binary outcome reward that discards useful signal from partially on-track search trajectories. We address both bottlenecks by reusing knowledge-graph paths as construction-derived intermediate supervision for both question construction and reward shaping. First, we ground question construction in LLM-guided knowledge-graph subgraphs, providing relational context for the Proposer. Second, we observe that constructing and solving a multi-hop question can involve overlapping intermediate entities: the factual bridges used to formulate the question may provide approximate waypoints for answering it. Exploiting this overlap, we introduce Waypoint Coverage Reward (WCR), which grants graded partial credit to incorrect Solver trajectories according to their coverage of entities on the construction path, while preserving full reward for correct answers. Across seven QA benchmarks and nine model configurations, our approach improves the average score over standard SSP in all configurations, including notable gains on multi-hop QA tasks. These results suggest that knowledge-graph paths can be reused as lightweight intermediate supervision, providing both relational guidance and process feedback without additional task-specific human annotations or manually labeled process steps.",
+  "doi": null,
+  "arxiv_id": "2605.05702",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:39:27.963265Z",
+  "relevance": 0.4167,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering context subgraph training"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

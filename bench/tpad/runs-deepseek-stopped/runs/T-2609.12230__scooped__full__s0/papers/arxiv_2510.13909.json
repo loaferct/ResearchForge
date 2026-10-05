@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2510.13909",
+  "title": "Knowledge Reasoning Language Model: Unifying Knowledge and Language for Inductive Knowledge Graph Reasoning",
+  "authors": [
+    "Xingrui Zhuo",
+    "Jiapu Wang",
+    "Gongqing Wu",
+    "Zhongyuan Wang",
+    "Jichen Zhang",
+    "Shirui Pan",
+    "Xindong Wu"
+  ],
+  "year": 2025,
+  "published": "2025-10-15",
+  "venue": "arXiv.org",
+  "url": "https://arxiv.org/abs/2510.13909",
+  "pdf_url": "https://arxiv.org/pdf/2510.13909v2",
+  "abstract": "Inductive Knowledge Graph Reasoning (KGR) aims to discover facts in open-domain KGs containing unknown entities and relations, which poses a challenge for KGR models in comprehending uncertain KG components. Existing studies have proposed Knowledge Graph Foundation Models (KGFMs) that learn structural invariances across KGs to handle this uncertainty. Recently, Large Language Models (LLMs) have demonstrated strong capabilities for open-domain knowledge reasoning. As a result, the latest research has focused on LLM-based KGFMs that integrate LLM knowledge with KG context for inductive KGR. However, the intrinsic knowledge of LLMs may be overshadowed by sparse KG context, leading to LLM knowledge distortion, which can cause irreversible damage to model reasoning. Moreover, existing LLM-based KGR methods still struggle to fully constrain generative hallucinations in LLMs, severely limiting the credibility of reasoning results. To address these limitations, we propose a Knowledge Reasoning Language Model (KRLM) that achieves unified coordination between LLM knowledge and KG context throughout the KGR process. Specifically, we design a Knowledge Reasoning Language (KRL) instruction format and a KRL tokenizer to align LLM knowledge with KG representations. Then, we propose a KRL attention layer that coordinates intrinsic LLM knowledge with additional KG context through a dynamic knowledge memory mechanism. Finally, a structure-aware next-entity predictor is proposed, which strictly constrains the reasoning results within a trustworthy knowledge domain. Extensive experimental results on 25 real-world inductive KGR datasets demonstrate the significant superiority of the proposed KRLM\\footnote{Our source codes are available at https://anonymous.4open.science/r/KRLM-EA36 in both zero-shot reasoning and fine-tuning scenarios.",
+  "doi": "10.48550/arxiv.2510.13909",
+  "arxiv_id": "2510.13909",
+  "openalex_id": null,
+  "s2_id": "bd3014f06bf1857193e3f841b17ae46acb879f5d",
+  "source": "arxiv",
+  "sources": [
+    "arxiv",
+    "semantic_scholar"
+  ],
+  "citation_count": 2,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:17:13.971693Z",
+  "relevance": 0.1852,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "structure-aware graph tokens fine-tuning LLM knowledge graph reasoning supervision neighbor context"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

@@ -1,0 +1,38 @@
+{
+  "id": "U013",
+  "question": "Does published work contradict the current assessment: The distinctions are (1) training-time vs inference-time manipulation of the context, (2) same-source-passage provenance of the added triples rather than KG-neighborhood retrieval, (3) an explicit one-hop failure detector/repair loop producing corrective training examples, and (4) a hop-depth transfer protocol where the model is RL-optimized only on lower-hop instances and evaluated on deeper hops. Points (1) and (4) are conceptual rather than implementation-level; points (2) and (3) are currently under-specified and may reduce to existing KG-neighborhood augmentation and generic iterative self-training if not formalized precisely.?",
+  "description": "Assessment: weak_or_flawed. The idea is not refuted - the decisive experiment (training-time context supervision) has not been run and no directly matching prior work was found - but in its current form it is weak for three evidence-backed reasons. First, its central premise is directly challenged by the closest controlled evidence: non-answer-path triples contributed only +0.003 F1 at inference (C002) and inflated context introduces accuracy-depressing distractors (C003), so the expected effect is null or negative. Second, H2's premise has no direct support; the only RL transfer evidence is cross-formalism with a +1.7% downstream gain (C005). Third, the design is unidentifiable as stated because budget, answer-path presence, and format co-vary with the treatment (C007, C013). The gap is real and the direction is worth one careful, drastically narrowed experiment, but it needs the confounder controls, an inference-time context baseline, and a resolved passage-alignment definition before it can be called promising.",
+  "category": "contradiction",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "REFINE",
+  "possible_actions": [],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "The assessment was formed from work found around the initial idea; look for work that would invalidate it.",
+  "resolution": "Partially resolved via challenge. Distinction (2) same-passage provenance does NOT reduce to KG-neighborhood augmentation (C020): passage-derived triples are a distinct 'text graph' construct, and aligning them to a reference KB is its own established, non-trivial task (C016, C017). The distinction is well-defined rather than under-specified, but it is crowded prior art in the text-to-KG-construction family, so the unoccupied part is only its use as a training supervision signal. Distinction (3), by contrast, is confirmed as non-novel: KnowTrace already performs reflective process-supervision self-bootstrapping over knowledge-triple context (C018) and training-free iterative refinement is standard (C019). Distinction (4) remains untested (U004/U016).",
+  "paper_ids": [
+    "doi:10.24963/kr.2020/77",
+    "doi:10.18653/v1/2020.eval4nlp-1.14",
+    "arxiv:2505.20245",
+    "arxiv:2303.17651"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2505.20245",
+    "arxiv:2303.17651",
+    "doi:10.24963/kr.2020/77",
+    "doi:10.18653/v1/2020.eval4nlp-1.14"
+  ],
+  "contradicting_paper_ids": [
+    "doi:10.24963/kr.2020/77",
+    "doi:10.18653/v1/2020.eval4nlp-1.14",
+    "arxiv:2505.20245"
+  ],
+  "claim_ids": [],
+  "challenge_verdict": "weakened",
+  "target_ref": "critique",
+  "attempts": 1,
+  "source": "controller",
+  "created_at": "2026-09-30T05:17:12.082970Z",
+  "updated_at": "2026-09-30T05:23:45.346272Z"
+}

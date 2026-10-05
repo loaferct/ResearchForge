@@ -1,0 +1,34 @@
+{
+  "id": "U008",
+  "question": "Is there enough measurement headroom on standard KGQA benchmarks for a context-enrichment effect to be detectable, or must the evaluation target the unsaturised 3+ hop / generative-answer regimes?",
+  "description": "Several candidate benchmarks appear nearly saturating at short hop depths (arxiv:2101.03737 reports MetaQA-2hop at 99.9 and MetaQA-1hop at 97.1 for NSM), while the difficulty concentrates at 3+ hops and on WebQSP/CWQ (68.7 / 47.6 for NSM). If the idea's context-enrichment effect is largest on low-hop or entity-ranking setups, the available headroom may be too small to detect, and the experiment must be pre-registered on the depth strata where the effect is expected.",
+  "category": "evaluation",
+  "importance": "medium",
+  "status": "open",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "COMPARE",
+    "SEARCH"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "If the chosen benchmark is saturated at the depths where context is supposed to help, a null result would be uninformative and a positive result implausible; this determines the evaluation design and the power of the proposed experiment.",
+  "resolution": "",
+  "paper_ids": [
+    "arxiv:2101.03737",
+    "arxiv:2406.13397"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2101.03737",
+    "arxiv:2406.13397"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "SYNTHESIZE",
+  "created_at": "2026-09-30T05:12:21.637313Z",
+  "updated_at": "2026-09-30T05:12:21.637581Z"
+}

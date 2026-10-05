@@ -1,0 +1,36 @@
+{
+  "id": "doi:10.1609/aaai.v38i17.29903",
+  "title": "Question Calibration and Multi-Hop Modeling for Temporal Question Answering",
+  "authors": [
+    "Chao Xue",
+    "Di Liang",
+    "Pengfei Wang",
+    "Jing Zhang"
+  ],
+  "year": 2024,
+  "published": "2024-03-24",
+  "venue": "Proceedings of the AAAI Conference on Artificial Intelligence",
+  "url": "https://doi.org/10.1609/aaai.v38i17.29903",
+  "pdf_url": "https://ojs.aaai.org/index.php/AAAI/article/download/29903/31579",
+  "abstract": "Many models that leverage knowledge graphs (KGs) have recently demonstrated remarkable success in question answering (QA) tasks. In the real world, many facts contained in KGs are time-constrained thus temporal KGQA has received increasing attention. Despite the fruitful efforts of previous models in temporal KGQA, they still have several limitations. (I) They adopt pre-trained language models (PLMs) to obtain question representations, while PLMs tend to focus on entity information and ignore entity transfer caused by temporal constraints, and finally fail to learn specific temporal representations of entities. (II) They neither emphasize the graph structure between entities nor explicitly model the multi-hop relationship in the graph, which will make it difficult to solve complex multi-hop question answering. To alleviate this problem, we propose a novel Question Calibration and Multi-Hop Modeling (QC-MHM) network. Specifically, We first calibrate the question representation by fusing the question and the time-constrained concepts in KG. Then, we construct the GNN layer to complete multi-hop message passing. Finally, the question representation is combined with the embedding output by the GNN to generate the final prediction. Empirical results verify that the proposed model achieves better performance than the state-of-the-art models in the benchmark dataset. Notably, the Hits@1 and Hits@10 results of QC-MHM on the CronQuestions dataset's complex questions are absolutely improved by 5.1% and 1.2% compared to the best-performing baseline. Moreover, QC-MHM can generate interpretable and trustworthy predictions.",
+  "doi": "10.1609/aaai.v38i17.29903",
+  "arxiv_id": null,
+  "openalex_id": "W4393161120",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 16,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T09:47:10.158782Z",
+  "relevance": 0.2727,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "citations of arxiv:2210.06281"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

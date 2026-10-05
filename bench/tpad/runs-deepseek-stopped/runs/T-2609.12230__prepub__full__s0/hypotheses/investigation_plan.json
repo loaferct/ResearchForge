@@ -1,0 +1,34 @@
+{
+  "questions": [
+    "Which existing methods are closest to training-time context-enriched triple/path supervision for multi-hop KGQA, and does the proposed idea already exist under different terminology (e.g., knowledge-grounded instruction tuning, graph-augmented LM pretraining, contextualized triple encoding, passage-grounded KG supervision)?",
+    "Is same-passage context actually available or derivable for MetaQA/WebQuestionsSP/ComplexWebQuestions, and how do prior KGQA/KGC works align triples to source text (passage-to-triple grounding)?",
+    "Which datasets, baselines, metrics and evaluation protocol apply, and what reported numbers must be beaten (per-hop Hits@1, hop-depth breakdown, leakage controls)?",
+    "Is low-hop-only RL optimization known to transfer to deeper-hop queries in multi-hop KGQA, or does hop-depth/compositional generalization require curriculum or mixed-hop training?",
+    "Can the adaptive repair loop be distinguished from existing iterative self-training / self-refine / bootstrapping data-cleaning methods, and is there precedent for automated one-hop failure detection?",
+    "Is the full pipeline feasible with available code and compute (fits a 1-7B LM with LoRA/RL), and which components are off-the-shelf versus must be built and validated?"
+  ],
+  "search_topics": [
+    "training-time subgraph/knowledge supervision for language models",
+    "knowledge-grounded instruction tuning and graph-augmented LM pretraining",
+    "contextualized triple encoding for knowledge graph completion (KG-BERT, KICGPT, SimKGC, StAR)",
+    "passage-to-triple alignment and KG construction from text / open information extraction grounding",
+    "multi-hop KGQA benchmarks MetaQA WebQuestionsSP ComplexWebQuestions",
+    "hop-depth and compositional generalization in multi-hop reasoning",
+    "reinforcement learning for LLM reasoning (PPO/GRPO, process rewards, verifiable rewards)",
+    "curriculum learning and shallow-to-deep transfer in multi-hop QA",
+    "iterative self-training, self-refine, bootstrapping, error-driven data augmentation",
+    "inference-time subgraph retrieval and GraphRAG for KGQA (contrast class)",
+    "knowledge graph incompleteness and missing-link repair",
+    "noisy supervision and label noise in KG-grounded training"
+  ],
+  "comparison_targets": [
+    "Triple/path-only fine-tuning of the same base model (internal primary baseline)",
+    "EmbedKGQA (doi:10.18653/v1/2020.acl-main.412) - multi-hop KGQA over sparse KGs with KB embeddings",
+    "GreaseLM / MHGRN (doi:10.18653/v1/2020.emnlp-main.99) - PTLM + multi-hop graph relation network over subgraphs",
+    "KICGPT (doi:10.18653/v1/2023.findings-emnlp.580) - LLM with KG context for knowledge graph completion",
+    "SG-RAG MOT (doi:10.20944/preprints202505.1992.v1) and other GraphRAG/inference-time subgraph prompting methods (contrast: context at inference vs training)",
+    "STRuCT-LLM (arxiv:2506.21575) - RL for tabular/graph semantic parsing",
+    "Curriculum/iteration baselines: one-pass denoising vs iterative self-training (Self-Refine arxiv:2303.17651; KnowTrace arxiv:2505.20245)"
+  ],
+  "recorded_at": "2026-09-30T05:06:31.694876Z"
+}

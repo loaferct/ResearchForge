@@ -1,0 +1,32 @@
+{
+  "id": "U001",
+  "question": "Is there existing work that already trains language models on context-enriched triple subgraphs (i.e., not just isolated triples but also surrounding triples from the same passage) for multi-hop KGQA?",
+  "description": "Determine if the core idea of enriching target triples with local context subgraphs from the same source passage has been explored.",
+  "category": "novelty",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "If such work exists, the novelty claim is weakened; if not, the idea is novel.",
+  "resolution": "Yes, arXiv:2609.12230 proposes a context-augmented training framework that attaches supporting triples from the same source text chunk to each primary KG triple, forming a context graph, and trains under KG-grounded and CG-grounded supervision.",
+  "paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "PLAN",
+  "created_at": "2026-09-30T06:31:22.281005Z",
+  "updated_at": "2026-09-30T06:56:04.054257Z"
+}

@@ -1,0 +1,37 @@
+{
+  "paper_id": "doi:10.18653/v1/d18-1362",
+  "relevance_tier": "medium",
+  "problem": "Multi-hop reasoning over incomplete knowledge graphs in an RL setup, where the agent receives low-quality rewards corrupted by false negatives in the training data and can be misled by spurious search trajectories that incidentally reach the correct answer.",
+  "method": "Cast multi-hop KG query answering as RL: a policy-based agent sequentially extends an inference path until it reaches a target. Reward shaping with a pretrained one-hop embedding model estimates rewards of unobserved facts; randomly generated edge masks force exploration of diverse paths.",
+  "key_assumptions": [
+    "The KG is incomplete, so observed edges are an unreliable reward signal (false negatives)",
+    "A pretrained one-hop embedding model can estimate rewards for unobserved facts",
+    "Diverse on-policy exploration via random edge masks reduces spurious-path overfitting"
+  ],
+  "main_contribution": "Two modeling advances for RL-based multi-hop KG reasoning: reward estimation for unobserved facts via a pretrained one-hop embedding model (reducing false-negative supervision), and random edge masking to force diverse path exploration and counter spurious paths.",
+  "datasets": [
+    "not stated in abstract (several benchmark datasets)"
+  ],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [
+    "not stated in abstract (reported as improvements over existing path-based KGQA models)"
+  ],
+  "results": "Abstract: the approach \"significantly improves over existing path-based KGQA models on several benchmark datasets and is comparable or better than embedding-based models.\"",
+  "limitations": [
+    "Path-based RL over a graph, not LM fine-tuning on triple text; the surrounding context of a fact is not the object of study.",
+    "Addresses reward corruption and spurious paths, not the context-poor supervision problem the idea targets.",
+    "No evaluation of transfer across hop depths is stated in the abstract."
+  ],
+  "future_work": [],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "This paper is direct prior art for the idea's RL component and for the observation that one-hop-level supervision is unreliable in KGs. Its fix is a reward-shaping estimator over unobserved edges; the idea's fix is to detect one-hop failures, generate corrective examples and iteratively refine the model. The overlap is methodological rather than conceptual: the idea must argue why example regeneration is better than (or complements) embedding-based reward estimation.",
+    "basis": "Problem overlap 0.5: both are multi-hop KG reasoning and both care about noisy supervision (the idea's 'adaptive repair loop' on one-hop failures vs this paper's corrupted rewards from false negatives). Method overlap 0.4: both use RL over graph paths, but here RL is the whole method with a hand-designed reward shaping scheme, whereas in the idea RL is a late-stage optimizer trained on lower-hop QA instances. Evaluation overlap 0.3: path-based KGQA benchmarks differ from the idea's likely MetaQA/WebQSP/CWQ LM fine-tuning setup, and the abstract reports no hop-depth transfer analysis."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:07:27.667321Z"
+}

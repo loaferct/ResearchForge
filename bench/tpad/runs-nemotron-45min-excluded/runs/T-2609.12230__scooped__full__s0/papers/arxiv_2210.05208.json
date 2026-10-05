@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2210.05208",
+  "title": "How Well Do Multi-hop Reading Comprehension Models Understand Date Information?",
+  "authors": [
+    "Xanh Ho",
+    "Saku Sugawara",
+    "Akiko Aizawa"
+  ],
+  "year": 2022,
+  "published": "2022-10-11",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2210.05208",
+  "pdf_url": "https://arxiv.org/pdf/2210.05208v1",
+  "abstract": "Several multi-hop reading comprehension datasets have been proposed to resolve the issue of reasoning shortcuts by which questions can be answered without performing multi-hop reasoning. However, the ability of multi-hop models to perform step-by-step reasoning when finding an answer to a comparison question remains unclear. It is also unclear how questions about the internal reasoning process are useful for training and evaluating question-answering (QA) systems. To evaluate the model precisely in a hierarchical manner, we first propose a dataset, \\textit{HieraDate}, with three probing tasks in addition to the main question: extraction, reasoning, and robustness. Our dataset is created by enhancing two previous multi-hop datasets, HotpotQA and 2WikiMultiHopQA, focusing on multi-hop questions on date information that involve both comparison and numerical reasoning. We then evaluate the ability of existing models to understand date information. Our experimental results reveal that the multi-hop models do not have the ability to subtract two dates even when they perform well in date comparison and number subtraction tasks. Other results reveal that our probing questions can help to improve the performance of the models (e.g., by +10.3 F1) on the main QA task and our dataset can be used for data augmentation to improve the robustness of the models.",
+  "doi": null,
+  "arxiv_id": "2210.05208",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:43:33.982795Z",
+  "relevance": 0.1944,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "HotpotQA 2WikiMultiHopQA multi-hop QA datasets"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

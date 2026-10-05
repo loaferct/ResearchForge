@@ -1,0 +1,29 @@
+{
+  "id": "M004",
+  "title": "Move the evaluation to a provenance-bearing, text-grounded KG",
+  "description": "Instantiate the mechanism where 'co-passage triples' are actually well defined: use a text-grounded KG built from a multi-hop QA corpus with supporting-paragraph annotations (HotpotQA-style) or a KG with per-triple sentence/paragraph provenance, rather than WebQSP/CWQ/MetaQA (Freebase and synthetic). Where provenance is genuinely absent, drop the passage framing and instead define context as the gold-path neighbourhood, clearly separated from retrieval-time subgraph context. Report transfer to the deeper-hop split in this provenance-bearing setting.",
+  "why_differs": "Every closest work is evaluated on Freebase/synthetic KGs where source passages do not exist; this modification changes the setting so that the mechanism's precondition holds, and explicitly separates passage provenance from retrieval-time graph neighbourhood (which is what DrKGC and GNN-RAG already do).",
+  "technical_mechanism": "Select or build a corpus where each question has supporting paragraphs and a KG whose triples are extracted from those paragraphs with sentence-level provenance. Attach to each target triple/path the set of triples whose provenance sentence/paragraph is shared. Guarantee answer containment per question and publish hop-stratified splits for the transfer protocol.",
+  "expected_benefit": "Removes the fatal feasibility objection: currently the mechanism cannot be evaluated against the strongest published KGQA baselines because those benchmarks have no source passages. A text-grounded setting makes passage context real and the comparison meaningful, and it makes the isolated-vs-context contrast non-trivial.",
+  "potential_novelty": "Hedged: the novelty is a resource plus a controlled study on it. If a suitable provenance-bearing KGQA benchmark already exists, novelty collapses to the study; a targeted search is required first.",
+  "implementation_difficulty": "high",
+  "implementation_difficulty_basis": "Data construction/curation (aligning triples to passages, ensuring coverage and answer containment) plus baseline adaptation is substantial engineering with no off-the-shelf artefact in the retrieved set.",
+  "experimental_difficulty": "high",
+  "experimental_difficulty_basis": "Requires constructing a multi-hop QA benchmark over a provenance-bearing KG with hop-stratified splits, and re-implementing or adapting strong baselines to that setting; published numbers will not transfer directly.",
+  "main_risk": "The constructed benchmark may be criticised as bespoke and non-comparable, and automatic triple-to-passage alignment may be noisy, reintroducing the very precision problem the design is meant to control.",
+  "required_baselines": [
+    "Isolated-triple training on the provenance-bearing KG",
+    "Retrieval-context LLM (GNN-RAG-style) on the same KG",
+    "No-context LLM reference"
+  ],
+  "related_paper_ids": [
+    "arxiv:2101.03737",
+    "doi:10.18653/v1/2025.findings-acl.856"
+  ],
+  "addresses_gap_ids": [
+    "G001",
+    "G003"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:28:13.506267Z"
+}

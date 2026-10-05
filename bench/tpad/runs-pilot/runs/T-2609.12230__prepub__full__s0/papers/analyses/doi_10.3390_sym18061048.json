@@ -1,0 +1,41 @@
+{
+  "paper_id": "doi:10.3390/sym18061048",
+  "relevance_tier": "high",
+  "problem": "Existing PLM+GNN methods for multi-hop QA suffer from low computational efficiency, insufficient deep semantic fusion, and imbalanced modeling of heterogeneous relations.",
+  "method": "Proposes Dynamic Hierarchical Adaptive Graph Convolution Network (DHACNet) with Dynamic Sparse Activation (DSA) for efficiency and interpretability, Hierarchical Feature Fusion (HFF) for deep semantic fusion, Adaptive Graph Convolution (AGC) for heterogeneous relation modeling, and hierarchical graph pooling for robust graph-level representation.",
+  "key_assumptions": [
+    "Dynamic sparse activation improves computational efficiency and interpretability.",
+    "Hierarchical feature fusion enhances deep semantic extraction.",
+    "Adaptive graph convolution improves modeling of heterogeneous relations."
+  ],
+  "main_contribution": "DHACNet that integrates DSA, HFF, AGC, and hierarchical graph pooling to achieve symmetry-aware reasoning and robust knowledge integration for multi-hop KGQA.",
+  "datasets": [
+    "not stated in abstract"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"The experimental results show that our proposed model maintains the symmetry between the text representation and graph representation through adaptive layered fusion and relational perceptual graph propagation.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "The paper focuses on adaptive graph convolutional networks with dynamic sparse activation and feature fusion, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:03:50.738363Z"
+}

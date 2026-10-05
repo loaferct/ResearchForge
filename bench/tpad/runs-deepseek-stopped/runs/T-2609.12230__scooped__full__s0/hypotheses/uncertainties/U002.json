@@ -1,0 +1,43 @@
+{
+  "id": "U002",
+  "question": "Is the reported gain of context-augmented (CG-grounded) supervision over KG-only supervision actually caused by the presence of surrounding context, or merely by exposing the model to more tokens/examples per target triple?",
+  "description": "Attaching supporting triples increases the length and information content of each training instance. Without a matched-token/matched-example control (e.g., padding KG-only instances with unrelated or random triples from other passages), a CG-over-KG accuracy gap cannot be attributed to passage-local context specifically. This is the core mechanism claim, so it is the experiment that would most sharply distinguish a real effect from a training-signal-size artifact.",
+  "category": "confounder",
+  "importance": "high",
+  "status": "unresolved",
+  "next_action": "VERIFY",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "SEARCH",
+    "COMPARE"
+  ],
+  "confidence": 0.7,
+  "confidence_basis": "Verified quotes show the authors' control claim and the fixed maximum sequence length, and support the inference that token volume is not equalized; the paper does not report per-regime QA item counts or token counts in the searchable text, so the gap is documented but its size is unknown.",
+  "rationale": "The idea's central hypothesis (H1) is stated as a comparison between supervision regimes, so the leading alternative explanation for any positive result is supervision-volume rather than context relevance; identifying it now determines the control arms the experiment plan must include.",
+  "resolution": "Sharpened by comparing mechanisms. The closest work states that backbone, fine-tuning configuration, LoRA setup, optimizer, sequence length, batch size, epochs and learning-rate schedule are all held fixed and that 'the only difference between KGModel and CGModel is the type of QA supervision used during training' - but maximum sequence length is a truncation cap, not a fixed token count, so CG-grounded instances still carry more supervision tokens per target triple at equal example counts. The paper reports neither per-regime QA item counts nor token counts in the searchable text. Comparable works do not close the gap: the dynamic-triple KBVQA work varies context quantity by design without a token-matched control, the subgraph-size study measures a volume effect only at inference for an embedding reasoner (where more volume hurt performance), and the structure-injection and KG-text-alignment works report no supervision-volume ablation. The difference from the idea remains implementation-level, but causal attribution is unestablished and remains the target of experiment E001.",
+  "paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2406.09994",
+    "arxiv:2202.13296",
+    "arxiv:2509.06531"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2406.09994",
+    "arxiv:2202.13296"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C007",
+    "C005",
+    "C018",
+    "C019",
+    "C020"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 2,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T05:02:01.209098Z",
+  "updated_at": "2026-09-30T05:31:25.715426Z"
+}

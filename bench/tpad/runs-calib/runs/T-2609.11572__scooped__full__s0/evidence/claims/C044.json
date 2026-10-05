@@ -1,0 +1,43 @@
+{
+  "id": "C044",
+  "statement": "Assessment for U033: the ranking question cannot be settled from the literature, but the two available patterns both argue against simple redundancy. Aggregate orderings are demonstrably slice-dependent in this exact corpus style, since a hybrid that wins overall loses to BM25 on multihop queries, so a version-level slice can plausibly reorder systems that an aggregate metric ranks identically. And the one point-in-time system with published numbers achieves 1.7% temporal leakage without reaching comparable answer accuracy, showing that a temporal metric captures failures that accuracy does not. The expected pattern is therefore partial overlap rather than identity: version-level metrics should correlate with accuracy but rank at least some system pairs differently, with the discordance concentrated on non-latest-gold queries. Because no work compares version-contamination rankings with accuracy rankings directly, U033 stays open on the specifics and is now the explicit target of plan E004, revised to add a redundancy and variance-decomposition component alongside the rank-agreement test.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "improves answer accuracy from 66.7% to 78.9% over hybrid RAG while reducing temporal evidence leakage from 10.8% to 1.7% and hallucination from 17.3% to 7.9%",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.2139/ssrn.7087840",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "BM25 outperforms hybrid on multihop queries",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.2139/ssrn.7087840",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Hybrid retrieval achieves the highest overall performance",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "U033",
+    "rank agreement",
+    "redundancy",
+    "contingent"
+  ],
+  "recorded_at": "2026-09-30T04:43:49.517667Z"
+}

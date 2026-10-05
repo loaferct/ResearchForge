@@ -1,0 +1,38 @@
+{
+  "id": "M002",
+  "title": "Heuristic Noise Filtering + RL Lower-Hop Transfer",
+  "description": "Replace the adaptive repair loop that detects one-hop failures and generates corrective examples with a heuristic filtering step: triples extracted from the source passage are retained only if their extraction confidence exceeds a threshold; the filtered context subgraph is then used for training enrichment, followed by the RL lower-hop transfer stage.",
+  "why_differs": "The original adaptive repair loop iteratively detects one-hop failures, generates corrective examples, and refines the model. This modification substitutes that iterative, model-based correction with a static confidence‑based filter, reducing complexity while still attempting to prune irrelevant context before training enrichment and RL transfer.",
+  "technical_mechanism": "1. For each training triple, retrieve the source passage and extract candidate triples with confidence scores from an IE pipeline. 2. Keep only triples with confidence ≥ τ (e.g., τ=0.8) to form the local context subgraph. 3. Form enriched training instances by concatenating target triple(s) with filtered context subgraph triples. 4. Train a model on these enriched instances. 5. Apply reinforcement learning lower-hop transfer: sample lower‑hop QA instances from the training set, compute rewards based on QA accuracy, and optimize the policy using a policy gradient method (e.g., REINFORCE).",
+  "expected_benefit": "Cuts down the iterative loop expense, reduces risk of error propagation from the repair loop, and leverages established RL lower‑hop transfer for potential gains.",
+  "potential_novelty": "Combines a simple confidence‑based context filter with RL lower‑hop transfer, a combination not explicitly explored in prior work.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Requires IE confidence scoring, thresholding, and implementation of an RL lower‑hop transfer stage (policy gradient), which is more involved than a plain enrichment baseline but less complex than a failure‑driven generative repair loop.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Experiments must compare: (i) enrichment with heuristic filter + RL transfer, (ii) enrichment without filter + RL transfer, (iii) enrichment only, (iv) baseline. This adds ablation steps but remains feasible with standard QA evaluation.",
+  "main_risk": "Heuristic filtering may discard useful low‑confidence triples or retain noisy high‑confidence false positives; the RL stage may still be unstable or require careful hyperparameter tuning.",
+  "required_baselines": [
+    "Baseline: isolated triples",
+    "Baseline: enriched triples with heuristic filter (no RL)",
+    "Baseline: enriched triples + RL transfer (no filter)",
+    "Baseline: enriched triples + RL transfer + heuristic filter (full)"
+  ],
+  "related_paper_ids": [
+    "arxiv:2608.13588",
+    "arxiv:2507.17365",
+    "arxiv:2604.26176",
+    "doi:10.1016/j.eswa.2024.124652",
+    "doi:10.1016/j.ins.2022.11.042",
+    "doi:10.26615/978-954-452-102-8-014",
+    "arxiv:2101.03737",
+    "arxiv:2305.13691",
+    "arxiv:2312.15194",
+    "arxiv:2501.16350",
+    "arxiv:2502.14245"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T09:29:54.278235Z"
+}

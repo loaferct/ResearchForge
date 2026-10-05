@@ -1,0 +1,28 @@
+{
+  "id": "M002",
+  "title": "Confidence‑weighted adaptive repair loop",
+  "description": "Replace the binary failure detection in the adaptive repair loop with a confidence‑weighted approach: for each training triple, compute the model’s prediction confidence (e.g., softmax probability of the correct answer); if confidence falls below a threshold, generate a corrected triple and add it to the training batch with a weight proportional to the confidence deficit, allowing the model to learn from near‑misses without discarding potentially useful examples.",
+  "why_differs": "Existing repair or correction mechanisms in KGQA (e.g., dynamic completion in doi:10.1016/j.ipm.2023.103283, anticipation embedding in doi:10.1016/j.ins.2022.11.042) either fill missing KG information or predict future rewards, but none weight corrective examples by the model’s own confidence to create a smooth, graded repair signal.",
+  "technical_mechanism": "During training, for each triple (h, r, t) obtain the model’s predicted score for the correct tail entity; define weight w = max(0, τ − confidence) where τ is a confidence threshold; sample corrected triples from a noise‑distribution or from a knowledge‑graph completion model and include them in the loss with weight w.",
+  "expected_benefit": "More graceful handling of uncertainty, reducing the risk of reinforcing incorrect corrections and providing a denser gradient signal for the repair loop.",
+  "potential_novelty": "Weighting corrective examples by prediction confidence is a novel twist on adaptive repair loops in the KGQA literature.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Requires modification of the training loop to compute confidence weights and sample weighted corrections; still uses standard back‑propagation.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Needs ablation studies over confidence thresholds and weighting schemes, but uses existing evaluation pipelines.",
+  "main_risk": "If the confidence threshold is poorly chosen, the loop may either ignore real failures or inject too much noise.",
+  "required_baselines": [
+    "triple‑only baseline",
+    "adaptive repair loop with binary failure detection"
+  ],
+  "related_paper_ids": [
+    "doi:10.1016/j.ipm.2023.103283",
+    "doi:10.1016/j.ins.2022.11.042",
+    "arxiv:2601.01195"
+  ],
+  "addresses_gap_ids": [
+    "G002"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T08:00:13.646354Z"
+}

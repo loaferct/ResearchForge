@@ -1,0 +1,146 @@
+{
+  "field_name": "Multi-hop Question Answering over Knowledge Graphs",
+  "categories": [
+    {
+      "name": "Stepwise Reasoning and Decomposition",
+      "parent": null,
+      "description": "Methods that decompose multi-hop questions into intermediate sub-questions with grounding on supporting facts for each reasoning step",
+      "paper_ids": [
+        "arxiv:2208.10297"
+      ]
+    },
+    {
+      "name": "Iterative Retrieval-Augmented Generation",
+      "parent": null,
+      "description": "RAG-based approaches that perform multiple retrieval iterations with summarization or planning to manage context and avoid over-planning",
+      "paper_ids": [
+        "arxiv:2407.13101",
+        "arxiv:2603.23512"
+      ]
+    },
+    {
+      "name": "Agentic Search and Planning",
+      "parent": null,
+      "description": "Systems that use autonomous agents to dynamically plan and execute retrieval strategies over knowledge graphs",
+      "paper_ids": [
+        "arxiv:2605.16598"
+      ]
+    },
+    {
+      "name": "Knowledge Rewriting and Reflection",
+      "parent": null,
+      "description": "Frameworks that use reflection loops and structured knowledge operations to rewrite and refine knowledge representations for better reasoning",
+      "paper_ids": [
+        "doi:10.1109/iccc68654.2025.11437995"
+      ]
+    },
+    {
+      "name": "Closed-loop Verification Systems",
+      "parent": null,
+      "description": "Methods that incorporate backward consistency verification and unified memory to validate reasoning paths and prevent early commitment to incorrect paths",
+      "paper_ids": [
+        "doi:10.1117/12.3120384"
+      ]
+    },
+    {
+      "name": "Answer Post-processing and Correction",
+      "parent": null,
+      "description": "Techniques that detect and correct problematic answers (e.g., off-topic, factual errors) through self-correction mechanisms",
+      "paper_ids": [
+        "arxiv:2403.12393"
+      ]
+    },
+    {
+      "name": "Training Data Enrichment",
+      "parent": null,
+      "description": "Approaches that enhance supervision signals by enriching training triples with contextual information from source passages",
+      "paper_ids": []
+    },
+    {
+      "name": "Subgraph Retrieval Methods",
+      "parent": null,
+      "description": "Techniques focused on retrieving relevant subgraphs from knowledge graphs to reduce reasoning space and improve interpretability",
+      "paper_ids": [
+        "arxiv:2202.13296"
+      ]
+    }
+  ],
+  "idea_position": "Training Data Enrichment",
+  "dominant_approaches": [
+    "Iterative Retrieval-Augmented Generation",
+    "Agentic Search and Planning",
+    "Stepwise Reasoning and Decomposition"
+  ],
+  "common_assumptions": [
+    "Grounding on supporting facts or context improves reasoning accuracy",
+    "Iterative or stepwise processes allow for error correction and refinement",
+    "Unified models or joint optimization improve performance across reasoning steps",
+    "Efficiency metrics (token usage, computational cost) are important for practical deployment"
+  ],
+  "common_datasets": [
+    "HotpotQA",
+    "2WikiMultiHopQA",
+    "MuSiQue"
+  ],
+  "common_benchmarks": [
+    "HotpotQA distractor setting",
+    "2WikiMultiHopQA",
+    "LongBench"
+  ],
+  "common_metrics": [
+    "Exact Match (EM)",
+    "F1 score",
+    "Accuracy",
+    "Token usage",
+    "Supporting fact prediction (EM, F1)"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Exposure bias between training and inference when predicted intermediate states deviate from ground truth",
+      "paper_ids": [
+        "arxiv:2208.10297"
+      ]
+    },
+    {
+      "description": "Context overload from multiple retrieval rounds or long contexts",
+      "paper_ids": [
+        "arxiv:2407.13101"
+      ]
+    },
+    {
+      "description": "Need for annotated evidence or decomposition supervision for training",
+      "paper_ids": [
+        "arxiv:2208.10297",
+        "arxiv:2403.12393"
+      ]
+    },
+    {
+      "description": "High computational costs from knowledge graph construction or iterative processing",
+      "paper_ids": [
+        "arxiv:2605.16598",
+        "doi:10.1117/12.3120384"
+      ]
+    },
+    {
+      "description": "Limited generalization across different question types or domains",
+      "paper_ids": [
+        "doi:10.5753/jbcs.2025.5801"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Combining local context subgraph enrichment with adaptive repair loops for training data improvement",
+    "Integrating reinforcement learning optimization with context-aware training for transfer to deeper hops",
+    "Using closed-loop verification mechanisms in training data generation processes"
+  ],
+  "contradictions": [
+    {
+      "description": "Whether iterative retrieval improves or hinders interpretability - some argue it reduces interpretability while others claim stepwise reasoning enhances it",
+      "paper_ids": [
+        "arxiv:2407.13101",
+        "arxiv:2208.10297"
+      ]
+    }
+  ],
+  "recorded_at": "2026-09-30T06:10:14.869452Z"
+}

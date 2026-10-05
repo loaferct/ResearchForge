@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2507.16403",
+  "relevance_tier": "high",
+  "problem": "Need for a Visual Question Answering (VQA) benchmark that incorporates structured encyclopedic knowledge to evaluate multi-hop reasoning capabilities of models.",
+  "method": "Proposes ReasonVQA dataset, automatically integrated with structured encyclopedic knowledge via a low-cost framework capable of generating complex multi-hop questions. Evaluates state-of-the-art VQA models on ReasonVQA to demonstrate its challenge and potential for benchmarking.",
+  "key_assumptions": [
+    "Integrating structured encyclopedic knowledge enables effective multi-hop visual reasoning evaluation.",
+    "The low-cost framework can scale to produce large datasets."
+  ],
+  "main_contribution": "ReasonVQA dataset for VQA with structured knowledge, showing significant challenges to state-of-the-art VQA models and enabling scaling beyond existing external-knowledge VQA datasets.",
+  "datasets": [
+    "ReasonVQA dataset"
+  ],
+  "benchmarks": [
+    "Evaluation of state-of-the-art VQA models on ReasonVQA"
+  ],
+  "baselines": [
+    "State-of-the-art VQA models (unspecified)"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"ReasonVQA poses significant challenges to state-of-the-art VQA models.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.25,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "ReasonVQA focuses on visual question answering with structured knowledge, while the idea targets knowledge graph-based question answering via context subgraph enrichment, adaptive repair loops, and RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:52:29.713616Z"
+}

@@ -1,0 +1,27 @@
+{
+  "id": "M001",
+  "title": "Enhanced temporal relevance function with interval algebra",
+  "description": "Extend the temporal relevance scoring to incorporate Allen's interval algebra relations (e.g., during, overlaps, starts) between query timestamp and document version effective intervals, allowing modeling of retroactive amendments and temporal constraints.",
+  "why_differs": "Closest work (TimelyRAG) uses a simple interpretable temporal distance function; this modification adds logical temporal relations to capture complex temporal scenarios.",
+  "technical_mechanism": "For each candidate passage, compute temporal relevance score as a weighted sum of distance-based score and logic-based score (e.g., higher score for 'during' relation, lower for 'before'/'after').",
+  "expected_benefit": "Better handling of complex temporal scenarios like retroactive laws, improving retrieval correctness.",
+  "potential_novelty": "Moderate – combines interval algebra with retrieval ranking, not commonly seen in QA.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Requires implementing temporal logic reasoning and integrating into existing reranking framework.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Need dataset with temporal logic annotations or synthetic retroactive amendments.",
+  "main_risk": "Increased complexity may not yield gains if temporal logic is not prevalent in benchmark.",
+  "required_baselines": [
+    "BM25",
+    "BGE-M3",
+    "TimelyRAG baseline"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.11572"
+  ],
+  "addresses_gap_ids": [
+    "G002"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T10:08:14.391387Z"
+}

@@ -1,0 +1,43 @@
+{
+  "id": "C047",
+  "statement": "Prior work reports the two kinds of measured outcome side by side rather than collapsing them: a point-in-time system headlines answer accuracy (66.7% to 78.9%) while separately reporting temporal evidence leakage (10.8% to 1.7%), a legal benchmark is described as encoding temporal validity in its labels, and legal analysis frames the characteristic failure as citing documents anachronistically - a property of the retrieved citation, not only of the generated answer.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "improves answer accuracy from 66.7% to 78.9% over hybrid RAG while reducing temporal evidence leakage from 10.8% to 1.7% and hallucination from 17.3% to 7.9%",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2608.21409",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "a new benchmark that encodes temporal validity",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "RAG-augmented legal AI tends instead to cite real documents in ways that are anachronistic",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "scoring",
+    "citation validity",
+    "answer accuracy",
+    "precedent"
+  ],
+  "recorded_at": "2026-09-30T04:44:38.841006Z"
+}

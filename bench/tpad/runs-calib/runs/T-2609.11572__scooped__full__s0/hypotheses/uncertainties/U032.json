@@ -1,0 +1,36 @@
+{
+  "id": "U032",
+  "question": "Is temporal evidence leakage (evidence not yet public at the as-of date) a valid prior for version contamination (retrieval of a superseded or not-yet-in-force near-duplicate clause), or do the two metrics measure different failure modes with different base rates?",
+  "description": "The 10.8% baseline is temporal evidence leakage - retrieved evidence that was not yet public at the as-of date - whereas the proposed primary metric is version contamination - retrieved passages not in force at the target date, including superseded and not-yet-in-force clauses with near-duplicate wording. The two differ in both direction (too-new vs wrong-version) and in whether near-duplicates compete. Using 10.8% as a prior for version contamination may over- or understate the legal case, so the stop/go threshold should not be derived from it uncritically.",
+  "category": "validity",
+  "importance": "medium",
+  "status": "resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "COMPARE",
+    "PLAN_EXPERIMENT",
+    "SEARCH"
+  ],
+  "confidence": 0.75,
+  "confidence_basis": "Definitional analysis grounded in verified statements of how the financial system enforces an information boundary and in the legal distinction between valid time and transaction time. The remaining uncertainty is empirical (actual base rates on a legal corpus), which the recorded plan measures.",
+  "rationale": "The stop/go threshold in the Stage-0 plan risks being calibrated on an incomparable number if the metrics measure different failures.",
+  "resolution": "Resolved as a definitional matter, with the base-rate question delegated to measurement. Leakage is a transaction-time, availability violation - violated only by evidence too new to have been public - whereas version contamination is a valid-time, version-selection error, violated by superseded versions (too old) as well as not-yet-in-force versions (too new). The superseded direction, which is the distinctive failure in amended-clause retrieval, has no counterpart in the leakage metric, and leakage is defined over availability of an item rather than over competition between near-duplicate versions of the same clause. The 10.8% financial leakage rate is therefore not a valid prior for the legal contamination rate and must not calibrate the Stage-0 threshold; the threshold should come from the oracle-gate headroom or an independently measured legal baseline. Plan E005 measures both metrics jointly to quantify the divergence.",
+  "paper_ids": [
+    "doi:10.3390/sym18091498",
+    "doi:10.2139/ssrn.7174868",
+    "arxiv:2606.09724",
+    "arxiv:2608.21409"
+  ],
+  "supporting_paper_ids": [
+    "doi:10.3390/sym18091498",
+    "arxiv:2606.09724"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T04:40:41.059872Z",
+  "updated_at": "2026-09-30T04:41:40.812009Z"
+}

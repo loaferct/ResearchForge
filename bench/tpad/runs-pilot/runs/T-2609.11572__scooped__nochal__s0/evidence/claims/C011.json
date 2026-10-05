@@ -1,0 +1,44 @@
+{
+  "id": "C011",
+  "statement": "TempRALM's evaluation shows that temporal augmentation improves performance most when query and passage time periods don't match (e.g., different years), but within the valid temporal window (passages at or before query time), the inverse time difference scoring still favors more recent passages, creating a potential confound where improvements could stem from recency bias rather than genuine temporal relevance for time-specific queries.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 5",
+      "quote": "Figure 4: Questions asking about the winner, runner-up, finalists and score asked at different timestamps, where the right answer corresponds to the most recent tennis match that occurred before the query timestamp (denoting passages that refer to future information relative to the time of the event specified in the query), to completely eliminate these passages from being considered while ranking the𝑡𝑜𝑝𝑘 . We re-write the retrieval computation as follows: 𝑇𝑒𝑚𝑝𝑅𝑒𝑡 𝑡(𝑞,𝑑,𝑞𝑡,𝑑𝑡 ) = ( 𝑠(𝑞,𝑑)+ 𝜏(𝑞𝑡,𝑑𝑡) if𝑞𝑡≥𝑑𝑡 −∞, otherwise",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score)",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 6",
+      "quote": "However, when the year in the timestamp of the query does not match that in the text passage (TPQ-2020 experiments), TempRALM outperforms unmodified Atlas by 49% in the 32 few-shot learning experiment, 67% in the 64 few-shot learning experiment, and 74% in the 128 few-shot learning experiment.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "TempRALM",
+    "temporal scoring",
+    "recency bias",
+    "evaluation confounder",
+    "time-specific queries"
+  ],
+  "recorded_at": "2026-09-30T10:16:47.436024Z"
+}

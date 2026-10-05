@@ -1,0 +1,44 @@
+{
+  "id": "C037",
+  "statement": "Temporal evidence leakage and version contamination are different failure modes and their base rates are not interchangeable. Leakage is an availability, or transaction-time, violation: it asks whether an item was public at the as-of date, so it is violated only by evidence that is too new and is never violated by old evidence. Version contamination is a valid-time error about which version governs: it is violated both by superseded versions (too old) and by not-yet-in-force versions (too new). The two overlap only in the not-yet-in-force direction; the superseded direction that dominates amended-clause retrieval has no counterpart in the leakage metric, and leakage is defined over evidence availability rather than over competition between near-duplicate versions of the same clause. Therefore the 10.8% leakage figure cannot calibrate a version-contamination threshold, and the Stage-0 stop/go threshold must be justified by the oracle-gate headroom or by an independently measured baseline rather than by that prior.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "a disclosure may support a query only after becoming public",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "enforces the information boundary defined by U.S. Securities and Exchange Commission (SEC) filing availability",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 6",
+      "quote": "from transaction time, when a norm was recorded in the official system",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "metric comparison",
+    "valid time",
+    "transaction time",
+    "leakage",
+    "threshold calibration"
+  ],
+  "recorded_at": "2026-09-30T04:41:38.037286Z"
+}

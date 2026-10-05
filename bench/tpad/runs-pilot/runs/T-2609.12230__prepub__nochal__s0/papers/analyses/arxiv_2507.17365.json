@@ -1,0 +1,52 @@
+{
+  "paper_id": "arxiv:2507.17365",
+  "relevance_tier": "high",
+  "problem": "Multi-step agentic retrieval systems based on LLMs are limited by factually inconsistent intermediate queries and inefficient search trajectories, causing reasoning deviations and redundant computations.",
+  "method": "DynaSearcher: leverages knowledge graphs as external structured knowledge to guide the search process by explicitly modeling entity relationships, ensuring factual consistency in intermediate queries and mitigating biases from irrelevant information; employs a multi-reward RL framework for fine-grained control over training objectives such as retrieval accuracy, efficiency, and response quality.",
+  "key_assumptions": [
+    "Knowledge graphs can effectively guide search and ensure factual consistency of intermediate queries.",
+    "Multi-reward RL can balance retrieval accuracy, efficiency, and response quality to produce high-quality intermediate queries and final answers."
+  ],
+  "main_contribution": "Achieves state-of-the-art answer accuracy on six multi-hop QA datasets, exhibits strong generalization and robustness across diverse retrieval environments and larger-scale models.",
+  "datasets": [
+    "HotpotQA",
+    "2WikiMultiHopQA",
+    "Musique",
+    "Bamboogle",
+    "MoreHopQA",
+    "Frames"
+  ],
+  "benchmarks": [
+    "HotpotQA",
+    "2WikiMultiHopQA",
+    "Musique",
+    "Bamboogle",
+    "MoreHopQA",
+    "Frames"
+  ],
+  "baselines": [
+    "State-of-the-art LLMs (DeepSeek-R1-0528, Qwen3-235B-A22B, GPT-4.1-0414, o4-mini-0416, Gemini-2.5-Pro-0325), advanced RAG methods, RL-based agentic search models"
+  ],
+  "metrics": [
+    "F1 score",
+    "Cover Exact Match (CEM)",
+    "Exact Match (EM)"
+  ],
+  "results": "DynaSearcher achieves significant performance improvements across multiple benchmarks under all evaluation metrics; e.g., on in-domain datasets it achieves F1 ~66.1, CEM ~62.8, EM ~52.0 (approximate from table); on out-of-domain datasets F1 ~71.3, CEM ~63.1, EM ~57.4.",
+  "limitations": [
+    "Not explicitly stated in the paper."
+  ],
+  "future_work": [
+    "Not explicitly stated in the paper."
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "Both use reinforcement learning and knowledge graphs to improve reasoning: DynaSearcher employs KG-guided search with multi-reward RL at inference time, while the idea enriches training triples with local context subgraphs and uses an adaptive repair loop for one-hop failures followed by RL lower-hop transfer. Overlap in using RL and KG; differences in focus (search agent training vs training data enrichment) and stage (inference vs training).",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T08:20:19.985524Z"
+}

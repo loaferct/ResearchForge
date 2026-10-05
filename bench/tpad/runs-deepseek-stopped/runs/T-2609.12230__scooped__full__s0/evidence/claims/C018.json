@@ -1,0 +1,24 @@
+{
+  "id": "C018",
+  "statement": "The closest work explicitly claims a fair KGModel-vs-CGModel comparison by holding backbone, fine-tuning configuration, LoRA setup, optimizer, sequence length, batch size, epochs and learning-rate schedule fixed, and asserts that the only difference is the type of QA supervision used in training.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 14",
+      "quote": "For a fair comparison, all four models are initialized from the same base model and trained using the same fine-tuning configuration, LoRA setup, optimizer, sequence length, batch size, number of epochs, and learning-rate schedule. The only difference between KGModel and CGModel is the type of QA supervision used during training.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "U002",
+    "budget",
+    "comparison"
+  ],
+  "recorded_at": "2026-09-30T05:29:59.866268Z"
+}

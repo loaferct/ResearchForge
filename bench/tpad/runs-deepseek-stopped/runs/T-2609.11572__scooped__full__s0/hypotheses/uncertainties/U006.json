@@ -1,0 +1,31 @@
+{
+  "id": "U006",
+  "question": "Can a benchmark of overlapping regulatory revisions with time-stamped queries be built whose labels are valid evidence about real retrieval behaviour, given that existing temporal legal QA sets are LLM-synthesized (with expert validation) rather than drawn from real time-stamped user queries?",
+  "description": "The only retrieved resource with version-aware statutory questions (arxiv:2605.23497) uses LLM-synthesized questions, subsequently expert-validated; TIQ is fully automatically generated. A benchmark of overlapping regulatory revisions with time-stamped queries would likely also need to be synthesized. It is unclear whether synthetic time-sensitive queries support valid claims about retrieval-ranking behaviour on real amended corpora, or whether they risk encoding the generator's own recency assumptions.",
+  "category": "evaluation",
+  "importance": "medium",
+  "status": "open",
+  "next_action": "INVESTIGATE_GAP",
+  "possible_actions": [
+    "INVESTIGATE_GAP",
+    "SEARCH",
+    "VERIFY"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Construct validity of the planned benchmark is a precondition for any claim that a soft temporal score improves answer accuracy; if synthetic queries encode recency assumptions, the main result could be circular.",
+  "resolution": "",
+  "paper_ids": [],
+  "supporting_paper_ids": [
+    "arxiv:2605.23497",
+    "doi:10.1145/3589335.3651895"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "SYNTHESIZE",
+  "created_at": "2026-09-30T05:13:08.126157Z",
+  "updated_at": "2026-09-30T05:13:08.126616Z"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "arxiv:2305.09025",
+  "title": "Soft Prompt Decoding for Multilingual Dense Retrieval",
+  "authors": [
+    "Zhiqi Huang",
+    "Hansi Zeng",
+    "Hamed Zamani",
+    "James Allan"
+  ],
+  "year": 2023,
+  "published": "2023-07-18",
+  "venue": null,
+  "url": "https://doi.org/10.1145/3539618.3591769",
+  "pdf_url": "https://dl.acm.org/doi/pdf/10.1145/3539618.3591769",
+  "abstract": "In this work, we explore a Multilingual Information Retrieval (MLIR) task, where the collection includes documents in multiple languages. We demonstrate that applying state-of-the-art approaches developed for cross-lingual information retrieval to MLIR tasks leads to sub-optimal performance. This is due to the heterogeneous and imbalanced nature of multilingual collections -- some languages are better represented in the collection and some benefit from large-scale training data. To address this issue, we present KD-SPD, a novel soft prompt decoding approach for MLIR that implicitly \"translates'' the representation of documents in different languages into the same embedding space. To address the challenges of data scarcity and imbalance, we introduce a knowledge distillation strategy. The teacher model is trained on rich English retrieval data, and by leveraging bi-text data, our distillation framework transfers its retrieval knowledge to the multilingual document encoder. Therefore, our approach does not require any multilingual retrieval training data. Extensive experiments on three MLIR datasets with a total of 15 languages demonstrate that KD-SPD significantly outperforms competitive baselines in all cases. We conduct extensive analyses to show that our method has less language bias and better zero-shot transfer ability towards new languages.",
+  "doi": "10.1145/3539618.3591769",
+  "arxiv_id": "2305.09025",
+  "openalex_id": "W4376988578",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 10,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T04:32:32.214755Z",
+  "relevance": 0.1136,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "retrieval-agnostic temporal re-ranking framework any retriever time-aware reranker"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

@@ -1,0 +1,36 @@
+{
+  "id": "doi:10.3390/make7030074",
+  "title": "SG-RAG MOT: SubGraph Retrieval Augmented Generation with Merging and Ordering Triplets for Knowledge Graph Multi-Hop Question Answering",
+  "authors": [
+    "Ahmmad O. M. Saleh",
+    "Gokhan Tur",
+    "Y. Saygín"
+  ],
+  "year": 2025,
+  "published": "2025-05-26",
+  "venue": "Machine Learning and Knowledge Extraction",
+  "url": "https://www.semanticscholar.org/paper/092f905ad69b69867796f2336ac63200300583fd",
+  "pdf_url": "https://www.mdpi.com/2504-4990/7/3/74/pdf?version=1754040155",
+  "abstract": "Large language models (LLMs) often tend to hallucinate, especially in domain-specific tasks and tasks that require reasoning. Previously, we introduced SubGraph Retrieval Augmented Generation (SG-RAG) as a novel Graph RAG method for multi-hop question answering. SG-RAG leverages Cypher queries to search a given knowledge graph and retrieve the subgraph necessary to answer the question. The results from our previous work showed the higher performance of our method compared to the traditional Retrieval Augmented Generation (RAG). In this work, we further enhanced SG-RAG by proposing an additional step called Merging and Ordering Triplets (MOT). The new MOT step seeks to decrease the redundancy in the retrieved triplets by applying hierarchical merging to the retrieved subgraphs. Moreover, it provides an ordering among the triplets using the Breadth-First Search (BFS) traversal algorithm. We conducted experiments on the MetaQA benchmark, which was proposed for multi-hop question-answering in the movies domain. Our experiments showed that SG-RAG MOT provided more accurate answers than Chain-of-Thought and Graph Chain-of-Thought. We also found that merging (up to a certain point) highly overlapping subgraphs and defining an order among the triplets helped the LLM to generate more precise answers.",
+  "doi": "10.3390/make7030074",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "092f905ad69b69867796f2336ac63200300583fd",
+  "source": "semantic_scholar",
+  "sources": [
+    "crossref",
+    "semantic_scholar"
+  ],
+  "citation_count": 5,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T06:25:49.425391Z",
+  "relevance": 0.75,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering knowledge graph context subgraph training"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

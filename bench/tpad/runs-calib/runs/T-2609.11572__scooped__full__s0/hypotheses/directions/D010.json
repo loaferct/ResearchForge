@@ -1,0 +1,31 @@
+{
+  "id": "D010",
+  "direction": "Replace the original mechanism-efficacy question with a measurement question. The study now asks what version-level point-in-time retrieval failure rates existing retrievers exhibit on clause-versioned amended legal text, and whether a valid-time gate reduces version contamination where the published recency-decay hybrid does not. Drop the temporal relevance component, the retrieval-agnostic framing and the temporal benchmark as contribution claims; keep them as adopted components and as a reusable artifact. State in the write-up that the metric is conceptually prescribed by prior work and that the contribution is the implemented benchmark, the per-retriever evidence and the possible negative result that decay suffices.",
+  "hypothesis": "Existing retrievers, including the published recency-decay hybrid, exhibit measurable version-level point-in-time failures on amended legal text whose successive clause versions are near-duplicates, and the failure rate is highest on queries whose in-force version is not the latest; valid-time gating reduces those failures where decay does not.",
+  "rationale": "Every comparison in this phase converges: the mechanism is implemented elsewhere in decay form, validity-aware filtering is prescribed and partially implemented, the legal-retrieval review states the required test criterion yet reports no empirical comparison, and a leading legal benchmark documents that in-force status of retrieved provisions is not assessed. The only claim not contradicted by this evidence is a measured one, so the research question must change from whether the component helps to what the failure rates are and whether decay suffices. This deserves investigation next because it is the smallest claim the evidence supports, it is falsifiable in both directions, and the negative branch is itself a contribution about where temporal handling belongs in legal RAG.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": "D009",
+  "research_question": "What version-level point-in-time retrieval failure rates (selection of superseded or not-yet-in-force clause versions) do sparse, dense and hybrid retrievers - including the published lexical+dense+recency-decay hybrid - exhibit on continuously amended legal text with near-duplicate successive clause versions, and does valid-time (as-of) gating reduce those failures where recency decay does not?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "arxiv:2606.09724",
+    "arxiv:2608.21409",
+    "doi:10.3390/computers15080471",
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.3390/sym18091498",
+    "doi:10.2139/ssrn.7087840",
+    "arxiv:2109.06157"
+  ],
+  "uncertainty_ids": [
+    "U009",
+    "U001",
+    "U005",
+    "U008",
+    "U021",
+    "U015",
+    "U027"
+  ],
+  "recorded_at": "2026-09-30T04:39:42.377506Z"
+}

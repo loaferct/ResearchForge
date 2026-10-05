@@ -1,0 +1,43 @@
+{
+  "id": "arxiv:2208.06501",
+  "title": "ForecastTKGQuestions: A Benchmark for Temporal Question Answering and Forecasting over Temporal Knowledge Graphs",
+  "authors": [
+    "Zifeng Ding",
+    "Zongyue Li",
+    "Ruoxia Qi",
+    "Jingpei Wu",
+    "Bailan He",
+    "Yunpu Ma",
+    "Zhao Meng",
+    "Shuo Chen",
+    "Ruotong Liao",
+    "Zhen Han",
+    "Volker Tresp"
+  ],
+  "year": 2022,
+  "published": "2022-08-12",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2208.06501",
+  "pdf_url": "https://arxiv.org/pdf/2208.06501v2",
+  "abstract": "Question answering over temporal knowledge graphs (TKGQA) has recently found increasing interest. TKGQA requires temporal reasoning techniques to extract the relevant information from temporal knowledge bases. The only existing TKGQA dataset, i.e., CronQuestions, consists of temporal questions based on the facts from a fixed time period, where a temporal knowledge graph (TKG) spanning the same period can be fully used for answer inference, allowing the TKGQA models to use even the future knowledge to answer the questions based on the past facts. In real-world scenarios, however, it is also common that given the knowledge until now, we wish the TKGQA systems to answer the questions asking about the future. As humans constantly seek plans for the future, building TKGQA systems for answering such forecasting questions is important. Nevertheless, this has still been unexplored in previous research. In this paper, we propose a novel task: forecasting question answering over temporal knowledge graphs. We also propose a large-scale TKGQA benchmark dataset, i.e., ForecastTKGQuestions, for this task. It includes three types of questions, i.e., entity prediction, yes-no, and fact reasoning questions. For every forecasting question in our dataset, QA models can only have access to the TKG information before the timestamp annotated in the given question for answer inference. We find that the state-of-the-art TKGQA methods perform poorly on forecasting questions, and they are unable to answer yes-no questions and fact reasoning questions. To this end, we propose ForecastTKGQA, a TKGQA model that employs a TKG forecasting module for future inference, to answer all three types of questions. Experimental results show that ForecastTKGQA outperforms recent TKGQA methods on the entity prediction questions, and it also shows great effectiveness in answering the other two types of questions.",
+  "doi": null,
+  "arxiv_id": "2208.06501",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T09:46:17.043123Z",
+  "relevance": 0.2727,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal relevance question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

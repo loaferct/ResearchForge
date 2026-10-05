@@ -1,0 +1,39 @@
+{
+  "id": "doi:10.1162/tacl_a_00638",
+  "title": "Lost in the Middle: How Language Models Use Long Contexts",
+  "authors": [
+    "Nelson F. Liu",
+    "Kevin Lin",
+    "John Hewitt",
+    "Ashwin Paranjape",
+    "Michele Bevilacqua",
+    "Fabio Petroni",
+    "Percy Liang"
+  ],
+  "year": 2024,
+  "published": "2024-01-01",
+  "venue": "Transactions of the Association for Computational Linguistics",
+  "url": "https://doi.org/10.1162/tacl_a_00638",
+  "pdf_url": "https://direct.mit.edu/tacl/article-pdf/doi/10.1162/tacl_a_00638/2336043/tacl_a_00638.pdf",
+  "abstract": "Abstract While recent language models have the ability to take long contexts as input, relatively little is known about how well they use longer context. We analyze the performance of language models on two tasks that require identifying relevant information in their input contexts: multi-document question answering and key-value retrieval. We find that performance can degrade significantly when changing the position of relevant information, indicating that current language models do not robustly make use of information in long input contexts. In particular, we observe that performance is often highest when relevant information occurs at the beginning or end of the input context, and significantly degrades when models must access relevant information in the middle of long contexts, even for explicitly long-context models. Our analysis provides a better understanding of how language models use their input context and provides new evaluation protocols for future long-context language models.",
+  "doi": "10.1162/tacl_a_00638",
+  "arxiv_id": null,
+  "openalex_id": "W4391876619",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 1333,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T05:16:42.797274Z",
+  "relevance": 0.0962,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "fine-tuning language model on retrieved context documents improves open-domain question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

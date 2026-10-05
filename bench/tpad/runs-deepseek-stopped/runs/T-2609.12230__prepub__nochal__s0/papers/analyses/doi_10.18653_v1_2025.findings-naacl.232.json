@@ -1,0 +1,41 @@
+{
+  "paper_id": "doi:10.18653/v1/2025.findings-naacl.232",
+  "relevance_tier": "medium",
+  "problem": "Naive RAG retrieves individual documents and therefore fails on networked documents such as citation graphs, social media and knowledge graphs, especially when multi-hop reasoning over textual graphs is required.",
+  "method": "GRAG (Graph Retrieval-Augmented Generation): a divide-and-conquer strategy retrieves an optimal textual subgraph structure in linear time, then integrates the joint textual and topological information into the LLM through two complementary views, a text view and a graph view.",
+  "key_assumptions": [
+    "Multi-hop reasoning on textual graphs requires subgraph retrieval rather than document retrieval.",
+    "Presenting both a text view and a graph view lets the LLM exploit graph context.",
+    "An optimal subgraph structure can be retrieved efficiently in linear time."
+  ],
+  "main_contribution": "A textual-subgraph retrieval method with linear-time divide-and-conquer retrieval and dual text/graph views for graph-context-aware generation, substantially outperforming state-of-the-art RAG methods on multi-hop textual graph reasoning.",
+  "datasets": [
+    "Graph reasoning benchmarks (names not stated in abstract)"
+  ],
+  "benchmarks": [
+    "Graph reasoning benchmarks (names not stated in abstract)"
+  ],
+  "baselines": [
+    "Current state-of-the-art RAG methods"
+  ],
+  "metrics": [
+    "Not stated in abstract"
+  ],
+  "results": "Significantly outperforms current state-of-the-art RAG methods in scenarios requiring multi-hop reasoning on textual graphs.",
+  "limitations": [
+    "Not stated in abstract"
+  ],
+  "future_work": [
+    "Not stated in abstract"
+  ],
+  "code_availability": "Datasets and code stated as available at https://github.com/HuieL/GRAG per abstract; repository inspection unavailable in this investigation.",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "GRAG is an inference-time retrieval and prompting framework for textual graphs, with no training-regime comparison, no provenance-based supervision construction, no repair loop and no RL. The idea shares the 'give the model the surrounding subgraph' intuition but moves it into the training supervision and compares isolated vs. context regimes under matched budgets.",
+    "basis": "Problem overlap 0.6: multi-hop reasoning over graph-structured knowledge, but textual graphs rather than KGQA benchmarks. Method overlap 0.5: subgraph retrieval and joint graph+text views for the LLM is adjacent to presenting a subgraph with the query, but it is inference-time and prompt-level. Evaluation overlap 0.3: graph reasoning benchmarks, not confirmed KGQA."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:17:19.095171Z"
+}

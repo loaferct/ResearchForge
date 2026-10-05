@@ -1,0 +1,47 @@
+{
+  "paper_id": "doi:10.5753/sbbd.2025.247297",
+  "relevance_tier": "high",
+  "problem": "Efficient retrieval for question answering that combines knowledge graph triples and textual evidence to improve recall and ranking.",
+  "method": "A sub-50ms, training-free retrieval pipeline leveraging a Neo4j knowledge graph and a ChromaDB vector index. Questions and passages are embedded with Sentence-BERT; retrieved entities seed a one-hop Cypher expansion in the KG. A transparent fusion based on Dice-Sørensen overlap ranks passages and triples.",
+  "key_assumptions": [
+    "Hybrid retrieval of KG triples and text embeddings improves QA performance.",
+    "One-hop KG expansion captures sufficient relevant triples.",
+    "Dice-Sørensen overlap provides effective fusion of passage and triple rankings."
+  ],
+  "main_contribution": "A training-free hybrid evidence retrieval pipeline that achieves superior Recall@10, MRR, and nDCG@10 on WebQSP and CQA-12k without learned parameters, offering a lightweight alternative to neural re-rankers.",
+  "datasets": [
+    "WebQSP",
+    "CQA-12k"
+  ],
+  "benchmarks": [
+    "WebQSP",
+    "CQA-12k"
+  ],
+  "baselines": [
+    "BM25",
+    "graph-only",
+    "vector-only"
+  ],
+  "metrics": [
+    "Recall@10",
+    "MRR",
+    "nDCG@10"
+  ],
+  "results": "\"On WebQSP and CQA-12k, the hybrid method achieves superior Recall@10, MRR, and nDCG@10 compared to BM25, graph-only, and vector-only baselines.\"",
+  "limitations": [
+    "Not stated in abstract; potential limitations include reliance on one-hop KG expansion and applicability to broader QA settings."
+  ],
+  "future_work": [
+    "Not stated in abstract."
+  ],
+  "code_availability": "[\"Not stated in abstract.\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "This work focuses on a training-free hybrid retrieval pipeline for QA, whereas the proposed idea enriches training triples with local context subgraphs, adds an adaptive repair loop, and applies RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T06:39:31.651740Z"
+}

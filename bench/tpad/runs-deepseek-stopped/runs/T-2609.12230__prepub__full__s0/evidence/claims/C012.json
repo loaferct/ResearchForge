@@ -1,0 +1,33 @@
+{
+  "id": "C012",
+  "statement": "The main technical risk to H1 is that surrounding (non-answer-path) triples carry little signal: at inference, replacing all non-chain triples with unrelated material changes multi-hop accuracy by only +0.003 F1 (claim C002), and inflated context introduces distractors (claim C003). If the same holds for supervision, context-enriched fine-tuning will not beat triple-only.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.10237",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "arxiv:2509.21035",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "technical-risk",
+    "H1",
+    "core-premise"
+  ],
+  "recorded_at": "2026-09-30T05:15:51.236672Z"
+}

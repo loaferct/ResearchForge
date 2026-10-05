@@ -1,0 +1,33 @@
+{
+  "id": "C009",
+  "statement": "A targeted challenge search did not contradict the assessment: the closest work reports size-matching only between the two disease KGs (not between the KG-grounded and CG-grounded training arms), uses a fixed seed only for the option-shuffling stress test rather than for seed-level variance over training runs, and its text-searchable evaluation description contains no untouched held-out test set that the repair loop cannot edit. Distinctions (i), (ii) and (iv) therefore remain unaddressed in the retrieved literature rather than being already covered by the closest work.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 8",
+      "quote": "Since the original diabetes KG is much larger than the gastroparesis KG, we construct a size-matched diabetes subset to enable a fair comparison between the two disease settings.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 28",
+      "quote": "We apply an option-shuffling stress test in which all four answer-option texts are randomly reassigned to option labels A-D under a fixed seed, while the question stem remains unchanged.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "challenge",
+    "U011",
+    "controls"
+  ],
+  "recorded_at": "2026-09-30T05:17:41.302629Z"
+}

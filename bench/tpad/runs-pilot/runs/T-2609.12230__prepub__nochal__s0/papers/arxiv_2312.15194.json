@@ -1,0 +1,38 @@
+{
+  "id": "arxiv:2312.15194",
+  "title": "PokeMQA: Programmable knowledge editing for Multi-hop Question Answering",
+  "authors": [
+    "Hengrui Gu",
+    "Kaixiong Zhou",
+    "Xiaotian Han",
+    "Ning-Hao Liu",
+    "Ruobing Wang",
+    "Xin Wang"
+  ],
+  "year": 2023,
+  "published": "2023-12-23",
+  "venue": "Annual Meeting of the Association for Computational Linguistics",
+  "url": "https://www.semanticscholar.org/paper/74f20c57ac323f5fdd6acbab558eb704253ef4e6",
+  "pdf_url": null,
+  "abstract": "Multi-hop question answering (MQA) is one of the challenging tasks to evaluate machine's comprehension and reasoning abilities, where large language models (LLMs) have widely achieved the human-comparable performance. Due to the dynamics of knowledge facts in real world, knowledge editing has been explored to update model with the up-to-date facts while avoiding expensive re-training or fine-tuning. Starting from the edited fact, the updated model needs to provide cascading changes in the chain of MQA. The previous art simply adopts a mix-up prompt to instruct LLMs conducting multiple reasoning tasks sequentially, including question decomposition, answer generation, and conflict checking via comparing with edited facts. However, the coupling of these functionally-diverse reasoning tasks inhibits LLMs' advantages in comprehending and answering questions while disturbing them with the unskilled task of conflict checking. We thus propose a framework, Programmable knowledge editing for Multi-hop Question Answering (PokeMQA), to decouple the jobs. Specifically, we prompt LLMs to decompose knowledge-augmented multi-hop question, while interacting with a detached trainable scope detector to modulate LLMs behavior depending on external conflict signal. The experiments on three LLM backbones and two benchmark datasets validate our superiority in knowledge editing of MQA, outperforming all competitors by a large margin in almost all settings and consistently producing reliable reasoning process.",
+  "doi": "10.48550/arxiv.2312.15194",
+  "arxiv_id": "2312.15194",
+  "openalex_id": null,
+  "s2_id": "74f20c57ac323f5fdd6acbab558eb704253ef4e6",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 49,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T07:33:26.243093Z",
+  "relevance": 0.75,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "\"one-hop\" multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": true,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

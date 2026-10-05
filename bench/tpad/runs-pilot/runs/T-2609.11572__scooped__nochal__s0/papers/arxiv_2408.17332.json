@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2408.17332",
+  "title": "Not All Videos Become Outdated: Short-Video Recommendation by Learning to Deconfound Release Interval Bias",
+  "authors": [
+    "Lulu Dong",
+    "Guoxiu He",
+    "Aixin Sun"
+  ],
+  "year": 2024,
+  "published": "2024-08-30",
+  "venue": "RecSys 2024",
+  "url": "https://arxiv.org/abs/2408.17332",
+  "pdf_url": "https://arxiv.org/pdf/2408.17332v1",
+  "abstract": "Short-video recommender systems often exhibit a biased preference to recently released videos. However, not all videos become outdated; certain classic videos can still attract user's attention. Such bias along temporal dimension can be further aggravated by the matching model between users and videos, because the model learns from preexisting interactions. From real data, we observe that different videos have varying sensitivities to recency in attracting users' attention. Our analysis, based on a causal graph modeling short-video recommendation, suggests that the release interval serves as a confounder, establishing a backdoor path between users and videos. To address this confounding effect, we propose a model-agnostic causal architecture called Learning to Deconfound the Release Interval Bias (LDRI). LDRI enables jointly learning of the matching model and the video recency sensitivity perceptron. In the inference stage, we apply a backdoor adjustment, effectively blocking the backdoor path by intervening on each video. Extensive experiments on two benchmarks demonstrate that LDRI consistently outperforms backbone models and exhibits superior performance against state-of-the-art models. Additional comprehensive analyses confirm the deconfounding capability of LDRI.",
+  "doi": "10.1145/3640457.3688113",
+  "arxiv_id": "2408.17332",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T09:54:45.268863Z",
+  "relevance": 0.1071,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal bias retrieval agnostic"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

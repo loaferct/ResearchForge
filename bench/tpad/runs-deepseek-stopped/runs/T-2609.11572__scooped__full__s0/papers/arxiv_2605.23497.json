@@ -1,0 +1,37 @@
+{
+  "id": "arxiv:2605.23497",
+  "title": "Asking For An Old Friend: Diagnosing and Mitigating Temporal Failure Modes in LLM-based Statutory Question Answering",
+  "authors": [
+    "Max Prior",
+    "Andreas Schultz",
+    "Matthias Grabmair"
+  ],
+  "year": 2026,
+  "published": "2026-05-22",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2605.23497",
+  "pdf_url": "https://arxiv.org/pdf/2605.23497v2",
+  "abstract": "Large language models are increasingly used for legal research, yet their fixed training cutoffs and reliance on static parametric knowledge are at odds with the evolving nature of statutory law. We study two temporal failure modes: post-cutoff staleness, where models apply superseded rules after legislative amendments, and recency bias, where models prefer newer provisions even when a historical version governs the fact pattern. To this end, we present a benchmark of 312 expert-validated, time-sensitive German statutory QA pairs spanning three categories: Post-Cutoff Amendment Questions, Pre-Amendment Questions, and Multi-Provision Pre-Amendment Questions. We evaluate five LLMs by OpenAI, Anthropic and DeepSeek under four inference settings: Vanilla, Web-search, and two retrieval-augmented variants that enforce temporal validity via a fact date extraction and version filtering. Using an LLM-as-a-judge validated against human expert ratings, we find severe degradation in the Vanilla post-cutoff setting. Both RAG approaches substantially improve performance across all question types, while web search yields unstable gains and exhibits a marked recency bias on historically anchored tasks. Our results indicate that reliable legal QA requires treating temporal validity as a hard constraint.",
+  "doi": null,
+  "arxiv_id": "2605.23497",
+  "openalex_id": "W7162322110",
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:00:10.102528Z",
+  "relevance": 0.6875,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "legal question answering statutory amendments temporal version retrieval"
+  ],
+  "code_urls": [
+    "https://github.com/TUMLegalTech/temporal_bias"
+  ],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

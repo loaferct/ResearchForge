@@ -1,0 +1,30 @@
+{
+  "id": "U004",
+  "question": "Does RL optimization on lower-hop instances actually transfer to deeper-hop queries, or does hop-depth generalization require direct deep-hop supervision?",
+  "description": "The transfer claim (H2) is central. If shallow-only training does not transfer to deeper hops, the RL stage must be redesigned (curriculum, mixed-hop, or process rewards).",
+  "category": "validity",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "No retrieved paper in the current set directly tests shallow-to-deep hop transfer for LLM KGQA under RL; the claim is currently a hypothesis rather than an evidenced result.",
+  "resolution": "Still unvalidated. The only retrieved RL transfer evidence is cross-formalism (SQL training improving Cypher and vice versa) with a modest zero-shot downstream KGQA gain of +1.7% and no hop-depth analysis (C005). No analyzed paper trains only on lower-hop instances and measures accuracy transfer to deeper hops, so H2 remains a hypothesis requiring a pre-registered hop-depth experiment with a benchmark-construction check.",
+  "paper_ids": [
+    "arxiv:2506.21575"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T05:06:11.606825Z",
+  "updated_at": "2026-09-30T05:16:37.584385Z"
+}

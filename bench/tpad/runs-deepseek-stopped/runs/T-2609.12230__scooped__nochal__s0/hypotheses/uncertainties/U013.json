@@ -1,0 +1,26 @@
+{
+  "id": "U013",
+  "question": "The conclusion behind U006 was weakened by contradicting work; how should the direction change?",
+  "description": "The inference-time null does not straightforwardly replicate under fine-tuning. arxiv:2609.12230 fine-tunes Qwen3-14B under exactly the contested contrast (KG-grounded: target triple/path only; CG-grounded: target plus same-source-chunk supporting triples) with matched base model, LoRA setup, optimizer, sequence length, batch size, epochs, learning-rate schedule and equal QA-item counts, and reports that the context-augmented model beats the KG-only model in every disease, evaluation setting and hop length, by 1.98/2.20/2.15 points on Gastroparesis 3/4/5-hop and 1.50-2.66 points for Diabetes. So training does appear to extract value that prompting did not, and the 'premise is false' inference is weakened. What remains open is attribution: the two regimes have equal example counts but the CG examples contain more context tokens, and no token-matched random-distractor control was run, so the gain could still be partly a context-volume or question-distribution effect rather than passage coherence.",
+  "category": "direction",
+  "importance": "high",
+  "status": "open",
+  "next_action": "REFINE",
+  "possible_actions": [],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Evidence contradicts the current direction; refine it instead of forcing the evidence to fit.",
+  "resolution": "",
+  "paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": "refine:U006",
+  "attempts": 0,
+  "source": "controller",
+  "created_at": "2026-09-30T05:23:37.268739Z",
+  "updated_at": "2026-09-30T05:23:37.268838Z"
+}

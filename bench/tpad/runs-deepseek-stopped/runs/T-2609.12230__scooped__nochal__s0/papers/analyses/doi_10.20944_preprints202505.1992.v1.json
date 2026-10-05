@@ -1,0 +1,37 @@
+{
+  "paper_id": "doi:10.20944/preprints202505.1992.v1",
+  "relevance_tier": "medium",
+  "problem": "LLMs hallucinate on domain-specific and reasoning-heavy tasks; a retrieved subgraph for multi-hop QA may contain redundant or badly ordered triples that reduce answer precision.",
+  "method": "SG-RAG MOT: extend SubGraph Retrieval Augmented Generation with a Merging and Ordering Triplets step. Hierarchical merging reduces redundancy across highly overlapping retrieved subgraphs, and Breadth First Search traversal imposes an order on the triplets before they are given to the LLM.",
+  "key_assumptions": [
+    "Subgraph retrieval via Cypher queries over the given KG returns the necessary facts",
+    "Redundancy across overlapping subgraphs is harmful and should be merged away",
+    "Ordering triplets (BFS) improves LLM comprehension of the graph context"
+  ],
+  "main_contribution": "Shows that merging (up to a point) highly overlapping subgraphs and ordering triplets helps an LLM generate more precise answers, outperforming Chain-of-Thought and Graph Chain-of-Thought on MetaQA.",
+  "datasets": [
+    "MetaQA (movies domain)"
+  ],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [
+    "answer accuracy (exact metric and values not stated in abstract)"
+  ],
+  "results": "Abstract states SG-RAG MOT \"provides more accurate answers than Chain-of-Thought and Graph Chain-of-Thought\" and that merging highly overlapping subgraphs (up to some point) and defining an order among triplets helps the LLM generate more precise answers.",
+  "limitations": [
+    "Retrieval-and-prompting design, not a training-time supervision study.",
+    "Evaluated only on MetaQA (single domain, movies).",
+    "Reports a heuristic 'up to some point' for merging, i.e. an uncontrolled trade-off between redundancy reduction and information loss."
+  ],
+  "future_work": [],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.55,
+    "method_overlap": 0.35,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "SG-RAG MOT treats extra triples as redundancy to be merged away and orders the surviving triples, using the LLM frozen. The idea treats extra triples as supportive context and changes the model's parameters. The paper is also the closest retrieved evidence that triple ordering/serialization is being actively tuned, which directly challenges the idea's assumption that passage-coherent context (rather than ordering/formatting) is the unaddressed lever.",
+    "basis": "Problem overlap 0.55: both concern what set of triples to present around a multi-hop question and on which benchmark (MetaQA). Method overlap 0.35: both manipulate the surrounding triple set and its ordering, but SG-RAG MOT is inference-time retrieval/merging over a prompt while the idea is training-time supervision enrichment plus repair and RL. Evaluation overlap 0.5: MetaQA is a shared candidate benchmark and both use answer accuracy, but the idea adds hop-stratified transfer and a token-matched control."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:07:27.644869Z"
+}

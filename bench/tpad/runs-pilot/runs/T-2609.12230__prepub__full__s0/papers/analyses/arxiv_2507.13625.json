@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2507.13625",
+  "relevance_tier": "high",
+  "problem": "Information retrieval and question answering from safety regulations are hindered by linguistic and structural complexity of regulatory text; many queries are multi-hop requiring synthesis across interlinked clauses.",
+  "method": "Introduces BifrostRAG, a dual-graph retrieval-augmented generation (RAG) system that models both linguistic relationships and document structure, supporting a hybrid retrieval mechanism combining graph traversal with vector-based semantic search to enable LLMs to reason over content and structure.",
+  "key_assumptions": [
+    "Modeling both linguistic and structural relationships improves retrieval and QA performance.",
+    "Hybrid retrieval combining graph traversal and vector search is effective for multi-hop questions over regulatory text."
+  ],
+  "main_contribution": "BifrostRAG, a dual-graph RAG system with hybrid retrieval for multi-hop QA in construction safety, achieving high precision, recall, and F1, and offering a transferable blueprint for knowledge-intensive domains.",
+  "datasets": [
+    "a multi-hop question dataset (not named)"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "vector-only and graph-only RAG baselines"
+  ],
+  "metrics": [
+    "precision, recall, F1 score"
+  ],
+  "results": "[\"BifrostRAG achieves 92.8% precision, 85.5% recall, and an F1 score of 87.3%, significantly outperforming vector-only and graph-only RAG baselines.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "The paper focuses on dual-graph RAG for regulatory text, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:55:22.476976Z"
+}

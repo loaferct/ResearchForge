@@ -1,0 +1,41 @@
+{
+  "id": "arxiv:2308.11730",
+  "title": "Knowledge Graph Prompting for Multi-Document Question Answering",
+  "authors": [
+    "Yu Wang",
+    "Nedim Lipka",
+    "Ryan A. Rossi",
+    "Alexa Siu",
+    "Ruiyi Zhang",
+    "Tyler Derr"
+  ],
+  "year": 2023,
+  "published": "2023-08-22",
+  "venue": "Proceedings of the AAAI Conference on Artificial Intelligence",
+  "url": "https://arxiv.org/abs/2308.11730",
+  "pdf_url": "https://arxiv.org/pdf/2308.11730v3",
+  "abstract": "The `pre-train, prompt, predict' paradigm of large language models (LLMs) has achieved remarkable success in open-domain question answering (OD-QA). However, few works explore this paradigm in the scenario of multi-document question answering (MD-QA), a task demanding a thorough understanding of the logical associations among the contents and structures of different documents. To fill this crucial gap, we propose a Knowledge Graph Prompting (KGP) method to formulate the right context in prompting LLMs for MD-QA, which consists of a graph construction module and a graph traversal module. For graph construction, we create a knowledge graph (KG) over multiple documents with nodes symbolizing passages or document structures (e.g., pages/tables), and edges denoting the semantic/lexical similarity between passages or intra-document structural relations. For graph traversal, we design an LLM-based graph traversal agent that navigates across nodes and gathers supporting passages assisting LLMs in MD-QA. The constructed graph serves as the global ruler that regulates the transitional space among passages and reduces retrieval latency. Concurrently, the graph traversal agent acts as a local navigator that gathers pertinent context to progressively approach the question and guarantee retrieval quality. Extensive experiments underscore the efficacy of KGP for MD-QA, signifying the potential of leveraging graphs in enhancing the prompt design for LLMs. Our code: https://github.com/YuWVandy/KG-LLM-MDQA.",
+  "doi": "10.1609/aaai.v38i17.29889",
+  "arxiv_id": "2308.11730",
+  "openalex_id": "W4393152682",
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv",
+    "openalex"
+  ],
+  "citation_count": 154,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T06:49:00.378308Z",
+  "relevance": 0.3056,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "passage context knowledge graph question answering"
+  ],
+  "code_urls": [
+    "https://github.com/YuWVandy/KG-LLM-MDQA"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

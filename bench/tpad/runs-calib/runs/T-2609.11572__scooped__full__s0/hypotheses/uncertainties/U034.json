@@ -1,0 +1,31 @@
+{
+  "id": "U034",
+  "question": "Are per-version publication or availability dates (distinct from validity dates) recoverable at clause granularity from public legal corpora?",
+  "description": "The dual-metric decomposition requires two dates per clause version: a validity interval and a publication/availability date. Consolidated legal databases expose the former but the latter may exist only at document level, may be recorded differently (official journal publication versus entry into force versus corpus ingestion), or may be missing for older versions, which would make the leakage metric uncomputable and force the comparison to be dropped or approximated.",
+  "category": "feasibility",
+  "importance": "medium",
+  "status": "open",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Without availability dates the leakage side of the decomposition cannot be measured and the comparison between the two metrics collapses to a definitional argument only.",
+  "resolution": "",
+  "paper_ids": [
+    "arxiv:2606.09724",
+    "doi:10.3390/computers15080471"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T04:41:38.098566Z",
+  "updated_at": "2026-09-30T04:41:38.098802Z"
+}

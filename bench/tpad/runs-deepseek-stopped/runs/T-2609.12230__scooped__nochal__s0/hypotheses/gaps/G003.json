@@ -1,0 +1,45 @@
+{
+  "id": "G003",
+  "gap": "There is no head-to-head comparison, at a fixed context budget, between different context-selection criteria for the triples attached to a target fact: same source passage, embedding similarity, graph neighbourhood, and unrelated triples. It is therefore unknown which notion of 'relevant context', if any, carries the benefit.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 8-9 (§3.3)",
+      "quote": "The remaining candidates are scored usings(τp,τc), sorted in descending order of similarity, and filtered",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2202.13296",
+      "experiment_run_id": null,
+      "location": "p. 1 (abstract)",
+      "quote": "The desired subgraph is crucial as a small one may exclude the answer but a large one might introduce more noises.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2609.10237",
+      "experiment_run_id": null,
+      "location": "p. 1 (abstract)",
+      "quote": "Retrieval budget belongs on recall, and precision in the range we can test buys nothing.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2202.13296",
+    "arxiv:2609.10237",
+    "doi:10.20944/preprints202505.1992.v1"
+  ],
+  "why_unaddressed": "The closest training-time study selects context triples by SapBERT embedding similarity above a threshold within the same-chunk candidate set, which conflates two criteria (passage co-occurrence and semantic similarity) and reports no ablation over selection rules. Subgraph-retrieval work selects by graph reachability and treats extra triples as noise to be filtered, and the inference-time control study finds that precision among non-chain triples buys nothing. No retrieved work varies the selection criterion while holding the budget fixed.",
+  "research_question": "At a fixed context budget, which context-selection criterion — same passage, embedding similarity, graph neighbourhood, or unrelated — produces the largest multi-hop accuracy gain, and does the model condition its answer on the attached context?",
+  "potential_experiment": "Compare four to five context-selection arms at matched token budget and identical training steps: same-chunk same-passage triples, SapBERT-similarity-ranked triples from other passages, graph-neighbourhood triples, randomly sampled triples, and unrelated-entity triples. Evaluate hop-stratified accuracy plus a context-perturbation test in which the attached context is deliberately made irrelevant or contradictory at test time, to see whether the model actually conditions on the attached context.",
+  "confidence": "medium",
+  "verification_required": "The relevant passages of arxiv:2609.12230 describing the similarity threshold and candidate set were only partially read (the exact threshold, candidate pool size and context-graph size were not extracted), so the baseline context-selection rule must be read in full before it is used as the comparison point. A literature search on context-selection criteria for KG-grounded training should be re-run when the budget resets.",
+  "recorded_at": "2026-09-30T05:26:56.885966Z"
+}

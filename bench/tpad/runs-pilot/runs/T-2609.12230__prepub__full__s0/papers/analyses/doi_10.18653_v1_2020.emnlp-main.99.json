@@ -1,0 +1,42 @@
+{
+  "paper_id": "doi:10.18653/v1/2020.emnlp-main.99",
+  "relevance_tier": "high",
+  "problem": "Fine-tuning pre‑trained language models for question answering struggles when external knowledge is needed; existing knowledge‑graph‑augmented QA models either model multi‑hop relations inefficiently or lack transparency into prediction rationales.",
+  "method": "Proposes MHGRN (Multi‑Hop Graph Relation Networks), a module that equips PTLMs with multi‑hop relational reasoning over subgraphs extracted from external KGs (e.g., ConceptNet). MHGRN unifies path‑based reasoning and graph neural networks, maintains interpretable reasoning paths, and scales to larger KGs.",
+  "key_assumptions": [
+    "Reasoning over multi‑relational KG subgraphs can effectively capture the knowledge needed for QA.",
+    "Integrating MHGRN with PTLMs preserves linguistic capabilities while adding structured reasoning."
+  ],
+  "main_contribution": "MHGRN achieves state‑of‑the‑art accuracy (76.5%) on the official CommonsenseQA test set with a RoBERTa‑large encoder, demonstrating effectiveness and scalability of multi‑hop relational reasoning for knowledge‑aware QA.",
+  "datasets": [
+    "CommonsenseQA",
+    "OpenbookQA"
+  ],
+  "benchmarks": [
+    "CommonsenseQA",
+    "OpenbookQA"
+  ],
+  "baselines": [
+    "BERT‑BASE, BERT‑LARGE, RoBERTa fine‑tuning (knowledge‑agnostic); RGCN, RN5, KagNet, GconAttn (KG‑augmented)"
+  ],
+  "metrics": [
+    "Accuracy"
+  ],
+  "results": "[\"MHGRN (RoBERTa, K=2) scores 75.4 dev and 76.5 test accuracy on CommonsenseQA; also evaluated on OpenbookQA (results not quoted in abstract).\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"https://github.com/INK-USC/MHGRN\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "MHGRN augments PTLMs with a multi‑hop relational reasoning module over KG subgraphs, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:24:33.492966Z"
+}

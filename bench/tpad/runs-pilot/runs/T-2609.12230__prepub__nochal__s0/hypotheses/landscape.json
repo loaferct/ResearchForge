@@ -1,0 +1,115 @@
+{
+  "field_name": "Multi-hop Knowledge Graph Question Answering",
+  "categories": [
+    {
+      "name": "Embedding-based Methods",
+      "parent": null,
+      "description": "Learn knowledge graph embeddings to encode entities and relations for reasoning.",
+      "paper_ids": []
+    },
+    {
+      "name": "Retrieval-based Methods",
+      "parent": null,
+      "description": "Retrieve relevant subgraphs from the knowledge graph based on question semantics.",
+      "paper_ids": []
+    },
+    {
+      "name": "Reinforcement Learning Methods",
+      "parent": null,
+      "description": "Use RL to optimize reasoning policies or trajectory selection for multi-hop QA.",
+      "paper_ids": [
+        "arxiv:2601.01195",
+        "doi:10.1016/j.eswa.2024.124652",
+        "doi:10.1016/j.ins.2022.11.042",
+        "doi:10.1016/j.ipm.2023.103283",
+        "doi:10.1016/j.knosys.2023.110760"
+      ]
+    },
+    {
+      "name": "Trajectory-based RL Optimization",
+      "parent": "Reinforcement Learning Methods",
+      "description": "Frame multi-hop reasoning as trajectory generation and optimize using policy gradient methods with intermediate supervision.",
+      "paper_ids": [
+        "arxiv:2601.01195"
+      ]
+    },
+    {
+      "name": "Ontology-guided Retrieval with Iterative Refinement",
+      "parent": "Reinforcement Learning Methods",
+      "description": "Use ontology graphs to guide retrieval and iteratively refine evidence paths under question context.",
+      "paper_ids": [
+        "arxiv:2606.28076"
+      ]
+    },
+    {
+      "name": "Context-enriched Triple Training",
+      "parent": null,
+      "description": "Enrich target triples with additional triples from the same source passage to form local context subgraphs for training.",
+      "paper_ids": []
+    },
+    {
+      "name": "Adaptive Repair Loop for One-hop Failures",
+      "parent": null,
+      "description": "Iteratively detect and correct one-hop prediction errors by generating corrective examples.",
+      "paper_ids": []
+    },
+    {
+      "name": "Lower-hop Transfer Learning",
+      "parent": null,
+      "description": "Pre-train on simpler (lower-hop) QA instances and transfer to deeper multi-hop reasoning via RL optimization.",
+      "paper_ids": []
+    }
+  ],
+  "idea_position": "Context-enriched Triple Training with Adaptive Repair Loop and Lower-hop Transfer",
+  "dominant_approaches": [
+    "Reinforcement Learning Methods",
+    "Retrieval-based Methods"
+  ],
+  "common_assumptions": [
+    "The knowledge graph contains sufficient relational information to support multi-hop reasoning.",
+    "Question answering performance can be improved by better utilization of KG structure and semantics.",
+    "Reasoning trajectories or evidence paths can be refined to reduce noise and improve accuracy."
+  ],
+  "common_datasets": [
+    "WebQSP",
+    "CWQ",
+    "MetaQA",
+    "CRONQUESTIONS",
+    "TIMEQUESTIONS"
+  ],
+  "common_benchmarks": [
+    "WebQSP",
+    "CWQ",
+    "MetaQA",
+    "CRONQUESTIONS",
+    "TIMEQUESTIONS"
+  ],
+  "common_metrics": [
+    "Hit@1",
+    "F1 score",
+    "Hits@10"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Dependence on quality of auxiliary components (e.g., prompt-generated trajectories, ontology graph) affects overall performance.",
+      "paper_ids": [
+        "arxiv:2601.01195",
+        "arxiv:2606.28076"
+      ]
+    },
+    {
+      "description": "LLMs may hallucinate or generate unsupported facts when lacking explicit graph-grounded evidence.",
+      "paper_ids": [
+        "arxiv:2601.01195",
+        "arxiv:2606.28076"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Combining context subgraph enrichment with ontology-guided retrieval mechanisms",
+    "Integrating adaptive repair loops with trajectory-based RL optimization approaches",
+    "Using lower-hop transfer learning with context-enriched triple training for improved generalization"
+  ],
+  "contradictions": [],
+  "recorded_at": "2026-09-30T07:45:09.430366Z"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.2139/ssrn.7087840",
+  "title": "Benchmarking Sparse, Dense, and Hybrid Retrieval forRegulatory Financial Document Question Answering:A Study on Bhutanese Central Bank Corpora",
+  "authors": [
+    "Pravaat Chhetri"
+  ],
+  "year": 2026,
+  "published": null,
+  "venue": null,
+  "url": "https://doi.org/10.2139/ssrn.7087840",
+  "pdf_url": null,
+  "abstract": "While retrieval-augmented generation (RAG) systems have worked well with open-domain question answering, their behaviour on narrow financial corpora such as regulatory and procedural documents remains understudied. To the best of our knowledge, this paper presents the first systematic comparison of BM25 sparse retrieval, dense vector retrieval, and hybrid BM25+dense retrieval via Reciprocal Rank Fusion (RRF) (Cormack et al., 2009) on a corpus of 33 publicly available payment system reports from the Royal Monetary Authority of Bhutan (RMA) (2018-2026, with 2026 represented by quarterly reports, 1,033 pages, 1,456 detected tables, 2,869 structure-aware chunks). We construct a 100-question domain-specific evaluation benchmark across four categories (factual, numerical, trend, multihop), manually verifying each question against the corresponding source document. For each condition, we compute ROUGE-1/2/L, BERTScore F1, faithfulness, and no-answer rate all metrics calculated over all 100 queries per condition including abstentions. Hybrid retrieval achieves the highest overall performance (ROUGE-L 0.513, BERTScore F1 0.697, faithfulness 90.0%, no-answer rate 16%), outperforming BM25-only (+17.4% ROUGE-L) and dense-only (+19.3% ROUGE-L) retrieval. Furthermore, BM25 outperforms hybrid on multihop queries (ROUGE-L 0.304 vs. 0.239), suggesting that Reciprocal Rank Fusion may be less effective than sparse retrieval for multi-document reasoning on domain-specific regulatory corpora. The benchmark and evaluation scripts are available at The benchmark and evaluation scripts are available at https://github.com/PravaatChhetri/rma-rag-benchmark.",
+  "doi": "10.2139/ssrn.7087840",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T04:17:43.350494Z",
+  "relevance": 0.375,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "recency-aware dense retrieval temporal decay document version timestamp"
+  ],
+  "code_urls": [
+    "https://github.com/PravaatChhetri/rma-rag-benchmark"
+  ],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

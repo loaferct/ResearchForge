@@ -1,0 +1,33 @@
+{
+  "id": "C010",
+  "statement": "Main experimental confounder: because successive amended clauses retain much of the original wording, an end-task answer-accuracy metric can be insensitive to version confusion - retrieving the superseded version may yield the same answer string and score as retrieving the in-force version. A temporal relevance term could therefore appear to help (or fail to help) for reasons unrelated to selecting the correct revision; the effect can only be attributed to temporal ranking if temporal-contamination/leakage is measured separately and query labels are not correlated with recency. Additionally, if the correct passage happens to be the most recent version in most queries, a pure recency prior wins without any validity reasoning.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "reducing temporal evidence leakage from 10.8% to 1.7%",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "even when provided with an updated evidence corpus (a roughly 15 point drop in accuracy)",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "experimental confounder",
+    "version confusion",
+    "metric sensitivity"
+  ],
+  "recorded_at": "2026-09-30T04:31:31.161279Z"
+}

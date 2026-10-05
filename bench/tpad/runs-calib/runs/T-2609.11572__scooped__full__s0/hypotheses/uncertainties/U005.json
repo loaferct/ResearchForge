@@ -1,0 +1,42 @@
+{
+  "id": "U005",
+  "question": "Is 'retrieval-agnostic' a substantive contribution, or does the temporal relevance term reduce to an already-published fixed hybrid, making the plug-in framing a repackaging with little added value?",
+  "description": "Every retrieved temporal-retrieval method implements the temporal signal inside a specific pipeline (a fixed three-signal hybrid, graph-based retrieval with learned decay, or a multimodal verifier). The proposal's only architectural novelty claim is that the same signal can be added to any standard retriever as a post-hoc re-ranking term. If that transfer is trivial or yields no additional benefit over the fixed hybrid, the 'retrieval-agnostic' framing adds little; if base-retriever choice materially interacts with the temporal term, the framing is a substantive contribution.",
+  "category": "direction",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "COMPARE",
+    "REFINE",
+    "PLAN_EXPERIMENT",
+    "SEARCH"
+  ],
+  "confidence": 0.7,
+  "confidence_basis": "Three independent pieces of evidence: an ontology-driven pre-retrieval filter on temporal validity in legal RAG (already retriever-agnostic in construction), Chronofy's layer-wise temporal embedding, and measured retriever heterogeneity in a regulatory QA benchmark. Uncertainty remains about the outcome of the cross-retriever measurement itself, which no retrieved work provides.",
+  "rationale": "Landscape shows the temporal mechanism is covered in architecture-specific systems with no cross-retriever transfer study, and the regulatory benchmark shows hybrid is not uniformly best (BM25 wins on multihop), suggesting base-retriever interaction is real but untested.",
+  "resolution": "Resolved: the plug-in framing is not a substantive contribution in itself. Retriever-agnostic temporal handling already exists as an ontology-driven pre-retrieval filter that admits legal sources by jurisdiction, lifecycle status and temporal validity, and temporal information is embedded across representation, retrieval and reasoning layers in other systems. Moreover, measured behaviour in a regulatory QA benchmark is retriever-dependent - hybrid wins overall while BM25 wins on multihop - so portability cannot be assumed. What remains is not the property but the measurement: whether a valid-time gate yields the same sign and a non-trivial effect in each retriever family. Treat 'retrieval-agnostic' as a design constraint chosen to make one implementation reusable, and report it as an empirical result or not at all; the scored-versus-hard-admitted difference from the ontology filter is an implementation detail.",
+  "paper_ids": [
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.3390/sym18091498",
+    "doi:10.2139/ssrn.7087840",
+    "arxiv:2109.06157",
+    "doi:10.3390/computers15080471"
+  ],
+  "supporting_paper_ids": [
+    "doi:10.2139/ssrn.7087840",
+    "arxiv:2109.06157",
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.3390/computers15080471"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 2,
+  "source": "SYNTHESIZE",
+  "created_at": "2026-09-30T04:31:08.151449Z",
+  "updated_at": "2026-09-30T04:39:28.396735Z"
+}

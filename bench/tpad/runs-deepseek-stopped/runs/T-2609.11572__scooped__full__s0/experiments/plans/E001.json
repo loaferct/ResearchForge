@@ -1,0 +1,75 @@
+{
+  "id": "E001",
+  "title": "Leakage-controlled head-to-head evaluation of soft elapsed-time re-ranking versus hard validity-interval filtering on amended statutory corpora",
+  "research_question": "When the soft elapsed-time term and hard validity-interval filtering are compared under identical conditions and leakage-controlled tuning, does the soft term improve version-selection and answer accuracy on amended regulatory texts - or is any apparent gain an artifact of tuning the temporal weight lambda against gold-version-anchored questions?",
+  "hypothesis": "Under held-out hyperparameter tuning and timestamp-shuffled / date-offset controls, the soft elapsed-time temporal term does not, by itself, produce a version-selection accuracy gain over future-mask-only and recency-only baselines; hard validity-interval filtering matches or outperforms it, and any soft-term benefit is confined to settings where validity intervals are unavailable or noisy.",
+  "proposed_method": "A leakage-controlled, budget-matched head-to-head study on one fixed versioned statutory corpus and one shared index. Candidate passages from all versions are scored by a fixed retriever s(q,p); the method adds a soft elapsed-time term lambda * f(|t_q - t_v(p)|) where f is exponential, linear or step-shaped, and t_q is the query's target date. All temporal hyperparameters are tuned on a held-out question split and never on the test split. The same index, chunking, top-k and generator are reused across arms so that only the ranking rule changes. Results are reported per query-date regime and accompanied by timestamp-shuffled and query-date-offset control runs. Two interval-aware variants are also tested: a step decay equal to an in-force indicator, and a validity-interval-aware term that uses effective/expiry dates rather than elapsed time.",
+  "baselines": [
+    "Budget-matched semantic-only retrieval with the same index, chunking, top-k and generator: BM25 and a dense bi-encoder",
+    "Hard validity-interval filtering (as-of date extracted, retrieval restricted to versions in force at t_q), reimplementing Prior et al.'s RAG-kNN setting (arxiv:2605.23497); the primary strong baseline",
+    "Future-mask-only re-ranker (passages with version timestamp > t_q removed, no decay term) to match TempRALM's masking component (arxiv:2401.13222)",
+    "Recency-only ranker that always prefers the newest version, exposing recency bias",
+    "Oracle in-force filter using gold in-force intervals (upper bound, not a deployable system)",
+    "TempRALM-style soft score: semantic + lambda * f(|t_q - t_v|) without validity intervals (the idea's mechanism)"
+  ],
+  "datasets": [
+    "Amended German statutory corpus with per-version effective dates, using the source provisions underlying the TUMLegalTech/temporal_bias benchmark (arxiv:2605.23497) and official consolidated statute versions",
+    "Held-out split of the 312 time-sensitive statutory QA pairs (arxiv:2605.23497), stratified by the three categories (Post-Cutoff Amendment, Pre-Amendment, Multi-Provision Pre-Amendment)",
+    "A transfer set of EU/UK amended legislation with version metadata (candidate source: Chalkidis et al., arxiv:2101.10726) to test jurisdiction transfer",
+    "Synthetic control instances with permuted version timestamps and shifted query dates, built from the same passages"
+  ],
+  "workloads": [
+    "Current/post-amendment queries whose correct version is the newest or a recent one",
+    "Historically anchored pre-amendment queries whose correct version is an older, superseded one",
+    "Multi-provision queries spanning several paragraphs with mixed version applicability",
+    "Control workloads with permuted version timestamps and with query dates shifted by a fixed offset",
+    "Sparse (BM25) and dense retrieval workloads evaluated under identical passage segmentation and top-k budgets"
+  ],
+  "hardware": "Experiments are retrieval- and API-bound rather than compute-bound. One workstation or a single modest GPU node for dense encoding of the statute corpus and local reranking is sufficient; if a local open-weight generator is used, one 24-40 GB GPU. No model training is required, consistent with the retrieval-agnostic, training-free claim.",
+  "software_environment": "",
+  "metrics": [
+    "Primary: version-selection accuracy@k (fraction of top-k retrieved passages whose version is in force at t_q)",
+    "Secondary retrieval: Recall@k, MRR, nDCG@k on gold passages",
+    "End-task: answer accuracy (exact match / F1 and LLM-as-judge correctness validated against a human-rated sample)",
+    "Reported stratified by query-date regime (current/post-amendment vs. historically anchored vs. multi-provision)",
+    "Delta over semantic-only, over future-mask-only, over recency-only, and over hard validity filtering, each with held-out tuning"
+  ],
+  "ablations": [
+    "Temporal-term shape: exponential vs. linear vs. step (in-force indicator) decay",
+    "Temporal weight lambda swept over a fixed grid and reported as a sensitivity curve, not a single tuned value",
+    "Semantic-only retrieval with identical index and top-k (no temporal term at all)",
+    "Future-mask only (no decay), isolating the 'not-yet-in-force' effect from the 'recency' effect, matching TempRALM's masking step (arxiv:2401.13222)",
+    "Timestamp-shuffled control: gold-version timestamps randomly permuted across candidate versions while content is unchanged",
+    "Query-date offset control: query dates shifted by a fixed interval so that elapsed-time ordering no longer aligns with in-force ordering",
+    "Regime-conditioned lambda (separate weight for current vs. historically anchored queries) versus a single global lambda"
+  ],
+  "controls": [],
+  "confounders_addressed": [
+    "Timestamp label leakage: all hyperparameters tuned on a held-out question split disjoint from the test split; the timestamp-shuffled and query-date-offset controls must fail to reproduce any gain",
+    "Regime mixing: results reported stratified by query-date regime so current-version and historical questions cannot cancel out",
+    "Retriever-specific effects: the wrapper is evaluated on BM25 plus at least two dense encoders under matched budgets",
+    "Benchmark construct artifacts: a manually audited sample of items is excluded when the correct version can be identified without any temporal cue, and question-generation artifacts are inspected against the source statute",
+    "Generator effects: answer accuracy is measured with two different LLM judges/generators while retrieval metrics remain generator-independent",
+    "Hyperparameter overfitting to one lambda: the full sensitivity curve is reported and significance is assessed at the pre-registered lambda, not the argmax"
+  ],
+  "expected_outcomes": "If the soft temporal term adds genuine value, it should improve version-selection accuracy@k over future-mask-only (B3) and recency-only (B4), and the gain must vanish under the timestamp-shuffled control and persist under held-out tuning. On the basis of Prior et al., the most likely outcome is that hard validity filtering (B2) dominates the soft term overall, with the soft term showing partial benefit only when validity intervals are unavailable or noisy; a secondary likely outcome is regime-dependent behaviour, with gains on current queries and degradation on historically anchored ones unless lambda is regime-conditioned.",
+  "failure_conditions": [
+    "The soft-term gain over semantic-only disappears when lambda is tuned on a held-out split, or is reproduced by the timestamp-shuffled control (leakage explanation confirmed, hypothesis falsified)",
+    "The hard validity filter matches or beats the soft term on version-selection accuracy in both regimes, leaving the soft term with no measurable contribution",
+    "Answer accuracy improves while version-selection accuracy does not, showing the gain comes from the generator rather than temporal retrieval",
+    "The soft term is no better than the recency-only newest-version baseline, showing it captures only recency bias",
+    "The soft term helps only on current/post-amendment questions while harming historically anchored ones, so no global lambda satisfies the stated research question"
+  ],
+  "reproducibility_notes": "The benchmark data underlying arxiv:2605.23497 is public (github.com/TUMLegalTech/temporal_bias; root files 'Prompts' and 'qa_set.xlsx'), but that repository contains no code for the retrieval or ranking pipeline and its README is empty, so the retrieval experiment must be implemented from scratch. TempRALM has no public repository (search_github for 'TempRALM' returned nothing), and the TaxFlow system (doi:10.1080/08839514.2026.2626097) provides no code in its abstract. Because no open implementation of the scoring wrapper on regulatory corpora exists and assembling the versioned corpus, in-force intervals and retrieval pipeline is not a small or safe automated run, no execution spec is attached; the experiment requires human setup. All random seeds, exact statute version snapshots, embedding model names and revision hashes, date-extraction rules, top-k values, lambda grids and judge prompts must be logged. Corpus version snapshots must be archived because legislation changes, making exact reproduction otherwise impossible.",
+  "related_modification_id": null,
+  "related_paper_ids": [
+    "arxiv:2401.13222",
+    "arxiv:2605.23497",
+    "doi:10.1080/08839514.2026.2626097",
+    "doi:10.18653/v1/2024.findings-naacl.295",
+    "doi:10.1145/3589335.3651895"
+  ],
+  "execution": null,
+  "status": "planned",
+  "recorded_at": "2026-09-30T05:20:14.867013Z"
+}

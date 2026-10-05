@@ -1,0 +1,28 @@
+{
+  "id": "U001",
+  "question": "Is enriching triples with local context subgraphs from the same source passage beneficial for multi-hop KGQA, or does it introduce noise that harms performance?",
+  "description": "The idea assumes that adding triples from the same passage as the target triple provides useful context for multi-hop reasoning. However, it is unclear whether this context is consistently helpful or if it may introduce irrelevant or noisy information that degrades model performance.",
+  "category": "other",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "SEARCH",
+  "possible_actions": [],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "The proposed method relies on the assumption that local context from the passage supports the target triple. No retrieved work directly verifies this assumption for KGQA training.",
+  "resolution": "Evidence from arxiv:2501.15378 shows that restoring textual context underlying each triple (a form of context enrichment) improves Exact Match and F1 scores on multi-hop QA datasets (HotpotQA, 2WikiMultiHopQA), indicating that context enrichment is beneficial rather than harmful for multi-hop KGQA performance.",
+  "paper_ids": [
+    "arxiv:2501.15378"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2501.15378"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T06:30:20.792886Z",
+  "updated_at": "2026-09-30T07:00:15.986289Z"
+}

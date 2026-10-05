@@ -1,0 +1,31 @@
+{
+  "id": "M003",
+  "title": "Head-to-head context-selection criteria plus a context-dependence probe",
+  "description": "Hold the context budget fixed and treat the selection criterion itself as the independent variable: same-passage triples, SapBERT-similarity-ranked triples drawn from other passages, graph-neighbourhood triples, and unrelated triples. Add a context-perturbation probe in which the attached context is made deliberately irrelevant or contradictory at evaluation time, to test whether the model actually conditions on the attached context or merely benefits from extra grounded text during training.",
+  "why_differs": "The published training pipeline selects context triples by similarity above a threshold inside a same-chunk candidate set, so passage co-occurrence and semantic similarity are not separable, and no selection-rule ablation is reported. Subgraph retrieval selects by graph reachability and treats extra triples as noise, and the inference-time study reports that precision among non-chain triples buys nothing. None compares selection rules at a matched budget while training.",
+  "technical_mechanism": "Define a fixed context slot count or token budget per training example. Populate it by four rules: triples co-occurring in the same source passage; top-ranked triples by SapBERT cosine similarity regardless of passage; graph neighbours within k hops; and uniformly sampled triples. Fine-tune identically for each rule. At test time, for each held-out example, run once with the original attached context and once with the context replaced by unrelated triples of the same length, and measure the accuracy drop as a proxy for context dependence.",
+  "expected_benefit": "Separates three things that the published design conflates: passage co-occurrence, semantic similarity and graph proximity. The perturbation probe distinguishes 'learned to use context' from 'benefited from extra tokens', which no retrieved work tests in the training regime.",
+  "potential_novelty": "Moderate to high, hedged. No retrieved paper varies context-selection criteria at a fixed budget in the training regime, and the context-perturbation probe is not reported for KG-grounded fine-tuning; however, the space is adjacent to a large literature on retrieval precision, so a careful search is needed before claiming novelty.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Requires defining and implementing several context-selection rules on the same KG and ensuring each arm's context block has an equal token count; the selection code is new even though the training loop is reusable.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Four training arms plus an evaluation-time perturbation sweep; the perturbation probe needs a held-out context substitution that is carefully controlled so it does not change the question.",
+  "main_risk": "The arms may differ in how much genuinely answer-relevant information they leak into the context, which would confound the comparison; the mitigation is to keep the target triple/path identical and audit each arm's context for chain overlap.",
+  "required_baselines": [
+    "Same-passage context triples",
+    "SapBERT-similarity-ranked triples from other passages",
+    "Graph-neighbourhood triples",
+    "Unrelated-entity triples at matched tokens"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2202.13296",
+    "arxiv:2609.10237",
+    "doi:10.20944/preprints202505.1992.v1"
+  ],
+  "addresses_gap_ids": [
+    "G003"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:27:52.340381Z"
+}

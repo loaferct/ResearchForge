@@ -1,0 +1,37 @@
+{
+  "id": "doi:10.1007/s44443-026-00999-7",
+  "title": "SPIMP-RAG: structure-prior injected message passing for low-budget triple retrieval in LLM-based knowledge graph question answering",
+  "authors": [
+    "Jun Chen",
+    "Zhi-Jun Xie",
+    "Rui Wang",
+    "Ming Jin",
+    "Yegang Lyu"
+  ],
+  "year": 2026,
+  "published": "2026-07-07",
+  "venue": "Journal of King Saud University: Computer and Information Sciences",
+  "url": "https://www.semanticscholar.org/paper/ff04b0d4d20f9a338f43630429e36631cc77ef5f",
+  "pdf_url": "https://doi.org/10.1007/s44443-026-00999-7",
+  "abstract": "Knowledge graph question answering (KGQA) with large language models (LLMs) relies on retrieving a compact set of supporting triples under strict context budgets. However, structure-free or single-stage retrieval can return triples that are semantically relevant in isolation yet insufficiently coordinated as a compact evidence set, which hurts downstream multi-hop reasoning in the low-budget regime. We study this low-budget evidence selection problem under a fixed candidate-subgraph protocol, where the candidate graph is treated as a shared retrieval space for controlled comparison. Our focus is fine-stage triple reranking within this shared candidate space, rather than candidate-subgraph construction. We propose SPIMP-RAG, a coarse-to-fine triple retrieval approach whose key component is Structure-Prior Injected Message Passing (SPIMP), a fine-stage reranker that injects Directional Distance Encoding (DDE) into relation-aware message passing. Starting from a question-centered candidate subgraph, a lightweight DDE+MLP coarse retriever first constructs a compact high-recall candidate set, which is then refined by SPIMP through DDE-guided message routing and adaptive semantic-structural fusion. We further introduce a confidence-weighted weak-supervision scheme to train the coarse scorer and SPIMP reranker from question–answer pairs without requiring gold reasoning paths. Extensive experiments on WebQSP and ComplexWebQuestions show that SPIMP-RAG consistently improves low-budget evidence quality and downstream KGQA performance. In particular, SPIMP-RAG reaches 88.13 Hit@1 / 72.93 F1 on WebQSP and 59.43 Hit@1 / 51.82 F1 on CWQ, and delivers consistent gains under the same candidate-graph protocol. These results support the effectiveness of structure-aware fine reranking for compact evidence selection in LLM-based KGQA.",
+  "doi": "10.1007/s44443-026-00999-7",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "ff04b0d4d20f9a338f43630429e36631cc77ef5f",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T06:48:21.321119Z",
+  "relevance": 0.3947,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "local context subgraph training triples knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

@@ -1,0 +1,44 @@
+{
+  "paper_id": "doi:10.18653/v1/2025.findings-acl.856",
+  "relevance_tier": "high",
+  "problem": "RAG for KGQA: recent approaches rely on costly LLM calls to generate executable relation paths or traverse the KG, which is inefficient for complex questions (multi-hop, multi-entity).",
+  "method": "GNN-RAG. A lightweight GNN scores KG nodes by question relevance and neighbour relevance; shortest paths connecting question entities to GNN answer candidates are retrieved, verbalized, and given to the LLM as context. Additional retrieval-augmentation and routing techniques improve end-to-end efficiency.",
+  "key_assumptions": [
+    "The retrieved question-specific subgraph contains the answer nodes.",
+    "Entity linking from the question to KG entities is correct.",
+    "Shortest paths from question entities to GNN answer candidates are an adequate verbalized context for the LLM."
+  ],
+  "main_contribution": "Lightweight GNN-based graph retrieval for KGQA that lets a 7B tuned LLM match or outperform GPT-4, improving complex (multi-hop/multi-entity) answering by 8.9-15.5 F1 points over LLM-based retrieval while using 9x fewer KG tokens and no extra LLM calls for retrieval.",
+  "datasets": [
+    "WebQSP",
+    "CWQ"
+  ],
+  "benchmarks": [
+    "WebQSP",
+    "CWQ"
+  ],
+  "baselines": [
+    "No RAG, KG-RAG variants, long-context inference, GPT-4 (as cited in the abstract)"
+  ],
+  "metrics": [
+    "Answer F1"
+  ],
+  "results": "Effective retrieval on WebQSP and CWQ; 8.9-15.5 F1 improvement on multi-hop and multi-entity questions over LLM-based retrieval; 9x fewer KG tokens than long-context inference; matches or beats GPT-4 with a 7B tuned LLM.",
+  "limitations": [
+    "Assumes the KG subgraph the GNN reasons over contains the answer nodes, which may fail for some questions or under entity-linking errors.",
+    "Uses simple prompting with shortest paths from question entities to candidate answers as context."
+  ],
+  "future_work": [
+    "Not stated in abstract"
+  ],
+  "code_availability": "Code stated as https://github.com/cmavro/GNN-RAG in the abstract; repository inspection unavailable in this investigation.",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.55,
+    "evaluation_overlap": 0.85,
+    "conceptual_difference": "GNN-RAG builds the supporting context (shortest paths) at inference time and feeds it to a frozen/lightly tuned LLM; the supervision used to train the GNN is question-answer pairs, not context-enriched triples. The idea instead attaches co-passage triples to each training supervision signal and compares isolated vs. context regimes, then adds a repair loop and lower-hop RL. Both supply multi-hop context, but one is retrieval-time context construction and the other is training-time supervision enrichment.",
+    "basis": "Problem overlap 0.7: both are multi-hop KGQA over the same benchmarks. Method overlap 0.55: retrieval of paths/subgraphs as LLM context is adjacent but is inference-time and path-based, not passage-derived training supervision. Evaluation overlap 0.85: identical WebQSP/CWQ benchmarks and answer-F1-style metrics."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:16:11.310332Z"
+}

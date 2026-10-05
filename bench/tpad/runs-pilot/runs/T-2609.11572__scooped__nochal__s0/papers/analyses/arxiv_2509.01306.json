@@ -1,0 +1,39 @@
+{
+  "paper_id": "arxiv:2509.01306",
+  "relevance_tier": "high",
+  "problem": "Temporal Information Retrieval (TIR) is a critical yet unresolved task for modern search systems, retrieving documents that not only satisfy a query's information need but also adhere to its temporal constraints.",
+  "method": "Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism.",
+  "key_assumptions": [
+    "not stated in abstract"
+  ],
+  "main_contribution": "Re3 framework and Re2Bench benchmark for disentangling and evaluating Relevance, Recency, and their hybrid combination in temporal information retrieval.",
+  "datasets": [
+    "Re2Bench benchmark"
+  ],
+  "benchmarks": [
+    "Re2Bench"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "R@1 (Recall@1)"
+  ],
+  "results": "Re3 achieves state-of-the-art results, leading in R@1 across all three subsets of Re2Bench; ablation studies confirm robustness and generalization across diverse encoders and real-world settings.",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "Available online at https://anonymous.4open.science/r/Re3-0C5A",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.7,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "Re3 addresses general temporal information retrieval balancing relevance and recency via a query-aware gating mechanism. Our idea focuses on open-domain question answering over continuously amended regulatory documents where each new amendment supersedes earlier clauses, creating dense semantic overlap across versions. We propose a retrieval-agnostic temporal relevance component that adjusts passage ranks based on elapsed time between query target date and version timestamp, aiming to select the correct version for a time-specific query. While both incorporate temporal signals, Re3 targets general TIR benchmarks, whereas we target QA accuracy over versioned regulatory text, and our framework is designed to be agnostic to the underlying retriever.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T09:48:44.214489Z"
+}

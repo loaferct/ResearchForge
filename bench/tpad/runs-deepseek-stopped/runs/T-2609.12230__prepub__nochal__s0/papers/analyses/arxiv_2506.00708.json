@@ -1,0 +1,46 @@
+{
+  "paper_id": "arxiv:2506.00708",
+  "relevance_tier": "high",
+  "problem": "Knowledge graph completion (KGC): predicting missing triples. The paper argues current LLM-based approaches encode graph context as flat text, failing to exploit graph structure, and lists three failures: structural information loss (prompts are long and noisy), static embeddings that do not adapt to query-specific structure, and generic LLM responses driven by pretraining data.",
+  "method": "DrKGC. (1) Convert incomplete triples into natural-language questions with a template lexicon; (2) train a lightweight model to learn structural embeddings and mine logical rules; (3) use a bottom-up, rule-guided retrieval to extract a query-specific local subgraph; (4) apply a GCN adapter over the retrieved subgraph to produce local structural embeddings, which are integrated into the prompt for LLM fine-tuning. So graph context is used both to construct supervision and inside fine-tuning.",
+  "key_assumptions": [
+    "Logical rules mined from the KG are predictive enough to guide subgraph retrieval.",
+    "A compact query-specific subgraph captures the structure needed for the prediction, without long or noisy text prompts.",
+    "A GCN adapter over the retrieved subgraph can inject structural information that the LLM cannot infer from text alone.",
+    "Restricting the LLM output space to candidates mitigates generic responses."
+  ],
+  "main_contribution": "A dynamic subgraph retrieval-augmented LLM framework for KGC that combines mined logical rules, query-specific subgraph retrieval, and a GCN adapter for structure-aware LLM fine-tuning; claimed state of the art on general KGs and strong performance on domain-specific biomedical KGs with improved interpretability.",
+  "datasets": [
+    "Two general-domain KG completion benchmark datasets (not named in the abstract)",
+    "Two biomedical KGs (not named in the abstract)"
+  ],
+  "benchmarks": [
+    "General-domain KGC benchmarks",
+    "Biomedical KGC benchmarks"
+  ],
+  "baselines": [
+    "Not stated in abstract; related work contrasts KICGPT and KoPA-style generation-based methods"
+  ],
+  "metrics": [
+    "Not stated in abstract"
+  ],
+  "results": "Abstract reports superior performance on two general-domain and two biomedical datasets. Full text limitations note fine-tuning is computationally intensive and performance is bounded by the underlying LLM and lightweight model.",
+  "limitations": [
+    "Relies on fine-tuning large language models, which is computationally intensive.",
+    "Performance is inherently constrained by the capabilities of the LLM and the lightweight structural model."
+  ],
+  "future_work": [
+    "Optimize fine-tuning efficiency",
+    "Enhance LLM performance"
+  ],
+  "code_availability": "No code URL recorded for this paper (code_urls empty); GitHub tools unavailable in this investigation, so availability could not be verified.",
+  "relation_to_idea": {
+    "problem_overlap": 0.55,
+    "method_overlap": 0.6,
+    "evaluation_overlap": 0.25,
+    "conceptual_difference": "DrKGC retrieves a query-specific subgraph at inference and injects it via a GCN adapter into an LLM prompt for KGC, guided by mined logical rules. The idea instead enriches the *training supervision signal* for KGQA with triples co-occurring in the same source passage, and studies isolated-vs-context regimes plus a repair loop. Same intuition (local context beyond an isolated triple) but different task (completion vs. QA), different context source (rule-guided graph retrieval vs. passage provenance), and different stage (inference+adapter vs. supervision construction).",
+    "basis": "Problem overlap 0.55: both target reasoning that needs more than an isolated triple, but KGC vs. multi-hop KGQA differ. Method overlap 0.6: query-specific subgraph retrieval + LLM fine-tuning with graph context is the closest mechanism found, though not passage co-occurrence. Evaluation overlap 0.25: KGC benchmarks rather than KGQA WebQSP/CWQ/MetaQA."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:16:11.286392Z"
+}

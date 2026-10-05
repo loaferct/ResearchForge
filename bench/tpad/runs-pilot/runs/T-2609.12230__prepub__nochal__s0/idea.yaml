@@ -1,0 +1,123 @@
+raw_idea: 'Multi‑hop question answering often relies on reasoning over a chain of
+  facts in a knowledge graph, yet current language‑model training typically uses isolated
+  head‑relation‑tail triples, depriving the model of the surrounding context that
+  supports multi‑step inference. We propose to enrich each target triple (or path)
+  with additional triples drawn from the same source passage, forming a local context
+  subgraph that is presented together with the primary supervision signal. The model
+  will be fine‑tuned under two regimes: one using only the target triple/path and
+  another that also incorporates the supporting context. To improve the reliability
+  of the base facts, we will introduce an adaptive repair loop that detects one‑hop
+  failures, generates corrective examples, and iteratively refines the model. After
+  this cleaning stage, we will apply reinforcement‑learning‑based optimization on
+  lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.'
+analysis:
+  raw_idea: 'Multi‑hop question answering often relies on reasoning over a chain of
+    facts in a knowledge graph, yet current language‑model training typically uses
+    isolated head‑relation‑tail triples, depriving the model of the surrounding context
+    that supports multi‑step inference. We propose to enrich each target triple (or
+    path) with additional triples drawn from the same source passage, forming a local
+    context subgraph that is presented together with the primary supervision signal.
+    The model will be fine‑tuned under two regimes: one using only the target triple/path
+    and another that also incorporates the supporting context. To improve the reliability
+    of the base facts, we will introduce an adaptive repair loop that detects one‑hop
+    failures, generates corrective examples, and iteratively refines the model. After
+    this cleaning stage, we will apply reinforcement‑learning‑based optimization on
+    lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.'
+  problem: Multi-hop question answering often relies on reasoning over a chain of
+    facts in a knowledge graph, yet current language-model training typically uses
+    isolated head-relation-tail triples, depriving the model of the surrounding context
+    that supports multi-step inference.
+  target_domain: Multi-hop question answering over knowledge graphs
+  proposed_method: 'Enrich each target triple (or path) with additional triples drawn
+    from the same source passage, forming a local context subgraph that is presented
+    together with the primary supervision signal. Fine-tune the model under two regimes:
+    (1) using only the target triple/path, and (2) using the target triple/path plus
+    the local context subgraph. Introduce an adaptive repair loop that detects one-hop
+    failures, generates corrective examples, and iteratively refines the model. After
+    this cleaning stage, apply reinforcement-learning-based optimization on lower-hop
+    QA instances and evaluate transfer to deeper multi-hop queries.'
+  hypothesis: Enriching training data with local context subgraphs and using an adaptive
+    repair loop will improve the model's ability to perform multi-hop reasoning, especially
+    when transferring from lower-hop to higher-hop QA, leading to higher exact match
+    and F1 scores on benchmark datasets compared to training on isolated triples alone.
+  research_question: In the setting of multi-hop question answering over knowledge
+    graphs, does augmenting each training triple with additional triples from the
+    same source passage (forming a local context subgraph) and applying an adaptive
+    repair loop that iteratively corrects one-hop failures result in significantly
+    higher exact match and F1 scores on 2-hop and 3-hop benchmark datasets compared
+    to training on the target triple alone, when both models are first pre-trained
+    on 1-hop question-answer pairs?
+  expected_contribution: A training method that improves multi-hop QA performance
+    by providing contextual supervision and iterative error correction, bridging the
+    gap between isolated triple training and structured reasoning.
+  assumptions:
+  - The source passage contains relevant triples that can form a useful context subgraph.
+  - The adaptive repair loop can effectively detect and correct one-hop failures.
+  - RL-based optimization on lower-hop QA instances will transfer to deeper multi-hop
+    queries.
+  variables:
+    independent:
+    - Training regime (with context vs without)
+    - Presence of adaptive repair loop
+    - RL optimization stage
+    dependent:
+    - Exact Match score
+    - F1 score on 2-hop and 3-hop questions
+    controls:
+    - Base model architecture
+    - Dataset size
+    - Training duration
+    - Random seed
+  target_system: Language models fine-tuned for knowledge graph-based question answering
+  expected_benefits:
+  - Improved accuracy on multi-hop QA benchmarks
+  - Better generalization from lower-hop to higher-hop reasoning
+  - Reduced reliance on spurious correlations
+  potential_risks:
+  - Context noise may degrade performance if irrelevant triples are included
+  - Adaptive repair loop may amplify errors if not properly constrained
+  - RL optimization may be unstable or require extensive hyperparameter tuning
+  ambiguities:
+  - question: Which multi-hop QA datasets are typically used for evaluation?
+    resolution: Commonly used datasets include HotpotQA, 2WikiMultiHopQA, MetaQA,
+      and MuSiQue, as evidenced by papers such as KGEIR and SG-RAG MOT.
+    resolved_by: literature
+  - question: What type of language model is being fine-tuned?
+    resolution: Recent work uses large language models (LLMs) such as LLaMA, T5, or
+      BERT-based models, as seen in UniKGQA and SG-RAG MOT.
+    resolved_by: literature
+  - question: What metrics are used to evaluate performance?
+    resolution: Exact Match (EM) and F1 score are standard for QA evaluation, as demonstrated
+      in the HotpotQA dataset paper and widely adopted in the field.
+    resolved_by: literature
+  - question: How is the 'local context subgraph' defined?
+    resolution: Assumed to be the set of triples extracted from the same sentence
+      or paragraph as the target triple, based on typical information extraction pipelines
+      for QA.
+    resolved_by: assumption
+  - question: What constitutes a 'one-hop failure' in the adaptive repair loop?
+    resolution: Assumed to be a failure to correctly predict the relation or entity
+      for a single-hop query derived from the knowledge graph.
+    resolved_by: assumption
+  - question: What is the 'reinforcement-learning-based optimization' stage?
+    resolution: Assumed to involve policy gradient methods that maximize reward based
+      on QA accuracy, similar to approaches like DeepPath or KG-Reasoner.
+    resolved_by: assumption
+  - question: What are considered 'lower-hop QA instances'?
+    resolution: Lower-hop QA instances typically refer to 1-hop questions, which are
+      used as supervision signals for intermediate reasoning, as shown in works like
+      'Improving Multi-hop Knowledge Base Question Answering by Learning Intermediate
+      Supervision Signals'.
+    resolved_by: literature
+  keywords:
+  - multi-hop question answering
+  - knowledge graph
+  - local context subgraph
+  - adaptive repair loop
+  - reinforcement learning
+  - lower-hop transfer
+  search_queries:
+  - local context subgraph multi-hop question answering
+  - adaptive repair loop knowledge graph question answering
+  - reinforcement learning lower-hop transfer multi-hop QA
+  recorded_at: '2026-09-30T07:34:21.111131Z'

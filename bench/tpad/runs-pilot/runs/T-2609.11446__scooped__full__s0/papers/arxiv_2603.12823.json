@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2603.12823",
+  "title": "Adaptive Vision-Language Model Routing for Computer Use Agents",
+  "authors": [
+    "Xunzhuo Liu",
+    "Bowei He",
+    "Xue Liu",
+    "Andy Luo",
+    "Haichen Zhang",
+    "Huamin Chen"
+  ],
+  "year": 2026,
+  "published": "2026-03-13",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2603.12823",
+  "pdf_url": "https://arxiv.org/pdf/2603.12823v1",
+  "abstract": "Computer Use Agents (CUAs) translate natural-language instructions into Graphical User Interface (GUI) actions such as clicks, keystrokes, and scrolls by relying on a Vision-Language Model (VLM) to interpret screenshots and predict grounded tool calls. However, grounding accuracy varies dramatically across VLMs, while current CUA systems typically route every action to a single fixed model regardless of difficulty. We propose \\textbf{Adaptive VLM Routing} (AVR), a framework that inserts a lightweight semantic routing layer between the CUA orchestrator and a pool of VLMs. For each tool call, AVR estimates action difficulty from multimodal embeddings, probes a small VLM to measure confidence, and routes the action to the cheapest model whose predicted accuracy satisfies a target reliability threshold. For \\textit{warm} agents with memory of prior UI interactions, retrieved context further narrows the capability gap between small and large models, allowing many actions to be handled without escalation. We formalize routing as a cost--accuracy trade-off, derive a threshold-based policy for model selection, and evaluate AVR using ScreenSpot-Pro grounding data together with the OpenClaw agent routing benchmark. Across these settings, AVR projects inference cost reductions of up to 78\\% while staying within 2 percentage points of an all-large-model baseline. When combined with the Visual Confused Deputy guardrail, AVR also escalates high-risk actions directly to the strongest available model, unifying efficiency and safety within a single routing framework. Materials are also provided Model, benchmark, and code: https://github.com/vllm-project/semantic-router.",
+  "doi": null,
+  "arxiv_id": "2603.12823",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T11:24:31.207592Z",
+  "relevance": 0.3182,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "confidence threshold routing"
+  ],
+  "code_urls": [
+    "https://github.com/vllm-project/semantic-router"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

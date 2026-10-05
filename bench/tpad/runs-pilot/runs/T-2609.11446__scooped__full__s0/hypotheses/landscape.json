@@ -1,0 +1,133 @@
+{
+  "field_name": "Calibrated Confidence Threshold Routing for Collaborative Inference",
+  "categories": [
+    {
+      "name": "Calibration Methods",
+      "parent": null,
+      "description": "Techniques to adjust model confidence scores to reflect true likelihoods, including temperature scaling, isotonic regression, and Platt scaling.",
+      "paper_ids": [
+        "arxiv:2605.18796",
+        "doi:10.2139/ssrn.7304331",
+        "doi:10.3390/info17020114"
+      ]
+    },
+    {
+      "name": "Selective Prediction / Routing",
+      "parent": null,
+      "description": "Framework where models make predictions or defer based on confidence thresholds, including accept-defer rules and cascaded inference.",
+      "paper_ids": [
+        "arxiv:2605.18796",
+        "arxiv:2609.30454",
+        "doi:10.2139/ssrn.7304331",
+        "doi:10.3390/info17020114"
+      ]
+    },
+    {
+      "name": "Ensemble Confidence Calibration",
+      "parent": null,
+      "description": "Calibrating the confidence of ensemble models (e.g., for sound event detection or audio deepfake detection).",
+      "paper_ids": [
+        "doi:10.1109/apsipaasc65261.2025.11249231",
+        "doi:10.1109/icassp49660.2025.10889972"
+      ]
+    },
+    {
+      "name": "Domain-specific Applications",
+      "parent": null,
+      "description": "Application of calibration and selective prediction to specific tasks such as NER, skin lesion classification, biosecurity, and financial forecasting.",
+      "paper_ids": [
+        "arxiv:2605.18796",
+        "doi:10.2139/ssrn.7304331",
+        "arxiv:2609.30454",
+        "doi:10.3390/info17020114"
+      ]
+    }
+  ],
+  "idea_position": "Calibration Methods + Selective Prediction / Routing (combining post-hoc calibration of diverse models with common thresholds for routing decisions)",
+  "dominant_approaches": [
+    "Post-hoc calibration (temperature scaling, isotonic regression)",
+    "Threshold-based routing (constrained cost minimization, accept-defer rules)",
+    "Selective prediction (accuracy vs coverage curves)"
+  ],
+  "common_assumptions": [
+    "Held-out validation data is available and representative of the test distribution.",
+    "Standard calibration methods are effective for each model type.",
+    "Common thresholds can be set meaningfully after calibration (e.g., by optimizing a validation metric)."
+  ],
+  "common_datasets": [
+    "Production NER workload (75k queries)",
+    "HAM10000 skin lesion dataset",
+    "ISIC 2018 skin lesion dataset",
+    "WMDP and LAB-Bench biosecurity benchmarks",
+    "Global equity indices for stock market forecasting"
+  ],
+  "common_benchmarks": [
+    "Entropy thresholding",
+    "Split-conformal routing",
+    "FrugalGPT-style learned threshold",
+    "Raw classifier performance",
+    "Econometric and machine learning baselines"
+  ],
+  "common_metrics": [
+    "Inference cost (relative to large-model-only)",
+    "Micro-F1 / Accuracy",
+    "Expected Calibration Error (ECE)",
+    "AUROC for error detection",
+    "Selective prediction (accuracy vs coverage)",
+    "Lead-time (for early warning)"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Assumption of large-model accuracy invariance to routing may not hold in other domains, breaking theoretical optimality.",
+      "paper_ids": [
+        "arxiv:2605.18796"
+      ]
+    },
+    {
+      "description": "Reliance on isotonic regression or temperature scaling requiring a calibration set adds overhead and may not generalize.",
+      "paper_ids": [
+        "arxiv:2605.18796",
+        "doi:10.2139/ssrn.7304331"
+      ]
+    },
+    {
+      "description": "Focus on specific structured outputs (e.g., JSON extraction) may limit generalization to other formats.",
+      "paper_ids": [
+        "arxiv:2605.18796"
+      ]
+    },
+    {
+      "description": "Calibration quality varies across datasets due to small sample sizes or distribution shift.",
+      "paper_ids": [
+        "arxiv:2609.30454"
+      ]
+    },
+    {
+      "description": "Answer-order instability indicates sensitivity to trivial perturbations, questioning robustness of confidence estimates.",
+      "paper_ids": [
+        "arxiv:2609.30454"
+      ]
+    },
+    {
+      "description": "Limited generalizability due to focus on a single commercial model or specific domain.",
+      "paper_ids": [
+        "arxiv:2609.30454"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Calibrating diverse model architectures (e.g., decision trees, k-NN, LLMs) and using a unified reliability metric across them.",
+    "Theoretical analysis linking calibration error to expected selective risk under distribution shift.",
+    "Empirical evaluation of common thresholds across heterogeneous models on language and vision benchmarks."
+  ],
+  "contradictions": [
+    {
+      "description": "Some works show calibration significantly improves selective prediction (e.g., skin lesion), while others note that calibration gains may be limited under distribution shift or for certain model types.",
+      "paper_ids": [
+        "doi:10.2139/ssrn.7304331",
+        "arxiv:2605.18796"
+      ]
+    }
+  ],
+  "recorded_at": "2026-09-30T11:32:53.043079Z"
+}

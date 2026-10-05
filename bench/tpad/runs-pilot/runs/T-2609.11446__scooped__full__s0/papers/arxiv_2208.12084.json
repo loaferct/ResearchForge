@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2208.12084",
+  "title": "Calibrated Selective Classification",
+  "authors": [
+    "Adam Fisch",
+    "Tommi Jaakkola",
+    "Regina Barzilay"
+  ],
+  "year": 2022,
+  "published": "2022-08-25",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2208.12084",
+  "pdf_url": "https://arxiv.org/pdf/2208.12084v2",
+  "abstract": "Selective classification allows models to abstain from making predictions (e.g., say \"I don't know\") when in doubt in order to obtain better effective accuracy. While typical selective models can be effective at producing more accurate predictions on average, they may still allow for wrong predictions that have high confidence, or skip correct predictions that have low confidence. Providing calibrated uncertainty estimates alongside predictions -- probabilities that correspond to true frequencies -- can be as important as having predictions that are simply accurate on average. However, uncertainty estimates can be unreliable for certain inputs. In this paper, we develop a new approach to selective classification in which we propose a method for rejecting examples with \"uncertain\" uncertainties. By doing so, we aim to make predictions with {well-calibrated} uncertainty estimates over the distribution of accepted examples, a property we call selective calibration. We present a framework for learning selectively calibrated models, where a separate selector network is trained to improve the selective calibration error of a given base model. In particular, our work focuses on achieving robust calibration, where the model is intentionally designed to be tested on out-of-domain data. We achieve this through a training strategy inspired by distributionally robust optimization, in which we apply simulated input perturbations to the known, in-domain training data. We demonstrate the empirical effectiveness of our approach on multiple image classification and lung cancer risk assessment tasks.",
+  "doi": null,
+  "arxiv_id": "2208.12084",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T11:25:06.361692Z",
+  "relevance": 0.2727,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "selective prediction calibration"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

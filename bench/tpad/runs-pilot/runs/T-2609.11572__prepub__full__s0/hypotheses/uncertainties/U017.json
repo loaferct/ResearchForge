@@ -1,0 +1,30 @@
+{
+  "id": "U017",
+  "question": "Does published work contradict the current assessment: Our idea specifically targets versioned regulatory documents for open-domain question answering (not general IR), focuses on the problem where amendments supersede earlier clauses creating semantic overlap, proposes a retrieval-agnostic temporal component designed to work with any base retriever, and aims to construct a domain-specific benchmark with regulatory texts and time-stamped queries.?",
+  "description": "Assessment: promising_needs_validation. The idea addresses a real and important problem with a principled approach grounded in existing temporal IR research. However, it requires empirical validation to demonstrate that the proposed temporal-semantic combination provides significant gains over existing time-aware retrieval techniques when applied to versioned regulatory QA, and that the approach is sufficiently novel beyond straightforward application of methods like Re3 to the regulatory domain.",
+  "category": "contradiction",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "CHALLENGE",
+  "possible_actions": [],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "The assessment was formed from work found around the initial idea; look for work that would invalidate it.",
+  "resolution": "Published work shows that aspects of the idea are not novel: IndiaFinBench (2026) demonstrates existing work targeting versioned regulatory documents for QA-related tasks, addressing the supersession problem, and constructing domain-specific benchmarks with temporal reasoning tasks. Re3 (2025) shows existing frameworks for dynamically balancing semantic and temporal information. However, the specific combination of a retrieval-agnostic temporal component for open-domain QA over versioned regulatory texts may still offer novelty.",
+  "paper_ids": [
+    "arxiv:2604.19298",
+    "arxiv:2509.01306"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [
+    "arxiv:2604.19298",
+    "arxiv:2509.01306"
+  ],
+  "claim_ids": [],
+  "challenge_verdict": "weakened",
+  "target_ref": "critique",
+  "attempts": 1,
+  "source": "controller",
+  "created_at": "2026-09-30T10:32:40.016664Z",
+  "updated_at": "2026-09-30T10:40:08.466356Z"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "arxiv:2603.11223",
+  "title": "MDER-DR: Multi-Hop Question Answering with Entity-Centric Summaries",
+  "authors": [
+    "Riccardo Campi",
+    "Nicolò Oreste Pinciroli Vago",
+    "Mathyas Giudici",
+    "Marco Brambilla",
+    "P. Fraternali"
+  ],
+  "year": 2026,
+  "published": "2026-03-11",
+  "venue": "arXiv.org",
+  "url": "https://www.semanticscholar.org/paper/622487eafd5422f02489df71a9e4e0679273dc60",
+  "pdf_url": null,
+  "abstract": "Retrieval-Augmented Generation (RAG) over Knowledge Graphs (KGs) suffers from the fact that indexing approaches may lose important contextual nuance when text is reduced to triples, thereby degrading performance in downstream Question-Answering (QA) tasks, particularly for multi-hop QA, which requires composing answers from multiple entities, facts, or relations. We propose a domain-agnostic, KG-based QA framework that covers both the indexing and retrieval/inference phases. A new indexing approach called Map-Disambiguate-Enrich-Reduce (MDER) generates context-derived triple descriptions and subsequently integrates them with entity-level summaries, thus avoiding the need for explicit traversal of edges in the graph during the QA retrieval phase. Complementing this, we introduce Decompose-Resolve (DR), a retrieval mechanism that decomposes user queries into resolvable triples and grounds them in the KG via iterative reasoning. Together, MDER and DR form an LLM-driven QA pipeline that is robust to sparse, incomplete, and complex relational data. Experiments show that on standard and domain specific benchmarks, MDER-DR achieves substantial improvements over standard RAG baselines (up to 66%), while maintaining cross-lingual robustness. Our code is available at https://github.com/DataSciencePolimi/MDER-DR_RAG.",
+  "doi": "10.48550/arxiv.2603.11223",
+  "arxiv_id": "2603.11223",
+  "openalex_id": null,
+  "s2_id": "622487eafd5422f02489df71a9e4e0679273dc60",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T06:49:50.543900Z",
+  "relevance": 0.25,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "context enriched triple training multi-hop question answering"
+  ],
+  "code_urls": [
+    "https://github.com/DataSciencePolimi/MDER-DR_RAG"
+  ],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

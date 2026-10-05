@@ -1,0 +1,30 @@
+{
+  "id": "U023",
+  "question": "Is the label noise in LLM-generated, manually screened time-sensitive legal QA sets low enough to detect a hard-versus-graded temporal ranking difference, and does the planned experiment need a label-audit arm?",
+  "description": "The closest benchmark accepted 312 of 697 generated QA pairs, using LLM generation plus manual screening. If a substantial share of retained items are mislabeled or do not truly require the intended version, the label noise floor may exceed the effect size of a hard-versus-graded ranking change, making any crossover finding undetectable. Expert validation reduces but does not eliminate this.",
+  "category": "evaluation",
+  "importance": "medium",
+  "status": "open",
+  "next_action": "VERIFY",
+  "possible_actions": [
+    "VERIFY",
+    "PLAN_EXPERIMENT",
+    "READ"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "A null result from the crossover experiment would be uninterpretable if label noise prevents detecting the effect at all, so the noise floor must be estimated before concluding anything.",
+  "resolution": "",
+  "paper_ids": [],
+  "supporting_paper_ids": [
+    "arxiv:2605.23497"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T05:31:42.004069Z",
+  "updated_at": "2026-09-30T05:31:42.004225Z"
+}

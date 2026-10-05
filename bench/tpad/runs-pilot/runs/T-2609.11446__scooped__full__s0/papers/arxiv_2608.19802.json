@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2608.19802",
+  "title": "Stopping and Routing LLM Judge Panels",
+  "authors": [
+    "Bin Zhu",
+    "Yi Xie",
+    "Yanghui Rao"
+  ],
+  "year": 2026,
+  "published": "2026-08-20",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2608.19802",
+  "pdf_url": "https://arxiv.org/pdf/2608.19802v1",
+  "abstract": "LLM evaluation pipelines often have many candidate judges: general LLM-as-a-judge prompts, reward models, safety classifiers, confidence variants, and task-specific verifiers. The deployment question is not only which judge is best, but which judges should be called, on which examples, and when panel construction should stop. We formulate judge-panel design as a role-conditioned allocation problem. From a small labeled audit set, declared slices, and judge costs, the method estimates target-relative roles: copies add no conditional information, complements improve the global panel, and specialists help only on slices. These roles induce a policy: drop copies, add complements globally, route specialists conditionally, and stop when validation gain falls below a threshold. Across reasoning, code, safety, preference, reward-model, summarization, and math audits, the method is compared with single judges, flat panels, matched diversity heuristics, full-call stacking, reliability juries, and frugal cascades. The result is a regime map for judge calls: route specialists on deployable slices, stop in saturated verifier regimes, keep broad ensembles when their risk benefit is worth the cost, and ignore conditional copies. The output is a reusable, auditable call plan for the next evaluation batch.",
+  "doi": null,
+  "arxiv_id": "2608.19802",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T11:24:31.208336Z",
+  "relevance": 0.1818,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "confidence threshold routing"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

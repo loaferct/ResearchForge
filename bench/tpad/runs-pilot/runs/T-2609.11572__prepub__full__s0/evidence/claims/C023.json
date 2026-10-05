@@ -1,0 +1,43 @@
+{
+  "id": "C023",
+  "statement": "The strongest baselines for time-aware retrieval of versioned documents include Re3 (a retrieval-agnostic framework balancing semantic and temporal signals), time-travel phrase query frameworks (focused on efficient indexing), and temporal random walk models (for importance scoring). Our idea differs by specifically targeting open-domain QA over versioned regulatory documents, focusing on the semantic overlap from superseding amendments, and aiming to construct a regulatory-specific benchmark with time-stamped queries.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2509.01306",
+      "experiment_run_id": null,
+      "location": "relation_to_idea",
+      "quote": "Re3 focuses on general temporal IR benchmarks; our idea targets versioned regulatory documents for open-domain QA, proposing a retrieval-agnostic temporal relevance component adaptable to any retriever.",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote not found in retrieved abstract/full text"
+    },
+    {
+      "paper_id": "doi:10.31803/tg-20230715000112",
+      "experiment_run_id": null,
+      "location": "relation_to_idea",
+      "quote": "The paper uses temporal graph based on citation/author for expert finding; our idea focuses on versioned regulatory documents and uses temporal proximity between query date and version timestamp to adjust retrieval rankings.",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote not found in retrieved abstract/full text"
+    },
+    {
+      "paper_id": "doi:10.1145/3404835.3463073",
+      "experiment_run_id": null,
+      "location": "relation_to_idea",
+      "quote": "CORW focuses on improving retrieval efficiency via offline pseudo-query weighting; our idea adds a temporal relevance component to adapt rankings based on version timestamps for QA over versioned texts.",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote not found in retrieved abstract/full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "baseline comparison",
+    "versioned documents",
+    "regulatory QA",
+    "temporal-semantic balance"
+  ],
+  "recorded_at": "2026-09-30T10:50:38.683277Z"
+}

@@ -1,0 +1,1347 @@
+[[page 1]]
+Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing , pages 8823–8838,
+November 16–20, 2020. c©2020 Association for Computational Linguistics
+8823
+Hierarchical Graph Network for Multi-hop Question Answering
+Yuwei Fang, Siqi Sun, Zhe Gan, Rohit Pillai, Shuohang Wang, Jingjing Liu
+Microsoft Dynamics 365 AI Research
+{yuwfan,siqi.sun,zhe.gan,rohit.pillai,shuohang.wang,jingjl}@microsoft.com
+Abstract
+In this paper, we present Hierarchical Graph
+Network (HGN) for multi-hop question an-
+swering. To aggregate clues from scattered
+texts across multiple paragraphs, a hierarchi-
+cal graph is created by constructing nodes
+on different levels of granularity (questions,
+paragraphs, sentences, entities), the representa-
+tions of which are initialized with pre-trained
+contextual encoders. Given this hierarchical
+graph, the initial node representations are up-
+dated through graph propagation, and multi-
+hop reasoning is performed via traversing
+through the graph edges for each subsequent
+sub-task (e.g., paragraph selection, supporting
+facts extraction, answer prediction). By weav-
+ing heterogeneous nodes into an integral uni-
+ﬁed graph, this hierarchical differentiation of
+node granularity enables HGN to support dif-
+ferent question answering sub-tasks simultane-
+ously. Experiments on the HotpotQA bench-
+mark demonstrate that the proposed model
+achieves new state of the art, outperforming ex-
+isting multi-hop QA approaches.1
+1 Introduction
+In contrast to one-hop question answering (Ra-
+jpurkar et al., 2016; Trischler et al., 2016; Lai et al.,
+2017) where answers can be derived from a single
+paragraph (Wang and Jiang, 2017; Seo et al., 2017;
+Liu et al., 2018; Devlin et al., 2019), many recent
+studies on question answering focus on multi-hop
+reasoning across multiple documents or paragraphs.
+Popular tasks include WikiHop (Welbl et al., 2018),
+ComplexWebQuestions (Talmor and Berant, 2018),
+and HotpotQA (Yang et al., 2018).
+An example from HotpotQA is illustrated in Fig-
+ure 1. In order to correctly answer the question
+(“The director of the romantic comedy ‘Big Stone
+Gap’ is based in what New York city”), the model is
+1Code will be released at https://github.com/yuwfan/HGN.
+Figure 1: An example of multi-hop question answer-
+ing from HotpotQA. The model needs to identify rele-
+vant paragraphs, determine supporting facts, and then
+predict the answer correctly.
+required to ﬁrst identify P1 as a relevant paragraph,
+whose title contains the keywords that appear in the
+question (“Big Stone Gap”). S1, the ﬁrst sentence
+of P1, is then chosen by the model as a supporting
+fact that leads to the next-hop paragraphP2. Lastly,
+from P2, the span “Greenwich Village, New York
+City” is selected as the predicted answer.
+Most existing studies use a retriever to ﬁnd para-
+graphs that contain the right answer to the question
+(P1 and P2 in this case). A Machine Reading Com-
+prehension (MRC) model is then applied to the
+selected paragraphs for answer prediction (Nishida
+et al., 2019; Min et al., 2019b). However, even after
+successfully identifying a reasoning chain through
+multiple paragraphs, it still remains a critical chal-
+lenge how to aggregate evidence from scattered
+
+[[page 2]]
+8824
+sources on different granularity levels (e.g., para-
+graphs, sentences, entities) for joint answer and
+supporting facts prediction.
+To better leverage ﬁne-grained evidences, some
+studies apply entity graphs through query-guided
+multi-hop reasoning. Depending on the character-
+istics of the dataset, answers can be selected either
+from entities in the constructed entity graph (Song
+et al., 2018; Dhingra et al., 2018; De Cao et al.,
+2019; Tu et al., 2019; Ding et al., 2019), or from
+spans in documents by fusing entity representa-
+tions back into token-level document representa-
+tion (Xiao et al., 2019). However, the constructed
+graph is mostly used for answer prediction only,
+while insufﬁcient for ﬁnding supporting facts. Also,
+reasoning through a simple entity graph (Ding et al.,
+2019) or paragraph-entity hybrid graph (Tu et al.,
+2019) lacks the ability to support complicated ques-
+tions that require multi-hop reasoning.
+Intuitively, given a question that requires mul-
+tiple hops through a set of documents to reach
+the right answer, a model needs to: ( i) identify
+paragraphs relevant to the question; (ii) determine
+strong supporting evidence in those paragraphs;
+and (iii) pinpoint the right answer following the
+garnered evidence. To this end, Graph Neural Net-
+work with its inherent message passing mechanism
+that can pass on multi-hop information through
+graph propagation, has great potential of effectively
+predicting both supporting facts and answer simul-
+taneously for complex multi-hop questions.
+Motivated by this, we propose a Hierarchical
+Graph Network (HGN) for multi-hop question an-
+swering, which empowers joint answer/evidence
+prediction via multi-level ﬁne-grained graphs in
+a hierarchical framework. Instead of only using
+entities as nodes, for each question we construct
+a hierarchical graph to capture clues from sources
+with different levels of granularity. Speciﬁcally,
+four types of graph node are introduced: questions,
+paragraphs, sentences and entities (see Figure 2).
+To obtain contextualized representations for these
+hierarchical nodes, large-scale pre-trained language
+models such as BERT (Devlin et al., 2019) and
+RoBERTa (Liu et al., 2019) are used for contextual
+encoding. These initial representations are then
+passed through a Graph Neural Network for graph
+propagation. The updated node representations are
+then exploited for different sub-tasks (e.g., para-
+graph selection, supporting facts prediction, entity
+prediction). Since answers may not be entities in
+the graph, a span prediction module is also intro-
+duced for ﬁnal answer prediction.
+The main contributions of this paper are three-
+fold: (i) We propose a Hierarchical Graph Network
+(HGN) for multi-hop question answering, where
+heterogeneous nodes are woven into an integral
+hierarchical graph. (ii) Nodes from different gran-
+ularity levels mutually enhance each other for dif-
+ferent sub-tasks, providing effective supervision
+signals for both supporting facts extraction and
+answer prediction. (iii) On the HotpotQA bench-
+mark, the proposed model achieves new state of
+the art in both Distractor and Fullwiki settings.
+2 Related Work
+Multi-Hop QA Multi-hop question answering
+requires a model to aggregate scattered pieces of
+evidence across multiple documents to predict the
+right answer. WikiHop (Welbl et al., 2018) and Hot-
+potQA (Yang et al., 2018) are two recent datasets
+designed for this purpose. Existing work on Hot-
+potQA Distractor setting focuses on converting
+the multi-hop reasoning task into single-hop sub-
+problems. Speciﬁcally, QFE (Nishida et al., 2019)
+regards evidence extraction as a query-focused
+summarization task, and reformulates the query
+in each hop. DecompRC (Min et al., 2019b) de-
+composes a compositional question into simpler
+sub-questions and leverages single-hop MRC mod-
+els to answer the sub-questions. A neural modu-
+lar network is also proposed in Jiang and Bansal
+(2019b), where neural modules are dynamically
+assembled for more interpretable multi-hop rea-
+soning. Recent studies (Chen and Durrett, 2019;
+Min et al., 2019a; Jiang and Bansal, 2019a) have
+also studied the multi-hop reasoning behaviors that
+models have learned in the task.
+Graph Neural Network Recent studies on
+multi-hop QA also build graphs based on entities
+and reasoning over the constructed graph using
+graph neural networks (Kipf and Welling, 2017;
+Veliˇckovi´c et al., 2018). MHQA-GRN (Song et al.,
+2018) and Coref-GRN (Dhingra et al., 2018) con-
+struct an entity graph based on co-reference reso-
+lution or sliding windows. Entity-GCN (De Cao
+et al., 2019) considers three different types of edges
+that connect different entities in the entity graph.
+HDE-Graph (Tu et al., 2019) enriches information
+in the entity graph by adding document nodes and
+creating interactions among documents, entities
+and answer candidates. Cognitive Graph QA (Ding
+
+[[page 3]]
+8825
+Figure 2: Model architecture of Hierarchical Graph Network. The constructed graph corresponds to the example
+in Figure 1. Green, blue, orange, and brown colors represent paragraph (P), sentence (S), entity (E), and question
+(Q) nodes, respectively. Some entities and hyperlinks are omitted for simplicity.
+et al., 2019) employs an MRC model to predict
+answer spans and possible next-hop spans, and
+then organizes them into a cognitive graph. DFGN
+(Xiao et al., 2019) constructs a dynamic entity
+graph, where in each reasoning step irrelevant en-
+tities are softly masked out and a fusion module
+is designed to improve the interaction between the
+entity graph and documents.
+More recently, SAE (Tu et al., 2020) deﬁnes
+three types of edge in the sentence graph based
+on the named entities and noun phrases appearing
+in the question and sentences. C2F Reader (Shao
+et al., 2020) uses graph attention or self-attention
+on entity graph, and argues that this graph may
+not be necessary for multi-hop reasoning. Asai
+et al. (2020) proposes a new graph-based recurrent
+method to ﬁnd evidence documents as reasoning
+paths, which is more focused on information re-
+trieval. Different from the above methods, our
+proposed model constructs a hierarchical graph,
+effectively exploring relations on different granu-
+larities and employing different nodes to perform
+different tasks.
+Hierarchical Coarse-to-Fine Modeling Previ-
+ous work on hierarchical modeling for question an-
+swering is mainly based on a coarse-to-ﬁne frame-
+work. Choi et al. (2017) proposes to use rein-
+forcement learning to ﬁrst select relevant sentences
+and then produce answers from those sentences.
+Min et al. (2018) investigates the minimal context
+required to answer a question, and observes that
+most questions can be answered with a small set
+of sentences. Swayamdipta et al. (2018) constructs
+lightweight models and combines them into a cas-
+cade structure to extract the answer. Zhong et al.
+(2019) proposes to use hierarchies of co-attention
+and self-attention to combine information from ev-
+idence across multiple documents. Different from
+the above methods, our proposed model organizes
+different granularities in a hierarchical manner and
+leverages graph neural network to obtain the repre-
+sentations for different downstream tasks.
+3 Hierarchical Graph Network
+As illustrated in Figure 2, the proposed Hierarchical
+Graph Network (HGN) consists of four main com-
+ponents: (i) Graph Construction Module (Sec. 3.1),
+through which a hierarchical graph is constructed
+to connect clues from different sources; (ii) Con-
+text Encoding Module (Sec. 3.2), where initial
+representations of graph nodes are obtained via
+a RoBERTa-based encoder; (iii) Graph Reasoning
+Module (Sec. 3.3), where graph-attention-based
+message passing algorithm is applied to jointly
+update node representations; and (iv) Multi-task
+Prediction Module (Sec. 3.4), where multiple sub-
+tasks, including paragraph selection, supporting
+facts prediction, entity prediction, and answer span
+extraction, are performed simultaneously.
+3.1 Graph Construction
+The hierarchical graph is constructed in two steps:
+(i) identifying relevant multi-hop paragraphs; and
+(ii) adding edges representing connections between
+sentences/entities within the selected paragraphs.
+Paragraph Selection We ﬁrst retrieve para-
+graphs whose titles match any phrases in the ques-
+tion (title matching). In addition, we train a para-
+
+[[page 4]]
+8826
+graph ranker based on a pre-trained RoBERTa en-
+coder, followed by a binary classiﬁcation layer, to
+rank the probabilities of whether the input para-
+graphs contain the ground-truth supporting facts.
+If multiple paragraphs are found by title match-
+ing, only two paragraphs with the highest ranking
+scores are selected. If title matching returns no re-
+sults, we further search for paragraphs that contain
+entities appearing in the question. If this also fails,
+the paragraph ranker will select the paragraph with
+the highest ranking score. The number of selected
+paragraphs in the ﬁrst-hop is at most 2.
+Once the ﬁrst-hop paragraphs are identiﬁed, the
+next step is to ﬁnd facts and entities within the para-
+graphs that can lead to other relevant paragraphs
+(i.e,, the second hop). Instead of relying on entity
+linking, which could be noisy, we use hyperlinks
+(provided by Wikipedia) in the ﬁrst-hop paragraphs
+to discover second-hop paragraphs. Once the links
+are selected, we add edges between the sentences
+containing these links (source) and the paragraphs
+that the hyperlinks refer to (target), as illustrated
+by the dashed orange line in Figure 2. In order to
+allow information ﬂow from both directions, the
+edges are considered as bidirectional.
+Through this two-hop selection process, we are
+able to obtain several candidate paragraphs. In
+order to reduce introduced noise during inference,
+we use the paragraph ranker to select paragraphs
+with top-N ranking scores in each step.
+Nodes and Edges Paragraphs are comprised of
+sentences, and each sentence contains multiple enti-
+ties. This graph is naturally encoded in a hierarchi-
+cal structure, and also motivates how we construct
+the hierarchical graph. For each paragraph node,
+we add edges between the node and all the sen-
+tences in the paragraph. For each sentence node,
+we extract all the entities in the sentence and add
+edges between the sentence node and these entity
+nodes. Optionally, edges between paragraphs and
+edges between sentences can also be included in
+the ﬁnal graph.
+Each type of these nodes captures semantics
+from different information sources. Thus, the hi-
+erarchical graph effectively exploits the structural
+information across all different granularity levels
+to learn ﬁne-grained representations, which can lo-
+cate supporting facts and answers more accurately
+than simpler graphs with homogeneous nodes.
+An example hierarchical graph is illustrated in
+Figure 2. We deﬁne different types of edges as
+follows: (i) edges between question node and para-
+graph nodes; ( ii) edges between question node
+and its corresponding entity nodes (entities ap-
+pearing in the question, not shown for simplicity);
+(iii) edges between paragraph nodes and their cor-
+responding sentence nodes (sentences within the
+paragraph); (iv) edges between sentence nodes and
+their linked paragraph nodes (linked through hy-
+perlinks); (v) edges between sentence nodes and
+their corresponding entity nodes (entities appear-
+ing in the sentences); (vi) edges between paragraph
+nodes; and (vii) edges between sentence nodes that
+appear in the same paragraph. Note that a sentence
+is only connected to its previous and next neigh-
+boring sentence. The ﬁnal graph consists of these
+seven types of edges as well as four types of nodes,
+which link the question to paragraphs, sentences,
+and entities in a hierarchical way.
+3.2 Context Encoding
+Given the constructed hierarchical graph, the next
+step is to obtain the initial representations of all
+the graph nodes. To this end, we ﬁrst combine
+all the selected paragraphs into contextC, which
+is concatenated with the question Q and fed into
+pre-trained Transformer RoBERTa, followed by
+a bi-attention layer (Seo et al., 2017). We de-
+note the encoded question representation as Q =
+{q0, q1,..., qm−1} ∈ Rm×d, and the encoded
+context representation asC ={c0, c1,..., cn−1}∈
+Rn×d, where m,n are the length of the question
+and the context, respectively. Each qi and cj∈ Rd.
+A shared BiLSTM is applied on top of the con-
+text representation C, and the representations of
+different nodes are extracted from the output of
+the BiLSTM, denoted as M ∈ Rn×2d. For en-
+tity/sentence/paragraph nodes, which are spans of
+the context, the representation is calculated from:
+(i) the hidden state of the backward LSTM at the
+start position, and (ii) the hidden state of the for-
+ward LSTM at the end position. For the question
+node, a max-pooling layer is used to obtain its rep-
+resentation. Speciﬁcally,
+pi = MLP1
+([
+M[P (i)
+start][d:]; M[P (i)
+end][:d]
+])
+si = MLP2
+([
+M[S(i)
+start][d:]; M[S(i)
+end][:d]
+])
+ei = MLP3
+([
+M[E(i)
+start][d:]; M[E(i)
+end][:d]
+])
+q = max-pooling(Q), (1)
+where P (i)
+start, S(i)
+start, and E(i)
+start denote the start
+
+[[page 5]]
+8827
+position of thei-th paragraph/sentence/entity node.
+Similarly,P (i)
+end,S(i)
+end, andE(i)
+end denote the corre-
+sponding end positions. MLP(·) denotes an MLP
+layer, and [; ] denotes the concatenation of two vec-
+tors. As a summary, after context encoding, each
+pi, si, and ei∈ Rd, serves as the representation
+of the i-th paragraph/sentence/entity node. The
+question node is represented as q∈ Rd.
+3.3 Graph Reasoning
+After context encoding, HGN performs reasoning
+over the hierarchical graph, where the contextu-
+alized representations of all the graph nodes are
+transformed into higher-level features via a graph
+neural network. Speciﬁcally, let P = {pi}np
+i=1,
+S ={si}ns
+i=1, and E ={ei}ne
+i=1, wherenp,ns and
+ne denote the number of paragraph/sentence/entity
+nodes in a graph. In experiments, we set np = 4,
+ns = 40 andne = 60 (padded where necessary),
+and denote H = {q, P, S, E} ∈ Rg×d, where
+g =np +ns +ne + 1, andd is the feature dimen-
+sion of each node.
+For graph propagation, we use Graph Attention
+Network (GAT) (Veliˇckovi´c et al., 2018) to per-
+form message passing over the hierarchical graph.
+Speciﬁcally, GAT takes all the nodes as input, and
+updates node feature h′
+i through its neighborsNi
+in the graph. Formally,
+h′
+i = LeakyRelu
+(∑
+j∈Ni
+αijhjW
+)
+, (2)
+where hj is the jth vector from H, W∈ Rd×d
+is a weight matrix 2 to be learned, and αij is the
+attention coefﬁcients, which can be calculated by:
+αij = exp(f([hi; hj]weij))∑
+k∈Ni exp(f([hi; hk]weik)), (3)
+where weij∈ R2d is the weight vector correspond-
+ing to the edge type eij between the i-th and j-
+th nodes, and f(·) denotes the LeakyRelu activa-
+tion function. In a summary, after graph reason-
+ing, we obtain H′ ={h′
+0, h′
+1,..., h′
+g}∈ Rg×d,
+from which the updated representations for each
+type of node can be obtained, i.e., P′∈ Rnp×d,
+S′∈ Rns×d, E′∈ Rne×d, and q′∈ Rd.
+Gated Attention The graph information will fur-
+ther contribute to the context information for an-
+swer span extraction. We merge the context repre-
+sentation M and the graph representation H′ via a
+2Note that we omit the bias term for all the weight matrices
+in the paper to save space.
+gated attention mechanism:
+C = Relu(MWm)· Relu(H′W′
+m)T
+¯H = Softmax(C)· H′
+G =σ([M; ¯H]Ws)· Tanh([M; ¯H]Wt), (4)
+where Wm ∈ R2d×2d, W′
+m ∈ R2d×2d, Ws ∈
+R4d×4d, Wt∈ R4d×4d are weight matrices to learn.
+G∈ Rn×4d is the gated representation which will
+be used for answer span extraction.
+3.4 Multi-task Prediction
+After graph reasoning, the updated node representa-
+tions are used for different sub-tasks: (i) paragraph
+selection based on paragraph nodes; (ii) support-
+ing facts prediction based on sentence nodes; and
+(iii) answer prediction based on entity nodes and
+context representation G. Since the answers may
+not reside in entity nodes, the loss for entity node
+only serves as a regularization term.
+In our HGN model, all three tasks are jointly
+performed through multi-task learning. The ﬁnal
+objective is deﬁned as:
+Ljoint =Lstart +Lend +λ1Lpara +λ2Lsent
++λ3Lentity +λ4Ltype, (5)
+where λ1, λ2, λ3, and λ4 are hyper-parameters,
+and each loss function is a cross-entropy loss, cal-
+culated over the logits (described below).
+For both paragraph selection (Lpara) and sup-
+porting facts prediction (Lsent), we use a two-layer
+MLP as the binary classiﬁer:
+osent = MLP4(S′), opara = MLP5(P′), (6)
+where osent ∈ Rns represents whether a sen-
+tence is selected as supporting facts, and opara∈
+Rnp represents whether a paragraph contains the
+ground-truth supporting facts.
+We treat entity prediction (Lentity) as a multi-
+class classiﬁcation problem. Candidate entities
+include all entities in the question and those that
+match the titles in the context. If the ground-truth
+answer does not exist among the entity nodes, the
+entity loss is zero. Speciﬁcally,
+oentity = MLP6(E′). (7)
+The entity loss will only serve as a regularization
+term, and the ﬁnal answer prediction will only rely
+on the answer span extraction module as follows.
+
+[[page 6]]
+8828
+Model Ans Sup Joint
+EM F1 EM F1 EM F1
+DecompRC (Min et al., 2019b) 55.20 69.63 - - - -
+ChainEx (Chen et al., 2019) 61.20 74.11 - - - -
+Baseline Model (Yang et al., 2018) 45.60 59.02 20.32 64.49 10.83 40.16
+QFE (Nishida et al., 2019) 53.86 68.06 57.75 84.49 34.63 59.61
+DFGN (Xiao et al., 2019) 56.31 69.69 51.50 81.62 33.62 59.82
+LQR-Net (Grail et al., 2020) 60.20 73.78 56.21 84.09 36.56 63.68
+P-BERT† 61.18 74.16 51.38 82.76 35.42 63.79
+TAP2 (Glass et al., 2019) 64.99 78.59 55.47 85.57 39.77 69.12
+EPS+BERT† 65.79 79.05 58.50 86.26 42.47 70.48
+SAE-large (Tu et al., 2020) 66.92 79.62 61.53 86.86 45.36 71.45
+C2F Reader(Shao et al., 2020) 67.98 81.24 60.81 87.63 44.67 72.73
+Longformer⋆ (Beltagy et al., 2020) 68.00 81.25 63.09 88.34 45.91 73.16
+ETC-large⋆ (Zaheer et al., 2020) 68.12 81.18 63.25 89.09 46.40 73.62
+HGN (ours) 69.22 82.19 62.76 88.47 47.11 74.21
+Table 1: Results on the test set of HotpotQA in the Distractor setting. HGN achieves state-of-the-art results at the
+time of submission (Dec. 1, 2019). (†) and (⋆) indicates unpublished and concurrent work. RoBERTa-large (Liu
+et al., 2019) is used for context encoding.
+The logits of every position being the start and
+end of the ground-truth span are computed by a
+two-layer MLP on top of G in Eqn.(4):
+ostart = MLP7(G), oend = MLP8(G). (8)
+Following previous work (Xiao et al., 2019), we
+also need to identify the answer type, which in-
+cludes the types of span, entity, yes and no. We use
+a 3-way two-layer MLP for answer-type classiﬁ-
+cation based on the ﬁrst hidden representation of
+G:
+otype = MLP9(G[0]). (9)
+During decoding, we ﬁrst use this to determine
+the answer type. If it is “yes” or “no”, we
+directly return it as the answer. Overall, the
+ﬁnal cross-entropy loss ( Ljoint) used for train-
+ing is deﬁned over all the aforementioned logits:
+osent, opara, oentity, ostart, oend, otype.
+4 Experiments
+In this section, we describe experiments comparing
+HGN with state-of-the-art approaches and provide
+detailed analysis on the model and results.
+4.1 Dataset
+We use HotpotQA dataset (Yang et al., 2018) for
+evaluation, a popular benchmark for multi-hop QA.
+Speciﬁcally, two sub-tasks are included in this
+dataset: (i) Answer prediction; and (ii) Supporting
+facts prediction. For each sub-task, exact match
+(EM) and partial match (F1) are used to evaluate
+model performance, and a joint EM and F1 score
+is used to measure the ﬁnal performance, which
+encourages the model to take both answer and evi-
+dence prediction into consideration.
+There are two settings in HotpotQA: Distractor
+and Fullwiki setting. In the Distractor setting, for
+each question, two gold paragraphs with ground-
+truth answers and supporting facts are provided,
+along with 8 ‘distractor’ paragraphs that were col-
+lected via a bi-gram TF-IDF retriever (Chen et al.,
+2017). The Fullwiki setting is more challenging,
+which contains the same training questions as in
+the Distractor setting, but does not provide relevant
+paragraphs for test set. To obtain the right answer
+and supporting facts, the entire Wikipedia can be
+used to ﬁnd relevant documents. Implementation
+details can be found in Appendix B.
+4.2 Experimental Results
+Results on Test Set Table 1 and 2 summarize
+results on the hidden test set of HotpotQA. In Dis-
+tractor setting, HGN outperforms both published
+and unpublished work on every metric by a sig-
+niﬁcant margin, achieving a Joint EM/F1 score
+of 47.11/74.21 with an absolute improvement of
+2.44/1.48 over previous state of the art. In Fullwiki
+setting, HGN achieves state-of-the-art results on
+
+[[page 7]]
+8829
+Model Ans Sup Joint
+EM F1 EM F1 EM F1
+TPReasoner (Xiong et al., 2019) 36.04 47.43 - - - -
+Baseline Model (Yang et al., 2018) 23.95 32.89 3.86 37.71 1.85 16.15
+QFE (Nishida et al., 2019) 28.66 38.06 14.20 44.35 8.69 23.10
+MUPPET (Feldman and El-Yaniv, 2019) 30.61 40.26 16.65 47.33 10.85 27.01
+Cognitive Graph (Ding et al., 2019) 37.12 48.87 22.82 57.69 12.42 34.92
+PR-BERT† 43.33 53.79 21.90 59.63 14.50 39.11
+Golden Retriever (Qi et al., 2019) 37.92 48.58 30.69 64.24 18.04 39.13
+Entity-centric BERT (Godbole et al., 2019) 41.82 53.09 26.26 57.29 17.01 39.18
+SemanticRetrievalMRS (Yixin Nie, 2019) 45.32 57.34 38.67 70.83 25.14 47.60
+Transformer-XH (Zhao et al., 2020) 48.95 60.75 41.66 70.01 27.13 49.57
+MIR+EPS+BERT† 52.86 64.79 42.75 72.00 31.19 54.75
+Graph Recur. Retriever (Asai et al., 2020) 60.04 72.96 49.08 76.41 35.35 61.18
+HGN (RoBERTa-large) 57.85 69.93 51.01 76.82 37.17 60.74
+HGN (ALBERT-xxlarge-v2) 59.74 71.41 51.03 77.37 37.92 62.26
+Table 2: Results on the test set of HotpotQA in the Fullwiki setting. HGN achieves state-of-the-art results at
+the time of submission (Feb. 11, 2020). ( †) indicates unpublished work. RoBERTa-large (Liu et al., 2019) and
+ALBERT-xxlarge-v2 (Lan et al., 2020) are used for context encoding, and SemanticRetrievalMRS is used for
+retrieval. Leaderboard: https://hotpotqa.github.io/.
+Joint EM/F1 with 2.57/1.08 improvement, despite
+using an inferior retriever; when using the same
+retriever as in SemanticRetrievalMRS (Yixin Nie,
+2019), our method outperforms by a signiﬁcant
+margin, demonstrating the effectiveness of our
+multi-hop reasoning approach. In the following
+sub-sections, we provide a detailed analysis on the
+sources of performance gain on the dev set. Ad-
+ditional ablation study on paragraph selection is
+provided in Appendix D.
+Effectiveness of Hierarchical Graph As de-
+scribed in Section 3.1, we construct our graph with
+four types of nodes and seven types of edges. For
+ablation study, we build the graph step by step.
+First, we only consider edges from question to para-
+graphs, and from paragraphs to sentences, i.e., only
+edge type (i), (iii) and (iv) are considered. We call
+this the PS Graph. Based on this, entity nodes and
+edges related to each entity node (corresponding to
+edge type (ii) and (v)) are added. We call this the
+PSE Graph. Lastly, edge types (vi) and (vii) are
+added, resulting in the ﬁnal hierarchical graph.
+As shown in Table 4, the use of PS Graph im-
+proves the joint F1 score over the plain RoBERTa
+model by 2.81 points. By further adding entity
+nodes, the Joint F1 increases by 0.30 points. This
+indicates that the addition of entity nodes is helpful,
+but may also bring in noise, thus only leading to
+limited performance improvement. By including
+edges among sentences and paragraphs, our ﬁnal
+hierarchical graph provides an additional improve-
+ment of 0.24 points. We hypothesize that this is
+due to the explicit connection between sentences
+that leads to better representations.
+Effectiveness of Pre-trained Language Model
+To verify the effects of pre-trained language mod-
+els, we compare HGN with prior state-of-the-art
+methods using the same pre-trained language mod-
+els. Results in Table 5 show that our HGN variants
+outperform DFGN, EPS and SAE, indicating the
+performance gain comes from better model design.
+4.3 Analysis
+In this section, we provide an in-depth error anal-
+ysis on the proposed model. HotpotQA provides
+two reasoning types: “bridge” and “comparison”.
+“Bridge” questions require the identiﬁcation of a
+bridge entity that leads to the answer, while “com-
+parison” questions compare two entities to infer
+the answer, which could be yes, no or a span of
+text. For analysis, we further split “comparison”
+questions into “comp-yn” and “comp-span”. Ta-
+ble 6 indicates that “comp-yn” questions are the
+easiest, on which our model achieves 88.5 joint F1
+score. HGN performs similarly on “bridge” and
+“comp-span” with 74 joint F1 score, indicating that
+there is still room for further improvement.
+To provide a more in-depth understanding of our
+
+[[page 8]]
+8830
+Category Question Answer Prediction Pct (%)
+Annotation Were the ﬁlms Tonka and 101
+Dalmatians released in the same
+decade?
+1958 Walt Disney
+Western adventure
+ﬁlm
+No 9
+Multiple An-
+swers
+Michael J. Hunter replaced the
+lawyer who became the adminis-
+trator of which agency?
+EPA Environmental Pro-
+tection Agency
+24
+Discrete Rea-
+soning
+Between two bands, Mastodon
+and Hole, which one has more
+members?
+Mastodon Hole 15
+Commonsense
+& External
+Knowledge
+What is the name of second ex-
+tended play by the artists of the
+mini-album Code#01?
+Code#02
+Pretty Pretty
+Code#01 Bad Girl 16
+Multi-hop Who directed the ﬁlm based on
+the rock opera 5:15 appeared in?
+Franc Roddam Ken Russell 16
+MRC How was Ada Lovelace, the ﬁrst
+computer programmer, related to
+Lord Byron in Childe Byron?
+his daughter strained relation-
+ship
+20
+Table 3: Error analysis of HGN model. For ‘Multi-hop’ errors, the model jumps to the wrong ﬁlm (“Tommy
+(1975 ﬁlm)”) instead of the correct one (“Quadrophenia (ﬁlm)”) from the starting entity “rock opera 5:15”. The
+supporting fact for the ‘MRC’ example is “ Childe Byron is a 1977 play by Romulus Linney about the strained
+relationship between the poet, Lord Byron, and his daughter, Ada Lovelace”.
+Model Ans F1 Sup F1 Joint F1
+w/o Graph 80.58 85.83 71.02
+PS Graph 81.68 88.44 73.83
+PSE Graph 82.10 88.40 74.13
+Hier. Graph 82.22 88.58 74.37
+Table 4: Ablation study on the effectiveness of the hi-
+erarchical graph on the dev set in the Distractor setting.
+RoBERTa-large is used for context encoding.
+Model Ans F1 Sup F1 Joint F1
+DFGN (BERT-base) 69.38 82.23 59.89
+EPS (BERT-wwm)† 79.05 86.26 70.48
+SAE (RoBERTa) 80.75 87.38 72.75
+HGN (BERT-base) 74.76 86.61 66.90
+HGN (BERT-wwm) 80.51 88.14 72.77
+HGN (RoBERTa) 82.22 88.58 74.37
+HGN (ALBERT-xxlarge-v2) 83.46 89.2 75.79
+Table 5: Results with different pre-trained language
+models on the dev set in the Distractor setting. (†) is un-
+published work with results on the test set, using BERT
+whole word masking (wwm).
+model’s weaknesses (and provide insights for fu-
+ture work), we randomly sample 100 examples in
+the dev set with the answer F1 as 0. After carefully
+analyzing each example, we observe that these er-
+Question Ans F1 Sup F1 Joint F1 Pct (%)
+comp-yn 93.45 94.22 88.50 6.19
+comp-span 79.06 91.72 74.17 13.90
+bridge 81.90 87.60 73.31 79.91
+Table 6: Results of HGN for different reasoning types.
+‘Pct’ is short for ‘Percentage’.
+rors can be roughly grouped into six categories: (i)
+Annotation: the annotation provided in the dataset
+is not correct; (ii) Multiple Answers: questions
+may have multiple correct answers, but only one
+answer is provided in the dataset; ( iii) Discrete
+Reasoning: this type of error often appears in “com-
+parison” questions, where discrete reasoning is re-
+quired to answer the question correctly; (iv) Com-
+monsense & External Knowledge : to answer this
+type of question, commonsense or external knowl-
+edge is required; (v) Multi-hop: the model fails to
+perform multi-hop reasoning, and ﬁnds the ﬁnal
+answer from wrong paragraphs; (vi) MRC: model
+correctly ﬁnds the supporting paragraphs and sen-
+tences, but predicts the wrong answer span.
+Note that these error types are not mutually ex-
+clusive, but we aim to classify each example into
+only one type, in the order presented above. For
+
+[[page 9]]
+8831
+example, if an error is classiﬁed as ‘Commonsense
+& External Knowledge’ type, it cannot be classi-
+ﬁed as ‘Multi-hop’ or ‘MRC’ error. Table 3 shows
+examples from each category (the corresponding
+paragraphs are omitted due to space limit).
+We observed that a lot of errors are due to the fact
+that some questions have multiple answers with the
+same meaning, such as “a body of water vs. creek”,
+“EPA vs. Environmental Protection Agency”, and
+“American-born vs. U.S. born”. In these exam-
+ples, the former is the ground-truth answer, and
+the latter is our model’s prediction. Secondly, for
+questions that require commonsense or discrete rea-
+soning (e.g., “second” means “Code#02”3, “which
+band has more members”, or “who was born ear-
+lier”), our model just randomly picks an entity as
+answer, as it is incapable of performing this type
+of reasoning. The majority of the errors are from
+either multi-hop reasoning or MRC model’s span
+selection, which indicates that there is still room
+for further improvement. Additional examples are
+provided in Appendix F.
+4.4 Generalizability Discussion
+The hierarchical graph can be applied to different
+multi-hop QA datasets, though in this paper mainly
+tailored for HotpotQA. Here we use Wikipedia hy-
+perlinks to connect sentences and paragraphs. An
+alternative way is to use an entity linking system
+to make it more generalizable. For each sentence
+node, if its entities exist in a paragraph, an edge
+can be added to connect the sentence and paragraph
+nodes. In our experiments, we restrict the number
+of multi-hops to two for the HotpotQA task, which
+can be increased to accommodate other datasets.
+The maximum number of paragraphs is set to four
+for HotpotQA, as we observe that using more docu-
+ments within a maximum sequence length does not
+help much (see Table 9 in the Appendix). To gener-
+alize to other datasets that need to consume longer
+documents, we can either: (i) use sliding-window-
+based method to chunk a long sequence into short
+ones; or ( ii) replace the BERT-based backbone
+with other transformer-based models that are capa-
+ble of dealing with long sequences (Beltagy et al.,
+2020; Zaheer et al., 2020; Wang et al., 2020).
+5 Conclusion
+In this paper, we propose a new approach, Hi-
+erarchical Graph Network (HGN), for multi-hop
+3Please refer to Row 4 in Table 3 for more context.
+question answering. To capture clues from dif-
+ferent granularity levels, our HGN model weaves
+heterogeneous nodes into a single uniﬁed graph.
+Experiments with detailed analysis demonstrate
+the effectiveness of our proposed model, which
+achieves state-of-the-art performances on the Hot-
+potQA benchmark. Currently, in the Fullwiki set-
+ting, an off-the-shelf paragraph retriever is adopted
+for selecting relevant context from large corpus of
+text. Future work includes investigating the interac-
+tion and joint training between HGN and paragraph
+retriever for performance improvement.
+References
+Akari Asai, Kazuma Hashimoto, Hannaneh Hajishirzi,
+Richard Socher, and Caiming Xiong. 2020. Learn-
+ing to retrieve reasoning paths over wikipedia graph
+for question answering. In ICLR.
+Iz Beltagy, Matthew E. Peters, and Arman Cohan.
+2020. Longformer: The long-document transformer.
+arXiv preprint arXiv:2004.05150.
+Danqi Chen, Adam Fisch, Jason Weston, and Antoine
+Bordes. 2017. Reading Wikipedia to answer open-
+domain questions. In ACL.
+Jifan Chen and Greg Durrett. 2019. Understanding
+dataset design choices for multi-hop reasoning. In
+NAACL.
+Jifan Chen, Shih-ting Lin, and Greg Durrett. 2019.
+Multi-hop question answering via reasoning chains.
+arXiv preprint arXiv:1910.02610.
+Eunsol Choi, Daniel Hewlett, Jakob Uszkoreit, Illia
+Polosukhin, Alexandre Lacoste, and Jonathan Be-
+rant. 2017. Coarse-to-ﬁne question answering for
+long documents. In ACL.
+Nicola De Cao, Wilker Aziz, and Ivan Titov. 2019.
+Question answering by reasoning across documents
+with graph convolutional networks. In NAACL.
+Jacob Devlin, Ming-Wei Chang, Kenton Lee, and
+Kristina Toutanova. 2019. Bert: Pre-training of deep
+bidirectional transformers for language understand-
+ing. In NAACL.
+Bhuwan Dhingra, Qiao Jin, Zhilin Yang, William W
+Cohen, and Ruslan Salakhutdinov. 2018. Neural
+models for reasoning over multiple mentions using
+coreference. In NAACL.
+Ming Ding, Chang Zhou, Qibin Chen, Hongxia Yang,
+and Jie Tang. 2019. Cognitive graph for multi-hop
+reading comprehension at scale. In ACL.
+Yair Feldman and Ran El-Yaniv. 2019. Multi-hop para-
+graph retrieval for open-domain question answering.
+arXiv preprint arXiv:1906.06606.
+
+[[page 10]]
+8832
+Michael Glass, Alﬁo Gliozzo, Rishav Chakravarti,
+Anthony Ferritto, Lin Pan, GP Bhargav, Dinesh
+Garg, and Avirup Sil. 2019. Span selection pre-
+training for question answering. arXiv preprint
+arXiv:1909.04120.
+Ameya Godbole, Dilip Kavarthapu, Rajarshi Das,
+Zhiyu Gong, Abhishek Singhal, Hamed Zamani,
+Mo Yu, Tian Gao, Xiaoxiao Guo, Manzil Zaheer,
+et al. 2019. Multi-step entity-centric information
+retrieval for multi-hop question answering. arXiv
+preprint arXiv:1909.07598.
+Quentin Grail, Julien Perez, and Eric Gaussier.
+2020. Latent question reformulation and informa-
+tion accumulation for multi-hop machine reading.
+https://openreview.net/forum?id=S1x63TEYvr.
+Yichen Jiang and Mohit Bansal. 2019a. Avoiding rea-
+soning shortcuts: Adversarial evaluation, training,
+and model development for multi-hop qa. In ACL.
+Yichen Jiang and Mohit Bansal. 2019b. Self-
+assembling modular networks for interpretable
+multi-hop reasoning. In EMNLP.
+Thomas N Kipf and Max Welling. 2017. Semi-
+supervised classiﬁcation with graph convolutional
+networks. In ICLR.
+Guokun Lai, Qizhe Xie, Hanxiao Liu, Yiming Yang,
+and Eduard Hovy. 2017. Race: Large-scale read-
+ing comprehension dataset from examinations. In
+EMNLP.
+Zhenzhong Lan, Mingda Chen, Sebastian Goodman,
+Kevin Gimpel, Piyush Sharma, and Radu Soricut.
+2020. Albert: A lite bert for self-supervised learn-
+ing of language representations. In ICLR.
+Xiaodong Liu, Yelong Shen, Kevin Duh, and Jianfeng
+Gao. 2018. Stochastic answer networks for machine
+reading comprehension. In ACL.
+Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Man-
+dar Joshi, Danqi Chen, Omer Levy, Mike Lewis,
+Luke Zettlemoyer, and Veselin Stoyanov. 2019.
+Roberta: A robustly optimized bert pretraining ap-
+proach. arXiv preprint arXiv:1907.11692.
+Sewon Min, Eric Wallace, Sameer Singh, Matt Gard-
+ner, Hannaneh Hajishirzi, and Luke Zettlemoyer.
+2019a. Compositional questions do not necessitate
+multi-hop reasoning. In ACL.
+Sewon Min, Victor Zhong, Richard Socher, and Caim-
+ing Xiong. 2018. Efﬁcient and robust question an-
+swering from minimal context over documents. In
+ACL.
+Sewon Min, Victor Zhong, Luke Zettlemoyer, and Han-
+naneh Hajishirzi. 2019b. Multi-hop reading compre-
+hension through question decomposition and rescor-
+ing. In ACL.
+Kosuke Nishida, Kyosuke Nishida, Masaaki Nagata,
+Atsushi Otsuka, Itsumi Saito, Hisako Asano, and
+Junji Tomita. 2019. Answering while summarizing:
+Multi-task learning for multi-hop qa with evidence
+extraction. In ACL.
+Peng Qi, Xiaowen Lin, Leo Mehr, Zijian Wang, and
+Christopher D. Manning. 2019. Answering complex
+open-domain questions through iterative query gen-
+eration. In EMNLP.
+Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, and
+Percy Liang. 2016. Squad: 100,000+ questions for
+machine comprehension of text. In EMNLP.
+Minjoon Seo, Aniruddha Kembhavi, Ali Farhadi, and
+Hannaneh Hajishirzi. 2017. Bidirectional attention
+ﬂow for machine comprehension. In ICLR.
+Nan Shao, Yiming Cui, Ting Liu, Wang, and Guop-
+ing Hu Hu. 2020. Is graph structure neces-
+sary for multi-hop reasoningt. arXiv preprint
+arXiv:2004.03096.
+Linfeng Song, Zhiguo Wang, Mo Yu, Yue Zhang,
+Radu Florian, and Daniel Gildea. 2018. Exploring
+graph-structured passage representation for multi-
+hop reading comprehension with graph neural net-
+works. arXiv preprint arXiv:1809.02040.
+Swabha Swayamdipta, Ankur P. Parikh, and Tom
+Kwiatkowski. 2018. Multi-mention learning for
+reading comprehension with neural cascades. In
+ICLR.
+Alon Talmor and Jonathan Berant. 2018. The web as
+a knowledge-base for answering complex questions.
+In NAACL.
+Adam Trischler, Tong Wang, Xingdi Yuan, Justin Har-
+ris, Alessandro Sordoni, Philip Bachman, and Ka-
+heer Suleman. 2016. Newsqa: A machine compre-
+hension dataset. arXiv preprint arXiv:1611.09830.
+Ming Tu, Kevin Huang, Guangtao Wang, Jing Huang,
+Xiaodong He, and Bowen Zhou. 2020. Select, an-
+swer and explain: Interpretable multi-hop reading
+comprehension over multiple documents. In AAAI.
+Ming Tu, Guangtao Wang, Jing Huang, Yun Tang, Xi-
+aodong He, and Bowen Zhou. 2019. Multi-hop read-
+ing comprehension across multiple documents by
+reasoning over heterogeneous graphs. In ACL.
+Petar Veliˇckovi´c, Guillem Cucurull, Arantxa Casanova,
+Adriana Romero, Pietro Lio, and Yoshua Bengio.
+2018. Graph attention networks. In ICLR.
+Shuohang Wang and Jing Jiang. 2017. Machine com-
+prehension using match-lstm and answer pointer. In
+ICLR.
+Shuohang Wang, Luowei Zhou, Zhe Gan, Yen-Chun
+Chen, Yuwei Fang, Siqi Sun, Yu Cheng, and Jingjing
+Liu. 2020. Cluster-former: Clustering-based sparse
+transformer for long-range dependency encoding.
+arXiv preprint arXiv:2009.06097.
+
+[[page 11]]
+8833
+Johannes Welbl, Pontus Stenetorp, and Sebastian
+Riedel. 2018. Constructing datasets for multi-hop
+reading comprehension across documents. TACL.
+Thomas Wolf, Lysandre Debut, Victor Sanh, Julien
+Chaumond, Clement Delangue, Anthony Moi, Pier-
+ric Cistac, Tim Rault, R ´emi Louf, Morgan Funtow-
+icz, and Jamie Brew. 2019. Transformers: State-of-
+the-art natural language processing. arXiv preprint
+arXiv:1910.03771.
+Yunxuan Xiao, Yanru Qu, Lin Qiu, Hao Zhou, Lei Li,
+Weinan Zhang, and Yong Yu. 2019. Dynamically
+fused graph network for multi-hop reasoning. In
+ACL.
+Wenhan Xiong, Mo Yu, Xiaoxiao Guo, Hong Wang,
+Shiyu Chang, Murray Campbell, and William Yang
+Wang. 2019. Simple yet effective bridge reason-
+ing for open-domain multi-hop question answering.
+arXiv preprint arXiv:1909.07597.
+Zhilin Yang, Peng Qi, Saizheng Zhang, Yoshua Ben-
+gio, William W Cohen, Ruslan Salakhutdinov, and
+Christopher D Manning. 2018. Hotpotqa: A dataset
+for diverse, explainable multi-hop question answer-
+ing. In EMNLP.
+Mohit Bansal Yixin Nie, Songhe Wang. 2019. Reveal-
+ing the importance of semantic retrieval for machine
+reading at scale. In EMNLP.
+Manzil Zaheer, Guru Guruganesh, Avinava Dubey,
+Joshua Ainslie, Chris Alberti, Santiago Ontanon,
+Philip Pham, Anirudh Ravula, Qifan Wang, Li Yang,
+et al. 2020. Big bird: Transformers for longer se-
+quences. arXiv preprint arXiv:2007.14062.
+Chen Zhao, Chenyan Xiong, Corby Rosset, Xia
+Song, Paul Bennett, and Saurabh Tiwary. 2020.
+Transformer-xh: Multi-evidence reasoning with ex-
+tra hop attention. In ICLR.
+Victor Zhong, Caiming Xiong, Nitish Keskar, and
+Richard Socher. 2019. Coarse-grain ﬁne-grain coat-
+tention network for multi-evidence question answer-
+ing. In ICLR.
+A Datasets
+There are two benchmark settings in HotpotQA:
+Distractor and Fullwiki setting. They both have
+90k training samples and 7.4k development sam-
+ples. In the Distractor setting, there are 2 gold
+paragraphs and 8 distractors. However, 2 gold para-
+graphs may not be available in the Fullwiki Setting.
+Therefore, the Fullwiki setting is more challenge
+which requires to search the entire Wikipedia to
+ﬁnd relevant documents. For both settings, there
+are 90K hidden test samples. More details about
+the dataset can be found in Yang et al. (2018).
+B Implementation Details
+Our implementation is based on the Transformer li-
+brary (Wolf et al., 2019). To construct the proposed
+hierarchical graph, we use spacy4 to extract entities
+from both questions and sentences. The numbers
+of entities, sentences and paragraphs in one graph
+are limited to 60, 40 and 4, respectively. Since
+HotpotQA only requires two-hop reasoning, up
+to two paragraphs are connected to each question.
+Our paragraph ranking model is a binary classiﬁer
+based on the RoBERTa-large model. For the Full-
+wiki setting, we leverage the retrieved paragraphs
+and the paragraph ranker provided by Yixin Nie
+(2019). We ﬁnetune on the training set for 8 epochs,
+with batch size as 8, learning rate as 1e-5, λ1 as
+1, λ2 as 5, λ3 as 1, λ4 as 1, LSTM dropout rate
+as 0.3 and GNN dropout rate as 0.3. We search
+hyperparameters for learning rate from{1e-5, 2e-5,
+3e-5} , λ2 from{1, 3, 5} and dropout rate from
+{0.1, 0.3, 0.5}.
+C Computing Resources
+We conduct experiments on 4 Quadro RTX 8000
+GPUs. The parameters of each component in HGN
+are summarized in Table 7. The computation bot-
+tleneck is mainly from RoBERTa. The best model
+of HGN took around 12 hours for training, which
+is almost the same as the RoBERTa-large baseline.
+Components #Parameters
+RoBERTa 355M
+Bi-Attention 0.62M
+BiLSTM 1.44M
+GNN 29M
+Multi-task Layer 0.55M
+Table 7: Number of parameters for each component in
+HGN.
+D Effectiveness of Paragraph Selection
+The proposed HGN relies on effective paragraph se-
+lection to ﬁnd relevant multi-hop paragraphs. Table
+8 shows the performance of paragraph selection on
+the dev set of HotpotQA. In DFGN, paragraphs are
+selected based on a threshold to maintain high re-
+call (98.27%), leading to a low precision (60.28%).
+Compared to both threshold-based and pure Top-
+N-based paragraph selection, our two-step para-
+4https://spacy.io
+
+[[page 12]]
+8834
+Method Precision Recall #Para.
+Threshold-based 60.28 98.27 3.26
+Top 2 from ranker 93.43 93.43 2
+Top 4 from ranker 49.39 98.48 4
+1st hop 96.10 59.74 1.24
+2 paragraphs (ours) 94.53 94.53 2
+4 paragraphs (ours) 49.45 98.74 4
+Table 8: Performance of paragraph selection on the dev
+set of HotpotQA based on BERT-base.
+graph selection process is more accurate, achiev-
+ing 94.53% precision and 94.53% recall. Besides
+these two top-ranked paragraphs, we also include
+two other paragraphs with the next highest ranking
+scores, to obtain a higher coverage on potential an-
+swers. Table 9 summarizes the results on the dev
+set in the Distractor setting, using our paragraph
+selection approach for both DFGN and the plain
+BERT-base model. Note that the original DFGN
+does not ﬁnetune BERT, leading to much worse
+performance. In order to provide a fair comparison,
+we modify their released code to allow ﬁnetuning
+of BERT. Results show that our paragraph selec-
+tion method outperforms the threshold-based one
+in both models.
+Model Ans F1 Sup F1 Joint F1
+DFGN (paper) 69.38 82.23 59.89
+DFGN
++ threshold-based 71.90 83.57 63.04
++ 2 para. (ours) 72.53 83.57 63.87
++ 4 para. (ours) 72.67 83.34 63.63
+BERT-base
++ threshold-based 71.95 82.79 62.43
++ 2 para. (ours) 72.42 83.64 63.94
++ 4 para. (ours) 72.67 84.86 64.24
+Table 9: Results with selected paragraphs on the dev
+set in the Distractor setting.
+E Case Study
+We provide two example questions for case study.
+To answer the question in Figure 3 (left),Q needs
+to be linked withP 1. Subsequently, the sentence
+S4 withinP 1 is connected toP 2 through the hy-
+perlink ( “John Surtees” ) in S4. A plain BERT
+model without using the constructed graph missed
+S7 as additional supporting facts, while our HGN
+discovers and utilizes both pieces of evidence as the
+connections amongS4,P 2 andS7 are explicitly
+encoded in our hierarchical graph.
+For the question in Figure 3 (right), the inference
+chain isQ→P 1→S1→S2→P 2→S3. The
+plain BERT model infers the evidence sentences
+S2 andS3 correctly. However, it fails to predict
+S1 as the supporting facts, while HGN succeeds,
+potentially due to the explicit connections between
+sentences in the constructed graph.
+F Additional Examples for Error
+Analysis
+Below, we provide additional examples for error
+analysis, where “Q” denotes question, “A” denotes
+answer provided with dataset and “P” denotes
+the prediction of proposed model. A full list of
+all the 100 examples is provided in Table 10 and 11.
+Category: Annotation
+ID: 5ae2e0fd55429928c4239524
+Q: What actor was also a president that Richard
+Darman worked with when they were in ofﬁce?
+A: George H. W. Bush
+P: Ronald Reagan
+ID: 5ab43b755542991779162c21
+Q: What sports club based in Hamburg Germany
+had a Persian born football player who played for
+eight seasons?
+A: Mehdi Mahdavikia
+P: Hamburger SV
+ID: 5a72e28f5542992359bc31ba
+Q: Which technique did the director at Pzena
+Investment Management outline?
+A: outlined by Joel Greenblatt
+P: Magic formula investing
+ID: 5a7e71ab55429949594199bc
+Q: Perfect Imperfection is a 2016 Chinese romantic
+drama ﬁlm starring a south Korean actor best
+known for his roles in what 2016 television drama?
+A: Reunited Worlds
+P: Cinderella and Four Knights
+ID: 5a7a18b05542990783324e53
+Q: What year was the independent regional brew-
+ery founded that currently operates in Hasting’s
+oldest pub?
+A: since 1864
+P: 1698
+Category: Multiple Answers
+
+[[page 13]]
+8835
+Figure 3: Examples of supporting facts prediction in the HotpotQA Distractor setting.
+Category Sample IDs
+Annotation 6, 23, 33, 38, 47, 59, 75, 81, 93
+Multiple Answers 1, 4, 8, 10, 11, 16, 19, 24, 26, 28, 29, 32, 39, 40, 42,
+50, 53, 56, 60, 63, 67, 68, 71, 72
+Discrete Reasoning 0, 2, 9, 21, 22, 35, 37, 45, 58, 64, 77, 82, 86, 88, 95
+Commonsense & External Knowledge 7, 15, 20, 36, 69, 70, 73, 76, 78, 83, 84, 85, 87, 91,
+92, 96
+Multi-hop 3, 17, 25, 27, 30, 41, 43, 46, 54, 57, 62, 74, 79, 90,
+97, 99
+MRC 5, 12, 13, 14, 18, 31, 34, 44, 48, 49, 51, 52, 55, 61,
+65, 66, 80, 89, 94, 98
+Table 10: The categories and sample IDs for the 100 examples selected for error analysis. The sample IDs are
+mapped to the ground-truth IDs in Table 11.
+ID: 5a8c9641554299585d9e36f5
+Q: Which season of Alias does the English actor,
+who was born 25 June 1961, appear?
+A: three
+P: third season
+ID: 5ae6179b5542992663a4f25b
+Q: Which Hong Kong actor born on 19 August
+1946 starred in The Sentimental Swordsman
+A: Tommy Tam Fu-Wing
+P: Ti Lung5
+ID: 5abec66b5542997ec76fd360
+Q: What do Josef Veltjens and Hermann Goering
+have in common?
+A: A veteran World War I ﬁghter pilot ace
+P: German
+ID: 5a85d6d95542996432c570fb
+Q: What is one element of House dance where the
+dancer ripples his or her torso back and forth?
+5Alias of the true answer, Tommy Tam Fu-Wing
+A: the jack
+P: Jacking
+ID: 5a79c9395542994bb94570a2
+Q: Which two occupations does Ronnie Dunn and
+Annie Lennox have in common?
+A: singer, songwriter
+P: singer-songwriter
+Category: Discrete Reasoning
+ID: 5a8ec3205542995a26add506
+Q: Does Dashboard Confessional have more
+members than World Party?
+A: yes
+P: no
+ID: 5abfd83f5542997ec76fd45c
+Q: Which genus has more species, Quesnelia or
+Honeysuckle?
+A: Honeysuckle
+P: Honeysuckles
+
+[[page 14]]
+8836
+ID: 5ac44b47554299194317396c
+Q: Which became a Cathedral ﬁrst St Chad’s
+Cathedral, Birmingham or Chelmsford Cathedral?
+A: Metropolitan Cathedral Church and Basilica of
+Saint Chad
+P: St Chad’s
+ID: 5ac2455e55429951e9e68512
+Q: Were both Life magazine and Strictly Slots
+magazine published monthly in 1998?
+A: yes
+P: no
+ID: 5a7d26bd554299452d57bb28
+Q: Who was born earlier, Johnny Lujack or Jim
+Kelly?
+A: Jim Kelly
+P: John Christopher Lujack
+Category: Commonsense & External Knowl-
+edge
+ID: 5ac275e755429921a00aaf81
+Q: From what nation is the football player
+who was named Man of the Match at the 2001
+Intercontinental Cup?
+A: Ghana
+P: Ghanaian
+ID: 5ac02d345542992a796decc0
+Q: Where are Abbey Clancy and Peter Crouch
+from?
+A: England
+P: English
+ID: 5ab2beba554299166977408f
+Q: Who is the father of the Prince in which William
+Joseph Weaver is most famous for painting a full
+length portrait of?
+A: George III
+P: Queen Victoria
+ID: 5a8dab16554299068b959d89
+Q: What type of elevation does Aldgate railway
+station, Adelaide and Aldgate, South Australia
+have in common?
+A: Hills
+P: kilometres
+ID: 5a82edae55429966c78a6a9f
+Q: Swiss music duo Double released their best
+known single ”The Captain of Her Heart” in what
+year?
+A: 1986
+P: 1985
+Category: Multi-hop
+ID: 5a7a46605542994f819ef1ad
+Q: What year did Roy Rogers and his third wife
+star in a ﬁlm directed by Frank McDonald?
+A: 1945
+P: 1946
+ID: 5a84f7255542991dd0999e33
+Q: Which country borders the Central African
+Republic and is south of Libya and east of Niger?
+A: Republic of Chad
+P: Sudan
+ID: 5a77152355429966f1a36c2e
+Q: What was the Roud Folk Song Index of the
+nursery rhyme inspiring What Are Little Girls
+Made Of?
+A: 821
+P: 326
+ID: 5a7e7c725542991319bc94be
+Q: In what year did Farda Amiga win a race at the
+Saratoga Race course?
+A: (foaled February 1, 1999)
+P: 1872
+ID: 5ae21ef35542994d89d5b35d
+Q: What college teamdid the point guard that
+led the way for Philedlphia 76ers in the 2017-18
+season play basketball in?
+A: Washington Huskies
+P: University of Kansas
+Category: MRC
+ID: 5ae5cf625542996de7b71a22
+Q: What sports team included both of the brothers
+Case McCoy and Colt McCoy during different
+years?
+A: University of Texas Longhorns
+P: Washington Redskins
+ID: 5a8fa4a5554299458435d6a3
+Q: What is name of the business unit led by Tina
+Sharkey at a web portal which is originally known
+as America Online?
+A: Sesame Street
+P: community programming
+
+[[page 15]]
+8837
+ID: 5a8135cc55429903bc27b943
+Q: In the USA, gun powder is used in conjunction
+with this to start the Boomershot.
+A: Anvil ﬁring
+P: an explosive ﬁreball
+ID: 5a84bb825542991dd0999dbe
+Q: Who beacme a star as a comic book character
+created by Gerry Conway and Bob Oksner?
+A: Megalyn Echikunwoke
+P: Stephen Amell
+ID: 5a75f1a755429976ec32bcb1
+Q: Which actress played a character that dated
+Mark Brendanawicz?
+A: Rashida Jones
+P: Amy Poehler
+
+[[page 16]]
+8838
+ID ID
+0 5ac2455e55429951e9e68512 1 5a8c9641554299585d9e36f5
+2 5a8ec3205542995a26add506 3 5a7a46605542994f819ef1ad
+4 5ae6179b5542992663a4f25b 5 5ac3c08a5542995ef918c217
+6 5ae2e0fd55429928c4239524 7 5ac275e755429921a00aaf81
+8 5a7ca98f55429935c91b5288 9 5a747a9a55429929fddd8444
+10 5a88696b554299206df2b25b 11 5abec66b5542997ec76fd360
+12 5ae5cf625542996de7b71a22 13 5abb729b5542993f40c73af4
+14 5a85cead5542991dd0999ea9 15 5ac02d345542992a796decc0
+16 5a7a88e455429941d65f268c 17 5a84f7255542991dd0999e33
+18 5a8fa4a5554299458435d6a3 19 5ae7793c554299540e5a55c2
+20 5a7755c65542993569682d54 21 5abfd83f5542997ec76fd45c
+22 5adeb95d5542992fa25da827 23 5ab43b755542991779162c21
+24 5a85d6d95542996432c570fb 25 5a8463945542992ef85e23d9
+26 5ae7d0675542994a481bbdf2 27 5a82a55955429966c78a6a70
+28 5ae7313c5542991e8301cbbc 29 5ac44629554299194317395d
+30 5a89d36e554299515336132a 31 5ac2e97d554299657fa290c0
+32 5a8a764555429930ff3c0de1 33 5a886211554299206df2b24a
+34 5a8f05b1554299458435d517 35 5a840e8a5542992ef85e239e
+36 5a7354e35542994cef4bc55b 37 5abc36cc55429959677d6a50
+38 5a7a18b05542990783324e53 39 5ab5d27a554299494045f073
+40 5ac19f405542991316484b5b 41 5a82ebb855429966c78a6a9c
+42 5a72c9e85542991f9a20c595 43 5ae7739c5542997b22f6a775
+44 5a84bda45542992a431d1a96 45 5a7d26bd554299452d57bb28
+46 5ae21ef35542994d89d5b35d 47 5a753c8c55429916b01642ab
+48 5ac24d725542996366519966 49 5ae0ec48554299422ee9955a
+50 5a8febb555429916514e73e4 51 5a7c9d2e55429935c91b5261
+52 5a8769475542993e715abf2b 53 5abbf519554299114383a0ad
+54 5a735bae55429901807dafef 55 5a7299465542992359bc3131
+56 5a8b2f2b5542995d1e6f12fa 57 5a77152355429966f1a36c2e
+58 5a87954f5542996e4f308856 59 5a7e71ab55429949594199bc
+60 5ac531ea5542994611c8b419 61 5ab72c7d55429928e1fe3830
+62 5a7e7c725542991319bc94be 63 5ae54c085542992663a4f1c4
+64 5adc7dbf5542994d58a2f618 65 5a8fb0be5542997ba9cb32ed
+66 5a8135cc55429903bc27b943 67 5abcf17655429959677d6b5c
+68 5ab925fd554299131ca42281 69 5ab2beba554299166977408f
+70 5a8dab16554299068b959d89 71 5ac38ce255429939154137c2
+72 5a79c9395542994bb94570a2 73 5ab946d7554299743d22eaaf
+74 5a73d33e5542992d56e7e3a9 75 5a72e28f5542992359bc31ba
+76 5ab1d983554299340b52540a 77 5a7cb9b95542990527d55515
+78 5a773d8955429966f1a36cc4 79 5a7780e855429949eeb29e9f
+80 5a84bb825542991dd0999dbe 81 5a7698c2554299373536010d
+82 5ae1847e55429920d52343ee 83 5a7199725542994082a3e88f
+84 5abf11d45542997719eab660 85 5ae52cb955429908b6326540
+86 5ac44b47554299194317396c 87 5a7d61775542991319bc93b9
+88 5ae0536755429924de1b70a6 89 5a75f1a755429976ec32bcb1
+90 5adbc8e25542996e68525230 91 5a72ac8a5542992359bc3164
+92 5adc6ded55429947ff17395d 93 5a7b971255429927d897bff3
+94 5ae34a225542992e3233c370 95 5ac2cdaa554299657fa29070
+96 5a82edae55429966c78a6a9f 97 5a8a3a355542996c9b8d5e5e
+98 5adcc90c5542990d50227d1b 99 5a79c9c05542994bb94570a5
+Table 11: The full index list of the 100 samples selected for error analysis.

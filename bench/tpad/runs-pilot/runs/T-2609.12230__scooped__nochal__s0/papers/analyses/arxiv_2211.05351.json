@@ -1,0 +1,44 @@
+{
+  "paper_id": "arxiv:2211.05351",
+  "relevance_tier": "high",
+  "problem": "Biomedical multi-hop question answering over knowledge graphs suffers from missing links; need to integrate language models with knowledge graph embeddings to improve answer relevance.",
+  "method": "Use language models (RoBERTa/BioBERT) to encode questions, knowledge graph embeddings (ComplEx) to encode entities/relations, and a scoring function that combines embeddings to rank answer entities. Separate models trained for 1-hop, 2-hop, 3-hop questions.",
+  "key_assumptions": [
+    "Knowledge graph embeddings can capture missing links and semantic similarity.",
+    "Language models provide contextual understanding of natural language questions."
+  ],
+  "main_contribution": "An integrated system that combines language models with knowledge graph embeddings for biomedical multi-hop question answering, demonstrating encouraging hits@10 results on a newly created Hetionet QA dataset.",
+  "datasets": [
+    "Hetionet knowledge graph",
+    "Hetionet multi-hop biomedical question-answering dataset (1-hop, 2-hop, 3-hop partitions)"
+  ],
+  "benchmarks": [
+    "None stated; evaluated on self-created Hetionet QA dataset"
+  ],
+  "baselines": [
+    "RoBERTa + ComplEx",
+    "BioBERT + ComplEx"
+  ],
+  "metrics": [
+    "Hits@10",
+    "Adjusted arithmetic mean rank",
+    "Adjusted arithmetic mean rank index"
+  ],
+  "results": "[\"Hits@10: 1-hop RoBERTa+ComplEx 0.7709, BioBERT+ComplEx 0.7421; 2-hop 0.7705, 0.9158; 3-hop 0.8506, 0.7687.\"]",
+  "limitations": [
+    "Not stated in abstract or full text."
+  ],
+  "future_work": [
+    "Not stated in abstract or full text."
+  ],
+  "code_availability": "[\"Not stated in abstract or full text.\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.9,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "The proposed work enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, whereas this paper focuses on combining language model and knowledge graph embeddings without explicit context subgraph enrichment or repair mechanism.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T06:35:03.303249Z"
+}

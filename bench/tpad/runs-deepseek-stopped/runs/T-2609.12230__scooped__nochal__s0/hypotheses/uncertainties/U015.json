@@ -1,0 +1,32 @@
+{
+  "id": "U015",
+  "question": "Does the appendix of arxiv:2609.12230 already report a token-matched, random-distractor or context-volume ablation that would close gap G001?",
+  "description": "The surviving delta rests on arxiv:2609.12230 not having run a token-matched random-distractor or unrelated-context ablation. The paper is 65 pages and only its outline, results, discussion and limitations sections were read; the appendices (including the GraphMERT implementation details and evaluation tables) were not inspected. If the appendices already contain a context-volume or distractor ablation, then G001 closes and the last defensible contribution of the direction disappears, which would force a change of direction or a rejection.",
+  "category": "novelty",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "READ",
+    "REFINE",
+    "CHALLENGE"
+  ],
+  "confidence": 0.8,
+  "confidence_basis": "Based on targeted full-text searches across the appendix pages of arxiv:2609.12230 for ablation, random/unrelated, threshold and context-size terms; the appendix structure was located (9.1-9.7 with Tables 13-37) and the only context-volume manipulation found is the inference-time threshold sweep.",
+  "rationale": "The entire refined direction depends on this control being missing; reading the appendices is a cheap check that could invalidate the recommended next experiment, so it must be done before investing in training runs.",
+  "resolution": "Answered in the direction that keeps the gap open. The appendices of arxiv:2609.12230 (sections 9.1-9.7, Tables 13-37) were searched for ablation, random/unrelated-context and context-size terms. No ablation of the fine-tuning contrast exists: there is no arm that fills the context slots with random or unrelated triples at a matched token budget, and no training-time context-volume manipulation at all. What the appendix does contain is (i) a preliminary threshold-selection sweep (Table 23) that varies the SapBERT similarity threshold, changing mean context triples per row, and evaluates the BASE model on CG-grounded 1-hop QA by modifying only the inference prompt, and (ii) final context-selection statistics (Table 24) with mean context triples before and after filtering and the number of empty-context rows. The sweep's accuracy is non-monotone in context volume, peaking at intermediate thresholds, which is weak evidence against a pure volume explanation but cannot close G001 because it operates at inference on 1-hop questions and varies relevance and volume jointly. Gap G001 therefore stands, narrowed: the required experiment is a training-time, token-matched arm with irrelevant context.",
+  "paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T05:28:33.510793Z",
+  "updated_at": "2026-09-30T05:30:47.410546Z"
+}

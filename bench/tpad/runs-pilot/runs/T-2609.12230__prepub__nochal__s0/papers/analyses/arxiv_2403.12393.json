@@ -1,0 +1,42 @@
+{
+  "paper_id": "arxiv:2403.12393",
+  "relevance_tier": "high",
+  "problem": "Large Language Models (LLMs) may generate off-topic answers in open-domain multi-hop question answering, which account for approximately one-third of incorrect answers.",
+  "method": "Dr3 mechanism: Discriminator judges whether the generated answer is on-topic using LLM intrinsic capabilities; if off-topic, Corrector performs stepwise revisions along the reversed reasoning chain (Re-Compose → Re-Solve → Re-Decompose) until the answer becomes on-topic.",
+  "key_assumptions": [
+    "The Discriminator can reliably detect off-topic answers.",
+    "The Corrector can successfully revise the reasoning chain to correct off-topic answers."
+  ],
+  "main_contribution": "Dr3 mechanism considerably reduces off-topic answers in ODMHQA by nearly 13% and improves Exact Match (EM) by nearly 3% compared to baseline without Dr3 on HotpotQA and 2WikiMultiHopQA datasets.",
+  "datasets": [
+    "HotpotQA",
+    "2WikiMultiHopQA"
+  ],
+  "benchmarks": [
+    "HotpotQA",
+    "2WikiMultiHopQA"
+  ],
+  "baselines": [
+    "Baseline method without Dr3 (likely ReAct+)"
+  ],
+  "metrics": [
+    "Exact Match (EM)"
+  ],
+  "results": "Dr3 reduces off-topic answers by nearly 13% and improves EM by nearly 3% compared to baseline.",
+  "limitations": [
+    "Not explicitly stated in the paper."
+  ],
+  "future_work": [
+    "Not explicitly stated in the paper."
+  ],
+  "code_availability": "https://github.com/Gy915/Dr3",
+  "relation_to_idea": {
+    "problem_overlap": 0.3,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "Dr3 addresses off-topic answers via post-hoc correction (Discriminator-Corrector loop), while the idea enriches training triples with local context subgraphs and uses an adaptive repair loop for one-hop failures. Both aim to improve correctness but differ in focus (inference-time correction vs training data enrichment and failure-driven example generation).",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T08:12:17.299301Z"
+}

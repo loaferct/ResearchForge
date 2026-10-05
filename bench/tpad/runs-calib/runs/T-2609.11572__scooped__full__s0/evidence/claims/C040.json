@@ -1,0 +1,43 @@
+{
+  "id": "C040",
+  "statement": "Prevalence assessment for U025: the best available analogue is context-dependent QA, where roughly 16.5% of NQ-Open questions are context-dependent and annotators judge up to 30% of questions to have answers that change over time - but that figure covers temporal and geographical dependence together, so the temporal share is smaller, and it comes from web QA rather than legal practice. No retrieved work estimates how often legal questions target a past point in time. Consequences for the design: oversampled per-stratum rates are unrepresentative by construction and must be presented as such, deployment impact should be reported as a prevalence-weighted rate over a stated range of prevalence assumptions with a sensitivity curve, and the two strata must always be reported separately so a reader can apply their own prevalence. Note also that contamination is not confined to non-latest-gold queries, since superseded near-duplicates can outrank the current version for current-law questions; the latest-gold stratum therefore carries deployment-relevant contamination that oversampling of the non-latest stratum would otherwise hide.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "roughly 16.5% of NQ-Open",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "up to 30% of questions in existing datasets have answers that change over time",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "an open-retrieval QA dataset where systems must produce the correct answer to a question given the temporal or geographical context",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "prevalence",
+    "representativeness",
+    "reweighting",
+    "deployment impact"
+  ],
+  "recorded_at": "2026-09-30T04:42:34.244908Z"
+}

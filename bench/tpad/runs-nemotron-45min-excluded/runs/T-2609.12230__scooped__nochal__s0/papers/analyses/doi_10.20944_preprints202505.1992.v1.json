@@ -1,0 +1,41 @@
+{
+  "paper_id": "doi:10.20944/preprints202505.1992.v1",
+  "relevance_tier": "high",
+  "problem": "LLMs hallucinate on domain-specific reasoning tasks requiring multi-hop knowledge graph reasoning; existing retrieval-augmented methods may retrieve redundant or unordered triplets, leading to imprecise answers.",
+  "method": "SG-RAG MOT: uses Cypher queries to retrieve a relevant subgraph from the knowledge graph, then applies a Merging and Ordering Triplets (MOT) step: hierarchical merging to reduce redundancy in retrieved subgraphs, and Breadth First Search (BFS) traversal to order the triplets, providing a structured sequence to the LLM for answer generation.",
+  "key_assumptions": [
+    "Cypher queries can retrieve a relevant subgraph containing necessary facts for answering the question.",
+    "Merging redundant triplets improves signal clarity.",
+    "Ordering triplets via BFS aids LLM reasoning."
+  ],
+  "main_contribution": "SG-RAG MOT enhances SubGraph Retrieval Augmented Generation by adding a merging and ordering step, yielding more accurate answers than Chain-of-Thought and Graph Chain-of-Thought on the MetaQA benchmark.",
+  "datasets": [
+    "MetaQA benchmark (movies domain)"
+  ],
+  "benchmarks": [
+    "MetaQA"
+  ],
+  "baselines": [
+    "Chain-of-Thought, Graph Chain-of-Thought"
+  ],
+  "metrics": [
+    "not stated in abstract; likely accuracy or hit@1"
+  ],
+  "results": "[\"SG-RAG MOT provides more accurate answers than Chain-of-Thought and Graph Chain-of-Thought on MetaQA.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.7,
+    "conceptual_difference": "Both retrieve subgraph/triplet context for LLMs; SG-RAG MOT retrieves via Cypher from KG and merges/orders triplets, while the idea enriches target triples with local context subgraphs from the same source passage, adds an adaptive repair loop for factual reliability, and applies RL transfer from lower-hop QA.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:53:33.161118Z"
+}

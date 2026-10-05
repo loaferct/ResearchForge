@@ -1,0 +1,49 @@
+{
+  "paper_id": "arxiv:2202.13296",
+  "relevance_tier": "high",
+  "problem": "Multi-hop KBQA where a question-relevant subgraph is retrieved from a knowledge base (Freebase) and a reasoner then ranks answer entities. The paper's stated problem is that existing subgraph retrieval is heuristic or interwoven with reasoning, causing reasoning over partial subgraphs and bias when intermediate supervision is missing.",
+  "method": "A trainable subgraph retriever (SR) decoupled from the downstream reasoner, usable plug-and-play with any subgraph-oriented KBQA model. The retriever is pre-trained with weak supervision and then fine-tuned end-to-end with the reasoner feedback; it is combined with NSM as the reasoner. Subgraphs are formed by expanding entity/relation paths and inducing a subgraph.",
+  "key_assumptions": [
+    "A question-relevant subgraph can be learned from weak supervision rather than gold intermediate annotations",
+    "Reasoning happens over a bounded, retrieved entity-relation subgraph of Freebase rather than the whole KB",
+    "Subgraph size trades off answer coverage against noise (larger subgraphs introduce more noise)"
+  ],
+  "main_contribution": "A decoupled, trainable subgraph retriever that improves both retrieval and QA over prior retrieval methods, reaching state of the art when combined with NSM for embedding-based KBQA, plus an analysis of the subgraph-size / coverage / accuracy trade-off.",
+  "datasets": [
+    "WebQSP (WebQuestionsSP)",
+    "CWQ (ComplexWebQuestions)",
+    "Freebase (whole KB; extracted 2-hop topic-centric subgraphs for WebQSP and 4-hop for CWQ)"
+  ],
+  "benchmarks": [
+    "WebQSP",
+    "CWQ"
+  ],
+  "baselines": [
+    "NSM (He et al., 2021)",
+    "existing heuristic / reasoning-interwoven subgraph retrieval methods (specific list not verified in the passages read)"
+  ],
+  "metrics": [
+    "Hits@1 (QA)",
+    "Answer Coverage Rate (retrieval)",
+    "retrieval metrics (abstract reports better retrieval, exact metric not verified)"
+  ],
+  "results": "Abstract: SR \"achieves significantly better retrieval and QA performance than existing retrieval methods\" and \"new state-of-the-art performance when combined with NSM\". Figure 1 plots Answer Coverage Rate and Hits@1 against subgraph size (1K-10K) for WebQSP and CWQ. Exact numeric QA values not extracted from the passages read.",
+  "limitations": [
+    "Retrieval and reasoning operate on entity/relation graph structure; there is no notion of the source passage or document a triple came from, so 'passage-coherent' context is not modelled.",
+    "The abstract itself frames the core tension as subgraph size vs. noise, i.e. extra triples are treated as a source of noise to be filtered, not as supportive context.",
+    "Depends on topic-centric subgraph extraction from Freebase with Virtuoso, an expensive setup."
+  ],
+  "future_work": [
+    "not stated in the passages read (abstract states only that codes and datasets are available online)"
+  ],
+  "code_availability": "Available and verified: https://github.com/RUCKBReasoning/SubgraphRetrievalKBQA (Python, 118 stars, run scripts for preprocess / train retriever / retrieve subgraph / train reasoner / fine-tune retriever; README confirms WebQSP and CWQ and Freebase-based 2-hop/4-hop subgraphs).",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "This is the strongest 'subgraph' precedent, but the subgraph is a retrieval-time object selected for a reasoner, not a training-time supervision enrichment. Crucially, extra triples are framed as noise and the subgraph is entity/relation neighbourhood-based, not derived from a shared source passage. The proposed idea asks the opposite question: whether surrounding triples, when they come from the same passage, are supportive context for training rather than noise.",
+    "basis": "Problem overlap 0.6: both are multi-hop KBQA over an extracted subgraph and share WebQSP/CWQ-style evaluation, but the paper is retrieval-centric embedding KBQA, not LM fine-tuning with passage context. Method overlap 0.3: multi-triple subgraph is used on both sides, yet SR learns which triples to retrieve and reasons over them, whereas the idea serializes passage-coherent triples as training text under a matched-budget isolated-vs-context regime. Evaluation overlap 0.5: same benchmark family (Hits@1 on subgraph KBQA), but the idea's dependent variables add hop-depth transfer and a token-matched control, which SR does not measure."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:07:08.863252Z"
+}

@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2209.00870",
+  "relevance_tier": "high",
+  "problem": "Answering natural language questions on knowledge graphs remains challenging due to understanding complex questions via multi-hop reasoning; previous efforts exploit entity-related text or KG embeddings but overlook rich semantics in off-the-shelf relation paths.",
+  "method": "Propose improving multi-hop KGQA by exploiting relation paths' hybrid semantics: integrate explicit textual information and implicit KG structural features of relation paths based on a novel rotate-and-scale entity link prediction framework.",
+  "key_assumptions": [
+    "Relation paths contain hybrid semantics (explicit textual and implicit structural) that can improve multi-hop KGQA.",
+    "The rotate-and-scale entity link prediction framework effectively integrates these semantics."
+  ],
+  "main_contribution": "A method that exploits hybrid semantics of relation paths to improve multi-hop KGQA, demonstrating superiority on three existing KGQA datasets, especially in multi-hop scenarios, with systematical coordination between questions and relation paths.",
+  "datasets": [
+    "Three existing KGQA datasets (unspecified)"
+  ],
+  "benchmarks": [
+    "Three existing KGQA datasets (unspecified)"
+  ],
+  "baselines": [
+    "Not stated in abstract."
+  ],
+  "metrics": [
+    "Not stated in abstract; likely accuracy or hit@1"
+  ],
+  "results": "[\"Extensive experiments on three existing KGQA datasets demonstrate the superiority of our method, especially in multi-hop scenarios.\"]",
+  "limitations": [
+    "Not stated in abstract."
+  ],
+  "future_work": [
+    "Not stated in abstract."
+  ],
+  "code_availability": "[\"Not stated in abstract.\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "This work exploits hybrid semantics of relation paths via a rotate-and-scale entity link prediction framework. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than relation path semantics.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:12:37.690519Z"
+}

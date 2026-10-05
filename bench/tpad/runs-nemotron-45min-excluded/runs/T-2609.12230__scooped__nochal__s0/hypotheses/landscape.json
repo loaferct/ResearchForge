@@ -1,0 +1,163 @@
+{
+  "field_name": "Knowledge Graph-based Multi-hop Question Answering (KGQA)",
+  "categories": [
+    {
+      "name": "Relational Chain Reasoning",
+      "parent": null,
+      "description": "Methods that extract and reason over explicit relational chains from questions and implicit chains from the knowledge graph.",
+      "paper_ids": [
+        "arxiv:2110.12679",
+        "arxiv:2104.07302"
+      ]
+    },
+    {
+      "name": "Language Model and Knowledge Graph Embedding Integration",
+      "parent": null,
+      "description": "Approaches that combine pretrained language models for question understanding with knowledge graph embeddings for relation encoding.",
+      "paper_ids": [
+        "arxiv:2211.05351"
+      ]
+    },
+    {
+      "name": "Question Decomposition to Formal Queries",
+      "parent": null,
+      "description": "Methods that break down complex multi-hop questions into simpler semantic units and convert them to SPARQL or other formal query languages.",
+      "paper_ids": [
+        "arxiv:2501.16350"
+      ]
+    },
+    {
+      "name": "Ontology-guided Path Inference",
+      "parent": null,
+      "description": "Frameworks that use ontology graphs to capture semantic constraints and guide path retrieval and refinement.",
+      "paper_ids": [
+        "arxiv:2606.28076"
+      ]
+    },
+    {
+      "name": "Subgraph Retrieval Augmented Generation",
+      "parent": null,
+      "description": "Techniques that retrieve relevant subgraphs from the knowledge graph and use them to augment language model generation, often with post-processing like merging and ordering.",
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    },
+    {
+      "name": "Benchmark-driven Evaluation",
+      "parent": null,
+      "description": "Works focused on creating new datasets and benchmarks to evaluate multi-hop reasoning capabilities, particularly for specific domains or question types.",
+      "paper_ids": [
+        "arxiv:2402.14116",
+        "arxiv:2507.16403"
+      ]
+    },
+    {
+      "name": "Logic-adaptive Multi-source Reasoning",
+      "parent": null,
+      "description": "Methods that fuse multiple reasoning sources with adaptive logic to improve interpretability and reliability.",
+      "paper_ids": [
+        "doi:10.1016/j.knosys.2026.115902"
+      ]
+    },
+    {
+      "name": "Unrestricted Multi-hop Reasoning Networks",
+      "parent": null,
+      "description": "Network architectures designed to perform interpretable multi-hop reasoning without restrictive neighborhood constraints.",
+      "paper_ids": [
+        "doi:10.1016/j.knosys.2022.108515"
+      ]
+    },
+    {
+      "name": "Similar Semantic Space Embeddings",
+      "parent": null,
+      "description": "Approaches that map knowledge graph elements into a shared semantic space with questions to facilitate matching and reasoning.",
+      "paper_ids": [
+        "doi:10.1109/ijcnn55064.2022.9892550"
+      ]
+    }
+  ],
+  "idea_position": "Context Subgraph Enrichment with Adaptive Repair and RL Transfer (combines elements from Subgraph Retrieval Augmented Generation and introduces novel adaptive repair loop and RL transfer components)",
+  "dominant_approaches": [
+    "Relational Chain Reasoning",
+    "Language Model and Knowledge Graph Embedding Integration",
+    "Subgraph Retrieval Augmented Generation"
+  ],
+  "common_assumptions": [
+    "Language models can effectively capture question semantics and context.",
+    "Knowledge graph embeddings help mitigate missing links in incomplete KGs.",
+    "Reasoning over relational paths or subgraphs improves multi-hop QA performance.",
+    "Evaluation metrics like hit@1, accuracy, and F1 are appropriate for measuring KGQA performance."
+  ],
+  "common_datasets": [
+    "MetaQA",
+    "Hetionet",
+    "FarsBase/PeCoQ",
+    "WebQSP",
+    "CWQ",
+    "FanOutQA",
+    "ReasonVQA"
+  ],
+  "common_benchmarks": [
+    "MetaQA (1/2/3-hop)",
+    "WebQuestionsSP-tiny",
+    "Complex-WebQuestionsSP",
+    "Hetionet QA dataset",
+    "PeCoQ",
+    "FanOutQA benchmark settings",
+    "ReasonVQA"
+  ],
+  "common_metrics": [
+    "hit@1",
+    "accuracy",
+    "F1-score",
+    "hits@10"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Performance constrained by incomplete or noisy knowledge graphs, affecting recall and reasoning reliability.",
+      "paper_ids": [
+        "arxiv:2110.12679"
+      ]
+    },
+    {
+      "description": "Modular architectures may suffer from cascaded error propagation between components.",
+      "paper_ids": [
+        "arxiv:2110.12679"
+      ]
+    },
+    {
+      "description": "Methods may not be suitable for questions solvable by simple hand-crafted rules, limiting applicability.",
+      "paper_ids": [
+        "arxiv:2110.12679"
+      ]
+    },
+    {
+      "description": "Limited discussion of computational efficiency and scalability for large-scale knowledge graphs.",
+      "paper_ids": [
+        "arxiv:2211.05351",
+        "arxiv:2501.16350"
+      ]
+    },
+    {
+      "description": "Domain-specific challenges (biomedical, language-specific, visual) require tailored approaches and may not generalize.",
+      "paper_ids": [
+        "arxiv:2211.05351",
+        "arxiv:2501.16350",
+        "arxiv:2507.16403"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Enriching target triples with local context subgraphs from the same source passage during training",
+    "Adaptive repair loops that detect one-hop failures and generate corrective examples iteratively",
+    "Reinforcement learning transfer from lower-hop QA optimization to higher-hop multi-hop queries",
+    "Combining source passage context with global knowledge graph structure for robust reasoning"
+  ],
+  "contradictions": [
+    {
+      "description": "No direct contradictions found; differences lie in methodological emphasis (path reasoning vs. embedding vs. decomposition) rather than conflicting claims.",
+      "paper_ids": []
+    }
+  ],
+  "recorded_at": "2026-09-30T05:56:03.220472Z"
+}

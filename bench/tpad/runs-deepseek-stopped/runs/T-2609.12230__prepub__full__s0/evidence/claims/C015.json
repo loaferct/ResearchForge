@@ -1,0 +1,42 @@
+{
+  "id": "C015",
+  "statement": "The inference-time evidence constrains but does not directly contradict the training-time hypothesis. It shows a frozen model gains almost nothing from peripheral non-chain triples (+0.003 F1, C002) while the answer chain carries most of the graph's value and removing it is costly; but a fine-tuned model could still learn to exploit context that a frozen reader ignores, and for a multi-hop target the proposed context subgraph would itself contain the reasoning chain. The defensible restatement of H1 is therefore 'supervision that exposes the full reasoning chain/path beats supervision on isolated triples', with peripheral same-passage triples the low-value and high-risk part. This restatement, however, aligns the mechanism with established path-based reasoning supervision rather than with a novel 'context' signal.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.10237",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "arxiv:2509.21035",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "doi:10.18653/v1/2020.emnlp-main.99",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "H1-refinement",
+    "focus-question",
+    "chain-vs-peripheral"
+  ],
+  "recorded_at": "2026-09-30T05:17:32.441678Z"
+}

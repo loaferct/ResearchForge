@@ -1,0 +1,43 @@
+{
+  "id": "C018",
+  "statement": "The paper that already implements the proposed pipeline states its own limitations: synthetic QA data for SFT/repair/RL/evaluation, LLM judges for failure diagnosis and quarantine, validation confined to two disease KGs, and context augmentation restricted to supporting triples from the same source text chunk (with richer evidence left to future work).",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 30 (§6 Limitations and Future Work)",
+      "quote": "Third, although we evaluate the framework on two disease settings, Gastroparesis and Diabetes, broader validation is still needed.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 30 (§6 Limitations and Future Work)",
+      "quote": "Finally, context augmentation in this work is limited to supporting triples extracted from the same source text chunk.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 30 (§6 Limitations and Future Work)",
+      "quote": "First, the QA datasets used for SFT, repair, RL, and evaluation are synthetically generated.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "limitations",
+    "external-validity",
+    "synthetic-data",
+    "scope"
+  ],
+  "recorded_at": "2026-09-30T05:24:47.448203Z"
+}

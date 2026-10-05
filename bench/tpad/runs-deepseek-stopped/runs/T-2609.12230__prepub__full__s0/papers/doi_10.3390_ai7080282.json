@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.3390/ai7080282",
+  "title": "Automating Heterogeneous Creep-Data Management for Aerospace Superalloy Fasteners: A Hybrid KG-RAG Framework with Iterative Prompting and Hallucination-Mitigated QA",
+  "authors": [
+    "Yue Ling",
+    "Yu-Cheng Cao",
+    "Jiang-Hong Yu"
+  ],
+  "year": 2026,
+  "published": "2026-07-27",
+  "venue": "Applied Informatics",
+  "url": "https://www.semanticscholar.org/paper/a4994b5c39ae8da2e05d113b52d26fc11c5d2275",
+  "pdf_url": "https://doi.org/10.3390/ai7080282",
+  "abstract": "High-temperature creep data for aero-engine fasteners are essential for life assessment and structural safety, but such records are often archived as heterogeneous tables, reports and figures with weak cross-record associations. This study develops a traceable knowledge-graph retrieval-augmented generation (KG-RAG) workflow for internal GH2132 fastener creep data. Seventeen GH2132 creep specimens with different geometries were organized into a standardized document archive, parsed into source-linked table and text fragments, and converted into structured entities and relationships. Iterative prompt templates were used to check extraction completeness, repair missing fields and preserve provenance without fine-tuning the underlying language model. The resulting Neo4j knowledge graph links material, specimen geometry, service condition, creep measurement and source evidence, while LightRAG retrieves vector chunks, entity contexts and relationship contexts through round-robin merging. The system was evaluated using 20 seed-engineering questions across five retrieval modes (Naive RAG, Local, Global, Hybrid and Mix), yielding 100 query-evaluation records. The questions covered simple, comparative, multi-constraint, out-of-knowledge-base and ambiguous queries. Mix achieved the strongest RAGAS profile, with answer correctness, answer similarity, answer relevancy, context precision, context recall and faithfulness scores of 0.85, 0.83, 0.79, 0.88, 0.87 and 0.85, respectively. Hybrid may be more practical for routine queries, although this qualitative interpretation was not supported by systematic latency benchmarking. A separate assessment by 15 domain experts gave a weighted score of 94/100. These results show that a source-linked KG-RAG workflow can improve the reuse, grounding and auditability of heterogeneous creep records within a bounded engineering dataset.",
+  "doi": "10.3390/ai7080282",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "a4994b5c39ae8da2e05d113b52d26fc11c5d2275",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:03:11.200734Z",
+  "relevance": 0.3125,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "iterative self-repair data cleaning knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

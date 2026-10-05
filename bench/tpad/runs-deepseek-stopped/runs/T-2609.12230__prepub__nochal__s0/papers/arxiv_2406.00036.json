@@ -1,0 +1,44 @@
+{
+  "id": "arxiv:2406.00036",
+  "title": "EMERGE: Enhancing Multimodal Electronic Health Records Predictive Modeling with Retrieval-Augmented Generation",
+  "authors": [
+    "Yinghao Zhu",
+    "Changyu Ren",
+    "Zixiang Wang",
+    "Xiaochen Zheng",
+    "Shiyun Xie",
+    "Junlan Feng",
+    "Xi Zhu",
+    "Zhoujun Li",
+    "Liantao Ma",
+    "Chengwei Pan"
+  ],
+  "year": 2024,
+  "published": "2024-05-27",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2406.00036",
+  "pdf_url": "https://arxiv.org/pdf/2406.00036v2",
+  "abstract": "The integration of multimodal Electronic Health Records (EHR) data has significantly advanced clinical predictive capabilities. Existing models, which utilize clinical notes and multivariate time-series EHR data, often fall short of incorporating the necessary medical context for accurate clinical tasks, while previous approaches with knowledge graphs (KGs) primarily focus on structured knowledge extraction. In response, we propose EMERGE, a Retrieval-Augmented Generation (RAG) driven framework to enhance multimodal EHR predictive modeling. We extract entities from both time-series data and clinical notes by prompting Large Language Models (LLMs) and align them with professional PrimeKG, ensuring consistency. In addition to triplet relationships, we incorporate entities' definitions and descriptions for richer semantics. The extracted knowledge is then used to generate task-relevant summaries of patients' health statuses. Finally, we fuse the summary with other modalities using an adaptive multimodal fusion network with cross-attention. Extensive experiments on the MIMIC-III and MIMIC-IV datasets' in-hospital mortality and 30-day readmission tasks demonstrate the superior performance of the EMERGE framework over baseline models. Comprehensive ablation studies and analysis highlight the efficacy of each designed module and robustness to data sparsity. EMERGE contributes to refining the utilization of multimodal EHR data in healthcare, bridging the gap with nuanced medical contexts essential for informed clinical predictions. We have publicly released the code at https://github.com/yhzhu99/EMERGE.",
+  "doi": "10.1145/3627673.3679582",
+  "arxiv_id": "2406.00036",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:25:31.318242Z",
+  "relevance": 0.1167,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "ablation study contribution of knowledge graph context retrieval augmented generation no-context baseline"
+  ],
+  "code_urls": [
+    "https://github.com/yhzhu99/EMERGE"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

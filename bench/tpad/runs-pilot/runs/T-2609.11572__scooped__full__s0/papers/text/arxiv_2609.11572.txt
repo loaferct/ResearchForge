@@ -1,0 +1,1655 @@
+[[page 1]]
+TimelyRAG: Semantic-Temporal Hybrid Retrieval for Time-Critical
+Question Answering in Overlapping-Evolving Documents
+Youngeun Nam1, Joeun Kim1, Hwanjun Song1, Susik Yoon2, Jae-Gil Lee1*, Byung Suk Lee3
+1KAIST, 2Korea University, 3University of Vermont
+{youngeun.nam, je.kim, songhwanjun, jaegil}@kaist.ac.kr
+susik@korea.ac.kr
+bslee@uvm.edu
+Abstract
+Although large language models (LLMs) and
+retrieval-augmented generation (RAG) have ad-
+vanced open-domain question answering (QA),
+they remain unreliable when documents evolve
+through amendments. Existing time-sensitive
+retrieval methods address only thedisjoint-
+evolving environment, where each update is
+an independent snapshot. However, laws, poli-
+cies, and regulations often operate inover-
+lapping-evolving environments, where amend-
+ments override earlier clauses while preserving
+most content, creating strong semantic over-
+lap across versions. We proposeTimelyRAG, a
+retriever-agnostic framework that incorporates
+temporal distance into ranking to align queries
+with version-appropriate documents. We also
+introduceTimelyQABench, the first benchmark
+for regulation-heavy domains with overlapping-
+evolving challenges. Experiments show con-
+sistent gains, up to +28.6% in nDCG@10,
+highlighting the importance of temporal rea-
+soning for reliable QA over evolving docu-
+ments. All resources are available at https:
+//github.com/kaist-dmlab/TimelyRAG.
+1 Introduction
+The growing capabilities of LLMs have expanded
+open-domain QA systems into powerful tools for
+diverse domains. (Kamalloo et al., 2023; Chen
+et al., 2024b; Kim et al., 2024). However, in the
+real world, LLM-based QA systems remain lim-
+ited intime-criticalscenarios, where correctness
+depends not only on topical relevance but also on
+the validity of documents at query time and ex-
+plicit temporal references in queries or documents.
+Amendments in domains such as law, policy, and
+institutional regulations preserve most content but
+revise key clauses, producing strong semantic over-
+lap across successive versions. The discrepancy
+between document validity and a query’s temporal
+*Corresponding Author.
+context creates ambiguity in identifying supporting
+evidence, and addressing this fundamental chal-
+lenge is essential in domains where decisions rely
+on precise, up-to-date regulatory knowledge.
+Fine-tuning LLMs to reflect evolving knowledge
+is costly and difficult to sustain at scale (Chung
+et al., 2024; Brown et al., 2020). RAG (Lewis et al.,
+2020) provides a practical alternative by accessing
+updated document collections, but existing retriev-
+ers rely onlexicalorsemanticsimilarity (Robertson
+et al., 2009; Karpukhin et al., 2020; Izacard et al.,
+2023). Without temporal awareness, they struggle
+to distinguish overlapping versions that share key-
+words but differ in validity. Existing time-sensitive
+methods rely onroughtemporal cues, typically
+year-level annotations, which are insufficient when
+amendments change clause-level conditions.
+We distinguish two temporal evolution environ-
+ments. In thedisjoint-evolving environment, doc-
+ument editions are independent across time, as
+in yearly rankings or one-time event results. In
+theoverlapping-evolving environment, documents
+evolve throughincremental amendments, where
+most content remains but selected clauses change,
+as in graduation requirements or regulatory policies.
+Such corpora encode temporal validity through is-
+suance dates, amendment dates, effective periods,
+or retroactive applicability clauses, either as meta-
+data or formulaic text. Thus, retrieval must identify
+both the relevant document and the version whose
+clause is valid under the query’s temporal context.
+Figure 1 contrasts the two environments.
+Several benchmarks have been proposed for
+time-sensitive retrieval, including TimeQA (Chen
+et al., 2021), RealTime QA (Kasai et al., 2023),
+TS-Retriever (Wu et al., 2024), and CRAG (Yang
+et al., 2024). These benchmarks evaluate tempo-
+ral reasoning over encyclopedic facts, news fresh-
+ness, timestamp-supervised retrieval, or dynamic
+domains. However, they mainly reflect disjoint-
+evolving settings, where timestamp matching or
+arXiv:2609.11572v1  [cs.IR]  10 Sep 2026
+
+[[page 2]]
+A. Disjoint-Evolving Environment
+B. Overlapping-Evolving Environment Time
+2024 Novel 
+Prize in Physics: 
+Pierre Agostini 
+2025 Novel 
+Prize in Physics: 
+Geoffrey Hinton 
+2026 Novel 
+Prize in Physics:
+TBD in October
+Graduation requirement, version.1 (2024)
+Graduation requirement, version. 2  (2025, amended)
+Graduation requirement, version. 3 (2026, amended)
+Independent records across time
+Successive amendments with partial overlap
+⋯
+⋯
+A. Disjoint-Evolving
+B. Overlapping-Evolving
+Previous Works TimelyRAG (OURS)
+works
+fails
+works
+works
+Figure 1: Comparison ofdisjoint- andoverlapping-
+evolving environments. Disjoint datasets are indepen-
+dent editions, whereas overlapping ones retain most of
+the content with amendments. Prior retrievers mainly
+address disjoint settings;TimelyRAGsupports both.
+recency filtering is often sufficient. Overlapping-
+evolving environments involve amendments, where
+effective dates and clause-level conditions change.
+Correct retrieval thus requires matching query
+event times to the version’s validity intervalat the
+clause level, rather than relying on a document-
+level date. Simple freshness heuristics fail when
+versions share keywords, insertion and effective
+dates diverge, or retroactive exceptions apply.
+To address this gap, we introduceTimelyRAG, a
+retriever-agnostic framework that integrates tempo-
+ral validity into ranking.TimelyRAGfuses semantic
+similarity with atemporal distancethat measures
+how the query time, or referenced event time, aligns
+with a candidate’s effective interval. The distance is
+minimal when the query time falls within a clause’s
+effective interval and grows as it diverges. This
+clause-level modeling enablesTimelyRAGto distin-
+guish confusing amendments based on whether the
+required clause was valid. Figure 2 contrastsTime-
+lyRAGwith document-level timestamp filtering.
+To evaluateTimelyRAG, we also constructTime-
+lyQABench, a benchmark tailored foroverlapping-
+evolving environmentsin regulation-focused do-
+mains.TimelyQABenchcontains successive amend-
+ments with substantial semantic similarity across
+versions, requiring systems to retrieve temporally
+valid evidence, not merely similar documents.
+Overall, our key contributions consist ofTime-
+lyRAG, a retriever-agnostic semantic-temporal
+reranking framework;TimelyQABench, the first
+benchmark centered on regulatory corpora with
+successive amendments; and experiments showing
+thatTimelyRAGimproves retrieval by up to +28.6%
+Retrieval Results : Invalidated
+A
+A B
+C D
+A B
+C D
+D
+Traditional
+Retrievers
+[Clause-level]
+TimelyRAG
+(OURS)
+[Document-level]
+Time-Sensitive
+Retrievers
+B
+⋯
+Time
+Do students who 
+entered in 2020 
+need to take 
+the English 
+graduation exam?
+Do students who 
+entered in 2021 
+need to take 
+the English 
+graduation exam?
+Chemistry
+Medicine
+In 2020, all scheduled English exam takers were 
+temporarily exempt due to COVID-19.Clause 1
+Clause 2
+Document. B: COVID-19 Exception
+Regular requirements resume according to the 
+graduation regulation in effect.
+Issued 20212021
+Students admitted in this year or later are 
+exempt from the English graduation exam.Clause 1
+Document. C: Revised Regulation Issued 20232023
+Medicine students admitted in 2021 are 
+retroactively exempt from the English exam.Clause 1
+Clause 2
+Document. D: Conditional Exemption
+Other students continue under the existing  rules.
+Issued 20242024
+2018
+Students admitted in 2018 or 2019 are exempt 
+from the English graduation exam.Clause 1
+Clause 2
+Document. A: Basic Regulations
+Students admitted in 2020, 2021, or 2022 are 
+required to pass the English graduation exam.
+Issued 2018, Revised:2022
+B
+Retrieve
+valid doc.
+InaccurateInaccurate
+Retrieve
+valid doc.
+Inaccurate
+(Simple match)
+Inaccurate
+(Recent first) 
+Figure 2: Example ofoverlapping-evolvingenviron-
+ment. Traditional retrievers return similar invalid ver-
+sions, and document-level temporal retrievers can miss
+clause-level validity.TimelyRAGuses clause-level tem-
+poral cues to prioritize the version valid for the query.
+in nDCG@10 and +19.1% in Hit@10 across re-
+trieval methods.
+2 Related Works
+2.1 Time-Aware RAG Methods
+Previous time-sensitive RAG methods incorpo-
+rate temporal signals through timestamp filter-
+ing, recency-based scoring, or temporal supervi-
+sion. TS-Retriever (Wu et al., 2024) uses posi-
+tive–negative contrastive learning with timestamp
+supervision, while MRAG (Zhang et al., 2024)
+combines question processing, retrieval, summa-
+rization, and semantic-temporal hybrid ranking
+over temporally perturbed evidence. These meth-
+ods highlight the importance of temporal informa-
+tion, but mainly target thedisjoint-evolving environ-
+ment, where snapshots are independent and tem-
+poral reasoning reduces to selecting the correct
+edition. In contrast, theoverlapping-evolving en-
+vironmentrequires distinguishing similar versions
+that differ in effective dates or scope, demanding
+temporal reasoning directly in the scoring process.
+2.2 Temporal KG Reasoning
+Temporal knowledge graph question answering
+(TKGQA) addresses time-dependent questions
+over structured facts. Representative work includes
+CronKGQA/CronQuestions (Saxena et al., 2021),
+
+[[page 3]]
+EXAQT (Jia et al., 2021), TempoQR (Mavromatis
+et al., 2022), and SubGTR (Chen et al., 2022),
+which model temporal constraints through tempo-
+ral embeddings, compact subgraphs, or time-aware
+reasoning. These methods are complementary to
+TimelyRAGbecause they assume structured tempo-
+ral facts in a knowledge graph, whereasTimelyRAG
+retrieves clause-valid versions from semantically
+overlapping textual amendments.
+2.3 Time-Sensitive QA Benchmarks
+Several benchmarks assess temporal reasoning in
+QA. TimeQA (Chen et al., 2021) uses timestamped
+questions over Wikipedia, RealTime QA (Kasai
+et al., 2023) evaluates continuously updated news
+questions, TS-Retriever (Wu et al., 2024) adds
+timestamp supervision for retrieval, TimeR4 (Qian
+et al., 2024) targets temporal knowledge graph
+QA, and CRAG (Yang et al., 2024) studies tem-
+poral consistency in financial and news domains.
+ChronoQA (Chen et al., 2025) further studies time-
+sensitive RAG over large-scale news data with ex-
+plicit and implicit temporal expressions. Despite
+these contributions, existing benchmarks rely on
+general-purpose corpora and provide limited cover-
+age of incremental document evolution, primarily
+reflecting thedisjoint-evolving environment.
+3TimelyRAGFramework
+Problem Formulation.Atime-critical queryis
+a query whose correct answer depends on the
+temporal validity of the retrieved evidence. In
+overlapping-evolving corpora, a candidate docu-
+ment can be topically relevant yet invalid because
+the clause needed to answer the query was not in
+effect under the query’s temporal context.
+LetD denote a collection of evolving documents
+and d∈D a candidate document. We consider
+four temporal signals for queries and documents:
+• Query Insert Time (QIT ): the time when the
+query was created or issued by the user.
+• Query Event Times (QET ): the explicit tem-
+poral expressions mentioned within the query
+text (e.g., “Which services became restricted af-
+terJanuary 2023?”)
+• Document Insert Time (DIT ): the insertion
+timestamp of the document into the database.
+• Document Event Times ( DET ): the tempo-
+ral expressions extracted from the document
+content (e.g., “Users who cancel a subscription
+within 14 days of activation, if purchased after
+June 15, 2021, are eligible for a full refund.”).
+These signals need not be equally available for all
+queries or documents. In particular, event times
+may be explicit, implicit, ambiguous, or missing.
+TimelyRAGtherefore treats temporal information as
+a set of available signals and applies fallback-aware
+scoring when event-time evidence is incomplete.
+Let’s suppose a retrieval function f, which as-
+signs each candidate document d∈ D a rele-
+vance score that combines two components: the
+semantic similaritybetween the query and the doc-
+ument, and thetemporal compatibilitybetween
+their temporal attributes. For brevity, we denote the
+query-side temporal signals asQT = (QIT,Q ET )
+and the document-side temporal signals asDT =
+(DIT,D ET ). The retrieval objective is to rank can-
+didate documents by combining semantic relevance
+and temporal compatibility:
+f(Q,Q T,D)
+= arg max
+d∈D
+h
+S(Q,d) +T(Q T,D T ;d)
+i
+,(1)
+where S(Q,d) denotes semantic similarity and
+T(Q T,D T ;d)denotes temporal compatibility.
+3.1 Semantic-Temporal Hybrid Retrieval
+TimelyRAGimplements f(Q,Q T,D) as a two-
+stage retrieval pipeline. The first stage retrieves
+a candidate pool using a lexical or semantic re-
+triever, while the second stage reranks the retrieved
+candidates using temporal compatibility. This de-
+sign is retriever-agnostic: the first-stage retriever
+can be sparse, dense, or late-interaction based, and
+TimelyRAGonly requires access to the resulting
+candidate set and temporal signals.
+1. Semantic retrieval stage: A base retriever ranks
+all documents according toS(Q,d) and retains
+the top-Ncandidates.
+2. Temporal re-ranking stage: Candidate docu-
+ments are re-ranked by combiningS(Q,d) with
+T(Q T,D T ;d) , promoting documents whose rel-
+evant clauses are temporally valid under the
+query context.
+BecauseTimelyRAGis a reranking framework,
+it cannot recover a gold document that is absent
+from the first-stage candidate pool. Its goal is in-
+stead to resolve version-level ambiguity among se-
+mantically relevant candidates, which is the central
+difficulty in overlapping-evolving corpora.
+
+[[page 4]]
+3.2 Stage 1: Semantic Retrieval
+The first stage constructs a candidate pool using
+textual relevance only. Given a queryQ, a base re-
+triever ranks all documents byS(Q,d) and retains
+the top-N candidates, denoted byCN(Q)⊂D . In
+our experiments,N is substantially larger than the
+final evaluation cutoff, allowing temporal reranking
+over a sufficiently broad candidate pool. The final
+ranking after Stage 2 can be evaluated at different
+cutoffs, such ask∈{3,5,10} , depending on the
+downstream use case. For retrieval evaluation, we
+report standard metrics atk= 10 ; for answer gen-
+eration, the top-k documents can be passed to the
+generator. We separately analyze candidate recall
+ofCN(Q) to distinguish first-stage coverage from
+temporal reranking effects.
+3.3 Stage 2: Temporal Re-Ranking
+The second stage refines the candidate pool by in-
+corporating temporal compatibility alongside se-
+mantic relevance. Document insert times are typ-
+ically available from corpus metadata. In con-
+trast, document event times are obtained from ex-
+plicit metadata, rule-based temporal parsing, or
+offline temporal normalization of formulaic expres-
+sions in the document text. When event-time sig-
+nals are missing or ambiguous,TimelyRAGfalls
+back to available insertion-time signals and reduces
+reliance on uncertain temporal evidence through
+query-adaptive weighting. For each candidate doc-
+umentd∈C N(Q), the final score is defined as
+Score(Q,d) = (1−α(Q))S(Q,d)
++α(Q)T(Q T,D T ;d),(2)
+whereα(Q)∈[0,1] balances semantic similarity
+and temporal compatibility.
+3.3.1 Temporal Signal Handling
+TimelyRAGdistinguishes between insertion times
+and event times. Insertion times, such asQIT and
+DIT , indicate when a query or document version
+becomes available. Event times, such asQET and
+DET , indicate the time period to which the query
+or document clause refers. When event times are
+available, they are prioritized because they directly
+capture temporal validity. When an event time
+is missing, ambiguous, or low-confidence,Time-
+lyRAGsubstitutes the corresponding insertion time
+only for the affected distance term rather than dis-
+carding the candidate. We also enforce a causality
+constraint when insertion times are used; a docu-
+ment can support a query only if it was available
+before the query was issued, i.e.,DIT≤Q IT . This
+prevents future documents from being selected as
+evidence for past queries.
+3.3.2 Temporal Compatibility
+Temporal compatibility measures whether a candi-
+date document is valid under the query’s temporal
+context. For document event times, we represent
+clause validity as an interval DET (d) = [s d,e d]
+when such interval information is available. Given
+a query event timeQET , the event-time distance is
+defined as zero ifQET falls within the document’s
+validity interval, and otherwise increases with the
+distance to the nearest boundary:
+∆(QET,D ET )
+=
+(
+0,ifQ ET∈[s d,e d],
+min(|QET−s d|,|Q ET−e d|),o/w. (3)
+When temporal information is represented as
+a point timestamp rather than an interval, this re-
+duces to the absolute distance between the two
+timestamps. We then compute the overall tempo-
+ral distance by combining available event-time and
+insertion-time alignments:
+δ(Q,d) = ∆(Q ET,D ET ) +λ 1|QIT−D IT|
++λ 2∆(QIT,D ET ) +λ 3|QET−D IT|,
+(4)
+whereλ1,λ 2,λ 3 control the contribution of auxil-
+iary temporal alignments. If an event-time signal is
+missing, the corresponding term is replaced by the
+available insertion-time signal as described above.
+The distance δ(Q,d) is normalized within the
+candidate poolCN(Q):
+z(Q,d)
+=
+δ(Q,d)−min
+d′∈CN (Q)
+δ(Q,d′)
+max
+d′∈CN (Q)
+δ(Q,d′) min
+d′∈CN (Q)
+δ(Q,d′) +ϵ,(5)
+whereϵ prevents division by zero. Finally, temporal
+compatibility is computed as
+T(Q T,D T ;d) = exp(−γz(Q,d)), γ >0(6)
+whereγcontrols the temporal penalty strength.
+3.3.3 Balancing Semantic/Temporal Signals
+The coefficientα(Q) controls how strongly tempo-
+ral compatibility affects the final ranking. Rather
+than assigning a fixed temporal weight to all
+
+[[page 5]]
+Domain Selection
+Company Policy Law
+Terms of Service University 
+Regulations
+Query Category Creation
+Multi-Version Policy Rules
+Legacy Exception Rules
+Policy Name/Code Revisions
+Emergency/Temporary Rules
+Historical, Retrospective Fact
+Implicit Time Context
+1. QA Pairs Generation
+What are the English-proficiency test 
+requirements for my graduation in 2022? Answer
+Llama 3.3
+70B
+⋯⋯
+Time
+2. Corpus Generation: Overlapping-Evolving Regulations
+3. Multi-Dimensional Validation
+𝑸𝑸𝑰𝑰𝑰𝑰: 2024𝑸𝑸𝑬𝑬𝑰𝑰: 2022
+𝑫𝑫𝑰𝑰𝑰𝑰: 2023
+𝑫𝑫𝑬𝑬𝑰𝑰: 2022
+Final Valid Benchmark
+TimelyQABench
+Time
+Sensitivity
+Domain
+Specificity
+Derivability
+Relevance
+2017
+Override
+Graduation
+: 115->120 
+Credits
+2018
+Revisions
+Graduation
+[CS]->[DS]
+2023
+Reinstatement
+Graduation
+: Revised
+2021
+Emergency
+Graduation
+Policy
+: COVID19
+2024
+Exception
+Graduation
+Policy
+: Foreign
+𝑫𝑫𝑰𝑰𝑰𝑰: 2024
+𝑫𝑫𝑬𝑬𝑰𝑰: 2024
+𝑫𝑫𝑰𝑰𝑰𝑰: 2021
+𝑫𝑫𝑬𝑬𝑰𝑰: 2020
+𝑫𝑫𝑰𝑰𝑰𝑰: 2018
+𝑫𝑫𝑬𝑬𝑰𝑰: 2018
+𝑫𝑫𝑰𝑰𝑰𝑰: 2017
+𝑫𝑫𝑬𝑬𝑰𝑰: 2016
+Figure 3: Overview ofTimelyQABenchacross four regulation-focused domains. Queries and documents are
+annotated with insertion timestamps, and validation uses four metrics to ensure reliable supervision.
+queries,TimelyRAGadjusts α(Q) according to the
+temporal specificity of the query. Queries with
+explicit event times or fine-grained temporal ex-
+pressions require stronger temporal discrimination,
+whereas queries with weak or absent temporal cues
+should rely more on semantic relevance.
+We computeα(Q)as
+α(Q) =σ
+ 
+γ1·1 has ET(Q) +γ 2·Gran(Q)
+
+,(7)
+where 1has ET(Q) indicates whether the query con-
+tains an explicit event time, Gran(Q) encodes tem-
+poral granularity, andγ1,γ 2≥0 are weighting co-
+efficients. This query-adaptive weighting prevents
+temporal signals from dominating when temporal
+evidence is weak, while emphasizing temporal va-
+lidity when the query explicitly requires it.
+4TimelyQABenchConstruction
+Most time-sensitive QA benchmarks capture
+disjoint-evolving environments with independent
+snapshots. In contrast, regulation-heavy domains
+often evolve through overlapping amendments,
+where content largely persists but selected clauses
+change. We constructTimelyQABenchas a con-
+trolled, synthetic benchmark with strong semantic
+overlap, explicit amendment histories, and gold
+labels for the version valid under each query’s
+temporal context. As shown in Figure 3,Time-
+lyQABenchhas three stages: regulatory QA gen-
+eration, evolving-family corpus construction with
+hard negatives, and multi-dimensional validation.
+4.1 Domain-Specific QA Creation
+The first phase defines the temporal reasoning
+requirements to be tested. We focus on four
+regulation-intensive domains—legal regulations,
+university regulations, company policy, and terms
+of service—because they are authoritative sources
+that undergo frequent amendments and require
+strict temporal validity. These domains are chal-
+lenging for retrieval, as minor wording or scope
+changes can alter the correct answer.
+Within these domains, we define six categories
+in Table 1, covering common temporal reasoning
+requirements such as exemptions, amendments, va-
+lidity periods, event-based conditions, version over-
+rides, and scope restrictions. For example, legacy
+exception rules require retrieving an older clause
+that remains valid for a specific population, while
+emergency rules require identifying a clause valid
+only during a limited period.
+Using Llama-3.3-70B (Grattafiori et al., 2024),
+we generate Korean time-critical QA instances fol-
+lowing these category definitions. Each instance
+contains a query, a query insertion time QIT , an
+answer, and gold document identifiers. The gold
+documents specify the minimal evidence required
+to derive the answer under the query’s temporal
+context. This explicit linkage allows retrieval sys-
+tems to be evaluated on topical relevance and on
+whether they retrieve the temporally valid version.
+We generate 3,000 QA instances for each domain,
+resulting in 12,000 instances in total. Detailed gen-
+eration prompts are provided in Appendix D.
+4.2 Corpus Generation
+The second phase constructs the evidence corpus.
+For each policy theme, we create an evolving docu-
+ment family with multiple temporally ordered ver-
+sions. Versions within the same family share the
+same policy topic and retain most content, while
+selected clauses are revised in eligibility, scope,
+effective period, exception conditions, or required
+actions. This design creates hard negatives, where
+non-gold documents are semantically similar to the
+gold document but temporally invalid for the query.
+Each document version is assigned a document
+insertion time DIT , and clauses include event-
+
+[[page 6]]
+Table 1: Time-sensitive query categories, definitions, examples, and context inTimelyQABench.
+Category Definition Context Examples
+Multi-Version Policy Rules Policies that exist in multiple versions
+with meaningful changes over time.
+Academic probation GPA requirement
+changed from 2.0 to 2.5 after 2022.
+What GPA is required
+to avoid academic probation?
+Legacy Exception Rules Rules allowing certain entities to follow
+older rules despite newer versions.
+Students enrolled before 2021
+follow the old graduation rules.
+Do students enrolled
+in 2020 need a thesis?
+Policy Name/Code Revisions Policies where course or program names
+or codes are officially updated.
+“Data Security 301” was renamed
+“Data Privacy 401” in 2024.
+Which new code covers
+data privacy in 2024?
+Emergency/Temporary Rules Temporary rules are issued in response
+to emergencies or external events.
+Pass/fail grading was temporarily
+allowed during COVID-19.
+Was pass/fail grading
+allowed in Fall 2020?
+Historical, Retrospective Fact Questions referring to how policies
+existed at a specific time in the past.
+Tuition fees increased from $5,000
+in 2015 to $6,000 in 2018.
+What was the tuition fee
+for students in 2015?
+Implicit Time Context Queries where the intended time must
+be inferred from contextual cues.
+Encryption rules were revised
+in 2023, replacing older policies.
+What are the encryption
+rules for banks?
+Table 2: Benchmark comparison highlighting temporal
+complexity and domain specificity.
+Benchmark
+Datasets
+Time Sensitivity Domain
+Specificity# Required
+Time Types
+Avg(#Available
+/#Required)
+TimelyQABench
+Company 2.16 100% 4.20
+Law 2.04 100% 4.83
+Terms 2.06 100% 4.29
+University 2.32 100% 4.28
+TimeR4 2.36 29.51% 2.44
+CRAG 2.91 7.58% 3.04
+TS-Retriever 2.26 3.98% 2.81
+RealTime QA 2.01 95.53% 3.12
+TimeQA 2.17 21.33% 2.53
+time expressions or validity intervals correspond-
+ing to DET . For example, an earlier version al-
+lowed “refund requests within 30 days of purchase,”
+while a later amendment shortens the period to
+“14 days” or restricts eligibility to annual subscrip-
+tions. These changes mirror amendment processes
+where new provisions override or qualify earlier
+ones while preserving surrounding text.
+Each query is associated with gold_docs, the
+minimal document versions required to derive the
+correct answer. Other versions in the same evolv-
+ing family are treated as temporally challenging
+non_gold_docs. We quantify semantic overlap
+across versions in Section 4.4. Detailed corpus
+generation prompts are included in Appendix D.
+4.3 Multi-Dimensional Validation
+The third phase validates generated instances using
+GPT-4o, Claude-3.7-Sonnet, and Qwen2.5-72B as
+independent validators. We use multi-model agree-
+ment as a scalable consistency filter. Each validator
+assesses four criteria:
+• Relevance:Whether the query matches the in-
+tended category in Table 1.
+Table 3: Semantic overlap comparison across bench-
+mark datasets. Higher BGE similarity indicates stronger
+semantic overlap among candidate documents.
+Dataset #Queries BGE Similarity
+TimelyQABench-Company 3000 0.71
+TimelyQABench-Law 3000 0.61
+TimelyQABench-Terms of Service 3000 0.73
+TimelyQABench-University 3000 0.68
+StreamingQA (Liska et al., 2022) 36376 0.35
+CRAG (Yang et al., 2024) 2705 0.36
+RealTimeQA (Kasai et al., 2023) 1429 0.35
+TS-Retriever (Wu et al., 2024) 3244 0.58
+TimeR4 (Qian et al., 2024) 3237 0.34
+• Derivability:Whether the provided answer is
+fully supported by the annotatedgold_docs.
+• Time Sensitivity:Whether answering requires
+temporal reasoning, including the number of time
+types (QIT,Q ET,D IT,D ET ) and the frequency
+of changes (yearly, monthly, daily, timely).
+• Domain Specificity:Whether the query and doc-
+uments reflect professional style and terminology
+appropriate to the chosen domain.
+An instance is retained only when validators
+agree that the answer is supported by the annotated
+gold documents and requires temporal reasoning.
+This filtering reduces inconsistent instances while
+preserving examples that require clause-level tem-
+poral alignment. See Appendix B for validation
+results and Appendix D for validation prompts.
+4.4TimelyQABenchAnalysis
+Table 2 comparesTimelyQABenchwith exist-
+ing benchmarks in temporal coverage and do-
+main specificity using Qwen2.5-72B. While prior
+datasets such as TimeQA (Chen et al., 2021) and
+CRAG (Yang et al., 2024) only partially annotate
+temporal signals,TimelyQABenchprovides com-
+
+[[page 7]]
+Table 4: Retrieval performance onTimelyQABench. Each cell reports baseline /+TimelyRAG.
+Retriever
+Law University
+nDCG@10 MAP@10 Recall@10 Hit@10 nDCG@10 MAP@10 Recall@10 Hit@10
+BM25 .174/.189.136/.152.234/.243.290/.300 .197/.246.157/.213.236/.250.316/.340
+BGE-M3 .172/.179.136/.145.229/.231.280/.283 .173/.213.142/.187.196/.213.265/.290
+NV-Embed-V2 .179/.221.141/.185.244/.269.295/.327 .183/.222.152/.196.208/.223.272/.300
+BGE-Gemma2 .183/.224.144/.188.249/.274.302/.334 .181/.216.151/.191.204/.217.267/.288
+Retriever
+Company Terms of Service
+nDCG@10 MAP@10 Recall@10 Hit@10 nDCG@10 MAP@10 Recall@10 Hit@10
+BM25 .226/.227.182/.183.218/.219.344/.345 .113/.134.094/.115.111/.123.170/.190
+BGE-M3 .197/.200.163/.166.176/.177.292/.294 .059/.071.049/.060.056/.064.090/.105
+NV-Embed-V2 .195/.228.161/.197.175/.179.289/.312 .062/.078.050/.067.065/.073.099/.115
+BGE-Gemma2 .197/.230.161/.198 .183/.183.297/.315 .068/.088.055/.074.072/.084.110/.131
+prehensive annotations across time types for clause-
+level temporal alignment. Its domain specificity
+makesTimelyQABenchpractical for evaluating sys-
+tems that retrieve the clause valid at query time.
+To verify thatTimelyQABenchcaptures overlap-
+ping evolution, we compute BGE similarity (Chen
+et al., 2024a) among candidate documents within
+each evolving policy family. As shown in Table 3,
+TimelyQABenchexhibits substantially higher se-
+mantic overlap than existing time-sensitive QA
+benchmarks. This confirms that the benchmark
+cannot be solved by semantic matching alone and
+requires identifying the temporally valid version.
+5 Experimental Results
+5.1 Experimental Setup
+Backbone Retrievers.We evaluateTimelyRAG
+on top of both sparse and dense retrievers, includ-
+ing BM25 (Robertson and Walker, 1994), BGE-
+M3 (Chen et al., 2024a), NV-Embed-V2 (Lee et al.,
+2025), and BGE-Gemma2 (Chen et al., 2024a).
+TimelyRAGis applied as a temporal reranker on
+top of each fixed first-stage retriever.
+Datasets.We use three benchmarks:Time-
+lyQABenchfor overlapping-evolving environments,
+TS-Retriever (Wu et al., 2024) for disjoint-evolving
+environments, and FiQA (BEIR) (Thakur et al.,
+2021) for non-evolving environments. Details of
+these datasets are provided in Appendix C.2.
+Retrieval Evaluation.We use four standard
+metrics: nDCG @k for rank-sensitive relevance,
+MAP@k for ranking quality, Recall@k for relevant-
+document coverage, and Hit@kfor top-ksuccess.
+Generation Evaluation.We assess downstream
+QA quality by comparing answers from baseline
+RAG andTimelyRAG-augmented RAG. For each
+query, both systems use the same generator, Llama-
+3.3-70B. Pairwise evaluation is conducted using
+GPT-5 as the judge model, which compares the
+two answers for correctness and temporal validity
+and reports win, tie, and lose rates forTimelyRAG.
+5.2 Retrieval Performance Comparison
+Results are presented for three types of benchmarks.
+α(Q) (§3.3.3) is set by the first heuristic for §5.2.1
+and by the second heuristic for §5.2.2 and §5.2.3.
+5.2.1 Overlapping-Evolving Benchmark
+We evaluateTimelyRAGon fourTimelyQABench
+domains:Law,University,Company, andTerms of
+Service. Table 4 shows thatTimelyRAGimproves
+retrieval across sparse and dense backbones. The
+largest gains appear inUniversityandTerms of
+Service, with up to 24.8% nDCG @10 improve-
+ment over BM25 onUniversityand 28.6% over
+BGE-Gemma2 onTerms of Service. Recall @10
+and Hit@10 further confirm that temporal rerank-
+ing improves both coverage and ranking accuracy.
+See Appendix C for extended results.
+We additionally compareTimelyRAGwith four
+stronger time-aware strategies.Temporal Query
+Rewritingaugments the original query with its tem-
+poral context at multiple granularities (timestamp,
+date, month, and year) before retrieval.Rule-based
+Effective-Date Filteringapplies hard temporal con-
+straints to remove candidates whose effective peri-
+ods are incompatible with the query.LLM-based
+Temporal Rerankinguses GPT-4o-mini to rerank
+retrieved candidates based on their textual content
+and temporal metadata.Oracle Temporal Filtering
+uses gold temporal information to filter candidates
+and is included only as an upper bound.
+
+[[page 8]]
+Table 5: Comparison with additional time-aware base-
+lines onTimelyQABench.
+Method Backbone nDCG@5 MAP@5
+Vanilla Retrieval BM25 0.2087 0.1846
+Vanilla Retrieval BGE-M3 0.1784 0.1594
+Temporal Query Rewriting BM25 0.1486 0.1314
+Temporal Query Rewriting BGE-M3 0.1351 0.1205
+Rule-based Effective-Date Filtering BM25 0.1683 0.1500
+Rule-based Effective-Date Filtering BGE-M3 0.1386 0.1237
+LLM-based Temporal Reranking – 0.1948 0.1775
+TimelyRAG BM25 0.2821 0.2607
+TimelyRAG BGE-M3 0.2326 0.2154
+Oracle Temporal Filtering BM25 0.3323 0.3066
+Oracle Temporal Filtering BGE-M3 0.2771 0.2537
+Table 6: Retrieval performance comparison on the TS-
+Retriever dataset using nDCG, Recall, and Hit Rate.
+Methods
+TS-Retriever Dataset
+@3 @5
+nDCG Recall Hit nDCG Recall Hit
+TS-Retriever 0.539 0.406 0.796 0.5470.5270.865
+BM25 0.022 0.011 0.032 0.025 0.015 0.040
++TimelyRAG 0.641 0.334 0.727 0.679 0.391 0.817
+SentenceBERT 0.392 0.190 0.465 0.425 0.254 0.557
++TimelyRAG 0.811 0.414 0.857 0.818 0.443 0.882
+BGE-M3 0.716 0.422 0.796 0.7290.5280.853
++TimelyRAG 0.874 0.435 0.879 0.875 0.451 0.891
+As shown in Table 5,TimelyRAGconsistently
+outperforms all deployable time-aware baselines
+under both sparse and dense retrieval. Temporal
+query rewriting merely injects temporal expres-
+sions into the query, while rule-based filtering ap-
+plies hard date constraints. In contrast,TimelyRAG
+explicitly models temporal compatibility among
+query and document timestamps while preserving
+semantic relevance. The oracle results indicate that
+further gains remain possible with more accurate
+temporal information.
+5.2.2 Disjoint-Evolving Benchmark
+Table 6 reports results on TS-Retriever, which eval-
+uatestime-sensitiveretrieval. Across metrics,Time-
+lyRAGconsistently improves the baselines, show-
+ing that temporal alignment complements both lex-
+ical and semantic retrieval. These results confirm
+thatTimelyRAGalso adapts to disjoint-evolving
+scenarios by favoring temporally valid evidence
+over merely recent or lexically similar passages.
+5.2.3 General RAG Benchmark
+To assess whether our temporal re-ranking mecha-
+nism interferes with retrieval innon-temporal do-
+mains, we evaluateTimelyRAGongeneral RAG
+benchmarksthat are unrelated to time-dependent
+Table 7: Retrieval results on the BEIR-FiQA dataset.
+Methods
+BEIR-FiQA Dataset
+nDCG@10 MAP@10 Recall@10 Hit@10
+BM25 0.199 0.163 0.180 0.302
++TimelyRAG 0.199 0.163 0.180 0.302
+SentenceBERT 0.485 0.419 0.439 0.653
++TimelyRAG 0.485 0.419 0.439 0.653
+BGE-M3 0.729 0.466 0.660 0.907
++TimelyRAG 0.729 0.466 0.660 0.907
+58.3
+55.6
+61.4
+57.2
+63.5
+66.1
+60.7
+56.8
+27.9
+29.7
+25.8
+28.9
+23.7
+21.3
+26.4
+29.1
+13.8
+14.7
+12.8
+13.9
+12.8
+12.6
+12.9
+14.1
+BM25+TimelyRAG
+BGE-M3+TimelyRAG
+BM25+TimelyRAG
+BGE-M3+TimelyRAG
+BM25+TimelyRAG
+BGE-M3+TimelyRAG
+BM25+TimelyRAG
+BGE-M3+TimelyRAG
+Win Tie Lose
+Law
+University
+Company
+Terms 
+of Service
+Datasets Methods
+Generation Evaluation by Win Rate
+Figure 4: Generation performance ofTimelyRAGcom-
+pared with baseline RAG.
+reasoning. As shown in Table 7,TimelyRAGpre-
+serves the original retriever performance because
+time-aware scoring becomes inactive without tem-
+poral context. This demonstrates thatTimelyRAG
+preserves baseline effectiveness in static corpora
+while improving retrieval in time-critical settings.
+5.3 Generation Evaluation
+Figure 4 shows thatTimelyRAG-augmented gener-
+ation consistently achieves higher win rates across
+all domains and retrievers. These results indicate
+that temporally valid retrieval improves evidence
+ranking and downstream answer reliability.
+5.4 Temporal Sensitivity Analysis
+Figure 5 illustrates the distributions of optimal
+α(Q) values on theTimelyQABench-University
+dataset, whereα(Q)controls the balance between
+semantic similarity and temporal alignment. In
+both sparse and dense retrievers, the optimalα(Q)
+values are heavily concentrated near 1.0 (84.6 %
+and 85.0 %), indicating thatTimelyQABenchre-
+quires clause-level temporal validity rather than
+semantic similarity alone.
+5.5 Ablation Study
+We analyze each component using simplified vari-
+ants of our temporal formulation. The first applies
+all distance terms in Eq. (4) with uniform weight-
+ing, ignoring causal constraints andfine-grained
+temporal relations. The second removes the event-
+time indicator 1has ET(Q) in Eq. (7), and the third
+omits the granularity term Gran(Q). Table 8 shows
+
+[[page 9]]
+84.6%
+80%
+90%
+α(Q): BM25+TimelyRAG
+best α ratio
+85.0%
+80%
+90%
+α(Q): BGE-M3+TimelyRAG
+best α ratio
+0%
+1%
+2%
+3%
+0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
+0%
+1%
+2%
+3%
+0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
+Figure 5: α(Q) distribution on theUniversitydataset.
+Higherαindicates stronger temporal importance.
+Table 8: Ablation results on theTimelyQABench-
+Universitydataset with the BM25 backbone.
+Variations
+TimelyQABench-University
+nDCG@10 MAP@10 Recall@10 Hit@10
+Naive-Dist 0.202 0.162 0.240 0.320
+w/o1 has ET(Q) 0.205 0.166 0.238 0.319
+w/o Gran(Q) 0.206 0.168 0.237 0.318
+TimelyRAG 0.246 0.213 0.250 0.340
+that query-document temporal alignment, event-
+time activation, and temporal granularity are ef-
+fective for fine-grained time-critical retrieval. Full
+results are reported in Appendix C.6.
+5.6 Computational Overhead
+We measure the incremental query-time cost of
+TimelyRAGseparately from the underlying retriever.
+Averaged across the fourTimelyQABenchdomains,
+in Table 9,TimelyRAGadds only 2.15 ms/query
+to BM25 and 2.64 ms/query to BGE-M3 while
+improving nDCG@5. The reranking stage con-
+sists mainly of candidate sorting, temporal fea-
+ture computation, and semantic–temporal mixing.
+For BGE-M3, document encoding is performed of-
+fline and excluded from query-time latency. The
+temporal module uses approximately 5.9×10 3
+CPU-side operations per query, compared with
+1.23×10 8 FLOPs/query for dense similarity com-
+putation. Overall,TimelyRAGprovides substantial
+retrieval gains withlittleincremental overhead.
+5.7 Candidate-Pool Sensitivity
+We vary the first-stage candidate pool size N∈
+{10,50,100,250} . As shown in Table 10, increas-
+ing the pool from 10 to 50 candidates substan-
+tially improves retrieval quality for both backbones,
+whereas further increases provide only marginal
+gains. This saturation indicates thatTimelyRAG
+benefits from sufficient candidate diversity but is
+relatively insensitive once the initial candidate pool
+becomes moderately large.
+Table 9: Retrieval effectiveness and incremental tempo-
+ral reranking overhead averaged across the fourTime-
+lyQABenchdomains.
+Backbone nDCG@5 MAP@5 Overhead
+Vanilla +TimelyRAG Vanilla +TimelyRAG ms/query
+BM25 0.2087 0.2821 0.1846 0.2607 2.15
+BGE-M3 0.1783 0.2326 0.1593 0.2156 2.64
+Table 10: Sensitivity analysis of the first-stage candi-
+date pool sizeN. Results are averaged across the four
+TimelyQABenchdomains.
+Retriever N nDCG@5 MAP@5
+BM25
+10 0.2646 0.2466
+50 0.2821 0.2607
+100 0.2830 0.2615
+250 0.2820 0.2604
+BGE-M3
+10 0.2176 0.2033
+50 0.2328 0.2156
+100 0.2342 0.2165
+250 0.2353 0.2172
+6 Conclusion
+We introduceTimelyRAG, a retriever-agnostic
+framework for time-critical QA over overlapping-
+evolving documents. By combining semantic rel-
+evance with clause-level temporal compatibility,
+TimelyRAGdistinguishes semantically similar ver-
+sions with different temporal validity. We also con-
+structTimelyQABench, a controlled benchmark for
+regulation-heavy domains with successive amend-
+ments. Experiments show consistent retrieval gains
+across retrievers and improve downstream gener-
+ation quality. Overall, reliable QA over evolving
+documents requires version-valid, clause-level tem-
+poral retrieval beyond document-level relevance.
+Acknowledgments
+This research was supported by the MSIT (Ministry
+of Science, ICT), Korea, under the Top-Tier
+AI Global HRD invitation program (RS-2025-
+25461932, 50%) supervised by the IITP (Institute
+for Information & Communications Technology
+Planning & Evaluation), by the Korea Institute
+of Science and Technology Information (KISTI)
+in 2026 (No. (KISTI)K26L3M1C1, 40%), aimed
+at developing KONI (KISTI Open Neural Intelli-
+gence), a large language model specialized in sci-
+ence and technology, and by Artificial intelligence
+industrial convergence cluster development project
+funded by the Ministry of Science and ICT (MSIT,
+Korea) & Gwangju Metropolitan City (AICA-26-
+AE000008, 10%).
+
+[[page 10]]
+Limitations
+While this work aims to tackle realistic retrieval sce-
+narios undertime-criticalandoverlapping-evolving
+environments, several limitations remain. First,
+TimelyRAGuses an interpretable temporal distance
+function; extending it to model complex temporal
+logic, causal relations, and multi-event dependen-
+cies remains future work. Second, as a reranking
+framework,TimelyRAGbenefits from a first-stage
+retriever that can include relevant document ver-
+sions in the candidate pool. Third, temporal signals
+can be harder to obtain in documents that do not
+follow explicit amendment or effective-date con-
+ventions. In contrast, regulation-heavy corpora of-
+ten provide effective periods and amendment dates
+through metadata or formulaic text.TimelyRAG
+mitigates missing temporal signals through fall-
+back and query-adaptive weighting. Finally,Time-
+lyQABenchis synthetically constructed to control
+semantic overlap and temporal validity. Extending
+it with real-world versioned corpora is an important
+future direction.
+Ethics Statement
+This work constructs a synthetic benchmark for
+time-critical QA in regulation-heavy domains. The
+dataset does not contain personal information,
+human-subject data, or offensive content. Since the
+benchmark is synthetically generated and validated
+with LLMs, it may still reflect biases or artifacts
+from the underlying models and prompts. We miti-
+gate this risk through multi-model validation and
+release prompts and evaluation resources to support
+reproducibility. For human validation, two indepen-
+dent annotators from our research group evaluated
+50 randomly sampled instances using the same val-
+idation criteria as the LLM-based evaluation.Time-
+lyRAGis intended to improve the retrieval of tem-
+porally valid evidence, but it should not be used as
+a substitute for professional legal, policy, or regula-
+tory advice. We releaseTimelyQABench, prompts,
+and evaluation scripts for research use under a per-
+missive open-source license. Users should follow
+the license terms of any external models or datasets
+used for comparison.
+References
+Tom Brown, Benjamin Mann, Nick Ryder, Melanie
+Subbiah, Jared D Kaplan, Prafulla Dhariwal, Arvind
+Neelakantan, Pranav Shyam, Girish Sastry, Amanda
+Askell, and 1 others. 2020. Language models are
+few-shot learners.Proceedings of the Conference on
+Neural Information Processing Systems (NeurIPS),
+33:1877–1901.
+Jianlyu Chen, Shitao Xiao, Peitian Zhang, Kun
+Luo, Defu Lian, and Zheng Liu. 2024a. M3-
+embedding: Multi-linguality, multi-functionality,
+multi-granularity text embeddings through self-
+knowledge distillation. InProceedings of the An-
+nual Meeting of the Association for Computational
+Linguistics (ACL), pages 2318–2335.
+Wenhu Chen, Xinyi Wang, and William Yang Wang.
+2021. A dataset for answering time-sensitive ques-
+tions. InProceedings of the Conference on Neural
+Information Processing Systems (NeurIPS).
+Yuhan Chen, Shuqi Li, and Rui Yan. 2024b. Flex-
+iqa: Leveraging llm’s evaluation capabilities for flex-
+ible knowledge selection in open-domain question
+answering. InProceedings of the European Chap-
+ter of the Association for Computational Linguistics
+(EACL), pages 56–66.
+Ziyang Chen, Erxue Min, Xiang Zhao, Yunxin Li, Xin
+Jia, Jinzhi Liao, Jichao Li, Shuaiqiang Wang, Baotian
+Hu, and Dawei Yin. 2025. A question answering
+dataset for temporal-sensitive retrieval-augmented
+generation.Scientific Data, 12(1):1855.
+Ziyang Chen, Xiang Zhao, Jinzhi Liao, Xinyi Li, and
+Evangelos Kanoulas. 2022. Temporal knowledge
+graph question answering via subgraph reasoning.
+Knowledge-Based Systems, 251:109134.
+Hyung Won Chung, Le Hou, Shayne Longpre, Barret
+Zoph, Yi Tay, William Fedus, Yunxuan Li, Xuezhi
+Wang, Mostafa Dehghani, Siddhartha Brahma, and
+1 others. 2024. Scaling instruction-finetuned lan-
+guage models.Journal of Machine Learning Re-
+search, 25(70):1–53.
+Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri,
+Abhinav Pandey, Abhishek Kadian, Ahmad Al-
+Dahle, Aiesha Letman, Akhil Mathur, Alan Schelten,
+Alex Vaughan, and 1 others. 2024. The llama 3 herd
+of models.arXiv preprint arXiv:2407.21783.
+Gautier Izacard, Mathilde Caron, Lucas Hosseini, Sebas-
+tian Riedel, Piotr Bojanowski, Armand Joulin, and
+Edouard Grave. 2022. Unsupervised dense informa-
+tion retrieval with contrastive learning.Transactions
+on Machine Learning Research.
+Gautier Izacard, Mathilde Caron, Lucas Hosseini, Se-
+bastian Riedel, Piotr Bojanowski, Armand Joulin,
+and Edouard Grave. 2023. Unsupervised dense re-
+trieval with relevance-aware contrastive pre-training.
+InProceedings of the Annual Meeting of the Asso-
+ciation for Computational Linguistics (ACL), pages
+10932–10940.
+Zhen Jia, Soumajit Pramanik, Rishiraj Saha Roy, and
+Gerhard Weikum. 2021. Complex temporal question
+answering on knowledge graphs. InProceedings of
+
+[[page 11]]
+the ACM International Conference on Information
+and Knowledge Management (CIKM), pages 792–
+802.
+Ehsan Kamalloo, Nouha Dziri, Charles LA Clarke, and
+Davood Rafiei. 2023. Evaluating open-domain ques-
+tion answering in the era of large language models.
+InProceedings of the Annual Meeting of the Asso-
+ciation for Computational Linguistics (ACL), pages
+5591–5606.
+Vladimir Karpukhin, Barlas Oguz, Sewon Min,
+Patrick SH Lewis, Ledell Wu, Sergey Edunov, Danqi
+Chen, and Wen-tau Yih. 2020. Dense passage re-
+trieval for open-domain question answering. InPro-
+ceedings of the Conference on Empirical Methods
+in Natural Language Processing (EMNLP), pages
+6769–6781.
+Jungo Kasai, Keisuke Sakaguchi, Ronan Le Bras, Akari
+Asai, Xinyan Yu, Dragomir Radev, Noah A Smith,
+Yejin Choi, Kentaro Inui, and 1 others. 2023. Real-
+time qa: What’s the answer right now?Proceedings
+of the Conference on Neural Information Processing
+Systems (NeurIPS), 36:49025–49043.
+Minsang Kim, Cheoneum Park, and Seungjun Baek.
+2024. Qpaug: Question and passage augmentation
+for open-domain question answering of llms. InPro-
+ceedings of the Conference on Empirical Methods
+in Natural Language Processing (EMNLP), pages
+9024–9042.
+Chankyu Lee, Rajarshi Roy, Mengyao Xu, Jonathan
+Raiman, Mohammad Shoeybi, Bryan Catanzaro, and
+Wei Ping. 2025. Nv-embed: Improved techniques for
+training llms as generalist embedding models. InPro-
+ceedings of the International Conference on Learning
+Representations (ICLR), volume 2025, pages 79310–
+79333.
+Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio
+Petroni, Vladimir Karpukhin, Naman Goyal, Hein-
+rich Küttler, Mike Lewis, Wen-tau Yih, Tim Rock-
+täschel, and 1 others. 2020. Retrieval-augmented
+generation for knowledge-intensive nlp tasks.Pro-
+ceedings of the Conference on Neural Information
+Processing Systems (NeurIPS), 33:9459–9474.
+Adam Liska, Tomas Kocisky, Elena Gribovskaya, Tay-
+fun Terzi, Eren Sezener, Devang Agrawal, Cyprien
+De Masson D’Autume, Tim Scholtes, Manzil Za-
+heer, Susannah Young, and 1 others. 2022. Stream-
+ingqa: A benchmark for adaptation to new knowl-
+edge over time in question answering models. InIn-
+ternational Conference on Machine Learning, pages
+13604–13622. PMLR.
+Costas Mavromatis, Prasanna Lakkur Subramanyam,
+Vassilis N Ioannidis, Adesoji Adeshina, Phillip R
+Howard, Tetiana Grinberg, Nagib Hakim, and George
+Karypis. 2022. Tempoqr: temporal question reason-
+ing over knowledge graphs. InProceedings of the
+AAAI Conference on Artificial Intelligence (AAAI),
+volume 36, pages 5825–5833.
+Xinying Qian, Ying Zhang, Yu Zhao, Baohang Zhou,
+Xuhui Sui, Li Zhang, and Kehui Song. 2024. Timer4:
+Time-aware retrieval-augmented large language mod-
+els for temporal knowledge graph question answer-
+ing. InProceedings of the Conference on Empirical
+Methods in Natural Language Processing (EMNLP),
+pages 6942–6952.
+Nils Reimers and Iryna Gurevych. 2019. Sentence-
+BERT: Sentence embeddings using Siamese BERT-
+networks. InProceedings of the Conference on Em-
+pirical Methods in Natural Language Processing
+(EMNLP), pages 3982–3992.
+Stephen Robertson, Hugo Zaragoza, and 1 others. 2009.
+The probabilistic relevance framework: Bm25 and
+beyond.Foundations and Trends® in Information
+Retrieval, 3(4):333–389.
+Stephen E Robertson and Steve Walker. 1994. Some
+simple effective approximations to the 2-poisson
+model for probabilistic weighted retrieval. InPro-
+ceedings of the International ACM SIGIR Confer-
+ence on Research and Development in Information
+Retrieval (SIGIR), pages 232–241. Springer.
+Keshav Santhanam, Omar Khattab, Jon Saad-Falcon,
+Christopher Potts, and Matei Zaharia. 2022. Col-
+BERTv2: Effective and efficient retrieval via
+lightweight late interaction. InProceedings of the
+North American Chapter of the Association for Com-
+putational Linguistics (NAACL), pages 3715–3734.
+Apoorv Saxena, Soumen Chakrabarti, and Partha Taluk-
+dar. 2021. Question answering over temporal knowl-
+edge graphs. InProceedings of the Annual Meet-
+ing of the Association for Computational Linguistics
+(ACL), pages 6663–6676.
+Nandan Thakur, Nils Reimers, Andreas Rücklé, Ab-
+hishek Srivastava, and Iryna Gurevych. 2021. BEIR:
+A heterogeneous benchmark for zero-shot evaluation
+of information retrieval models. InProceedings of
+the Conference on Neural Information Processing
+Systems (NeurIPS) Datasets and Benchmarks Track
+(Round 2).
+Feifan Wu, Lingyuan Liu, Wentao He, Ziqi Liu,
+Zhiqiang Zhang, Haofen Wang, and Meng Wang.
+2024. Time-sensitve retrieval-augmented generation
+for question answering. InProceedings of the ACM
+International Conference on Information and Knowl-
+edge Management (CIKM), pages 2544–2553.
+Xiao Yang, Kai Sun, Hao Xin, Yushi Sun, Nikita Bhalla,
+Xiangsen Chen, Sajal Choudhary, Rongze Gui, Zi-
+ran Jiang, Ziyu Jiang, and 1 others. 2024. Crag-
+comprehensive rag benchmark.Proceedings of the
+Conference on Neural Information Processing Sys-
+tems (NeurIPS), 37:10470–10490.
+Siyue Zhang, Yuxiang Xue, Yiming Zhang, Xiaobao
+Wu, Anh Tuan Luu, and Chen Zhao. 2024. Mrag:
+A modular retrieval framework for time-sensitive
+question answering.Preprint at https://arxiv.
+org/abs/2412.15540.
+
+[[page 12]]
+A Temporal Granularity
+Temporal granularity determines the resolution at
+which time expressions are interpreted in both
+queries and documents. The granularity plays a
+key role in balancing semantic relevance and tem-
+poral compatibility through the gating function in
+Eq. (7). A finer granularity (e.g.,hour-level) indi-
+cates a stronger temporal constraint, while coarser
+levels (e.g.,year-level) correspond to broader or
+more general temporal references.
+A.1 Final Granularity
+We define the granularity Gran(Q) as an element
+of the ordered setG={hour,day,month,year} ,
+with an ordinal mapping ϕ:G→{0,1,2,3} de-
+fined asϕ(year) = 0,ϕ(month) = 1,ϕ(day) = 2,
+and ϕ(hour) = 3 . A larger ordinal thus corre-
+sponds to a finer temporal resolution.
+To unify temporal resolution between queries
+and documents, we first take the finer of the two:
+Gran(Q) = max≺{Granquery,Gran doc},
+ensuring that temporal scoring always adopts the
+highest available precision. When the two differ
+significantly, we compute ∆ =|g q−g d| for their
+integer levelsgq,g d∈{0,1,2,3} and pull one level
+toward the finer side if ∆≥2 , avoiding abrupt
+transitions such as fromyeardirectly today.
+The resulting Gran(Q) defines the temporal unit
+(hour,day,month, oryear) used in the temporal
+distance computation of Eq. (4). As described in
+Eq. (7),α(Q) balances semantic relevance and tem-
+poral compatibility based on two factors—the pres-
+ence of explicit event times and the final temporal
+granularity. A finer granularity (larger Gran(Q))
+leads to a higher α(Q), thus assigning greater
+weight to temporal compatibility relative to seman-
+tic similarity.
+IfQET is missing, Gran(Q) defaults tomonth,
+and insertion times substitute missing event terms.
+Missing document times fall back toDIT under the
+causality constraintDIT < QIT . When multiple
+QET or DET values exist, the pair minimizing
+Eq. (4) is selected.
+A.2 Query-Side Estimation
+We detect the query-side granularity Granquery by
+parsing explicit temporal expressions from fine to
+Table 11: Multi-dimensional validation results onTime-
+lyQABenchusing the Qwen2.5-72B model.
+Criteria Law University Company Service Terms
+# Query 3000 3000 3000 3000
+Relevance (5) 4.98 4.90 4.88 4.94
+Derivability
+(#Docs) 3.45 3.05 2.82 3.09
+coarse patterns:
+hour-level:patterns ofYYYY-MM-DD HH:MM,
+day-level:patterns ofYYYY-MM-DD,
+month-level:patterns ofYYYY-MM,
+year-level:patterns ofYYYY.
+If multiple patterns are matched, the finest level is
+selected. If no explicit time appears, we default to
+month-level, which empirically balances coverage
+and stability.
+A.3 Document-Side Estimation
+LetC(Q)⊆D be the semantic top-N candidate
+documents for queryQ. We estimate the predomi-
+nant temporal resolution among these candidates
+by analyzing their insertion and event timestamps
+(DIT,D ET ). Specifically, we compute three pro-
+portions: phour,pday, and pmonth, representing the
+fractions of documents that (i) contain nonzero
+hour or minute values, (ii) have day components
+other than 1, and (iii) have month components other
+than 1, respectively.
+The document-side granularity Grandoc is then
+determined by the finest level whose proportion
+exceeds a predefined thresholdτ (set toτ= 0.7 in
+our experiments):
+Grandoc =
+
+
+
+hour,ifp hour≥τ,
+day,else ifp day≥τ,
+month,else ifp month≥τ,
+year,otherwise.
+This identifies the dominant temporal resolution
+in the retrieved candidates, which is then com-
+bined with the query-side estimate to obtain the
+final Gran(Q).
+B Multi-Dimensional Validation Results
+Using the Qwen2.5-72B model, we evaluated
+TimelyQABenchdatasets along four key dimen-
+sions—time sensitivity, domain specificity, rele-
+vance, and derivability. The results for time sensi-
+tivity and domain specificity are presented earlier
+
+[[page 13]]
+Table 12: Additional results of retrieval performance comparison on theTimelyQABenchdataset.
+Methods nDCG@10 MAP@10 Recall@10 Hit@10 nDCG@10 MAP@10 Recall@10 Hit@10
+Law University
+TS-Retriever 0.0188 0.0162 0.0278 0.0317 0.0301 0.0241 0.0409 0.0557
+DPR 0.0007 0.0005 0.0009 0.0013 0.0001 0.0001 0.0002 0.0003
++TimelyRAG 0.0009 0.0007 0.0013 0.0017 0.0002 0.0001 0.0003 0.0007
+Contriever 0.0023 0.0015 0.0040 0.0047 0.0044 0.0036 0.0042 0.0070
++TimelyRAG 0.0026 0.0019 0.0042 0.0050 0.0056 0.0047 0.0053 0.0090
+ColBERT 0.0350 0.0297 0.0376 0.0520 0.0812 0.0705 0.0748 0.1130
++TimelyRAG 0.0410 0.0360 0.0410 0.0560 0.0972 0.0882 0.0810 0.1240
+Methods Company Terms of Service
+TS-Retriever 0.0205 0.0159 0.0241 0.0427 0.0375 0.0301 0.0517 0.0710
+DPR 0.0004 0.0004 0.0002 0.0007 0.0006 0.0004 0.0004 0.0010
++TimelyRAG 0.0006 0.0004 0.0003 0.0010 0.0012 0.0008 0.0014 0.0027
+Contriever 0.0034 0.0024 0.0030 0.0067 0.0031 0.0024 0.0029 0.0057
++TimelyRAG 0.0041 0.0030 0.0030 0.0077 0.0047 0.0036 0.0042 0.0083
+ColBERT 0.0622 0.0545 0.0437 0.0840 0.0555 0.0478 0.0480 0.0787
++TimelyRAG 0.0722 0.0656 0.0461 0.0910 0.0651 0.0576 0.0525 0.0880
+in Table 2, while Table 11 reports the remaining
+results for relevance and derivability. Relevance,
+rated on a 5-point scale, measures how closely
+each query–answer–document set aligns with its as-
+signed category in Table 1 (1: irrelevant, 5: highly
+relevant). Across all domains,TimelyQABench
+achieves an average relevance score of 4.93, in-
+dicating that the dataset is well aligned with time-
+critical categories. Derivability represents the av-
+erage number of passages required to answer each
+query. On average, 3.10 passages are needed to
+derive a correct answer, reflecting the temporal
+complexity of consulting multiple revised versions
+to identify clauses valid at the query time.
+C Additional Experimental Results
+Hardware Configuration.All experiments are
+conducted on a server equipped with an NVIDIA
+RTX 6000 Ada Generation.
+C.1 Backbone Retrievers
+We employ the following backbone retrievers in
+our evaluation:
+• BM25(Robertson and Walker, 1994): a classi-
+cal lexical model based on term frequency and
+inverse document frequency
+• BGE-M3(Chen et al., 2024a): a multi-function
+embedding model supporting dense, sparse, and
+multi-vector retrieval
+• Sentence-BERT(Reimers and Gurevych, 2019):
+semantically meaningful sentence embeddings
+via siamese BERT networks
+• DPR(Karpukhin et al., 2020): a standard super-
+vised dense retriever trained on question–passage
+• Contriever(Izacard et al., 2022): learning dense
+representations in a fully unsupervised manner
+• ColBERT(Santhanam et al., 2022): performing
+late-interaction scoring between query and docu-
+ment tokens for fine-grained semantic matching
+All retrievers are tested both in their vanilla forms
+and with our temporal re-ranking moduleTime-
+lyRAG, which adjusts ranking scores according to
+semantic–temporal compatibility.
+C.2 Datasets
+TimelyQABench.Our newly constructed bench-
+mark comprises four regulation-focused domains:
+legal regulations,university regulations,company
+policy, andterms of service.
+TS-Retriever.TS-Retriever (Wu et al., 2024)
+is a benchmark designed for time-sensitive re-
+trieval scenarios, built upon Wikipedia revisions
+and timestamped questions.
+FiQA (BEIR).FiQA (BEIR) (Thakur et al.,
+2021) is a financial-domain benchmark from the
+BEIR suite, containing user questions on stock mar-
+ket and financial regulations.
+
+[[page 14]]
+Table 13: Pilot human evaluation on 50 randomly sam-
+pledTimelyQABenchqueries compared with full-dataset
+LLM validation.
+Evaluator Time Types Domain Spec. Relevance Derivability
+Human Evaluation 2.73 4.38 4.74 3.39
+LLM Validation 2.15 4.40 4.93 3.10
+C.3 Results and Analysis
+Table 12 shows retrieval performance on the four
+subsets ofTimelyQABench. Across all backbones,
+the absolute scores of baseline retrievers are strik-
+ingly low, revealing the inherent difficulty ofTime-
+lyQABench. Unlike conventional RAG datasets,
+where lexical or semantic similarity alone suf-
+fices, documents inTimelyQABenchexhibit ex-
+tremely high semantic overlap across temporal ver-
+sions. Many passages differ only in clause-level
+details—such as validity periods, effective dates,
+or scope restrictions—making temporal reasoning
+indispensable for correct retrieval.
+When equipped withTimelyRAG, every retriever
+demonstrates consistent improvement across all
+metrics. Even simple dense retrievers like DPR and
+Contriever benefit from our temporal re-ranking,
+indicating thatTimelyRAGeffectively captures
+fine-grained clause-level temporal distinctions be-
+yond semantic similarity. These results confirm
+thatTimelyQABenchis a realistic and challeng-
+ing benchmark that cannot be solved by semantic
+matching alone. Accurate retrieval requires identi-
+fying the clause valid at the query time, andTime-
+lyRAGprovides this essential temporal discrimina-
+tion capability.
+C.4 Human Validation
+We additionally conduct a pilot human evaluation
+on 50 randomly sampledTimelyQABenchqueries.
+Two independent annotators from our research
+group evaluate the samples using the same valida-
+tion dimensions as our automatic pipeline (required
+temporal types, domain specificity, relevance, and
+derivability). As shown in Table 13, human judg-
+ments exhibit a trend consistent with the full-
+dataset LLM validation, with both evaluations indi-
+cating high relevance and domain specificity. We
+observe no substantial discrepancy between human
+and automatic judgments on this pilot sample.
+C.5 Category-Wise Analysis
+We analyze retrieval performance across the six
+query categories in Table 1. This analysis shows
+Table 14: Per-category retrieval performance on the
+Company dataset (nDCG@10).
+Category BM25 +TimelyRAG BGE-M3 +TimelyRAG
+Multi-Version Policy Rules 0.222 0.225 0.171 0.181
+Legacy Exception Rules 0.263 0.271 0.246 0.246
+Policy Name/Code Revisions 0.201 0.214 0.155 0.156
+Emergency/Temporary Rules 0.287 0.297 0.300 0.304
+Historical, Retrospective Fact 0.186 0.157 0.133 0.130
+Implicit Time Context 0.197 0.199 0.176 0.182
+Table 15: Expanded ablation study acrossTime-
+lyQABenchdomains and retrievers (nDCG@5).
+Domain Retriever Naive-Dist w/o ET w/o Gran.TimelyRAG
+Company BM25 0.203 0.214 0.221 0.227
+BGE-M3 0.181 0.189 0.195 0.200
+Law BM25 0.162 0.174 0.183 0.189
+BGE-M3 0.154 0.164 0.173 0.179
+Terms of Service BM25 0.113 0.123 0.129 0.134
+BGE-M3 0.058 0.064 0.068 0.071
+University BM25 0.202 0.205 0.206 0.246
+BGE-M3 0.184 0.197 0.206 0.213
+where temporal reranking is most beneficial and
+whetherTimelyRAGremains effective in implicit
+temporal contexts, where the relevant time must be
+inferred rather than matched directly.
+Table 14 reports per-category nDCG@10 on the
+Company dataset.TimelyRAGimproves or pre-
+serves performance in most categories, including
+Implicit Time Context, where explicit temporal
+cues are weak. The only clear degradation appears
+in Historical, Retrospective Fact, suggesting that
+retrospective queries require more precise handling
+of past validity intervals.
+C.6 Expanded Ablation
+Table 15 extends the ablation study to all four do-
+mains and both sparse and dense retrievers.Time-
+lyRAGconsistently outperforms Naive-Dist and the
+variants without event-time activation (w/o ET) or
+temporal-granularity modeling (w/o Gran.) in all
+eight settings, demonstrating that the benefits of
+the proposed temporal modeling are not limited to
+a particular domain or retrieval backbone.
+D Prompts
+D.1 Benchmark Dataset Generation Prompt
+Table 16 presents the prompt template used for
+generating time-sensitive Korean QA samples in
+regulation-intensive domains. The prompt is care-
+fully designed to guide the construction of realis-
+tic query-answer pairs that reflect temporal vari-
+ability in corporate policies. It specifies struc-
+tured requirements for each component—such as
+
+[[page 15]]
+query timestamp, semantically overlapping but tem-
+porally distinct documents, and gold document
+labels—ensuring consistency and temporal ground-
+ing. This template plays a critical role in the cre-
+ation of high-quality benchmark data for evaluating
+time-aware retrieval and generation systems.
+D.2 Benchmark Validation Prompt
+Table 17 presents the prompt template used for
+validating each QA instance inTimelyQABench.
+This validation process is designed to assess mul-
+tiple dimensions critical for time-sensitive QA
+evaluation. Specifically, annotators are asked to
+score the query’s relevance to its category, identify
+which documents are necessary to derive the cor-
+rect answer, determine which temporal types (e.g.,
+QIT,Q ET,D IT,D ET ) are involved, and describe
+how frequently the answer may change over time.
+Additionally, the prompt guides annotators to eval-
+uate the level of domain-specific language used
+in both the query and the documents. By stan-
+dardizing this evaluation framework, the prompt
+ensures consistent, high-quality validation across
+the dataset.
+
+[[page 16]]
+Table 16: Time-critical Korean QA and corpus benchmark generation prompt.
+Step Instruction
+1. Role and Purpose: You are an expert dataset builder for Korean corporate HR policies in a retrieval-augmented
+generation (RAG) system. Your task is to generate a realistic, time-sensitive benchmark sample that reflects how internal
+company regulations change across time and how those changes affect the answerability of a given query. The output must
+be inKoreanand follow the structure below.
+2.Components to Include: Each sample must include the following fields:
+•{category}: Choose one from the following: {category}
+•{ query_ko}: A specific, realistic, and time-sensitive HR-related question that could be asked by an employee or HR
+manager.
+–Avoid vague questions like “what changed”.
+–Vary queries by roles, years, departments, contract types, or policy situations.
+–Incorporate time constraints, past usage, or eligibility.
+–Ensure the question is answerable only with the correct versions of policy documents.
+•{query_insert_time}: A realistic past timestamp in the format{YYYY-MM-DD HH:MM:SS}.
+•{answer}: A correct and complete answer in Korean, supported entirely by one or more of the documents.
+•{docs_ko}: A list of 10 internal policy passages.
+–Each passage must be in Korean.
+–Share a common policy topic.
+–Content must vary to simulate time-based revisions.
+–Each must include a{text} and{doc_insert_time}.
+•{gold_docs}: List of 0-based indices in{docs_ko} that support the answer.
+3.Constraints:
+•Do notrepeat previous queries.
+• Avoid boilerplate phrasing.
+• Each question must bedistinct.
+• Returnonlythe JSON object in raw form.
+• No explanations, no markdown, no formatting.
+4.Output Format (JSON):
+{
+"category": "{category}",
+"query_insert_time": "YYYY-MM-DD HH:MM:SS",
+"query_ko": "...",
+"answer": "...",
+"docs_ko": [ ...,
+{ "text": "...", "doc_insert_time": "YYYY-MM-DD HH:MM:SS" },
+{ "text": "...", "doc_insert_time": "YYYY-MM-DD HH:MM:SS" },
+{ "text": "...", "doc_insert_time": "YYYY-MM-DD HH:MM:SS" },
+{ "text": "...", "doc_insert_time": "YYYY-MM-DD HH:MM:SS" },
+{ "text": "...", "doc_insert_time": "YYYY-MM-DD HH:MM:SS" },
+...
+],
+"gold_docs": "..."
+}
+
+[[page 17]]
+Table 17: Validation prompt used to annotate time-critical QA samples across four dimensions.
+Step Instruction
+1. Role and Goal: You are a professional Korean benchmark evaluator for time-sensitive document QA (within a RAG
+framework). Your task is to evaluate the provided QA sample across four validation dimensions.
+2.Category: Explicitly note the QA topic domain (e.g., HR, legal, university regulations).
+3.Time Type Definitions:
+•QIT– Query Insert Time: When the user created the query.
+•QET– Query Event Time: Temporal expressions mentioned in the query.
+•DIT– Document Insert Time: When the document was added to the database.
+•DET– Document Event Time: Time expressions mentioned inside the document.
+4.Evaluation Dimensions:
+•Relevance (1–5): Does the query match the designated category?
+•Derivability: Identify the indices of documents required to derive the answer. Return assupporting_docs.
+•Time Sensitivity:
+–Identify which time types are involved (QIT,QET,DIT,DET).
+•Domain Specificity (1–5): Rate how professional or domain-specific the language is.
+5.Output Format (JSON):
+{
+"relevance": {
+"score": 1-5,
+"reason": "..."
+},
+"derivability": {
+"supporting_docs": [0, 1, ...],
+"reason": "..."
+},
+"time_sensitivity": {
+"available_time_types": ["QIT", "QET", "DIT", "DET"],
+"required_time_types": ["QIT", "QET", "DIT", "DET"],
+"reason": "..."
+},
+"domain_specificity": {
+"score": 1-5,
+"reason": "..."
+}
+}

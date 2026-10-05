@@ -1,0 +1,33 @@
+{
+  "id": "C004",
+  "statement": "A major experimental confounder is that observed improvements in answer accuracy could stem from the framework's tendency to favor more recent documents (recency bias) rather than genuinely selecting the correct version for a time-specific query, especially in regulatory texts where older versions may still be legally valid for certain time points.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "Temporal Score We introduce a new method called TempRALM, which augments the retriever with a temporal score𝜏(𝑞𝑡,𝑑𝑡), where𝑞𝑡 is the timestamp of the query𝑞, and𝑑𝑡 is the timestamp of document𝑑. To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score), and use a scaling factor𝛼 to tune the temporal score’s importance relative to the importance of the semantic score. The temporal score formulation is as follows: 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2509.01306",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "This task is shaped by two challenges: Relevance, ensuring alignment with the query's explicit temporal requirements, and Recency, selecting the freshest document among multiple versions. Existing methods often address the two challenges in isolation, relying on brittle heuristics that fail in scenarios where temporal requirements and staleness resistance are intertwined.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "experimental confounder",
+    "recency bias",
+    "temporal relevance"
+  ],
+  "recorded_at": "2026-09-30T09:53:00.078553Z"
+}

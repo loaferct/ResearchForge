@@ -1,0 +1,32 @@
+{
+  "id": "U001",
+  "question": "What is the appropriate temporal relevance function (e.g., linear, exponential, step) for adjusting passage ranks based on time difference in the context of versioned regulatory texts?",
+  "description": "The choice of temporal function affects how well the model captures the notion that newer versions are more relevant for recent queries while still allowing older versions to be relevant for historical queries. Fixed functions may not generalize across different amendment frequencies.",
+  "category": "validity",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "COMPARE",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": 0.7,
+  "confidence_basis": "Based on Re3's results showing state-of-the-art performance with learned gating mechanism on Re2Bench benchmark.",
+  "rationale": "Literature suggests learned combinations may outperform fixed functions, but we need to survey recent temporal retrieval work to see what functions are commonly used or learned.",
+  "resolution": "Literature shows learned combinations (like Re3's query-aware gating) may outperform fixed functions, but optimal approach for versioned regulatory QA remains unclear.",
+  "paper_ids": [
+    "arxiv:2509.01306"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2509.01306"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T10:13:42.100076Z",
+  "updated_at": "2026-09-30T10:31:08.397757Z"
+}

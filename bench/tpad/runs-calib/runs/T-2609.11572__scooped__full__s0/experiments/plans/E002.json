@@ -1,0 +1,84 @@
+{
+  "id": "E002",
+  "title": "Stage-1 minimal discriminator: recency decay versus valid-time gating on non-latest-authoritative clauses",
+  "research_question": "On clause-versioned amended legal text, does the published recency-decay hybrid already match a valid-time (as-of) gate on version contamination and point-in-time recovery, or does decay fail specifically on queries whose authoritative version is not the latest?",
+  "hypothesis": "On amended legal clauses whose authoritative (in-force) version is old while a recent near-duplicate version exists, the published recency-decay hybrid selects the wrong version substantially more often than a valid-time (as-of) gate; on queries whose authoritative version is the latest, the two perform equivalently. If decay matches the gate on the discriminating subset, recency is a sufficient proxy for validity in this domain.",
+  "proposed_method": "Curate clause version chains from a public consolidated legal corpus with per-version validity dates. For each chain, construct time-stamped queries whose target date lies inside an older version's validity window and whose clause has a recent near-duplicate version, so decay and validity make opposite predictions; also include latest-gold and no-version-in-force queries. Run five retrieval conditions (BM25, dense, hybrid RRF, hybrid+decay at swept rates, and a recency-only ranker) each with and without a post-hoc valid-time gate, scoring retrieval against version-identity gold labels. Reuse the retrieval and metric plumbing patterns of the public RMA regulatory QA harness (same sparse/dense/RRF structure, structure-aware chunking, ROUGE-free retrieval metrics), then extend with version chains and target dates, which that harness lacks. Stage 1 is retrieval-only and CPU-bound; Stage 2 adds the fixed reader and the answer-differential screen.",
+  "baselines": [
+    "Published three-signal hybrid (lexical + dense + exponential decay) with a tuned decay rate - the strong, directly comparable baseline",
+    "BM25 sparse retrieval only and dense bge-small retrieval only - budget-matched controls",
+    "Hybrid RRF without any temporal term",
+    "Recency-only ranker (always the latest version)",
+    "Random temporal assignment control (random validity intervals)"
+  ],
+  "datasets": [
+    "Stage 1 (retrieval-only, CPU): a small hand-curated set of clause version chains from a public consolidated legal/regulatory corpus with machine-readable entry-into-force and applicability dates, targeting roughly 100-200 time-stamped queries of which at least 50 are non-latest-gold",
+    "Corpus criterion: clauses with at least two versions and a documented validity interval per version",
+    "Stage 2 (optional): add the reader LLM and the answer-differential screen on the same chains",
+    "Not used at this stage: ESG and financial-filing corpora (domain mismatch), the static RMA regulatory corpus (no versioning or target dates)"
+  ],
+  "workloads": [
+    "Discriminating-case queries: target date inside an old validity window, with a recent near-duplicate version of the same clause in the candidate pool",
+    "Latest-gold queries: authoritative version is the most recent (expected equivalence control)",
+    "No-version-in-force queries where abstention is correct",
+    "Boundary queries: target date equal to an entry-into-force or applicability date",
+    "Deep-chain clauses with three or more versions to test whether contamination grows with chain depth"
+  ],
+  "hardware": "Stage 1 is CPU-only: BM25 plus BAAI/bge-small-en-v1.5 embeddings on a few hundred clause versions, comfortably runnable on a laptop. Stage 2 optionally uses one GPU or a hosted reader LLM with cached responses.",
+  "software_environment": "",
+  "metrics": [
+    "Primary: version contamination - fraction of retrieved passages not in force at the target date",
+    "Primary: clause-level point-in-time recovery - fraction of queries whose top-ranked passage is the in-force version",
+    "Primary: version confusion - selected version differs from gold version",
+    "Diagnostic: discriminating-case counts and the gap between decay and gate on that subset",
+    "Diagnostic: nDCG@k / Recall@k against version-identity gold labels",
+    "Diagnostic: contamination under decay as a function of the age gap between the in-force version and the latest version",
+    "Stage 2 only: answer accuracy on the answer-differential subset and the screen pass rate"
+  ],
+  "ablations": [
+    "Decay rate sweep, reporting the best case for decay (including per-query-type tuning) so the comparison is not an artifact of a fixed rate",
+    "Hard valid-time gate vs graded gate with a tie-break",
+    "Target-date granularity: day, month, year",
+    "Validity-interval boundary handling: inclusive vs half-open, same-day amendment and applicability dates",
+    "Retrieval depth k and chunk granularity (whole clause vs sub-clause fragments)",
+    "Discriminating-case subset only (old in-force version plus recent near-duplicate)"
+  ],
+  "controls": [
+    "Same chunking, k, embedding model and candidate pool across all arms",
+    "Version-identity gold labels rather than answer strings",
+    "Every arm scored on the identical query set and target dates",
+    "Per-stratum reporting (discriminating case vs latest-gold) instead of a pooled average",
+    "Corpus snapshot pinned and documented",
+    "Seeds fixed; rankings released per query so metrics can be recomputed"
+  ],
+  "confounders_addressed": [
+    "Decay and gate may agree because the authoritative version is usually the latest - addressed by the discriminating-case subset (old in-force window with a recent near-duplicate)",
+    "Answers may be identical across versions, hiding retrieval errors - Stage 1 scores retrieval at version-identity level with no reader",
+    "Decay rate choice could favour either arm - swept and reported at its best, including per-query-type tuning",
+    "Shallow amendment chains would leave little to test - minimum-version-count curation criterion",
+    "Date granularity and boundary conventions could drive the result - tested explicitly",
+    "Long-lived in-force clauses demoted purely by age - measured directly on old-window queries"
+  ],
+  "expected_outcomes": "On the discriminating subset, the decay hybrid shows materially higher version contamination and lower point-in-time recovery than the valid-time gate, because decay is monotone in age and demotes long-lived in-force clauses; on the latest-gold subset the two are equivalent, which is reported as the expected boundary condition. Semantic-only retrieval is intermediate. If decay tuned per query type closes the gap, that is reported as evidence that decay can approximate validity when its rate is effectively condition-dependent.",
+  "failure_conditions": [
+    "The decay hybrid matches the gate on the discriminating subset within confidence intervals - recency is a sufficient proxy and the direction is falsified",
+    "Semantic-only retrieval already achieves near-zero version contamination - the problem premise fails and there is nothing for a temporal term to fix",
+    "No accessible corpus yields enough clauses with documented per-version validity intervals - the benchmark is infeasible and the direction should be dropped rather than approximated with document-level dates",
+    "The gate's advantage vanishes once the decay rate is tuned per query type - the validity-versus-recency distinction reduces to rate calibration",
+    "Contamination differences exist but the answer-differential screen is empty (no query's answer depends on version) - the finding is metric-only"
+  ],
+  "reproducibility_notes": "No execution spec is attached. The only open implementation found (RMA regulatory QA benchmark repository) is a Jupyter notebook that requires downloading third-party RMA PDFs and setting an OpenRouter API key, computes metrics live in-notebook rather than emitting a JSON results file, and - decisively - has a static corpus with no versioning or target dates, so it cannot be run to test this hypothesis; it is reusable for chunking, index-building and evaluation patterns only. When built: pin and publish the corpus snapshot and amendment metadata source, release the version chains, validity intervals and query-stratum assignments, fix all seeds, hold embeddings/k/chunking fixed across arms, sweep and report the decay rate at its best, publish per-query rankings, and report paired bootstrap confidence intervals plus both natural-prevalence-weighted and oversampled estimates.",
+  "related_modification_id": "M001",
+  "related_paper_ids": [
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.3390/sym18091498",
+    "arxiv:2606.09724",
+    "arxiv:2608.21409",
+    "doi:10.2139/ssrn.7087840",
+    "arxiv:2109.06157"
+  ],
+  "execution": null,
+  "status": "planned",
+  "recorded_at": "2026-09-30T04:40:18.174312Z"
+}

@@ -1,0 +1,40 @@
+{
+  "id": "U011",
+  "question": "Does published work contradict the current assessment: The only distinctions that survive are evaluation-protocol and scope distinctions, not mechanism: (i) matched-token/matched-example arms separating passage locality from supervision volume (absent from arxiv:2609.12230); (ii) an untouched held-out evaluation set that the repair loop never edits (the closest work removes invalid triples and regenerates validation questions, C006); (iii) a context-size sweep testing whether excess context distracts, as suggested by arxiv:2406.09994 and arxiv:2202.13296 (C005); (iv) seed-level variance and external validity beyond two disease-specific synthetic MCQ sets; (v) head-to-head comparison against intermediate-step supervision (arxiv:2101.03737).?",
+  "description": "Assessment: substantial_overlap. The decisive fact is that arxiv:2609.12230 already implements and evaluates the idea's exact mechanism, including its central comparative claim, so as written the idea is a replication (novelty: high-severity overlap). Technical validity is additionally weakened by two unresolved artifacts in the closest work — unequal repair-example allocation and validation-set editing by the same loop (C006), and the absence of a matched-token control between supervision regimes (C007) — while adjacent evidence that excess context distracts (C005) undermines the monotonic-context assumption behind H1/H4. The idea is therefore not weak or flawed in principle, but it is not novel as stated: it becomes defensible only by re-scoping to a controlled decomposition whose outcome could be null.",
+  "category": "contradiction",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "REFINE",
+  "possible_actions": [],
+  "confidence": 0.75,
+  "confidence_basis": "Based on a citation-graph query returning zero citing works, targeted full-text searches of the closest paper, and two new literature searches; coverage is good for the exact overlap question but non-English and very recent preprints may be missed.",
+  "rationale": "The assessment was formed from work found around the initial idea; look for work that would invalidate it.",
+  "resolution": "The challenge search found no work that contradicts the assessment, so the conclusion holds: arxiv:2609.12230 implements the mechanism and the surviving differences are protocol/scope, not mechanism. Concretely confirmed unaddressed: no matched-token/matched-example control between the KG-grounded and CG-grounded arms, no seed-level variance over training runs, and no untouched held-out test set (C009); the citation graph yields no follow-up work. Two qualifications narrow rather than refute the distinctions: adaptive control of subgraph expansion is already treated as a known problem at retrieval time (EntropyRAG, 2026), and cross-strategy augmentation comparisons (RAG vs fine-tuning across twelve LMs) already exist (arxiv:2403.01432), so a context-size sweep and a regime comparison are only novel in their specific supervised, matched-budget, KGQA form (C010). Mechanism-level alternatives (structure-aware injection for KG completion, GNN retrieval, graph-as-memory cross-attention) place the idea's mechanism inside a wider family of injecting KG context into LLMs.",
+  "paper_ids": [
+    "arxiv:2609.12230",
+    "doi:10.2139/ssrn.6794971",
+    "arxiv:2403.01432"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2202.13296",
+    "arxiv:2406.09994",
+    "arxiv:2101.03737",
+    "doi:10.2139/ssrn.6794971",
+    "arxiv:2403.01432",
+    "arxiv:2509.06531",
+    "arxiv:2510.08966"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C009",
+    "C010"
+  ],
+  "challenge_verdict": "holds",
+  "target_ref": "critique",
+  "attempts": 1,
+  "source": "controller",
+  "created_at": "2026-09-30T05:15:29.217488Z",
+  "updated_at": "2026-09-30T05:18:30.068951Z"
+}

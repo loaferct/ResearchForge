@@ -1,0 +1,55 @@
+{
+  "paper_id": "arxiv:2101.03737",
+  "relevance_tier": "high",
+  "problem": "Multi-hop KBQA lacks supervision signals at intermediate steps; algorithms get feedback only from the final answer, which \"makes the learning unstable or ineffective\" (abstract).",
+  "method": "A teacher-student approach. The student (Neural State Machine) finds the answer; the teacher learns intermediate entity distributions using both forward and backward reasoning, producing intermediate supervision signals that are used to improve the student. Teacher architectures include parallel and hybrid 3-hop reasoning variants.",
+  "key_assumptions": [
+    "Training data is only <question, answer> pairs, so intermediate path supervision must be inferred rather than read off",
+    "The intermediate entity distributions produced by the bidirectional teacher are reliable enough to supervise the student",
+    "Correcting spurious intermediate reasoning is the main lever for improving multi-hop accuracy"
+  ],
+  "main_contribution": "First explicit learning of intermediate supervision signals with a teacher-student framework via bidirectional reasoning, alleviating spurious reasoning and improving KBQA especially where training data is lacking.",
+  "datasets": [
+    "MetaQA-1hop",
+    "MetaQA-2hop",
+    "MetaQA-3hop",
+    "WebQuestionsSP (WebQSP)",
+    "Complex WebQuestions (CWQ)"
+  ],
+  "benchmarks": [
+    "MetaQA (1/2/3-hop)",
+    "WebQSP",
+    "CWQ"
+  ],
+  "baselines": [
+    "KV-Mem",
+    "GraftNet",
+    "PullNet",
+    "SRN",
+    "EmbedKGQA",
+    "NSM"
+  ],
+  "metrics": [
+    "Hits@1",
+    "F1"
+  ],
+  "results": "Evaluation casts multi-hop KBQA as ranking, using Hits@1 and F1. Per the authors' repo table, NSM reaches WebQSP 68.7, MetaQA-1hop 97.1, MetaQA-2hop 99.9, MetaQA-3hop 98.9, CWQ 47.6, with the teacher-student variant reported as NSM+p (73.9 on WebQSP) in the README excerpt. The authors note most methods do very well on MetaQA-1hop and MetaQA-2hop and that the challenge is at greater depth.",
+  "limitations": [
+    "Supervision is an intermediate ENTITY DISTRIBUTION over the question-specific graph, not natural-language or passage context around a fact.",
+    "Requires a bounded question-specific subgraph (2-hop for WebQSP, 4-hop for CWQ) and reasoning steps set per dataset (4 for CWQ, 3 otherwise), so depth is a hyperparameter.",
+    "MetaQA 1/2-hop are nearly saturated (99.9), so headroom for the idea's context-enrichment claim on those splits is minimal."
+  ],
+  "future_work": [
+    "not stated in the passages read"
+  ],
+  "code_availability": "Available and verified: https://github.com/RichardHGL/WSDM2021_NSM (Python/PyTorch, 149 stars, includes main_nsm.py / main_teacher.py / main_student.py, run_metaqa.sh / run_webqsp.sh / run_CWQ.sh, paper DOI 10.1145/3437963.3441753, arXiv id 2101.03737 in README).",
+  "relation_to_idea": {
+    "problem_overlap": 0.65,
+    "method_overlap": 0.35,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "The idea's 'adaptive repair loop that detects one-hop failures and generates corrective examples' is conceptually adjacent to this paper's intermediate-supervision learning, but the paper derives intermediate supervision from a differentiable teacher over entity distributions, whereas the idea proposes detecting concrete one-hop failures and regenerating training examples. The paper also provides the hop-stratified MetaQA evaluation (1/2/3-hop) that the idea needs for its 'transfer to deeper queries' claim.",
+    "basis": "Problem overlap 0.65: both target multi-hop KBQA with poor intermediate supervision, a core motivation of the idea's repair loop. Method overlap 0.35: teacher-student intermediate supervision is a different mechanism from passage-context data enrichment plus example regeneration; it corrects reasoning signals rather than enriching the supervision text. Evaluation overlap 0.6: MetaQA-1/2/3-hop and WebQSP/CWQ with Hits@1/F1 are exactly the benchmark family the idea would use to measure hop-depth transfer."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:07:08.888050Z"
+}

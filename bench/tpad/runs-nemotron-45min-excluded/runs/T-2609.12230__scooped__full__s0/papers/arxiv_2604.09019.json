@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2604.09019",
+  "title": "Regime-Conditional Retrieval: Theory and a Transferable Router for Two-Hop QA",
+  "authors": [
+    "Andre Bacellar"
+  ],
+  "year": 2026,
+  "published": "2026-04-10",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2604.09019",
+  "pdf_url": "https://arxiv.org/pdf/2604.09019v2",
+  "abstract": "Two-hop QA retrieval splits queries into two regimes determined by whether the hop-2 entity is explicitly named in the question (Q-dominant) or only in the bridge passage (B-dominant). We formalize this split with three theorems: (T1) per-query AUC is a monotone function of the cosine separation margin, with R^2 >= 0.90 for six of eight type-encoder pairs; (T2) regime is characterized by two surface-text predicates, with P1 decisive for routing and P2 qualifying the B-dominant case, holding across three encoders and three datasets; and (T3) bridge advantage requires the relation-bearing sentence, not entity name alone, with removal causing an 8.6-14.1 pp performance drop (p < 0.001). Building on this theory, we propose RegimeRouter, a lightweight binary router that selects between question-only and question-plus-relation-sentence retrieval using five text features derived directly from the predicate definitions. Trained on 2WikiMultiHopQA (n = 881, 5-fold cross-fitted) and applied zero-shot to MuSiQue and HotpotQA, RegimeRouter achieves +5.6 pp (p < 0.001), +5.3 pp (p = 0.002), and +1.1 pp (non-significant, no-regret) R@5 improvement, respectively, with artifact-driven.",
+  "doi": null,
+  "arxiv_id": "2604.09019",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:43:33.982655Z",
+  "relevance": 0.1111,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "HotpotQA 2WikiMultiHopQA multi-hop QA datasets"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": [
+    "abstract (from arxiv) never mentions 'Regime-Conditional Retrieval'; it may belong to another work"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "paper_id": "arxiv:2406.09994",
+  "relevance_tier": "medium",
+  "problem": "Knowledge-based visual QA needs the right amount of external KG knowledge: too little context is insufficient and too much distracts the model, and fixed numbers of supplied triples may not fit questions of different complexity.",
+  "method": "A dynamic triple-extraction approach that augments a vision-language transformer (OFA) with a flexible, question-dependent number of KG triples supplied as context; a question-based triple filtering module selects triples, and the model is fine-tuned (and separately probed with a recent large language model) under without-knowledge, fixed-knowledge, and dynamic-knowledge context settings.",
+  "key_assumptions": [
+    "Triples relevant to a question can be extracted and filtered dynamically from a KG.",
+    "Supplying a variable number of triples is better than a fixed number for reasoning. [abstract]",
+    "Knowledge-based VQA is a valid testbed for conclusions about knowledge context in language models. [abstract]"
+  ],
+  "main_contribution": "Dynamic triple extraction with flexible context size; reports an average 4.75% Exact Match improvement over SOTA on three KBVQA datasets and shows variable triples improve LM reasoning over fixed numbers of triples, illustrated even for recent LLMs.",
+  "datasets": [
+    "KVQA",
+    "CRIC-VQA",
+    "FVQA (additional results)",
+    "Web-based image-question datasets used for the enhanced CRIC knowledge base"
+  ],
+  "benchmarks": [
+    "KVQA",
+    "CRIC-VQA",
+    "FVQA"
+  ],
+  "baselines": [
+    "OFA-based KBVQA state of the art",
+    "Without-knowledge context setting",
+    "Fixed-number-of-triples context setting",
+    "Recent large language model (LLaVA) under zero-shot and fine-tuned settings"
+  ],
+  "metrics": [
+    "Exact Match (EM) score",
+    "Qualitative analysis of LLaVA responses under without/fixed/dynamic knowledge"
+  ],
+  "results": "Average improvement of 4.75% EM over SOTA on three KBVQA datasets; variable (dynamic) triple supply improves reasoning relative to a fixed number of triples, demonstrated also for recent LLMs; strong generalization on a small dataset via straightforward fine-tuning.",
+  "limitations": [
+    "Multimodal VQA setting, not KGQA over text; questions are image-grounded, so transfer to textual multi-hop KGQA is unverified.",
+    "No repair loop, no RL, and no per-hop-depth analysis; context is supplied to a fine-tuned/prompted model rather than designed as a two-regime supervision comparison.",
+    "The abstract itself asserts an inverted-U concern ('precision empowers, excess distracts'), so 'more context' is not monotonically helpful."
+  ],
+  "future_work": [
+    "Not fully extracted; the paper emphasizes generalization to small datasets and analysis of context relevance with recent LLMs."
+  ],
+  "code_availability": "Not stated in the retrieved record (no code URL found; GitHub search not run for this paper).",
+  "relation_to_idea": {
+    "problem_overlap": 0.45,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "This work supplies a variable number of KG triples as question context inside a multimodal VQA model, varying context quantity; the idea fixes the context to same-passage triples attached to a target triple as a training supervision signal and evaluates a two-regime SFT comparison. The shared mechanism is 'context triples improve reasoning', but the setting differs (VQA vs multi-hop textual KGQA) and this paper does not study training-supervision design, repair, or RL.",
+    "basis": "Method overlap 0.5 because both dynamically select KG triples to enrich a model's input context and both compare context configurations; problem overlap 0.45 because the underlying claim (context quantity/quality shapes reasoning) is related but the task is KBVQA not KGQA; evaluation overlap 0.2 because datasets and metrics (KVQA/CRIC-VQA EM) differ from KGQA hop-depth accuracy."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:08:14.310639Z"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "doi:10.1186/s13321-021-00565-5",
+  "title": "Deep scaffold hopping with multimodal transformer neural networks",
+  "authors": [
+    "Shuangjia Zheng",
+    "Zengrong Lei",
+    "Haitao Ai",
+    "Hongming Chen",
+    "Daiguo Deng",
+    "Yuedong Yang"
+  ],
+  "year": 2021,
+  "published": "2021-11-13",
+  "venue": "Journal of Cheminformatics",
+  "url": "https://doi.org/10.1186/s13321-021-00565-5",
+  "pdf_url": "https://jcheminf.biomedcentral.com/track/pdf/10.1186/s13321-021-00565-5",
+  "abstract": "Scaffold hopping is a central task of modern medicinal chemistry for rational drug design, which aims to design molecules of novel scaffolds sharing similar target biological activities toward known hit molecules. Traditionally, scaffolding hopping depends on searching databases of available compounds that can't exploit vast chemical space. In this study, we have re-formulated this task as a supervised molecule-to-molecule translation to generate hopped molecules novel in 2D structure but similar in 3D structure, as inspired by the fact that candidate compounds bind with their targets through 3D conformations. To efficiently train the model, we curated over 50 thousand pairs of molecules with increased bioactivity, similar 3D structure, but different 2D structure from public bioactivity database, which spanned 40 kinases commonly investigated by medicinal chemists. Moreover, we have designed a multimodal molecular transformer architecture by integrating molecular 3D conformer through a spatial graph neural network and protein sequence information through Transformer. The trained DeepHop model was shown able to generate around 70% molecules having improved bioactivity together with high 3D similarity but low 2D scaffold similarity to the template molecules. This ratio was 1.9 times higher than other state-of-the-art deep learning methods and rule- and virtual screening-based methods. Furthermore, we demonstrated that the model could generalize to new target proteins through fine-tuning with a small set of active compounds. Case studies have also shown the advantages and usefulness of DeepHop in practical scaffold hopping scenarios.",
+  "doi": "10.1186/s13321-021-00565-5",
+  "arxiv_id": null,
+  "openalex_id": "W3213530673",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 75,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T06:03:31.371929Z",
+  "relevance": 0.0667,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "reinforcement learning transfer lower-hop higher-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

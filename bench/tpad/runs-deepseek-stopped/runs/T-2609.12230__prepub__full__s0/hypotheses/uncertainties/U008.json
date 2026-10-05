@@ -1,0 +1,37 @@
+{
+  "id": "U008",
+  "question": "Does evidence that non-answer-path context triples barely affect inference-time multi-hop accuracy contradict the hypothesis that same-passage context triples improve training-time multi-hop KGQA?",
+  "description": "The core premise is that surrounding (non-target) triples from the same passage carry learnable value. Evidence from a controlled graph-RAG study finds that at multi-hop depth, replacing every non-answer-chain triple with material from an unrelated entity changes answer accuracy by only +0.003 F1, and that syntax, triple order and subgraph size have no measurable effect; only the presence of the answer path matters. If this holds for training too, context enrichment beyond the answer path should yield no gain, and H1 is at risk.",
+  "category": "contradiction",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "REFINE",
+  "possible_actions": [
+    "CHALLENGE",
+    "COMPARE",
+    "PLAN_EXPERIMENT",
+    "REFINE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "This is the strongest challenge found so far: it is a controlled ablation holding triple count fixed, directly isolating the value of surrounding vs answer-path triples, and it reports a near-null effect at multi-hop depth on two KGQA benchmarks.",
+  "resolution": "Resolved as 'weakened, not refuted' (challenge result recorded). The finding that non-chain triples change accuracy by +0.003 F1 while removing the chain is costly does not contradict the training-time hypothesis, because it measures a frozen reader rather than learned representations, and because a multi-hop context subgraph would itself contain the reasoning chain. Its force is constraining: it predicts peripheral context is inert and that the effective signal is the chain/path, which redirects H1 and raises the overlap with established path-based supervision (U013).",
+  "paper_ids": [
+    "arxiv:2609.10237",
+    "arxiv:2509.21035"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.10237"
+  ],
+  "contradicting_paper_ids": [
+    "arxiv:2609.10237",
+    "arxiv:2509.21035"
+  ],
+  "claim_ids": [],
+  "challenge_verdict": "weakened",
+  "target_ref": null,
+  "attempts": 0,
+  "source": "INVESTIGATE",
+  "created_at": "2026-09-30T05:11:49.437262Z",
+  "updated_at": "2026-09-30T05:17:32.477657Z"
+}

@@ -1,0 +1,199 @@
+{
+  "field_name": "Time-aware retrieval and question answering over temporally evolving documents",
+  "categories": [
+    {
+      "name": "Time-aware retrieval and QA (root)",
+      "parent": null,
+      "description": "Retrieval and question answering when documents, facts or provisions change over time, so the correct answer depends on a time reference.",
+      "paper_ids": [
+        "arxiv:2401.13222",
+        "arxiv:2605.23497",
+        "doi:10.1080/08839514.2026.2626097",
+        "doi:10.18653/v1/2024.emnlp-main.394",
+        "doi:10.1145/3589335.3651895",
+        "doi:10.18653/v1/2024.findings-naacl.295",
+        "doi:10.1109/bigdata66926.2025.11402566"
+      ]
+    },
+    {
+      "name": "Temporal-aware retrieval scoring",
+      "parent": "Time-aware retrieval and QA (root)",
+      "description": "Approaches that modify how candidates are scored or selected using a time signal.",
+      "paper_ids": [
+        "arxiv:2401.13222",
+        "arxiv:2605.23497",
+        "doi:10.1080/08839514.2026.2626097",
+        "doi:10.18653/v1/2024.findings-naacl.295"
+      ]
+    },
+    {
+      "name": "Soft temporal-semantic score fusion",
+      "parent": "Temporal-aware retrieval scoring",
+      "description": "Add a continuous temporal term (elapsed time, recency, publication year) to a semantic similarity score, without retraining or re-indexing.",
+      "paper_ids": [
+        "arxiv:2401.13222",
+        "doi:10.18653/v1/2024.findings-naacl.295"
+      ]
+    },
+    {
+      "name": "Hard version / validity-interval filtering",
+      "parent": "Temporal-aware retrieval scoring",
+      "description": "Extract an as-of date and restrict the retrieval space to document versions in force during that period, treating temporal validity as a hard constraint.",
+      "paper_ids": [
+        "arxiv:2605.23497",
+        "doi:10.1080/08839514.2026.2626097"
+      ]
+    },
+    {
+      "name": "Learned time-aware retrieval over structured temporal knowledge",
+      "parent": "Time-aware retrieval and QA (root)",
+      "description": "Retrievers fine-tuned with time-aware objectives over timestamped graph facts, with question rewriting and temporal reranking.",
+      "paper_ids": [
+        "doi:10.18653/v1/2024.emnlp-main.394"
+      ]
+    },
+    {
+      "name": "Temporal QA benchmarks",
+      "parent": "Time-aware retrieval and QA (root)",
+      "description": "Datasets of time-sensitive questions with ground-truth answers and supporting evidence: multi-source implicit-time QA and time-sensitive statutory QA.",
+      "paper_ids": [
+        "doi:10.1145/3589335.3651895",
+        "arxiv:2605.23497"
+      ]
+    },
+    {
+      "name": "Domain-specific legal / regulatory RAG systems",
+      "parent": "Time-aware retrieval and QA (root)",
+      "description": "End-to-end assistants over statutes, tax law and legal corpora, some with temporal validity handling and some without an explicit temporal component.",
+      "paper_ids": [
+        "doi:10.1080/08839514.2026.2626097",
+        "doi:10.5220/0013751200004000",
+        "arxiv:2605.23497"
+      ]
+    },
+    {
+      "name": "Temporal-aware RAG in non-legal document domains",
+      "parent": "Time-aware retrieval and QA (root)",
+      "description": "Time-sensitive QA over ESG and biomedical documents, where recency of evidence functions as a relevance signal.",
+      "paper_ids": [
+        "doi:10.1109/bigdata66926.2025.11402566",
+        "doi:10.18653/v1/2024.findings-naacl.295"
+      ]
+    }
+  ],
+  "idea_position": "The idea sits in the \"Soft temporal-semantic score fusion\" sub-category, but transfers it to the legal/regulatory setting that is currently dominated by \"Hard version / validity-interval filtering\". Its distinctive framing is retrieval-agnostic soft re-ranking of overlapping document versions by elapsed time to the query date, positioned against hard in-force-date filtering as the baseline.",
+  "dominant_approaches": [
+    "Add a temporal term to the semantic retrieval score (exponential/reciprocal time difference, normalized and summed), possibly masking future-dated passages (arxiv:2401.13222)",
+    "Extract an as-of date and hard-filter the retrieval corpus to the version valid at that date (arxiv:2605.23497, doi:10.1080/08839514.2026.2626097)",
+    "Fine-tune a time-aware retriever with contrastive learning and rerank by explicit temporal constraints (doi:10.18653/v1/2024.emnlp-main.394)",
+    "Use publication year / recency as a document-quality re-weighting signal in open-domain QA (doi:10.18653/v1/2024.findings-naacl.295)",
+    "Construct time-sensitive benchmarks with LLM-generated, expert-validated questions whose fact date determines the correct version (arxiv:2605.23497)"
+  ],
+  "common_assumptions": [
+    "Usable timestamps exist for queries (or can be extracted) and for documents/versions",
+    "Temporal proximity or recency is an adequate proxy for temporal relevance or legal validity",
+    "Retrieval can be modified post-hoc without retraining the underlying model",
+    "Answer accuracy (often LLM-as-judge) is the primary success measure",
+    "Documents from different time points co-exist in one corpus, producing dense semantic overlap"
+  ],
+  "common_datasets": [
+    "TPQ-2019 / TPQ-2020 few-shot time-sensitive QA (arxiv:2401.13222)",
+    "German statutory QA benchmark, 312 expert-validated pairs (arxiv:2605.23497)",
+    "TIQ, 10,000 implicit-time questions (doi:10.1145/3589335.3651895)",
+    "PubMed with three health QA datasets (doi:10.18653/v1/2024.findings-naacl.295)",
+    "Curated Indian tax statutes/gazettes plus a unified tax-law benchmark (doi:10.1080/08839514.2026.2626097)",
+    "Two unnamed temporal knowledge graph QA datasets (doi:10.18653/v1/2024.emnlp-main.394)"
+  ],
+  "common_benchmarks": [
+    "TPQ-2019/TPQ-2020",
+    "German time-sensitive statutory QA benchmark",
+    "TIQ",
+    "Health QA datasets over PubMed",
+    "Unified Indian tax law benchmark",
+    "Temporal knowledge graph QA datasets"
+  ],
+  "common_metrics": [
+    "Answer accuracy / exact match / F1",
+    "LLM-as-a-judge rubric score validated against expert ratings",
+    "Recall@1 and Recall@5",
+    "Macro F1, precision, recall",
+    "BLEU and ROUGE-L"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Recency-oriented temporal signals harm historically anchored queries: the same mechanism that fixes post-amendment staleness introduces recency bias when the applicable version is older.",
+      "paper_ids": [
+        "arxiv:2401.13222",
+        "arxiv:2605.23497",
+        "doi:10.18653/v1/2024.findings-naacl.295"
+      ]
+    },
+    {
+      "description": "Temporal signal is reduced to coarse proximity or publication year, ignoring explicit validity/effective-date intervals, so a temporally near version may still be legally inapplicable.",
+      "paper_ids": [
+        "arxiv:2401.13222",
+        "doi:10.18653/v1/2024.findings-naacl.295"
+      ]
+    },
+    {
+      "description": "Evaluation is confined to a single jurisdiction, language or domain, and no shared public benchmark of overlapping regulatory revisions exists.",
+      "paper_ids": [
+        "arxiv:2605.23497",
+        "doi:10.1080/08839514.2026.2626097"
+      ]
+    },
+    {
+      "description": "The approach presupposes reliable per-query and per-document timestamps; both are asserted or regex-extracted rather than stress-tested for noise and missingness.",
+      "paper_ids": [
+        "arxiv:2401.13222",
+        "arxiv:2605.23497"
+      ]
+    },
+    {
+      "description": "Soft temporal scoring and hard validity filtering are never compared head-to-head on the same corpus and retriever: TempRALM lacks a hard-constraint baseline, and Prior et al. test no soft re-ranker.",
+      "paper_ids": [
+        "arxiv:2401.13222",
+        "arxiv:2605.23497"
+      ]
+    },
+    {
+      "description": "Retrieval-agnosticism is claimed but only one retriever family is instantiated, so cross-retriever generalisation is unverified.",
+      "paper_ids": [
+        "arxiv:2401.13222"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "A direct head-to-head comparison of soft elapsed-time score fusion versus hard validity-interval filtering on the same amended-statute corpus with the same retriever",
+    "Validity-interval-aware temporal scoring (in-force indicator or piecewise decay) instead of monotone distance decay, which would reconcile the soft/hard contradiction",
+    "Query-date-regime-conditioned temporal weighting that avoids recency bias on historically anchored queries",
+    "Retrieval-agnostic evaluation across multiple retriever families (BM25 plus several dense encoders) with and without re-indexing, on the same benchmark",
+    "Benchmarks with clause-level, partially overlapping successive revisions plus per-passage version timestamps, as opposed to snapshot QA pairs or knowledge-graph facts",
+    "Joint evaluation of retrieval-layer metrics (version-selection accuracy, Recall@k) and end-task answer accuracy in the legal temporal setting"
+  ],
+  "contradictions": [
+    {
+      "description": "Hard constraint versus soft score: Prior et al. conclude that legal temporal validity must be enforced as a hard constraint and that the correct timeframe matters more than the retrieval method, whereas TempRALM's core contribution is a soft temporal score added to semantic similarity that improves accuracy without any validity constraint.",
+      "paper_ids": [
+        "arxiv:2605.23497",
+        "arxiv:2401.13222"
+      ]
+    },
+    {
+      "description": "Recency as benefit versus recency as bias: Vladika and Matthes treat preferring more recent evidence as a gain (+10% macro F1), while Prior et al. and TempRALM's own design constraints show that preferring newer provisions is a failure mode for historically anchored questions.",
+      "paper_ids": [
+        "doi:10.18653/v1/2024.findings-naacl.295",
+        "arxiv:2605.23497",
+        "arxiv:2401.13222"
+      ]
+    },
+    {
+      "description": "Training-free score adjustment versus learned time-aware retrieval: the idea and TempRALM avoid retraining, whereas TimeR4 fine-tunes a contrastive time-aware retriever and reports large gains, leaving it open which is necessary when temporal constraints are complex.",
+      "paper_ids": [
+        "arxiv:2401.13222",
+        "doi:10.18653/v1/2024.emnlp-main.394"
+      ]
+    }
+  ],
+  "recorded_at": "2026-09-30T05:13:08.110935Z"
+}

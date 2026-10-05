@@ -1,0 +1,24 @@
+{
+  "id": "G001",
+  "gap": "Lack of benchmarks using real-world regulatory documents with noisy temporal metadata to evaluate temporal relevance approaches.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.11572",
+      "experiment_run_id": null,
+      "location": "p. 10",
+      "quote": "Extending it with real-world versioned corpora is an important future direction.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.11572"
+  ],
+  "why_unaddressed": "Existing work like TimelyRAG uses synthetic benchmark (TimelyQABench) and notes extending to real-world as future work.",
+  "research_question": "How does performance of temporal relevance component vary when evaluated on real-world regulatory documents with noisy temporal metadata compared to synthetic benchmarks?",
+  "potential_experiment": "Construct a benchmark from real regulatory texts (e.g., US Code, CFR) with version histories, extract temporal metadata (effective dates) using heuristics or NLP, and evaluate retrieval and QA accuracy.",
+  "confidence": "medium",
+  "verification_required": "Need to search for existing real-world regulatory QA benchmarks.",
+  "recorded_at": "2026-09-30T09:59:16.087187Z"
+}

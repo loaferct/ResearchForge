@@ -1,0 +1,33 @@
+{
+  "id": "doi:10.20944/preprints202604.0317.v1",
+  "title": "Attention Heatmap Drift in a Contrastively Pretrained Vision–Language Model: A Controlled Matched-Learning-Rate Comparison of Full Fine-Tuning and Low-Rank Adaptation",
+  "authors": [
+    "Ruize Xia"
+  ],
+  "year": 2026,
+  "published": "2026-04-06",
+  "venue": null,
+  "url": "https://doi.org/10.20944/preprints202604.0317.v1",
+  "pdf_url": null,
+  "abstract": "Downstream adaptation of a contrastively pretrained vision--language model can improve in-domain accuracy while degrading performance on unseen transfer tasks. This study examines how full fine-tuning and low-rank adaptation alter attention heatmaps under a controlled design that matches learning rate across adaptation methods. The completed matched-learning-rate matrix contains 80 runs using the OpenAI Contrastive Language--Image Pretraining model with a base 32-patch vision transformer image encoder, two datasets (EuroSAT and Oxford-IIIT Pets), four shared learning rates (1e-6, 5e-6, 1e-5, and 5e-5), and five random seeds. We measure classification-token-to-patch attention entropy, the fraction of patches required to capture 95\\% of attention mass, attention concentration, head diversity, in-domain validation accuracy, and adapter-aware zero-shot accuracy on CIFAR-100. Three findings emerge. First, learning rate is a primary determinant of structural drift: on EuroSAT, full fine-tuning moves from entropy broadening at 1e-6 (+1.83%) to marked contraction at 5e-5 (-3.99%), whereas low-rank adaptation remains entropy-positive across the full matched grid (+0.68% to +1.50%). Second, low-rank adaptation preserves out-of-domain transfer substantially better than full fine-tuning at matched learning rates: averaged across the EuroSAT grid, zero-shot accuracy on CIFAR-100 is 45.13% for low-rank adaptation versus 11.28% for full fine-tuning; on Oxford-IIIT Pets, the corresponding averages are 58.01% and 8.54%. Third, Oxford-IIIT Pets exhibits a clear interaction with optimization scale: low-learning-rate low-rank adaptation underfits the in-domain task, so method-only averages can obscure the regime in which it becomes competitive. Additional rollout, patch-to-patch, centered-kernel-alignment, and backbone analyses are directionally consistent with these controlled results. Across both controlled datasets, runs with broader retained attention support also retain more zero-shot performance. Taken together, these findings support attention heatmap drift as an informative descriptive lens on model adaptation while arguing against a universal interpretation of the observed behavior as a single collapse phenomenon.",
+  "doi": "10.20944/preprints202604.0317.v1",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T05:15:59.796064Z",
+  "relevance": 0.1207,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "token-matched compute-matched control context augmentation fine-tuning ablation language model"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

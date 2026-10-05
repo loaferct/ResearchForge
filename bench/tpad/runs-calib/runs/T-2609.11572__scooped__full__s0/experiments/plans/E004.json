@@ -1,0 +1,89 @@
+{
+  "id": "E004",
+  "title": "Discriminative validity of the version-level benchmark: does point-in-time measurement reorder systems that established metrics rank differently?",
+  "research_question": "Does version-level point-in-time evaluation change conclusions about which retrieval configuration is reliable for amended legal text - reordering systems relative to answer accuracy and to a recency-style temporal metric, and capturing failures that accuracy does not - or does it merely reproduce the ordering and redundancy that established metrics already give?",
+  "hypothesis": "Version-level point-in-time metrics overlap only partially with established metrics: contamination correlates with answer accuracy but is not a rescaling of it, and at least one system pair is ordered differently across metric families - most plausibly the published recency-decay hybrid ranking competitively on accuracy while showing substantially more contamination on non-latest-gold queries than sparse retrieval or an oracle valid-time gate.",
+  "proposed_method": "Using the Stage-0 chains and query set, obtain a single frozen set of per-query rankings for all systems (BM25, dense, hybrid RRF, three-signal decay hybrid, recency-only, oracle gate). Score those identical rankings under four metric families: answer accuracy with a fixed reader, a recency-style temporal-accuracy metric of the kind reported by prior temporal retrieval work, version contamination and point-in-time recovery against version-identity labels, and nDCG/recall against version-identity labels. Estimate rank agreement between metric-induced orderings with bootstrap confidence intervals and a leave-one-system-out check, identify discordant system pairs, and localize disagreement to strata (non-latest-gold, latest-gold, near-duplicate, deep chains). Add a redundancy component: measure the correlation between contamination and answer correctness and the partial correlation controlling for accuracy, and compute the paired probability of a correct answer following a contaminated versus a clean retrieval. Interpret a pre-registered level of disagreement as evidence that the version-level benchmark changes conclusions; interpret the absence of disagreement, or near-perfect prediction of correctness by contamination, as evidence that the measurement adds no diagnostic value.",
+  "baselines": [
+    "Systems to be ranked (each scored under every metric family): BM25, dense bge-small, hybrid RRF, published three-signal hybrid with decay, recency-only ranker, oracle valid-time gate",
+    "Metric families: (i) answer accuracy with a fixed reader, (ii) established temporal-accuracy style metric based on recency of evidence, (iii) version contamination and point-in-time recovery, (iv) nDCG/recall against version-identity gold labels",
+    "Budget-matched baselines are BM25 and dense; the strong baselines are the decay hybrid and the oracle gate",
+    "Reference patterns from the literature for interpreting magnitudes: near-complete temporal compliance coexisting with roughly four-fifths answer accuracy in a point-in-time system, and a reversal where sparse retrieval beats a hybrid on a query slice"
+  ],
+  "datasets": [
+    "The Stage-0 curated clause version chains and time-stamped query set (non-latest-gold, latest-gold, near-duplicate, deep-chain and no-version-in-force strata)",
+    "Answer-differential subset produced with the fixed reader",
+    "Optional replication arm on a static regulatory corpus (no temporal labels) to show that the version metric is uninformative when no versioning exists, contrasting with the temporal strata",
+    "Public infrastructure: patterns from the RMA regulatory QA repository for chunking and metric plumbing only"
+  ],
+  "workloads": [
+    "Non-latest-gold queries where the authoritative version is superseded",
+    "Latest-gold queries as a control stratum",
+    "Near-duplicate version pairs",
+    "Deep chains with three or more versions",
+    "Answer-differential subset screened with the fixed reader",
+    "No-version-in-force queries where abstention is correct"
+  ],
+  "hardware": "CPU for all retrieval metrics on a few hundred clause versions; one GPU or a hosted reader LLM with cached, temperature-0 responses for the accuracy arms. Small scale overall: no training required.",
+  "software_environment": "",
+  "metrics": [
+    "Diagnostic validity: rank agreement (Kendall tau) between the orderings induced by the four metric families, with bootstrap confidence intervals and a leave-one-system-out robustness check",
+    "Discordance: number and identity of system pairs ordered differently, and the size of the inversions",
+    "Version contamination and point-in-time recovery per system, per stratum",
+    "Answer accuracy per system on the answer-differential subset, with the screen pass rate",
+    "Redundancy: correlation between contamination and correctness, and the partial correlation of contamination with correctness controlling for accuracy",
+    "Conditional correctness analysis: the probability of a correct answer given a contaminated retrieval, compared with a clean retrieval (paired, McNemar-style)",
+    "Diagnostic gap: best-minus-worst system spread under each metric family",
+    "Stratum-specific rank agreement (non-latest-gold vs latest-gold)"
+  ],
+  "ablations": [
+    "Metric definition for contamination: top-1 only vs top-k, strict in-force vs lenient (any in-force passage present)",
+    "With and without the answer-differential filter on the accuracy arms",
+    "Retrieval depth k",
+    "Decay rate for the three-signal hybrid",
+    "Stratum composition: non-latest-gold only, latest-gold only, near-duplicate only, deep chains only",
+    "Ranking restricted to strong systems only vs including weak/naive systems, to test whether discordance depends on system diversity",
+    "Redundancy analysis repeated per stratum, and with the recency-only ranker included or excluded to test whether discordance is driven by trivial systems"
+  ],
+  "controls": [
+    "Every metric is computed from the identical per-query rankings, so differences come from the metric, not the retrieval run",
+    "Version-identity gold labels fixed before scoring",
+    "Same reader, prompt and decoding for all accuracy arms",
+    "Rank agreement reported with bootstrap confidence intervals over queries",
+    "Per-stratum results reported alongside pooled results",
+    "Pre-registered decisions on what counts as a meaningful rank disagreement and on the minimum number of discordant pairs needed to claim diagnostic value",
+    "Leave-one-system-out recomputation of rank agreement as a robustness check"
+  ],
+  "confounders_addressed": [
+    "Answer accuracy may be insensitive because versions produce identical answers - addressed by reporting the answer-differential pass rate and by ranking under all four metric families",
+    "A metric could be gamed by always returning the largest/closest document - addressed by including the recency-only ranker and measuring contamination on non-latest-gold strata",
+    "Strata composition could drive rank disagreement - addressed by recomputing rank agreement within each stratum",
+    "Reader stochasticity could dominate accuracy differences - addressed by temperature 0, a fixed prompt, and repetition with paired bootstrap intervals",
+    "Definition sensitivity could manufacture discordance - addressed by pre-registering strict and lenient contamination definitions and reporting both",
+    "Metric correlation could be inflated by a single extreme system - addressed by recomputing rank agreement with each system left out in turn"
+  ],
+  "expected_outcomes": "Partial rather than complete overlap. Version contamination is expected to correlate with answer accuracy but not to be a rescaling of it - the published point-in-time system reached 1.7% leakage while still missing roughly a fifth of answers, so temporal compliance is not sufficient for correctness and accuracy is not sufficient for temporal compliance. At least one system pair is expected to be ordered differently across metric families, most plausibly the decay hybrid ranking well on accuracy while showing more non-latest contamination than sparse retrieval or the oracle gate, with discordance concentrated in the non-latest-gold stratum and near-zero on latest-gold queries. If instead all metric families induce the same ordering and contamination predicts correctness almost perfectly (near-unit rank agreement and near-unit partial correlation), that is reported as a negative result: the version-level measurement adds no diagnostic power beyond established metrics.",
+  "failure_conditions": [
+    "All metric families induce the same ranking (rank correlation near 1) with no discordant pair outside noise - the benchmark adds no diagnostic value and the measurement contribution is insufficient",
+    "Contamination predicts answer correctness almost perfectly once accuracy is controlled, showing the version-level metric is redundant with existing evaluation",
+    "Any discordance that appears is confined to the latest-gold stratum where version choice does not matter - the result does not support the version-level framing",
+    "Accuracy differences are dominated by reader stochasticity so no informative comparison is possible",
+    "Contamination is so low for every system that the metric cannot separate them - the problem premise fails and the direction should be dropped",
+    "The only systems that are reordered are weak or naive ones, so the discordance is not practically meaningful",
+    "Rank disagreement disappears when any single system is left out, showing it rests on one outlier rather than a general metric difference"
+  ],
+  "reproducibility_notes": "No execution spec is attached: no open implementation with clause-versioned legal data and target dates exists, and the only adjacent public repository is an interactive notebook over a static, non-versioned corpus that needs third-party PDFs and an API key and emits no JSON metrics. The design deliberately scores all metric families from one frozen ranking set, so it is replication-friendly: release per-query rankings, metric code, the version-identity labels, the answer-differential screening procedure, the fixed reader prompt and decoding settings, the pre-registered rank-disagreement threshold and the minimum discordant-pair count, and the leave-one-system-out results. Report both strict and lenient contamination definitions and both per-stratum and pooled agreement.",
+  "related_modification_id": "M005",
+  "related_paper_ids": [
+    "arxiv:2109.06157",
+    "doi:10.2139/ssrn.7087840",
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.3390/sym18091498",
+    "arxiv:2606.09724",
+    "arxiv:2608.21409",
+    "doi:10.1109/iri69576.2026.00090"
+  ],
+  "execution": null,
+  "status": "planned",
+  "recorded_at": "2026-09-30T04:43:49.524402Z"
+}

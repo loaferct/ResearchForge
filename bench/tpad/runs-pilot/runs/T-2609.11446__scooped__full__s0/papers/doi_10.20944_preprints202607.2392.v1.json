@@ -1,0 +1,36 @@
+{
+  "id": "doi:10.20944/preprints202607.2392.v1",
+  "title": "How Reliable Is Automatic Emotion Classification in Children’s Drawings? A Reproducible Benchmark with Calibration and Selective Prediction",
+  "authors": [
+    "Hoonhee Lee",
+    "Minwoo Kim",
+    "Jaewon Kim",
+    "Jungsup Oh"
+  ],
+  "year": 2026,
+  "published": "2026-07-31",
+  "venue": null,
+  "url": "https://doi.org/10.20944/preprints202607.2392.v1",
+  "pdf_url": null,
+  "abstract": "Emotion recognition in children’s drawings is difficult because affect is carried by sparse strokes, symbolic objects, and overall composition rather than by the stable appearance statistics of photographs. Work in this area typically reports a single accuracy figure, which says little about which predictions can be trusted. We built a reproducible four-class benchmark (Angry, Fear, Happy, Sad) on an existing public corpus of 818 children’s drawings and compared three transfer-learning regimes under identical stratified five-fold splits with nested model selection: ResNet-50, ViT-B/16, and an end-to-end fine-tuned SigLIP image encoder (SigLIP-FT). Reliability was assessed using top-1–top-2 probability margins, expected calibration error (ECE), and margin-based selective prediction. Five annotators independently labeled all images under a pre-specified analysis plan, providing a human reference point on the same items. SigLIP-FT reached the highest macro-F1 (0.773±0.028) ahead of ViT-B/16 (0.700±0.040) and ResNet-50 (0.598±0.038), and was the best calibrated (ECE 0.119). Margin-based abstention raised its macro-F1 to 0.818 at 73.0% coverage and 0.867 at 55.0%. Fear was also the least reliably judged category for annotators (Krippendorff’s α=0.422), yet their majority vote recovered the corpus labels with macro-F1 0.960, well above the model. Coverage–performance behavior, rather than a single full-coverage score, is therefore the appropriate reporting standard for ambiguous visual domains of this kind.",
+  "doi": "10.20944/preprints202607.2392.v1",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T11:25:07.273015Z",
+  "relevance": 0.3182,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "selective prediction calibration"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

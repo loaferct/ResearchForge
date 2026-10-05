@@ -1,0 +1,43 @@
+T-2609.12230: prior=0 probe_hit=False probe=''
+T-2609.11572: prior=3 probe_hit=False probe=''
+T-2609.11446: prior=3 probe_hit=False probe='Calibrated Collaborative Inference (2023)'
+T-2609.11414: prior=3 probe_hit=False probe='MT-Router: Multi-Turn LLM Routing with Context-Aware Prompt Compression (2024)'
+T-2609.11393: prior=3 probe_hit=False probe=''
+T-2609.11192: prior=3 probe_hit=False probe='"Matryoshka Gist: Learning to Compress Contexts with Variable Budgets" (2024)'
+T-2609.11061: prior=3 probe_hit=False probe='PIVOT: Efficient Tree Search for LLM Reasoning (2025)'
+T-2609.10441: prior=3 probe_hit=False probe='"HiFi: Hierarchical Filtering for Long-Context Question Answering" (2023)'
+T-2609.10439: prior=3 probe_hit=False probe='Layer-wise Unlearning: A Simple and Effective Method for Unlearning in Large Language Models (2024)'
+T-2609.10346: prior=3 probe_hit=False probe='MoTP: Mixture of Token Pruners for Efficient Vision-Language Models (2024)'
+T-2609.09883: prior=3 probe_hit=False probe=''
+T-2609.09768: prior=3 probe_hit=False probe='KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse (2024)'
+T-2609.09707: prior=3 probe_hit=False probe='Not All Tokens Are Equal: Token-Level Loss Reweighting for Mathematical Reasoning (2024)'
+Traceback (most recent call last):
+  File "/Users/kingsofttech/KINGSOFT-PROJECTS/LF/scripts/tpad_build.py", line 240, in <module>
+    main()
+  File "/Users/kingsofttech/KINGSOFT-PROJECTS/LF/scripts/tpad_build.py", line 236, in main
+    args.fn(args)
+  File "/Users/kingsofttech/KINGSOFT-PROJECTS/LF/scripts/tpad_build.py", line 208, in cmd_refresh
+    answer, hit = probe(item["idea"], rec)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kingsofttech/KINGSOFT-PROJECTS/LF/scripts/tpad_build.py", line 141, in probe
+    answer = chat(PROBE_MODEL, PROBE_PROMPT.format(idea=idea), max_tokens=16000)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kingsofttech/KINGSOFT-PROJECTS/LF/scripts/tpad_build.py", line 75, in chat
+    r.raise_for_status()
+  File "/Users/kingsofttech/KINGSOFT-PROJECTS/LF/.venv/lib/python3.12/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 Internal Server Error' for url 'https://ollama.com/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+T-2609.09835: prior=3 probe_hit=False probe=''
+T-2609.09156: prior=3 probe_hit=False probe='"CiteAgent: An Autonomous AI Agent for Citation Recommendation" (2024)'
+T-2609.08650: prior=3 probe_hit=False probe='Beyond Pass@1: Boosting Pass@k with Tree Search and Reinforcement Learning (2025)'
+T-2609.08267: prior=3 probe_hit=False probe='NONE'
+T-2609.08189: prior=3 probe_hit=False probe='MALSKIP: Memory-Augmented Adaptive Layer Skipping for Efficient LLM Inference (2024)'
+T-2609.08273: prior=0 probe_hit=False probe='Memory Management for Long-Term Interactive Agents (2024)'
+T-2609.07286: prior=3 probe_hit=False probe='Audio Contrastive Decoding: Mitigating Hallucination in Large Audio-Language Models (2024)'
+T-2609.07050: prior=3 probe_hit=False probe=''
+T-2609.10060: prior=3 probe_hit=False probe='Bias Behind the Scenes: Internal Representations of Social Bias in Large Language Models (2023)'
+T-2609.09953: prior=0 probe_hit=False probe='"Multilingual Sentence Encoders for Token-level Tasks" (2022)'
+T-2609.11655: prior=3 probe_hit=False probe='"Spectral Clipping: A Simple and Effective Method for Stabilizing Muon" (2025)'
+T-2609.30289: prior=3 probe_hit=False probe='Co-Memory: Collaborative Memory for Multi-Agent Systems (2025)'
+T-2609.08173: prior=3 probe_hit=False probe='Aging with GRACE: Lifelong Model Editing with Discrete Key-Value Adaptors (2022/2023)'

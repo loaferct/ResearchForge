@@ -1,0 +1,33 @@
+{
+  "id": "doi:10.2139/ssrn.6459080",
+  "title": "Nor-CaseHOLD: A Retrieval Benchmark for Norwegian Legal AI",
+  "authors": [
+    "Bendik Eeg-Henriksen"
+  ],
+  "year": 2026,
+  "published": null,
+  "venue": null,
+  "url": "https://doi.org/10.2139/ssrn.6459080",
+  "pdf_url": null,
+  "abstract": "<p>This paper presents two contributions to Norwegian legal NLP: Norwegian Legal BERT, a domain-adapted BERT model built by continuing masked language model pretraining of NbAiLab/nb-bert-base using 9,140 Norwegian legal documents; and Nor-CaseHOLD, a legal retrieval benchmark built from 1,244 documents — 627 Supreme Court (Høyesterett) decisions and 617 Skatteetaten bindende forhåndsuttalelser (BFU) — each paired with its official summary.&nbsp;</p> <p>To the author's knowledge, Norwegian Legal BERT is the first open-source domain-adapted Norwegian legal language model, and Nor-CaseHOLD is the first Norwegian open-source legal retrieval benchmark.</p> <p>So far nine retrieval methods have been benchmarked using Nor-CaseHOLD, including Norwegian Legal BERT. These cover sparse retrieval (BM25, TF-IDF), dense encoders (Norwegian Legal BERT, NB-BERT-base, mBERT, multilingual MiniLM), structural baselines (Lead-5), and oracle upper bounds (greedy and sequential). Two additional experiments — hybrid BM25+dense scoring and cross-encoder reranking — were also tested. All results include bootstrap confidence intervals and pairwise significance tests.&nbsp;</p> <p>Key finding so far is that among non-oracle methods, sparse retrieval dominates the benchmark with BM25 and TF-IDF achieving the highest ROUGE-1 clocking in at 47.49 and 47.85 respectively — this is a common finding across jurisdictions, and our benchmarks seem to reinforce that point. Neither hybrid scoring nor cross-encoder reranking improved over pure BM25. As for dense encoders, Norwegian Legal BERT (38.40) outperforms NB-BERT-base (37.28, p &lt; 0.001) and mBERT (37.34, p &lt; 0.01), confirming that pretraining improves performance.</p> <p><span>Rankings are consistent across Høyesterett and BFU data, indicating that findings apply across different types of legal documents. Both Norwegian Legal BERT and Nor-CaseHOLD are publicly available on HuggingFace and GitHub under open licences.</span></p>",
+  "doi": "10.2139/ssrn.6459080",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T04:32:34.353858Z",
+  "relevance": 0.1522,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "amended statute version retrieval benchmark temporal validity interval legal document supersession"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

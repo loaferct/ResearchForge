@@ -1,0 +1,24 @@
+{
+  "id": "D001",
+  "direction": "Change the temporal component from a monotone elapsed-time decay to a validity-interval-aware, retrieval-agnostic re-ranking term, and make the leakage-controlled evaluation protocol and a clause-level versioned benchmark part of the contribution rather than only the evaluation. Concretely: score(q,p) = s(q,p) + lambda * g(t_q, interval(p)) where g is governed by the version's in-force interval, with hard in-force filtering, monotone decay and a content-blind date-only ranker as baselines, lambda tuned on a held-out split, and version-selection accuracy@k reported per query-date regime across BM25 and dense retrievers.",
+  "hypothesis": "A retrieval-agnostic temporal re-ranking term conditioned on a passage version's in-force interval rather than on elapsed time improves version-selection accuracy and answer accuracy on time-stamped regulatory queries relative to semantic-only retrieval and to monotone elapsed-time decay, matches hard in-force filtering where the latter is applicable, and does so robustly across sparse and dense retrievers when the temporal weight is selected on held-out data with timestamp-shuffled and date-offset controls.",
+  "rationale": "The evidence does not support continuing with the original mechanism as stated. TempRALM already publishes the retrieval-agnostic addition of an elapsed-time temporal term to a retriever's semantic score, including future-passage masking (C001, C003, C005), so the mechanism is pre-empted. More importantly, elapsed time is not the legal validity relation: TempRALM's score is monotone in the time difference (C008) while legal applicability is determined by effective/amendment dates, and Prior et al. conclude temporal validity must be a hard constraint (C002, C010). The empirical case is also unguarded: TempRALM tunes its temporal scaling factor without a held-out split or leakage control (C014) even though date injection alone is reported to reorder rankings with content held fixed (C016), so any soft-term accuracy gain would be uninterpretable as temporal skill (U007, C018). The surviving, evidence-backed opening is therefore neither the original decay term nor a repeat of hard filtering, but an interval-aware soft score that keeps the retrieval-agnostic framing while conditioning on the property that actually determines applicability, tested under a leakage-controlled protocol and measured with version-selection accuracy on a clause-level versioned corpus, which no retrieved resource provides (G001-G004, C019). This deserves investigation next because it is the only variant that simultaneously addresses the pre-emption (novelty), the proxy invalidity (technical validity) and the leakage confounder (experimental validity), and because the interval-aware soft score may recover graded behaviour (including among simultaneously valid versions) that a binary filter cannot express; the degeneracy risk is recorded as U011.",
+  "change_type": "MODIFY_METHOD",
+  "previous_direction_id": null,
+  "research_question": "Does a retrieval-agnostic temporal re-ranking term conditioned on a passage version's in-force interval, rather than on elapsed time to the query date, improve version-selection accuracy and answer accuracy on time-stamped queries over continuously amended regulatory texts - compared with semantic-only retrieval, monotone elapsed-time decay and hard in-force filtering - when the temporal weight is tuned on held-out data and evaluated under timestamp-shuffled and query-date-offset controls across sparse and dense retrievers?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "arxiv:2401.13222",
+    "arxiv:2605.23497",
+    "doi:10.1080/08839514.2026.2626097"
+  ],
+  "uncertainty_ids": [
+    "U001",
+    "U002",
+    "U007",
+    "U009",
+    "U010"
+  ],
+  "recorded_at": "2026-09-30T05:24:57.866948Z"
+}

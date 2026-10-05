@@ -1,0 +1,43 @@
+{
+  "id": "C039",
+  "statement": "Power assessment for U013: the non-latest stratum is constructible by design rather than limited by natural prevalence. Because a target date can be sampled anywhere inside a version's validity interval, and because the precedent multiplies a single question into several (question, context, answer) instances by annotating alternative contexts, each multi-version clause can yield multiple non-latest-gold queries. The binding constraint is therefore the number of clauses with at least two versions and documented per-version validity dates, together with query-authoring cost, not the frequency of naturally occurring historical questions - which is a minority (roughly 16.5% of NQ-Open context-dependent, up to 30% by annotator judgement for answer-changing questions). Consequences: oversampling is both necessary and legitimate, but reported failure rates must be given in natural-prevalence-weighted form alongside the oversampled estimate, and since multiple queries cluster within a clause the power calculation must be clustered rather than per-query independent. Whether adequate power is attainable remains an empirical property of the corpus, which the census plan measures.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "we then crowdsource alternative contexts and their corresponding answers",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "up to 30% of questions in existing datasets have answers that change over time",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "We then use each validated or identified pair to construct a (q, cv, a) triple for the stripped question.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "power",
+    "stratum construction",
+    "clustering",
+    "prevalence weighting"
+  ],
+  "recorded_at": "2026-09-30T04:42:09.448295Z"
+}

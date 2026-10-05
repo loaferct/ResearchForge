@@ -1,0 +1,1123 @@
+[[page 1]]
+Locate Then Ask: Interpretable Stepwise Reasoning for
+Multi-hop Question Answering
+Siyuan Wang1, Zhongyu Wei1,2∗, Zhihao Fan1, Qi Zhang3, Xuanjing Huang3
+1School of Data Science, Fudan University, China
+2Research Institute of Intelligent and Complex Systems, Fudan University, China
+3School of Computer Science, Fudan University, China
+{wangsy18,zywei,fanzh18,qz,xjhuang}@fudan.edu.cn
+Abstract
+Multi-hop reasoning requires aggregating mul-
+tiple documents to answer a complex ques-
+tion. Existing methods usually decompose
+the multi-hop question into simpler single-hop
+questions to solve the problem for illustrating
+the explainable reasoning process. However,
+they ignore grounding on the supporting facts
+of each reasoning step, which tends to generate
+inaccurate decompositions. In this paper, we
+propose an interpretable stepwise reasoning
+framework to incorporate both single-hop sup-
+porting sentence identiﬁcation and single-hop
+question generation at each intermediate step,
+and utilize the inference of the current hop for
+the next until reasoning out the ﬁnal result. We
+employ a uniﬁed reader model for both inter-
+mediate hop reasoning and ﬁnal hop inference
+and adopt joint optimization for more accurate
+and robust multi-hop reasoning. We conduct
+experiments on two benchmark datasets Hot-
+potQA and 2WikiMultiHopQA. The results
+show that our method can effectively boost per-
+formance and also yields a better interpretable
+reasoning process without decomposition su-
+pervision. 1
+1 Introduction
+Recent years have witnessed an emerging trend
+in the task of multi-hop question answering. It
+requires the model to aggregate multiple pieces
+of documents (i.e., context) and perform multi-
+hop reasoning to infer the answer (Talmor and Be-
+rant, 2018; Khashabi et al., 2018). Several datasets
+have been introduced as benchmarks, such as Hot-
+potQA (Yang et al., 2018), 2WikiMultiHopQA
+(Ho et al., 2020) and WikiHop (Welbl et al., 2018),
+and the ﬁrst two provide supporting facts supervi-
+sion to encourage models to further explain what
+supporting sentences lead to the prediction.
+∗Corresponding author
+1Codes are publicly available at https://github.com/
+WangsyGit/StepwiseQA.
+[Question]
+Q: What city is the Marine Air Control Group 28 located in?
+[Context]
+P1:  Marine Tactical Air Command Squadron 28 is a United 
+States Marine Corps aviation command and control unit based at 
+Marine Corps Air Station Cherry Point. They provide the 2nd 
+Marine Aircraft Wings tactical headquarters and … 
+P2:  Marine Corps Air Station Cherry Point or MCAS Cherry 
+Point is a United States Marine Corps airfield located in Havelock, 
+North Carolina, United States, in the eastern part of the state. It ...
+P3-P10: …
+[Question Decomposition(Min et al., 2019)]
+Sub-Q1:  Which Marine Air Control Group 28?
+Sub-Q2:  What city is Marine Tactical Air Command Squadron 28 
+located in?
+[Stepwise Decomposition]
+Step1-S:  Marine Tactical Air Command Squadron 28 is a … 
+control unit based at Marine Corps Air Station Cherry Point.
+Step1-Q: Which is the base of Marine Air Control Group 28?
+Step2-S:  Marine Corps Air Station Cherry Point ... United States 
+Marine Corps airfield located in Havelock, North Carolina … state.
+Step2-Q: What city is the Marine Corps Air Station Cherry Point 
+located in?
+Figure 1: A multi-hop reasoning example from Hot-
+potQA. To solve the problem, DecompRC (Min et al.,
+2019) generates improper decomposition of questions
+and predicts a wrong answer while our expected step-
+wise decomposition includes both single-hop support-
+ing sentences and sub-questions of each step to rea-
+son out the correct answer. The underlined phrase is
+the fact uncovered by machine-generated decomposi-
+tion while the shaded contexts support the correspond-
+ing single-hop question generation.
+The ﬁrst generation of models for multi-hop
+question answering utilizes a one-step reader (Qiu
+et al., 2019; Fang et al., 2019; Shao et al., 2020;
+Tu et al., 2020; Beltagy et al., 2020) to capture the
+interaction between the question and relevant con-
+texts for the prediction of the answer as well as the
+supporting sentences. In order to model the explain-
+able multi-step reasoning process, researchers ex-
+plore to decompose the multi-hop question into eas-
+ier single-hop questions and solve sub-questions to
+reach the answer (Talmor and Berant, 2018; Wolf-
+son et al., 2020).
+Question decomposition based approaches
+arXiv:2208.10297v1  [cs.CL]  22 Aug 2022
+
+[[page 2]]
+[CLS] HOP=𝑘 Question Q [SENT] s!
+!… …
+Unified Reader 𝓜𝜽
+Supporting Sentence Prediction Layer
+Single-hop 
+Question Generator 𝓖
+Single-hop 
+QA Model 𝓐
+Question 𝑸:
+What city is the Marine Air Control Group 28 
+located in?
+Question-relevant Context 𝑪:
+P1: Marine Tactical Air Command Squadron 
+28 is a United States Marine…
+P2: Marine Corps Air Station Cherry 
+Point…located in Havelock, North Carolina... 
+P3 & P4: …
+Single-hop 
+Supporting Sentence 
+Identification
+Single-hop 
+Question
+Generation
+𝑘!"	hop supportingsentences	S#
+Unified Reader 𝓜𝜽
+Supporting Sentence Prediction LayerAnswer Prediction Layer
+[SENT] s!
+"…
+[CLS] HOP=𝐊 Question Q [SUB] q#𝐊 …[SENT] s!
+!…[BDG]a#𝐊
+𝑘!"hop 
+sub-questionq#
+yes no
+Final Hop Inference
+𝑘!"	Hop Input
+𝐊!"	Hop Input
+Intermediate Hop Reasoning
+𝟏𝐬𝐭Hop Supporting Sentence 𝑺𝟏:
+Marine Tactical Air Command Squadron 28is 
+a United States Marine Corps aviation 
+command and control unit based atMarine 
+Corps Air Station Cherry Point.
+𝟏𝐬𝐭Hop Sub-question𝒒𝟏:
+What is the base of Marine Air Control 
+Group 28 ?
+𝟏𝐬𝐭Hop Sub-answer𝒂𝟏:
+Marine Corps Air Station Cherry Point
+Final answer A Final supporting sentences S Predicted Final Answer 𝑨:
+What city is the Marine Corps Air Station 
+Cherry Point located in? 
+𝑨:Havelock
+Reasoning Process
+Inter. End Layer
+[SUB] q#% [BDG] a#%
+Intermediate
+reasoning end
+Not end
+a%q%
+Figure 2: The overall architecture of stepwise reasoning framework with an interpretable reasoning process.
+achieve promising prediction performance and are
+able to demonstrate the reasoning process to some
+extent. However, the single-hop questions are gen-
+erated solely based on the original question with-
+out considering the supporting facts each step in-
+volves (Min et al., 2019; Perez et al., 2020; Khot
+et al., 2020). This usually leads to wrong-guided de-
+composition and inaccurate explanations. An exam-
+ple is shown in Figure 1 including a question, two
+relevant contextual paragraphs, two sub-questions
+generated by Min et al. (2019) and two expected
+steps of reasoning with supporting sentences and
+sub-questions. The ﬁrst single-hop question gener-
+ated by an existing model (Sub-Q1) fails to query
+“the base of Marine Air Control Group 28” which is
+beyond the scope of the original multi-hop question
+and such an improperly reasoned hop also leads
+to the failure of ﬁnal answer prediction. We argue
+that a complete step of reasoning should consist
+of intermediate supporting sentence identiﬁcation
+and sub-question generation to reduce the inference
+error in the procedure.
+In this paper, we propose a stepwise reasoning
+framework for multi-hop question answering. It
+performs both single-hop supporting sentence iden-
+tiﬁcation and single-hop question generation in
+each step, and reasons from one intermediate hop
+to the next until the ﬁnal hop inference. Speciﬁ-
+cally, we perform an intermediate hop reasoning
+that locates the single-hop supporting sentences
+and constructs the sub-question based on the origi-
+nal question and the corresponding supporting facts
+in each step. We utilize an off-the-shelf single-hop
+question generator to eliminate the need for hu-
+man annotations and avoid the risk of noisy labels
+posed by constructed pseudo-supervision. In the ﬁ-
+nal hop, we simultaneously predict the answer and
+the supporting sentences of the multi-hop question
+according to the preceding hops. We employ a uni-
+ﬁed reader model for both intermediate single-hop
+supporting sentence identiﬁcation and ﬁnal hop in-
+ference and jointly learn them so that a midway
+error may be corrected by subsequent hops to mit-
+igate cumulative failures. We further adopt two
+measures to reduce the train-test discrepancy of
+single-hop supporting sentences and sub-questions
+to mitigate exposure bias for better generalization.
+Experiments are conducted on two benchmark
+datasets involving different hops of reasoning,
+HotpotQA (Yang et al., 2018) and 2WikiMulti-
+HopQA (Ho et al., 2020). The results indicate
+that our stepwise reasoning framework achieves
+signiﬁcant improvements and shows general effec-
+tiveness across different reasoning types. Further
+analysis and qualitative cases also demonstrate that
+our method generates high-quality single-hop ques-
+tions for interpretable multi-hop reasoning.
+2 Methodology
+Given a multi-hop question Q and a context in-
+cluding multiple paragraphs, we aim to read the
+question-relevant contextC to predict the ﬁnal an-
+swerA and explain it with the supporting sentences
+S. As illustrated in Figure 2, we present a step-
+
+[[page 3]]
+wise reasoning framework to iteratively identify
+the single-hop supporting sentences and generate
+the single-hop question for the following reasoning,
+which consists of three components as below. It
+ﬁrst ﬁlters out the unrelated paragraphs to extract
+the question-relevant context C (§ 2.1). Then it
+identiﬁes the supporting sentences of each inter-
+mediate hop from the relevant context to ask and
+answer the corresponding single-hop question, and
+passes the auto-generated messages to the next hop
+(§ 2.2). After intermediate hop reasoning ends, the
+last module predicts the ﬁnal answer and the sup-
+porting sentences of the multi-hop question accord-
+ing to the preceding inference (§ 2.3). We jointly
+train a uniﬁed reader model for all reasoning hops
+(§ 2.4) and adopt two measures to mitigate the
+train-test discrepancy for better inference (§ 2.5).
+2.1 Context Filter
+In order to reduce the distraction in the context
+for downstream multi-hop reasoning process, we
+select the most relevant paragraphs as the question-
+relevant contextC. We ﬁrst train a paragraph se-
+lection model which takes the question and the
+concatenation of all candidate paragraphs as the
+input and predicts the probability scores that each
+paragraph is relevant to answer the question.
+As HotpotQA mainly consists of 2-hop ques-
+tions which involve two relevant paragraphs, we
+follow the 2-hop selection strategy in (Fang et al.,
+2019). For the ﬁrst hop, it selects the paragraph
+with the highest scores among the paragraphs con-
+taining the same phrases as the question. Then the
+second-hop paragraph is extracted by hyperlinks
+from the ﬁrst selected one. Two other paragraphs
+with the next highest scores are also selected to
+constitute the question-relevant context. For 2Wiki-
+MultiHopQA dataset with 2∼4 hop questions, we
+select ﬁve paragraphs with the highest scores and
+ﬁlter the other paragraphs from the context.
+2.2 Intermediate Hop Reasoning
+Based upon the ﬁltered relevant context, we per-
+form the multi-hop reasoning step-by-step. We
+adopt a uniﬁed reader modelMθ to iteratively iden-
+tify the single-hop supporting sentences focused
+at each intermediate hop, and decide whether to
+end the intermediate hop reasoning indicating that
+the cumulative intermediate information is ready
+for ﬁnal hop inference. Then depending on the
+predicted supporting sentences at each hop, the cor-
+responding single-hop question can be generated
+and answered, which will be passed to the reader
+for next hop reasoning. This iterative process is
+repeated until the intermediate reasoning is ended,
+or up toK− 1 intermediate hops.
+Single-hop Supporting Sentence Identiﬁcation
+The reader attempts to ﬁnd the supporting sen-
+tences at each hop k∈{ 1,...,K − 1} given the
+concatenation of the original question Q, the sub
+question-answer pairs{(q1,a 1) ... (qk−1,ak−1)}
+of previous hops, and the relevant context C as
+the input. Speciﬁcally, the concatenated sequence
+is formulated as [CLS] HOP=k [SEP] Q
+[SUB] q1 [BDG] a1 ... [SUB] qk−1
+[BDG] ak−1 [SEP] [SENT] s1
+1 [SENT]
+s1
+2 ...[SEP] [SENT] s2
+1 ...[SEP] where
+HOP=k indicates the current hop number. Special
+tokens [SUB], [BDG], [SENT] respectively
+represent the single-hop sub-question, sub-answer
+and each sentence, and si
+j is the j-th sentence of
+thei-th paragraph in the relevant contextC.
+On top of the representations of each sentence
+token [SENT], we build a binary classiﬁer to pre-
+dict the probabilityp(k)
+i,j that each sentencesi
+j is a
+supporting fact of the current hop. The correspond-
+ing binary cross entropy lossL(k)
+sf is calculated as
+Eq. 1. y(k)
+i,j is the label whether the sentencesi
+j is
+a supporting fact of the hopk, andNs is the total
+number of sentences inC.
+L(k)
+sf = 1
+Ns
+∑
+i
+∑
+j
+−y(k)
+i,j log(p(k)
+i,j )
+− (1−y(k)
+i,j ) log(1−p(k)
+i,j ) (1)
+Then the [CLS] representation is also fed into a
+binary classiﬁer to compute the probability p(k)
+end
+that the intermediate reasoning should be ended
+at hopk and go on to ﬁnal hop inference, and the
+cross entropy loss is as Eq. 2. y(k)
+end is the label
+whether to end the intermediate hop reasoning at
+current hopk.
+L(k)
+end =−y(k)
+end log(p(k)
+end)
+− (1−y(k)
+end) log(1−p(k)
+end) (2)
+Single-hop Question Generation After identi-
+fying the supporting sentences Sk of hop k, we
+generate the corresponding single-hop questionqk
+to investigate what the current hop asks about. In
+this work, we do not use annotated or pseudo su-
+pervision to train a question decomposition model.
+
+[[page 4]]
+Instead, we take inspiration from (Pan et al., 2020)
+and adopt a pre-trained simple question generator
+Gs to directly output the desired single-hop ques-
+tion, which is trained beforehand on top of an off-
+the-shelf simple question corpus.
+To encourage the single-hop question more
+grounded on the contextual facts, we generate them
+based on both the identiﬁed single-hop supporting
+sentencesSk and the multi-hop question Q. The
+latter serves as a guidance for the generation to-
+wards the original reasoning goal. Speciﬁcally, we
+extract the intersectional tokens betweenSk andQ
+as the prompt and append it to the supporting sen-
+tencesSk as the input for single-hop question gen-
+eration, which is organized as[CLS] ( Q ∩ Sk)
+[SEP] Sk [SEP]. Correspondingly, during the
+single-hop question generator pre-training, we also
+take a single sentence as the context and utilize the
+tokens existing within both the target question and
+the context to prompt simple question generation.
+Queried with the generated single-hop question
+qk, we immediately resolve it to ease the whole
+multi-hop question. We also leverage the afore-
+mentioned simple question dataset to pre-train a
+single-hop QA modelA to make it more consistent
+with the single-hop question generator. Then ac-
+cording to the single-hop supporting sentencesSk
+and questionqk at hopk, we utilize the pre-trained
+QA modelA to output the single-hop answer ak,
+which together with the single-hop questionqk will
+be passed to the next hop for subsequent reasoning.
+2.3 Final Hop Inference
+After the end of intermediate hop reasoning, we
+can utilize the single-hop questions and answers
+{(q1,a 1) ... (qK−1,aK−1)} of all previous hops
+to build a bridge for inferring the ﬁnal hop K.
+We employ the same uniﬁed reader model Mθ
+during intermediate hop reasoning to predict the
+ﬁnal answer A of the multi-hop question Q and
+simultaneously provide the overall explanatory
+supporting sentences S. The input sequence
+fed into the reader for the ﬁnal hop is similar
+to intermediate hops, except that we insert two
+additional tokens yes and no before the relevant
+context C for answer prediction. As there are
+three answer types (yes/no/span), we integrate
+the answer type classiﬁcation into the answer
+span prediction by appending yes and no as
+two candidate spans. We reformulate the current
+input as [CLS] HOP=K [SEP] Q [SUB]
+q1 [BDG] a1 ... [SUB] qK−1 [BDG]
+aK−1 [SEP] yes no [SEP] [SENT] s1
+1
+...[SEP] [SENT] s2
+1 ...[SEP].
+To accomplish the ﬁnal hop inference, we ﬁrst
+utilize the same binary classiﬁer to identify whether
+each sentence is a supporting fact of the whole
+multi-hop question, and compute a ﬁnal supporting
+sentence identiﬁcation lossLK
+sf . Then for the ﬁnal
+answer span prediction, we attach a linear layer
+with a softmax function to all context represen-
+tations to obtain the probability of each token tn
+being the startps
+n or end positionpe
+n of the answer
+span. The cross entropy loss is calculated as follow-
+ing formula, where tokentx andty are respectively
+the labels of start or end positions.
+Lspan =− log(ps
+x)− log(pe
+y) (3)
+2.4 Optimization & Inference
+In order to optimize our framework, we can ﬁrst
+set up a maximum number of required reasoning
+hopsK. Then our stepwise reasoning framework
+essentially comprisesK− 1 iterative intermediate
+hop reasoning layers and a ﬁnal hop inference layer.
+As there is no previous single-hop question-answer
+pair before the ﬁrst hop reasoning, we omit them
+within the initial input which will be fed into the
+ﬁrst intermediate hop reasoning layer. We jointly
+train our stepwise reasoning framework for all in-
+termediate hops and the ﬁnal hop in order that an in-
+termediate mistake can be corrected by subsequent
+hops to mitigate cascading failures. All losses are
+combined in a weighted manner:
+L =λ1Lint
+sf +λ2Lint
+end +λ3LK
+sf +Lspan (4)
+Lint
+sf =
+L(1)
+sf + ∑K−1
+k=2 (1−y(k−1)
+end )L(k)
+sf
+1 + ∑K−1
+k=2 (1−y(k−1)
+end )
+(5)
+Lint
+end = 1
+ke
+ke∑
+k=1
+L(k)
+end, wherey(ke)
+end = 1 (6)
+where λ1, λ2 and λ3 are weighted hyper-
+parameters. Lint
+sf is the average supporting sen-
+tence identiﬁcation loss of all actual intermediate
+hops that are not ended.Lint
+end is the average loss of
+intermediate reasoning end prediction.
+During the inference period, we start from the
+ﬁrst hop and dynamically reason from one hop to
+the next until the ﬁnal hop. We predict whether to
+end the intermediate reasoning at each intermediate
+hop. Once it is over, we utilize all generated sub-
+questions and sub-answers and move to conduct the
+
+[[page 5]]
+ﬁnal hop inference. If not end, we will pass them
+to the next intermediate hop and repeat the process
+until the intermediate hop reasoning is ended, or
+until reachingK− 1 intermediate hops.
+2.5 Exposure Bias Mitigation
+In light of the design of our stepwise reasoning
+framework, there may arise the exposure bias prob-
+lem between optimization and inference. Given the
+ground-truth supporting sentence supervision for
+each intermediate hopSt
+k, we can generate the tar-
+get single-hop question and answer for the follow-
+up reasoning at training time. However, at test time
+we can only conduct single-hop question genera-
+tion based on the predicted single-hop supporting
+sentencesSk which may deviate from the oracle
+ones St
+k. To address this, we propose two mea-
+sures to respectively reduce the discrepancy be-
+tween train-test single-hop supporting sentences
+and train-test single-hop questions.
+Firstly, we train a separate reader model only for
+the intermediate single-hop supporting sentence
+identiﬁcation, and adopt it to re-predict the single-
+hop supporting sentences of training data with occa-
+sionally injected mistakes for optimizing the whole
+framework. Thereby we can regulate bias between
+training and test supporting sentences of interme-
+diate hops. Besides, we also augment the train-
+ing data for the single-hop question generationGs
+by taking the re-predicted training single-hop sup-
+porting sentences Sk as input, and the generated
+sub-questions based on the ground-truth support-
+ing sentences St
+k as the target. Then the genera-
+tor is trained to recover from the non-gold single-
+hop supporting sentences to approximate the oracle
+ones and reduce the deviation between train-test
+intermediate single-hop questions. With these two
+strategies, we can jointly optimize our stepwise
+reasoning framework for better generalization to
+non-golden test cases.
+3 Experiments
+3.1 Experimental Dataset
+We take two datasets HotpotQA (Yang et al., 2018)
+and 2WikiMultiHopQA (Ho et al., 2020) that in-
+volve different reasoning hops as a testbed to study
+textual multi-hop reasoning. They both require an-
+swering the question as well as predicting the sup-
+porting facts to explain the reasoning. HotpotQA
+includes both distractor setting and fullwiki setting,
+and we focus on the former with limited candidate
+paragraphs to fully test the multi-hop reasoning
+ability while putting aside the information retrieval
+part. Although 2WikiMultiHopQA provides anno-
+tated evidence for interpreting the reasoning path,
+we leave them out of account to illustrate the ef-
+fectiveness and interpretability of our framework
+without explanation supervision.
+HotpotQA and 2WikiMultiHopQA respec-
+tively consist of 90, 447/7, 405/7, 405 and
+167, 454/12, 576/12, 576 samples in training,
+development and test sets, and each instance is
+provided with 10 paragraphs. HotpotQA comprises
+2-hop questions that only two paragraphs contain
+necessary supporting sentences, while 2WikiMul-
+tiHopQA contains 2∼4 hop questions and the
+supporting facts reside in two to four paragraphs.
+Besides, to train the single-hop question generator
+and QA model, we use SQuAD (Rajpurkar et al.,
+2016) as the simple question corpus.
+3.2 Implementation Details
+We take ELECTRA-large (Clark et al., 2020) as
+the backbone of our proposed framework and the
+single-hop QA model, and train a single-hop ques-
+tion generator using BART-large (Lewis et al.,
+2019). The weights to balance losses are chosen
+asλ1 = 10/5 (for HotpotQA/2WikiMultiHopQA),
+λ2 = 2 and λ3 = 5 . The maximum value of
+required reasoning hops is set as K = 2 for Hot-
+potQA andK = 4 for 2WikiMultiHopQA. More
+training details are given in Appendix A.
+3.3 Overall Performance
+We compare our stepwise reasoner (StepRea-
+soner) with previous published methods on Hot-
+potQA and 2WikiMultiHopQA. Since there are few
+systems on the leaderboard of 2WikiMultiHopQA,
+we follow (Fu et al., 2021) and make a comparison
+with more models on both dev and test sets. The
+compared methods cover both question decompo-
+sition based models and one-step reading based
+models.
+Question decomposition based models include
+DecompRC (Min et al., 2019), ONUS (Perez et al.,
+2020), QFE (Nishida et al., 2019), CRERC (Fu
+et al., 2021)) and NA-Reviewer (Fu et al., 2022).
+One-step reading based models consist of
+DFGN (Qiu et al., 2019), ELECTRA (Clark et al.,
+2020), TAP2 (Glass et al., 2019), SAE-large (Tu
+et al., 2020), C2F Reader (Shao et al., 2020),
+Longformer (Beltagy et al., 2020), ETC-large (Za-
+heer et al., 2020), FFReader-large (Alkhaldi et al.,
+
+[[page 6]]
+Model
+Answer Sup Fact Joint
+EM F1 EM F1 EM F1
+DecompRC (Min et al., 2019) 55.20 69.63 - - - -
+ONUS (Perez et al., 2020) 66.33 79.34 - - - -
+TAP2 (Glass et al., 2019) 64.99 78.59 55.47 85.57 39.77 69.12
+SAE-large (Tu et al., 2020) 66.92 79.62 61.53 86.86 45.36 71.45
+C2F Reader (Shao et al., 2020) 67.98 81.24 60.81 87.63 44.67 72.73
+Longformer (Beltagy et al., 2020) 68.00 81.25 63.09 88.34 45.91 73.16
+ETC-large (Zaheer et al., 2020) 68.12 81.18 63.25 89.09 46.40 73.62
+FFReader-large (Alkhaldi et al., 2021) 68.89 82.16 62.10 88.42 45.61 73.78
+HGN-large (Fang et al., 2019) 69.22 82.19 62.76 88.47 47.11 74.21
+StepReasoner 69.66 82.42 62.99 87.85 47.84 74.27
+Table 1: Experimental results of different models on the test set of HotpotQA distractor setting.
+Model
+Answer Sup Fact
+EM F1 EM F1
+Dev
+DecompRC (Min et al., 2019) 7.46 41.57 56.49 82.73
+QFE (Nishida et al., 2019) 37.56 43.21 21.13 59.20
+CRERC (Fu et al., 2021) 71.56 74.51 86.00 92.75
+NA-Reviewer (Fu et al., 2022) 76.88 82.30 - -
+DFGN (Qiu et al., 2019) 30.87 38.49 17.06 57.79
+ELECTRA-base 66.81 72.28 81.19 90.96
+ELECTRA-large 79.22 83.51 83.08 92.01
+StepReasoner(ELECTRA-base) 68.11 73.03 81.72 91.21
+StepReasoner(ELECTRA-large) 80.23 84.26 83.41 92.01
+Test
+HGN-revise (Fang et al., 2019) 71.20 75.69 69.35 89.07
+CRERC (Fu et al., 2021) 69.58 72.33 82.86 90.68
+NA-Reviewer (Fu et al., 2022) 76.73 81.91 89.61 94.31
+StepReasoner 80.88 84.86 83.30 91.89
+Table 2: Results on the dev and test sets of 2WikiMul-
+tiHopQA.
+2021), HGN-large (Fang et al., 2019).
+The results are shown in Table 1 and 2. We ﬁnd
+that StepReasoner outperforms all models in terms
+of both answer prediction and joint evaluation and
+achieves comparable performance in supporting
+fact prediction, which demonstrates the effective-
+ness of our method. Speciﬁcally, it performs better
+than both question decomposition based and one-
+step reading based methods. The former improve-
+ment indicates that a uniﬁed reader to stepwise
+identify the single-hop supporting sentences for
+single-hop sub-question generation can enhance
+the accuracy of previous question decomposition
+methods. The latter veriﬁes that the interpretability
+injected by stepwise reasoning can also improve the
+QA performance. Besides, Longformer, ETC-large,
+FFReader-large and HGN-large show a better sup-
+porting fact prediction performance on HotpotQA,
+especially in F1 score. This is because the ﬁrst
+three models are designed for handling longer se-
+quences and the last utilizes a complex hierarchical
+graph network which both can cover more candi-
+date paragraphs for supporting sentence prediction.
+For 2WikiMultiHopQA, CRERC and NA-Reviewer
+achieve better supporting fact prediction because
+they both utilize external annotated evidence for
+training which conﬁrms the effectiveness of our
+StepReasoner without explanation supervision. We
+also evaluate the intermediate reasoning end pre-
+diction, and ﬁnd that our StepReasoner can exactly
+decide when to end the intermediate hop reasoning.
+3.4 Further Analysis
+Ablation Study To dive into the sources of per-
+formance gain in our StepReasoner, we conduct
+an ablation study on the HotpotQA development
+set, which is shown in Table 3. Compared to the
+overall stepwise reasoning system StepReasoner, a
+pipeline model without joint training shows a sharp
+performance degradation. It indicates that joint op-
+timization of a uniﬁed reader model for all hops
+can improve the tolerance for intermediate faults
+and boost reasoning performance. After removing
+any measures to mitigate exposure bias, the per-
+formance has also signiﬁcantly dropped. It shows
+that both two measures to alleviate the train-test
+discrepancy of single-hop supporting sentences and
+single-hop questions conﬁrm a better generaliza-
+tion to cases deviated from oracle.
+Effectiveness on Various Backbone Models To
+analyze the effectiveness of the StepReasoner
+based on different backbones, we vary several pre-
+trained models of different scales including BERT-
+
+[[page 7]]
+Model
+Answer Sup Fact Joint
+EM F1 EM F1 EM F1
+StepReasoner 70.11 83.03 64.27 88.10 48.55 74.85
+w/o joint training 69.30 82.44 63.35 87.89 47.25 74.16
+w/o bias.supp 69.66 82.64 63.10 87.74 47.39 74.20
+w/o bias.ques 69.76 82.93 63.46 88.01 47.49 74.57
+Table 3: Ablation study on HotpotQA dev set.
+w/o joint training means a pipeline stepwise reason-
+ing schema. bias.supp and bias.ques are two expo-
+sure bias mitigating measures to reduce the train-test
+discrepancy of single-hop supporting sentences and
+questions.
+base-uncased (Liu et al., 2019), ELECTRA-large
+and ALBERT-xxlarge-v2 (Lan et al., 2019). From
+Table 4, we can see that our StepReasoner variants
+consistently perform better than the corresponding
+baseline models and the previous state-of-the-art
+method (HGN) using ALBERT-largeas base model,
+especially in EM scores. It demonstrates that our
+method is robust to be effective based on various
+pre-trained models and it is the paradigm of our
+joint stepwise reasoning that contributes to more
+accurate multi-hop reasoning.
+Model
+Answer Sup Fact Joint
+EM F1 EM F1 EM F1
+BERT 60.80 74.76 57.16 85.05 38.67 65.89
+StepReasoner(BERT) 60.52 74.81 59.00 85.38 40.31 66.50
+ELECTRA 69.49 82.76 62.80 87.91 46.75 74.33
+StepReasoner(ELECTRA) 70.11 83.03 64.27 88.10 48.55 74.85
+ALBERT 70.14 83.58 62.78 88.43 46.60 75.30
+HGN(ALBERT) 70.18 83.44 63.17 89.19 47.01 75.74
+StepReasoner(ALBERT) 70.73 83.92 64.17 88.69 48.54 75.85
+Table 4: Analysis of StepReasoner on different back-
+bone models on HotpotQA dev set.
+Analysis of Different Reasoning Types We de-
+tailedly investigate the performance of StepRea-
+soner on various reasoning types of HotpotQA
+compared to the baseline model. Following Min
+et al. (2019), HotpotQA integrates four types of
+multi-hop reasoning skills, including “Bridge”,
+“Implicit-Bridge”, “Comparison” and “Intersec-
+tion”. The ﬁrst two both require identifying the
+bridge entity to complete the chain reasoning, but
+“Implicit-Bridge” resembles single-hop questions
+which implicitly query a multi-hop property of an
+entity, such as the question in Fig. 1. “Intersection”
+questions ask to locate the answer entity that satis-
+ﬁes multiple properties. “Comparison” questions
+involve comparing two entities to ﬁnd the answer.
+Reasoning Type
+ELECTRA StepReasoner
+EM F1 EM F1
+Bridge (34%) 47.30 76.43 48.37 76.54
+Implicit-Bridge (29%) 37.04 68.66 39.81 69.65
+Comparison (20%) 61.77 79.13 63.04 79.13
+Intersection (17%) 42.97 73.89 46.23 75.07
+Table 5: Results of Joint EM and Joint F1 across dif-
+ferent reasoning types. The numbers in parentheses are
+percentages of different types.
+As shown in Table 5, our system is generally ef-
+fective on all reasoning types compared to the base-
+line model ELECTRA, especially “Implicit-Bridge”
+and “Intersection”. Because these questions are
+susceptible to shortcut solutions by directly iden-
+tifying an entity satisfying one queried property
+from a single piece of evidence to reach the incor-
+rect answer while ignoring the multi-hop reasoning
+involving other evidence. This observation also
+veriﬁes the effectiveness of our system to stepwise
+generate the single-hop question grounded on the
+intermediate single-hop supporting sentences for
+interpretable multi-hop reasoning.
+Comparison of Different Single-hop Question
+Generation Methods To manifest the effective-
+ness of our generated single-hop questions based
+on identiﬁed single-hop supporting sentences, we
+incorporate several various single-hop question
+generation approaches into our stepwise reason-
+ing framework and compare the QA results. Ta-
+ble 6 shows that our Supp-based method performs
+best. It reveals that our single-hop question gen-
+eration is grounded on single-hop supporting sen-
+tences to generate more accurate and informative
+sub-questions, which are more effective than single-
+hop questions constructed by other strategies.
+Method
+Answer Sup Fact Joint
+EM F1 EM F1 EM F1
+Span-based 68.60 81.66 62.31 87.41 46.26 73.20
+USeq2Seq 69.29 82.22 63.11 88.00 46.96 74.08
+Supp-based 70.11 83.03 64.27 88.10 48.55 74.85
+Table 6: Comparison of various single-hop question
+generation methods. Span-based represents the sub-
+question generation based on span prediction in De-
+compRC (Min et al., 2019) while USeq2Seq is the
+Unsupervised seq2seq decomposition in ONUS (Perez
+et al., 2020). Supp-based is our supporting sentences
+based single-hop question generation.
+
+[[page 8]]
+Case Study An example of the “Bridge” type
+question is presented in Figure 3 to show the inter-
+pretable reasoning process of StepReasoner com-
+pared to other decomposition based methods. Our
+system successfully identiﬁes the ﬁrst-hop sup-
+porting sentences and generates the ﬁrst-hop sub-
+question to query the escaping location. Then the
+ﬁrst-hop sub-answer helps to identify the following
+supporting sentences to ﬁnally predict the correct
+answer. The second-hop question is also generated
+for better illustration. By contrast, DecompRC fails
+to decompose this complex question while ONUS
+generates an improper ﬁrst-hop question, and they
+both predict a wrong answer. More cases of the
+other reasoning types are in Appendix B.
+Question:  Sparking the Marian civil war, who helped the recently abdicated 
+queen to escape her imprisonment?
+Answer:  the Queen's gaoler
+# StepReasoner#
+Sub-S1:  The Marian civil war in Scotland (1568-1573) was a period of 
+conflict which followed the abdication of Mary, Queen of Scots, and her 
+escape from Loch Leven Castle in May 1568.
+Sub-Q1:  Where did the queen escape from during her abdication? 
+Sub-A1:  Loch Leven Castle
+Sub-S2:  Loch Leven Castle is a ruined castle on an island in ...  Queen of 
+Scots was imprisoned here in 1567-1568, and forced to abdicate as queen, 
+before escaping with the help of her gaoler's family.
+Sub-Q2:  Who helped the the queen to escape her imprisonment?
+# DecompRC#
+Sub-Q:  Sparking the Marian civil war, who helped the recently abdicated 
+queen to escape her imprisonment?
+# ONUS #
+Sub-Q1:  Why did sparking the Marian Civil War?
+Sub-Q2:  Who helped the recently abdicated queen escape her imprisonment?
+Wrong Predicted Answer:  Loch Leven Castle 
+Figure 3: A case of the reasoning process by our
+StepReasoner compared to DecompRC and ONUS. The
+green phrase denotes our predicted answer and the texts
+in shadow support the single-hop question generation.
+4 Related Work
+Multi-hop question answering aims to aggre-
+gate multiple pieces of documents to model the
+multi-hop reasoning chain and predict the an-
+swer (Khashabi et al., 2018; Yang et al., 2018;
+Welbl et al., 2018; Ho et al., 2020). Prior methods
+mainly focus on utilizing a single reader to model
+the interaction between the question and relevant
+context, and simultaneously or separately predict
+the supporting sentences and answer within one
+step. Dhingra et al. (2018) and Qiu et al. (2019)
+propose to construct graphs based on entity in-
+formation from scattered paragraphs and utilize
+graph neural networks as the reader to reason out
+the answer. Then HDE-Graph (Tu et al., 2019),
+HGN (Fang et al., 2019) and SAE (Tu et al., 2020)
+enrich information in the entity graph by extend-
+ing nodes of other granularity to build a hierarchi-
+cal graph and improve the interaction between the
+question and context. Some other methods (Glass
+et al., 2019; Beltagy et al., 2020; Zaheer et al., 2020;
+Alkhaldi et al., 2021) adopt pre-trained models as
+the powerful reader for multi-hop reasoning and
+achieve promising results. However, these one-step
+reader methods directly encode the relevant context
+and question for answer prediction while neglect-
+ing to illustrate the explicit reasoning process.
+To circumvent the interpretability limitation, an-
+other stream of research proposes to solve the multi-
+hop reasoning by multi-step question decomposi-
+tion. Nishida et al. (2019) and Jiang and Bansal
+(2019) recurrently update the sub-query at each
+step to break down the problem but these sub-
+queries are learned in latent representations and not
+sufﬁciently explainable. Instead, some works ex-
+plore to explicitly decompose the complex question
+into single-hop questions which assumes access
+to decomposition supervision (Min et al., 2019;
+Wolfson et al., 2020). To skip this reliance, (Perez
+et al., 2020) and (Khot et al., 2020) attempt to
+construct pseudo-decomposition from other simple
+question corpora which pose a new challenge of la-
+bel noises. Besides, they only take as input the orig-
+inal question to generate single-hop questions with-
+out grounding on the supporting facts at each hop.
+In contrast, we design a stepwise reasoning frame-
+work to locate the single-hop supporting sentences
+at each step for generating more fact-grounded and
+informative single-hop sub-questions without any
+genuine or pseudo supervision, and integrate the se-
+quential reasoning process into a uniﬁed multi-hop
+reader for more robust performance.
+5 Conclusion
+In this paper, we study the task of multi-hop ques-
+tion answering and propose to stepwise locate the
+single-hop supporting sentences and generate more
+fact-grounded single-hop questions for better in-
+terpretable multi-hop reasoning. We present a
+stepwise reasoning framework to incorporate both
+single-hop supporting sentence identiﬁcation and
+the corresponding single-hop question generation
+for each intermediate step until inferring a ﬁnal re-
+sult. It employs a pre-trained simple question gener-
+ator and takes the identiﬁed single-hop supporting
+sentences as base to generate the single-hop ques-
+tion, which obviates the necessity of constructed
+
+[[page 9]]
+supervision and helps generate more fact-based
+single-hop questions. It utilizes a uniﬁed reader to
+jointly learn both intermediate hop reasoning and
+ﬁnal hop inference for better fault tolerance. Exper-
+imental results validate the general effectiveness
+and interpretability of our StepReasoner.
+References
+Tareq Alkhaldi, Chenhui Chu, and Sadao Kurohashi.
+2021. Flexibly focusing on supporting facts, using
+bridge links, and jointly training specialized mod-
+ules for multi-hop question answering. TASLP.
+Iz Beltagy, Matthew E Peters, and Arman Cohan.
+2020. Longformer: The long-document transformer.
+arXiv preprint arXiv:2004.05150.
+Kevin Clark, Minh-Thang Luong, Quoc V Le, and
+Christopher D Manning. 2020. Electra: Pre-training
+text encoders as discriminators rather than genera-
+tors. In Proc. of ICLR.
+Bhuwan Dhingra, Qiao Jin, Zhilin Yang, William W
+Cohen, and Ruslan Salakhutdinov. 2018. Neural
+models for reasoning over multiple mentions using
+coreference. In Proc. of NAACL.
+Yuwei Fang, Siqi Sun, Zhe Gan, Rohit Pillai, Shuohang
+Wang, and Jingjing Liu. 2019. Hierarchical graph
+network for multi-hop question answering. In Proc.
+of EMNLP.
+Ruiliu Fu, Han Wang, Xuejun Zhang, Jun Zhou, and
+Yonghong Yan. 2021. Decomposing complex ques-
+tions makes multi-hop QA easier and more inter-
+pretable. In Findings of the Association for Compu-
+tational Linguistics: EMNLP 2021 , pages 169–180,
+Punta Cana, Dominican Republic. Association for
+Computational Linguistics.
+Ruiliu Fu, Han Wang, Jun Zhou, and Xuejun Zhang.
+2022. Na-reviewer: Reviewing the context to im-
+prove the error accumulation issue for multi-hop qa.
+Electronics Letters, 58(6):237–239.
+Michael Glass, Alﬁo Gliozzo, Rishav Chakravarti, An-
+thony Ferritto, Lin Pan, GP Bhargav, Dinesh Garg,
+and Avirup Sil. 2019. Span selection pre-training
+for question answering. In Proc. of ACL.
+Xanh Ho, Anh-Khoa Duong Nguyen, Saku Sugawara,
+and Akiko Aizawa. 2020. Constructing a multi-
+hop QA dataset for comprehensive evaluation of
+reasoning steps. In Proceedings of the 28th Inter-
+national Conference on Computational Linguistics ,
+pages 6609–6625, Barcelona, Spain (Online). Inter-
+national Committee on Computational Linguistics.
+Yichen Jiang and Mohit Bansal. 2019. Self-assembling
+modular networks for interpretable multi-hop rea-
+soning. In Proc. of EMNLP.
+Daniel Khashabi, Snigdha Chaturvedi, Michael Roth,
+Shyam Upadhyay, and Dan Roth. 2018. Looking be-
+yond the surface: A challenge set for reading com-
+prehension over multiple sentences. In Proc. of
+NAACL.
+Tushar Khot, Daniel Khashabi, Kyle Richardson, Peter
+Clark, and Ashish Sabharwal. 2020. Text modular
+networks: Learning to decompose tasks in the lan-
+guage of existing models. In Proc. of NAACL.
+Zhenzhong Lan, Mingda Chen, Sebastian Goodman,
+Kevin Gimpel, Piyush Sharma, and Radu Soricut.
+2019. Albert: A lite bert for self-supervised learn-
+ing of language representations. In Proc. of ICLR.
+Mike Lewis, Yinhan Liu, Naman Goyal, Mar-
+jan Ghazvininejad, Abdelrahman Mohamed, Omer
+Levy, Ves Stoyanov, and Luke Zettlemoyer. 2019.
+Bart: Denoising sequence-to-sequence pre-training
+for natural language generation, translation, and
+comprehension. In Proc. of ACL.
+Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Man-
+dar Joshi, Danqi Chen, Omer Levy, Mike Lewis,
+Luke Zettlemoyer, and Veselin Stoyanov. 2019.
+Roberta: A robustly optimized bert pretraining ap-
+proach. arXiv preprint arXiv:1907.11692.
+Sewon Min, Victor Zhong, Luke Zettlemoyer, and Han-
+naneh Hajishirzi. 2019. Multi-hop reading compre-
+hension through question decomposition and rescor-
+ing. In Proc. of ACL.
+Kosuke Nishida, Kyosuke Nishida, Masaaki Nagata,
+Atsushi Otsuka, Itsumi Saito, Hisako Asano, and
+Junji Tomita. 2019. Answering while summarizing:
+Multi-task learning for multi-hop qa with evidence
+extraction. arXiv preprint arXiv:1905.08511.
+Liangming Pan, Wenhu Chen, Wenhan Xiong, Min-
+Yen Kan, and William Yang Wang. 2020. Unsuper-
+vised multi-hop question answering by question gen-
+eration. arXiv preprint arXiv:2010.12623.
+Ethan Perez, Patrick Lewis, Wen-tau Yih, Kyunghyun
+Cho, and Douwe Kiela. 2020. Unsupervised ques-
+tion decomposition for question answering. In Proc.
+of EMNLP.
+Lin Qiu, Yunxuan Xiao, Yanru Qu, Hao Zhou, Lei Li,
+Weinan Zhang, and Yong Yu. 2019. Dynamically
+fused graph network for multi-hop reasoning. ACL.
+Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, and
+Percy Liang. 2016. Squad: 100,000+ questions for
+machine comprehension of text. EMNLP.
+Nan Shao, Yiming Cui, Ting Liu, Shijin Wang, and
+Guoping Hu. 2020. Is graph structure necessary for
+multi-hop reasoning? In Proc. of EMNLP.
+Alon Talmor and Jonathan Berant. 2018. The web as
+a knowledge-base for answering complex questions.
+arXiv preprint arXiv:1803.06643.
+
+[[page 10]]
+Ming Tu, Kevin Huang, Guangtao Wang, Jing Huang,
+Xiaodong He, and Bowen Zhou. 2020. Select, an-
+swer and explain: Interpretable multi-hop reading
+comprehension over multiple documents. In Proc.
+of AAAI.
+Ming Tu, Guangtao Wang, Jing Huang, Yun Tang, Xi-
+aodong He, and Bowen Zhou. 2019. Multi-hop read-
+ing comprehension across multiple documents by
+reasoning over heterogeneous graphs. In Proc. of
+ACL.
+Johannes Welbl, Pontus Stenetorp, and Sebastian
+Riedel. 2018. Constructing datasets for multi-hop
+reading comprehension across documents. TACL.
+Thomas Wolf, Lysandre Debut, Victor Sanh, Julien
+Chaumond, Clement Delangue, Anthony Moi, Pier-
+ric Cistac, Tim Rault, Rémi Louf, Morgan Funtow-
+icz, et al. 2019. Transformers: State-of-the-art natu-
+ral language processing. ArXiv, abs/1910.03771.
+Tomer Wolfson, Mor Geva, Ankit Gupta, Matt Gard-
+ner, Yoav Goldberg, Daniel Deutch, and Jonathan
+Berant. 2020. Break it down: A question under-
+standing benchmark. TACL.
+Zhilin Yang, Peng Qi, Saizheng Zhang, Yoshua Ben-
+gio, William W Cohen, Ruslan Salakhutdinov, and
+Christopher D Manning. 2018. Hotpotqa: A dataset
+for diverse, explainable multi-hop question answer-
+ing. In Proc. of EMNLP.
+Manzil Zaheer, Guru Guruganesh, Kumar Avinava
+Dubey, Joshua Ainslie, Chris Alberti, Santiago On-
+tanon, Philip Pham, Anirudh Ravula, Qifan Wang,
+Li Yang, et al. 2020. Big bird: Transformers for
+longer sequences. In Proc. of NeurIPS.
+A Training Details
+All these models are implemented using Hugging-
+face (Wolf et al., 2019). For HotpotQA, we use a
+batch size of 48 and ﬁne-tune for 10 epochs with
+the learning rate 3e-5. For 2WikiMultiHopQA,
+the batch size is set to 24, the number of training
+epochs is 5 and the learning rate is 5e-5. The Adam
+is taken as the optimizer and we use a linear learn-
+ing rate scheduler with 10% warmup proportion.
+The proposed systems and other comparison mod-
+els are trained on 4 NVIDIA Tesla V100 GPUs.
+B Case Study of Different Reasoning
+Types
+We further present three cases of other reason-
+ing types in Figure 4, including “Implicit-Bridge”,
+“Comparison” and “Intersection”. We can see that
+the StepReasoner generates high-quality decompo-
+sitions for better interpretable multi-hop reasoning
+and predict accurate answers for all types compared
+to previous question decomposition based methods.
+For the “Implicit-Bridge” question in Figure 4a,
+by ﬁrst predicting the supporting sentences related
+to “Sivarama Swami” at the ﬁrst hop, we can gen-
+erate a sub-question to identify the implicit bridge
+“Bhaktivedanta Manor” for location query in the
+second hop. Although our predicted answer is dif-
+ferent from the ground truth, it is also a reason-
+able response and more close to the golden one
+compared to the predictions of DecompRC and
+ONUS. These two methods both fail to decompose
+the multi-hop question and can only predict an in-
+termediate answer.
+For the “Comparison” and “Intersection” ques-
+tions in Figure 4b and 4c, all methods predict the
+correct answers. However, we can generate more
+diverse single-hop sub-questions without request-
+ing for any supervision, such as “die” and “death”
+for representing “pass away”, and “belong to” for
+“from”. By contrast, the decompositions by De-
+compRC are usually inﬂexibly from the original
+questions and the unsupervised ONUS creates im-
+proper sub-questions with noises. We hope that
+combining our generated single-hop questions can
+also help to construct more natural and diverse
+multi-hop questions and further promote multi-hop
+reasoning performance.
+
+[[page 11]]
+Question: Where does SivaramaSwami conduct courses on Vaishnava Theology?
+Answer: in the village of Aldenham
+# StepReasoner#
+Sub-S1:  Sivarama Swami (born 30 March 1949, Budapest, Hungary) is a 
+Vaishnava guru and a religious leader….He has been conducting courses at 
+Bhaktivedanta Manor on his own commentaries to … Vaishnava Theology.
+Sub-Q1:  Which manor does SivaramaSwami conduct courses on Vaishnava?
+Sub-A1: BhaktivedantaManor
+Sub-S2:  Bhaktivedanta Manor is a Gaudiya Vaishnava temple set in the 
+Hertfordshire countryside of England, in the village of Aldenhamnear Watford.
+Sub-Q2: What section does BhaktivedantaManor belong to?
+# DecompRC#
+Sub-Q: Where does SivaramaSwami conduct courses on Vaishnava Theology?
+# ONUS #
+Sub-Q1: Where does SivaramaSwami conduct courses on Vaishnava Theology?
+Sub-Q2:What is the nationality of the child?
+Predicted Answer: BhaktivedantaManor
+Implicit-Bridge
+(a) An example of “Implicit-Bridge” reasoning type.
+Question:  Who passed away first Robert Graves or Dino Buzzati?
+Answer:  Dino Buzzati-Traverso
+# StepReasoner#
+Sub-S1:  Robert von Ranke Graves (24 July 1895 - 7 December 1985), also 
+known as Robert Ranke Graves and most commonly Robert Graves, was an 
+English poet, novelist, critic and classicist.
+Sub-Q1:  When did Robert Graves die? 
+Sub-A1: 7 December 1985
+Sub-S2: Dino Buzzati-Traverso (14 October 1906 - 28 January 1972) was an 
+Italian novelist, short story writer, painter and poet, as well as a journalist….
+Sub-Q2: What was Dino Buzzati-Traverso’s death date?
+# DecompRC#
+Sub-Q1:  Robert Graves passed away when? 
+Sub-Q2:Dino Buzzatipassed away when?    Sub-Q3:SMALLER
+Predicted Answer:  Dino Buzzati
+# ONUS #
+Sub-Q1: When was dinobuzzatiborn? Sub-Q2:Who passed away first?
+Predicted Answer: Dino Buzzati
+Comparison
+(b) An example of “Comparison” reasoning type.
+Question:  What family are the genus' Sinofranchetiaand Stauntoniafrom?
+Answer:  a genus of flowering plant in the Lardizabalaceaefamily 
+# StepReasoner#
+Sub-S1: Stauntonia is a genus of flowering plant in the Lardizabalaceae family. 
+Sub-Q1: What family does the Stauntoniabelong to? 
+Sub-A1: Lardizabalaceae
+Sub-S2: Sinofranchetia is a genus of flowering plant in the Lardizabalaceae 
+family.
+Sub-Q2: What family does the Sinofranchetiabelong to?
+# DecompRC#
+Sub-Q1: What family is the genus ‘ Sinofranchetiafrom?
+Sub-Q2:What family is the genus ‘ Stauntoniafrom?
+Sub-Q3:INTERSEC
+Predicted Answer:  Lardizabalaceae
+# ONUS #
+Sub-Q1: What family are the genus ‘ Sinofranchetia?
+Sub-Q2:WhereisStauntoniafrom?
+Predicted Answer: Lardizabalaceae
+Intersection
+(c) An example of “Intersection” reasoning type.
+Figure 4: Three cases of other reasoning types. The
+green phrases denote our predicted answers and the
+texts in shadow support the corresponding single-hop
+question generation.

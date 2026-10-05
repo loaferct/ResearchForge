@@ -1,0 +1,49 @@
+{
+  "paper_id": "arxiv:2604.26970",
+  "relevance_tier": "medium",
+  "problem": "Existing temporal knowledge graph approaches apply uniform decay to all facts, ignoring that different knowledge types have different temporal dynamics. This leads to poor retrieval performance because the core issue is identifying what is important at query time, not just latency or throughput.",
+  "method": "The authors propose a hierarchical framework that replaces uniform decay with a continuous decay surface parameterized by velocity (observation frequency) and volatility (value change measured via embedding distance). The decay surface has three levels: domain-level (universal patterns), context-level (setting-dependent), and entity-level (personalized). Parameters are learned from data via survival analysis on edge lifetimes, where the event is value supersession (a meaningfully different value replacing the current one). No predefined taxonomies are needed.",
+  "key_assumptions": [
+    "Knowledge edge lifetimes follow a survival process where supersession events indicate meaningful value changes.",
+    "Velocity and volatility are sufficient signals to capture heterogeneous temporal dynamics across knowledge types.",
+    "Learning decay parameters from observed lifetimes via survival analysis yields effective adaptive decay functions."
+  ],
+  "main_contribution": "A hierarchical adaptive decay framework for knowledge graphs that models temporal heterogeneity via velocity-volatility decay surface with three levels (domain, context, entity). Parameters learned from data through survival analysis. Experiments show recovery of planted parameters, emergence of velocity-volatility clusters aligning with persistence patterns, and near-universal Lindy effect. Uniform decay performs 18x worse than no temporal weighting, while heterogeneous decay substantially improves performance.",
+  "datasets": [
+    "Synthetic temporal knowledge graphs",
+    "107 Wikipedia articles",
+    "1,163 patient records from Synthea clinical EHR simulator"
+  ],
+  "benchmarks": [
+    "Uniform decay baseline",
+    "No temporal weighting"
+  ],
+  "baselines": [
+    "Uniform decay"
+  ],
+  "metrics": [
+    "HDBSCAN ARI (for parameter recovery)",
+    "Performance improvement over baselines"
+  ],
+  "results": "\"HDBSCAN ARI = 1.0 for synthetic graphs, indicating perfect recovery of planted hierarchical parameters. On real-world data, velocity-volatility clusters emerge and align with observable persistence patterns, showing Lindy effect (Weibull shape k < 1). Uniform decay performs 18x worse than no temporal weighting; heterogeneous decay recovers from this, with each hierarchy level contributing measurable improvement.\"",
+  "limitations": [
+    "Focuses on knowledge graph edge prediction, not document retrieval or question answering.",
+    "Does not explicitly address versioned textual documents or evolving regulatory texts.",
+    "Survival analysis assumes supersession events are observable and definable."
+  ],
+  "future_work": [
+    "Apply framework to document-level temporal retrieval (e.g., versioned legal texts).",
+    "Investigate integration with retrieval-augmented generation for evolving knowledge.",
+    "Explore decay surfaces for other modalities (e.g., temporal knowledge bases, time series)."
+  ],
+  "code_availability": "No code availability stated in the abstract.",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "The paper proposes adaptive temporal decay for knowledge graph retrieval based on velocity and volatility, while our work proposes a retrieval-agnostic temporal relevance component for open-domain QA over evolving regulatory documents using version timestamps.",
+    "basis": "Heuristic: both deal with temporal weighting for retrieval, but differ in modality (knowledge graphs vs text documents), granularity (edge level vs passage level), and specific mechanism (adaptive decay surface vs elapsed time weighting)."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T10:42:17.575666Z"
+}

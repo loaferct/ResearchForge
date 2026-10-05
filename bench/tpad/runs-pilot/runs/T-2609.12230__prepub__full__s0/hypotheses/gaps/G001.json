@@ -1,0 +1,36 @@
+{
+  "id": "G001",
+  "gap": "Lack of local context subgraph enrichment from source passages in triple supervision for multi-hop KGQA training.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2212.00959",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "In this paper, we propose UniKGQA, a novel approach for multi-hop KGQA task, by unifying retrieval and reasoning in both model architecture and parameter learning.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2601.01195",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Specifically, MRE begins with prompt engineering to guide the LLM in generating diverse reasoning trajectories for a given question. Valid reasoning trajectories are then selected for supervised fine-tuning, serving as a cold-start strategy.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2212.00959",
+    "arxiv:2601.01195",
+    "doi:10.1016/j.eswa.2024.124652",
+    "doi:10.1016/j.ins.2022.11.042"
+  ],
+  "why_unaddressed": "Existing work focuses on unifying retrieval-reasoning modules, enhancing RL with multi-perspective information, anticipation embeddings, or trajectory sampling, but none enrich each target triple with a local context subgraph extracted from the same source passage.",
+  "research_question": "Does enriching each target triple (or path) with a local context subgraph from the source passage improve Hits@1 on multi-hop KGQA benchmarks compared to training on isolated triples only?",
+  "potential_experiment": "Fine-tune a language model under two regimes: (i) using only the target triple/path, and (ii) using the target triple/path plus its local context subgraph (e.g., all triples from the same sentence), holding all other factors constant, and measure Hits@1 on MetaQA/WebQSP/CWQ.",
+  "confidence": "medium",
+  "verification_required": "Search broader literature for any work that mentions enriching triples with local context from source passages in KGQA or related tasks.",
+  "recorded_at": "2026-09-30T07:58:53.044524Z"
+}

@@ -1,0 +1,43 @@
+{
+  "paper_id": "arxiv:2401.13222",
+  "relevance_tier": "high",
+  "problem": "Ensuring that users receive the most relevant and up-to-date information, especially in the presence of multiple versions of web content from different time points remains a critical challenge for information retrieval. This challenge has recently been compounded by the increased use of question answering tools trained on Wikipedia or web content and powered by large language models (LLMs) which have been found to make up information (or hallucinate), and in addition have been shown to struggle with the temporal dimensions of information. Even Retriever Augmented Language Models (RALMs) which incorporate a document database to reduce LLM hallucination are unable to handle temporal queries correctly.",
+  "method": "TempRALM augments the retriever with a temporal score 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡 (inverse of time difference) normalized to align with semantic score range, combined with semantic score 𝑠(𝑞,𝑑) = ⟨𝑓𝜃(𝑞),𝑓 𝜃(𝑑)⟩. The retriever fetches documents based on both semantic and temporal relevance.",
+  "key_assumptions": [
+    "Timestamps are available for queries and documents.",
+    "Temporal relevance can be modeled as inversely proportional to time difference.",
+    "Semantic score from dense retriever (Contriever) is suitable for combining with temporal score."
+  ],
+  "main_contribution": "TempRALM, a temporally-aware Retriever Augmented Language Model (RALM) with few-shot learning extensions, demonstrating up to 74% improvement in Exact Match over baseline RALM without requiring model pre-training, recalculating or replacing the RALM document index, or adding other computationally intensive elements.",
+  "datasets": [
+    "Tennis grand slam time-sensitive dataset (curated for temporally evolving QA)"
+  ],
+  "benchmarks": [
+    "TPQ-2019 and TPQ-2020 test sets (temporal proximity queries)"
+  ],
+  "baselines": [
+    "Atlas-large (pre-trained RALM model)"
+  ],
+  "metrics": [
+    "Exact Match",
+    "Recall@1",
+    "Recall@5"
+  ],
+  "results": "TempRALM improves Exact Match from 64.84 to 71.72 (32-shot), 74.68 to 75.78 (64-shot), 76.88 to 77.80 (128-shot); Recall@1 improves from 0.54 to 0.63 (TPQ-2019) and 0.24 to 0.64 (TPQ-2020); Recall@5 shows similar gains.",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.7,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "TempRALM augments a specific RALM (Atlas) with a temporal score based on inverse time difference, evaluated on a synthetic tennis dataset. Our idea proposes a retrieval-agnostic temporal relevance component that adjusts passage ranks based on elapsed time between query target date and version timestamp, targeting open-domain QA over continuously amended regulatory documents where amendments create dense semantic overlap across versions. We aim to improve answer accuracy (EM/F1) via a framework applicable to any retriever (dense/sparse), and we propose a benchmark of regulatory documents with overlapping revisions.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T09:50:14.802394Z"
+}

@@ -1,0 +1,45 @@
+{
+  "paper_id": "arxiv:2406.06027",
+  "relevance_tier": "high",
+  "problem": "Given unstructured text, Large Language Models (LLMs) are adept at answering simple (single-hop) questions but performance degrades as question complexity increases due to overhead of understanding complex questions and filtering/aggregating unstructured information.",
+  "method": "We propose to use a knowledge graph (KG) that is context-aware and distilled to contain query-relevant information. The compressed distilled KG is used as input to the LLM, resulting in up to 67% fewer tokens to represent query-relevant information compared to the state-of-the-art method. The method leverages hyper-relational KG to capture nuanced relations.",
+  "key_assumptions": [
+    "A context-aware, query-relevant distilled KG can reduce token overhead and improve LLM reasoning on multi-hop questions.",
+    "Hyper-relational KG representation preserves important relational nuances."
+  ],
+  "main_contribution": "HOLMES introduces a hyper-relational, context-aware distilled KG that reduces token usage by up to 67% and improves performance on EM, F1, BERTScore, and Human Evaluation on HotpotQA and MuSiQue benchmarks.",
+  "datasets": [
+    "HotpotQA",
+    "MuSiQue"
+  ],
+  "benchmarks": [
+    "HotpotQA",
+    "MuSiQue"
+  ],
+  "baselines": [
+    "Unspecified baselines (referenced works: hwa et al., 2023; Robinson et al., 2022; Xu et al., 2023)"
+  ],
+  "metrics": [
+    "Exact Match (EM)",
+    "F1",
+    "BERTScore",
+    "Human Evaluation"
+  ],
+  "results": "\"Our experiments show consistent improvements over the state-of-the-art across several metrics (EM, F1, BERTScore, Human Eval) on HotpotQA and MuSiQue; the method utilizes up to 67% fewer tokens to represent query-relevant information.\"",
+  "limitations": [
+    "Not explicitly stated in the abstract or text; potential limitations include dependence on KG quality and generalizability beyond the two datasets."
+  ],
+  "future_work": [
+    "Not explicitly stated in the abstract or text."
+  ],
+  "code_availability": "[\"Not explicitly stated in the abstract or text.\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.9,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.9,
+    "conceptual_difference": "HOLMES focuses on inference-time use of a context-aware distilled KG to reduce token load, whereas the proposed idea enriches training triples with local context subgraphs, adds an adaptive repair loop, and applies RL transfer to improve multi-hop QA.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T06:42:23.030288Z"
+}

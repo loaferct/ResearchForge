@@ -1,0 +1,32 @@
+{
+  "id": "C003",
+  "statement": "The adaptive repair loop in the idea (detect one-hop failures, generate corrective examples, iteratively refine, clean noisy triples) is already implemented in arxiv:2609.12230 as an LLM-judged, history-aware adaptive repair stage with failure categorization, targeted QA item generation, regression tracking, and quarantine review, applied before RL.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "Second, we introduce an LLM-judged adaptive repair stage inspired by skill-targeted adaptive training (STAT) [23]. This stage checks whether the initial SFT models still contain unresolved one-hop missing knowledge and applies targeted adaptive repair before employing reinforcement learning (RL).",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 6",
+      "quote": "Motivated by these risks, the LLM-judged repair step separates valid missing-knowledge items from unreliable cases. The detailed repair procedure, including failure categorization, targeted QA item generation, regression tracking, and quarantine review, is described in Section 3.6.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "formalize",
+  "tags": [
+    "repair",
+    "overlap"
+  ],
+  "recorded_at": "2026-09-30T05:02:28.065468Z"
+}

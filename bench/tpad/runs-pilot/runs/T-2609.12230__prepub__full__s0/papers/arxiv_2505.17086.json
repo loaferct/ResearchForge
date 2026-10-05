@@ -1,0 +1,42 @@
+{
+  "id": "arxiv:2505.17086",
+  "title": "Advancing Multi-Agent RAG Systems with Minimalist Reinforcement Learning",
+  "authors": [
+    "Yihong Wu",
+    "Liheng Ma",
+    "Muzhi Li",
+    "Jiaming Zhou",
+    "Lei Ding",
+    "Jianye Hao",
+    "Ho-fung Leung",
+    "Irwin King",
+    "Yingxue Zhang",
+    "Jian-Yun Nie"
+  ],
+  "year": 2025,
+  "published": "2025-05-20",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2505.17086",
+  "pdf_url": "https://arxiv.org/pdf/2505.17086v4",
+  "abstract": "Large Language Models (LLMs) equipped with modern Retrieval-Augmented Generation (RAG) systems often employ multi-turn interaction pipelines to interface with search engines for complex reasoning tasks. However, such multi-turn interactions inevitably produce long intermediate contexts, as context length grows exponentially with exploration depth. This leads to a well-known limitation of LLMs: their difficulty in effectively leveraging information from long contexts. This problem is further amplified in RAG systems that depend on in-context learning, where few-shot demonstrations must also be included in the prompt, compounding the context-length bottleneck. To address these challenges, we propose Mujica-MyGo, a unified framework for efficient multi-turn reasoning in RAG. Inspired by the divide-and-conquer principle, we introduce Mujica (Multi-hop Joint Intelligence for Complex Question Answering), a multi-agent RAG workflow that decomposes multi-turn interactions into cooperative sub-interactions, thereby mitigating long-context issues. To eliminate the dependency on in-context learning, we further develop MyGO (Minimalist Policy Gradient Optimization), a lightweight and efficient reinforcement learning algorithm that enables effective post-training of LLMs within complex RAG pipelines. We provide theoretical guarantees for MyGO's convergence to the optimal policy. Empirical evaluations across diverse question-answering benchmarks, covering both text corpora and knowledge graphs, show that Mujica-MyGO achieves superior performance.",
+  "doi": null,
+  "arxiv_id": "2505.17086",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T07:31:30.156759Z",
+  "relevance": 0.5714,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "reinforcement learning multi-hop question answering knowledge graph"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

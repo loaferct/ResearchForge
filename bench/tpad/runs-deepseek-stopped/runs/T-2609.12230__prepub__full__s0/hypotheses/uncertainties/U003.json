@@ -1,0 +1,34 @@
+{
+  "id": "U003",
+  "question": "Is the reported benefit of context-enriched supervision separable from a token-budget/context-length confound, i.e., could any additional context (even irrelevant triples) yield the same gain?",
+  "description": "If the context regime simply gives the model more tokens/examples, gains may not be attributable to same-passage relevance. A relevance ablation (same-passage vs random/shuffled triples at matched budget) is required.",
+  "category": "confounder",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "COMPARE",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "SG-RAG MOT reports that merging/ordering overlapping triplets improves answer precision, indicating that context amount and ordering can matter independently of 'supporting' relevance.",
+  "resolution": "The confounder is confirmed and now evidence-backed: a controlled study found non-answer-path triples contribute only +0.003 F1 while the answer chain carries most of the graph's value (C002), over-retrieval introduces distractors that depress accuracy (C003), and asymmetric prompt/format handling between context and no-context arms manufacturers spurious findings (C007). Mitigation required: matched token budget, identical templates except triple content, a shuffled/random-context arm, and a format-controlled scorer.",
+  "paper_ids": [
+    "doi:10.20944/preprints202505.1992.v1",
+    "arxiv:2609.10237",
+    "arxiv:2509.21035"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.10237",
+    "arxiv:2509.21035"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T05:06:11.599156Z",
+  "updated_at": "2026-09-30T05:16:37.576083Z"
+}

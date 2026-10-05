@@ -1,0 +1,65 @@
+{
+  "id": "G001",
+  "gap": "No retrieval benchmark evaluates version selection over continuously amended legal text at clause granularity: no resource pairs time-stamped queries with ground-truth in-force versions of overlapping, near-duplicate amended clauses and measures retrieval of superseded or not-yet-in-force text. Legal-domain temporal work is either conceptual/prescriptive (explicitly without empirical comparison) or multiple-choice over normative-act relationships without source-text retrieval; temporal retrieval benchmarks with temporal-accuracy metrics exist only for ESG disclosures and financial filings; regulatory retrieval benchmarks have no target dates at all.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2505.20243",
+      "experiment_run_id": null,
+      "location": "p. 24",
+      "quote": "most are focused on static question answering and do not address the temporal dynamics of legal knowledge",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 3",
+      "quote": "The paper does not report a benchmarked empirical comparison of existing systems; its contribution is formal and diagnostic",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2608.21409",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "applied to a new benchmark that encodes temporal validity",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "we further introduce TempFinQA, a point-in-time evaluation protocol built from public filings and XBRL facts",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.2139/ssrn.7087840",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "We construct a 100-question domain-specific evaluation benchmark across four categories (factual, numerical, trend, multihop)",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2505.20243",
+    "arxiv:2606.09724",
+    "arxiv:2608.21409",
+    "doi:10.3390/sym18091498",
+    "doi:10.2139/ssrn.7087840",
+    "doi:10.2139/ssrn.6459080"
+  ],
+  "why_unaddressed": "The temporal QA survey states legal QA datasets are static and do not address the temporal dynamics of legal knowledge; the legal-retrieval framework that formalizes the requirement ('diachronic blindness', 'bitemporal correctness') states explicitly that it reports no benchmarked empirical comparison and is formal and diagnostic; the legal benchmark that encodes temporal validity is a multiple-choice diagnostic that does not evaluate retrieval of source text; the point-in-time evaluation protocol with a temporal-leakage metric exists only for financial filings; and the regulatory retrieval benchmark has no target-date or version dimension.",
+  "research_question": "On a corpus of continuously amended statutes/regulations with near-duplicate successive versions, does valid-time-aware (as-of) temporal re-ranking reduce retrieval of superseded or not-yet-in-force clauses, and improve answer accuracy, compared with semantic-only retrieval and with a recency-decay baseline?",
+  "potential_experiment": "Construct a version-level benchmark from a jurisdiction with machine-readable amendment metadata (e.g., EU legislation under ELI, which encodes date of entry into force and date of applicability): retrieve clauses from a versioned corpus where successive versions are near-duplicates; annotate queries with a target date and the ground-truth in-force clause version, deliberately including target dates whose authoritative version is not the latest; evaluate semantic-only, recency-decay, hard as-of filtering, and valid-time gated re-ranking, reporting version-level temporal contamination alongside answer accuracy.",
+  "confidence": "high",
+  "verification_required": "Re-run literature searches (the paper budget for this session is exhausted) for any amended-statute retrieval benchmark, and confirm that passage/clause-level validity metadata (not only legislation-level dates) can be extracted for the chosen jurisdiction and corpus snapshot.",
+  "recorded_at": "2026-09-30T04:34:08.725943Z"
+}

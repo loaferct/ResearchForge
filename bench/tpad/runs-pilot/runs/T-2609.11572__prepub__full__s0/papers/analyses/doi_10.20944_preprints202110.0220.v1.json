@@ -1,0 +1,28 @@
+{
+  "paper_id": "doi:10.20944/preprints202110.0220.v1",
+  "relevance_tier": "medium",
+  "problem": "The commonly-used large-scale knowledge bases have been facing challenges in open domain question answering tasks which are caused by the loose knowledge association and weak structural logic of triplet-based knowledge.",
+  "method": "Proposes a novel metaknowledge enhanced approach for open domain question answering: automatically extract metaknowledge and build metaknowledge network from Wiki documents, design a graph encoder GE4MK to model the network, and propose a metaknowledge enhanced graph reasoning model MEGr-Net for question answering that aggregates relational and neighboring interactions.",
+  "key_assumptions": [
+    "Metaknowledge extracted from Wiki documents can improve open domain question answering performance.",
+    "Graph reasoning models can effectively utilize metaknowledge for QA."
+  ],
+  "main_contribution": "(1) Metaknowledge enhanced approach for open domain QA; (2) Automatic extraction of metaknowledge from Wiki documents; (3) Graph encoder GE4MK for metaknowledge network modeling; (4) Metaknowledge enhanced graph reasoning model MEGr-Net for QA.",
+  "datasets": [],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [],
+  "results": "\"Experiments have proved the improvement of metaknowledge over main-stream triplet-based knowledge.\"",
+  "limitations": [],
+  "future_work": [],
+  "code_availability": "[]",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.1,
+    "conceptual_difference": "Focuses on metaknowledge extraction from Wiki documents for general open-domain QA, while our idea focuses on temporal relevance weighting based on version timestamps for regulatory document QA.",
+    "basis": "Abstract describes metaknowledge enhanced QA approach."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T10:59:23.867650Z"
+}

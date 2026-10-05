@@ -1,0 +1,625 @@
+[[page 1]]
+Chronofy: A Temporal-Logical Decay Architecture
+for
+Information Validity in Time-Aware
+Retrieval-Augmented Generation
+Muntaser Syed 1, Marius Silaghi 1, Sheikh Abujar 2, Sharun Akter 3
+1Florida Institute of Technology, 2University of Alabama at Birmingham, 3Daffodil International University
+msyed2011@my.fit.edu, msilaghi@fit.edu, sabujar@uab.edu, sharun.cse@diu.edu.bd
+Abstract—Retrieval-Augmented Generation (RAG) systems re-
+trieve and integrate external knowledge to ground large lan-
+guage model (LLM) outputs. However, current RAG architec-
+tures treat all retrieved facts as equally valid regardless of
+temporal provenance, leading totemporal hallucination, where
+plausible but obsolete facts corrupt the output. We present
+Chronofy, a three-layer neuro-symbolic framework implementing
+the Temporal-Logical Decay Architecture (TLDA) that embeds
+temporal validity directly into the representation, retrieval, and
+reasoning layers of RAG systems. Layer 1 reserves a dedicated
+temporal subspace within Matryoshka embeddings to make fact
+age structurally irremovable from the representation. Layer 2
+integrates learnable exponential decay functions into graph-based
+retrieval, where the decay coefficientβ j is grounded in Bayesian
+decision theory as an approximation of twice the latent process
+mean-reversion rate. Layer 3 applies Signal Temporal Logic
+(STL) robustness functions to evaluate thetemporal validity of
+retrieved knowledge, not LLM output confidence, and enforces the
+possibilistic weakest-link principle to bound output confidence
+by the most decayed evidence in the reasoning chain. We
+evaluate Chronofy on temporal knowledge graph forecasting
+benchmarks, the TimE temporal QA benchmark, and a domain-
+specific sensitivity analysis, demonstrating that explicit temporal
+decay modeling improves retrieval precision, reduces temporal
+hallucination, and enables principled data re-acquisition triggers
+when temporal context is insufficient.
+Index Terms—temporal reasoning, information decay,
+retrieval-augmented generation, signal temporal logic, knowledge
+graphs, neuro-symbolic AI
+I. INTRODUCTION
+Consider a clinical decision support system queried about a
+patient’s risk for cardiac arrhythmia. The system retrieves two
+serum potassium readings: one from yesterday (4.1 mEq/L)
+and one from six months ago (3.2 mEq/L). A standard RAG
+pipeline, retrieving by semantic similarity alone, may weight
+both equally, or even prefer the six-month-old reading if it is
+more semantically aligned with the query.
+This failure mode is not confined to clinical settings. In
+financial analytics, market data decays within hours; in legal
+compliance, regulatory interpretations are superseded by new
+rulings. Recent studies have identified a 17% “phantom rate”
+in AI-assisted citations where semantically correct concepts
+are paired with hallucinated temporal metadata [1].
+Existing approaches address fragments of this problem.
+TempValid [2] introduces exponential decay for temporal
+knowledge graph forecasting but operates only at the knowl-
+edge graph layer without RAG integration or formal verifi-
+cation. STAR-RAG [3] provides time-aligned graph summa-
+rization for retrieval but uses structural time costs rather than
+explicit decay functions. Mao et al. [4] apply Signal Temporal
+Logic robustness to LLM chain-of-thought reasoning, but eval-
+uateoutput confidence trajectories, not thetemporal validity
+of the retrieved knowledgefeeding the reasoning chain.
+To our knowledge, no prior work combines temporal decay
+mathematics, time-aware retrieval, and formal temporal logic
+verification in a single end-to-end RAG system.
+We presentChronofy, implementing the Temporal-Logical
+Decay Architecture (TLDA), a three-layer neuro-symbolic
+framework that addresses this gap. Our contributions are:
+1) A three-layer architecture integrating temporal subspace
+embeddings (Layer 1), decay-weighted graph retrieval
+(Layer 2), and STL-based knowledge validity verifica-
+tion (Layer 3) into a unified RAG pipeline.
+2) Application of Signal Temporal Logic robustness to
+knowledge temporal validityrather than LLM confidence
+calibration, with a formal proof that the weakest-link
+principle bounds output confidence by the most decayed
+evidence in the reasoning chain.
+3) A decision-theoretic grounding ofβ j as twice the latent
+process mean-reversion rate under Gaussian dynamics
+(Proposition 1), replacing ad hoc penalties with a prin-
+cipled Bayesian surrogate.
+II. RELATEDWORK
+A. Temporal Decay in Knowledge Graphs
+TempValid [2] parameterizes rule confidence decay via
+exp(−βj∆tij)with learnableβ j per rule, achieving strong
+temporal knowledge graph forecasting results at ACL 2024. It
+operates exclusively at the KG layer without RAG integration
+or formal verification.
+Chronocept [7] models temporal validity as a skew-normal
+distribution, capturing delayed-onset and asymmetric lifecycle
+arXiv:2607.20560v1  [cs.LG]  17 Jul 2026
+
+[[page 2]]
+patterns, but requires LLM-based parameter prediction and
+lacks retrieval or reasoning integration.
+B. Time-Aware Retrieval
+STAR-RAG [3] compresses temporal knowledge graphs into
+compact rule graphs via MDL optimization, achieving 97%
+token reduction through Seeded Personalized PageRank. It
+encodes temporal constraints structurally through MDL edge
+costs rather than explicit, learnable decay functions, limiting
+domain-specific adaptability.
+TMRL [6] dedicates the firsttdimensions of Matryoshka
+embeddings to a temporal subspace, preserving fact age across
+all truncation levels, but does not address retrieval weighting
+or reasoning verification.
+C. Temporal Logic for LLM Reasoning
+Mao et al. [4] model stepwise chain-of-thought confidence
+as a continuous temporal signal and evaluate it using STL con-
+straints for smoothness, monotonicity, and causal consistency.
+A follow-up [5] extends this with discriminative STL mining
+and hypernetworks for question-adaptive parameters.
+Both works apply STL to the LLM’soutput confidence
+trajectory, not to thetemporal validity of the retrieved knowl-
+edgefeeding the reasoning chain. A model can be confidently
+wrong when it retrieves plausible but stale facts. Chronofy
+applies STL robustness to knowledge freshness instead.
+D. Clinical Temporal Reasoning and Information Theory
+Clinical temporal models have progressed from attention-
+based approaches (HiTANet [8]) to LLM-based methods, with
+TIMER-Bench [9] providing the first time-aware EHR bench-
+mark. These systems parameterize temporal attention but lack
+formal verification guarantees. The Age of Information [15]
+and Age of Incorrect Information [16] literatures provide
+formal freshness metrics, while the Value of Information
+framework [13], [14] grounds the expected utility of evidence.
+Chronofy draws on these foundations (Section III-E).
+III. THECHRONOFYFRAMEWORK
+A. Overview
+Chronofy implements a three-layer pipeline operating se-
+quentially over timestamped evidence. Each evidence item
+is represented as a tuplee= (c,t e,q,m)wherecis the
+content,t e is the observation timestamp,q∈(0,1]is a source
+reliability weight, andmencodes metadata (source, modality).
+Layers 1 and 2 build on established techniques (temporal
+embeddings from TMRL, exponential decay from TempValid,
+graph summarization from STAR-RAG); Layer 3’s application
+of STL robustness to knowledge validity and the decision-
+theoretic grounding ofβ(Section III-E) constitute the primary
+novel contributions.
+Given a query at timeT q, the framework: (1) embeds
+all candidate facts into a temporally-aware vector space,
+(2) retrieves a decay-weighted subset via graph traversal, and
+(3) verifies the temporal soundness of the generated reasoning
+via STL robustness scoring. Fig. 1 illustrates the architecture.
+Timestamped Evidencee= (c,t e,q,m)
+Layer 1: Temporal Subspace Embedding
+e= [e temp ;e sem]via sinusoidal PE + LoRA
+Layer 2: Decay-Weighted Graph Retrieval
+w=q e·c(tr j)·exp(−β j·∆t), epistemic filterτ
+Layer 3: STL Knowledge Validity Verification
+ρ(φvalid,π) = min i(v(si)−γ), weakest-link bound
+Verified Output Re-acquire Data
+temporally-aware vectors
+decay-filtered context
+ρ≥0 ρ<0
+Query(q,T q)
+Fig. 1. Chronofy three-layer architecture. Timestamped evidence flows
+through temporal embedding (Layer 1), decay-weighted graph retrieval
+(Layer 2), and STL-verified reasoning (Layer 3). When robustnessρ <0,
+the system triggers data re-acquisition instead of forcing a low-confidence
+prediction.
+B. Layer 1: Representation via Temporal Subspaces
+Following the TMRL paradigm [6], we structure embed-
+dings hierarchically by reserving the firsttdimensions exclu-
+sively for temporal information.
+Definition 1(Temporal Embedding).For an evidence iteme=
+(c,te,q,m), the full embeddinge∈R d is the concatenation:
+e= [e temp ;e sem](1)
+wheree temp =f temp(te,m)∈R t is produced by a temporal
+projection module ande sem∈R d−t encodes semantic content.
+The temporal projection modulef temp is a lightweight
+MLP trained via Low-Rank Adaptation (LoRA) with a Cen-
+tered Kernel Alignment (CKA) contrastive loss that forces
+the temporal subspace to preserve explicit time-cues across
+all Matryoshka truncation scales. For any target dimension
+m≥t, the truncated embedding preserves evidence age,
+preventing semantic similarity from overshadowing temporal
+provenance. Full training details and hyperparameters are
+documented in the open-source implementation; the ablation
+study (Section IV-E) validates the architectural principle using
+a simplified sinusoidal positional encoding that requires no
+training.
+C. Layer 2: Retrieval via Decay-Weighted Graph Traversal
+1) Rule Graph Construction:Following STAR-RAG [3],
+we construct a compact rule graph from the temporal knowl-
+edge base. Individual timestamped events are abstracted into
+categorical rule nodes via the Apriori algorithm, and edges
+are optimized using the Minimum Description Length (MDL)
+principle, which penalizes edges exhibiting erratic temporal
+jumps.
+2) Decay-Weighted Traversal:We integrate an explicit ex-
+ponential decay function into the graph traversal. For a query
+at timeTq and a historical fact with timestampTf , the traversal
+weight of the edge connecting them is:
+
+[[page 3]]
+w(eij) =q e·c(trj)·exp
+ 
+−βj·(Tq−Tf)
+
+(2)
+wherec(trj)is the base semantic confidence of rule trj,βj >0
+is the learnable decay coefficient specific to fact typej, and
+qe is the source reliability weight.
+A largeβ j (e.g.,β≈5.0for vital signs) causes rapid decay,
+whileβ j≈0(e.g., for genetic conditions) preserves evidence
+indefinitely.
+3) Epistemic Filtering:During Seeded Personalized PageR-
+ank, edges withw(e ij)< τare pruned, constituting an
+epistemic filterthat structurally excludes stale evidence from
+the context window.
+Property 1(Retrieval Completeness).Under the decay filter
+with thresholdτ, the retrieved contextC τ excludes all evidence
+itemsesatisfyingq e·c(trj)·exp(−β j·∆t)<τ, guaranteeing
+the LLM receives no evidence below the minimum validity
+threshold.
+D. Layer 3: Reasoning via STL Knowledge Validity Verifica-
+tion
+1) Knowledge Validity as a Temporal Signal:As the
+LLM generates a chain-of-thought reasoning traceπ=
+(s1,s 2,...,s n), we track which retrieved facts are utilized
+at each steps i. Thetemporal validity signalat stepiis:
+v(si) = min
+e∈facts(si)
+qe·exp
+ 
+−βj(e)·(T q−te)
+
+(3)
+This models the temporal freshness of theleast validpiece of
+evidence used at each reasoning step.
+2) STL Specification and Robustness:We define a Signal
+Temporal Logic formula constraining the validity signal:
+φvalid =G [0,n]
+ 
+v(si)≥γ
+
+(4)
+whereG [0,n] is the “globally” operator (the constraint must
+hold at every reasoning step) andγis the minimum acceptable
+validity threshold.
+The quantitative semantics of STL yield a continuousro-
+bustness score:
+ρ(φvalid,π) =
+n
+min
+i=1
+ 
+v(si)−γ
+
+(5)
+Positiveρindicates temporal satisfaction; negativeρflags
+reliance on stale evidence, with magnitude quantifying the
+margin.
+3) Weakest-Link Bound:
+Theorem 1(Decay Propagation Bound).For any reasoning
+chainπ= (s 1,...,s n)utilizing facts{e 1,...,e k}, the maxi-
+mum reliable output confidenceC out is bounded:
+Cout≤
+k
+min
+i=1
+qei·exp
+ 
+−βj(ei)·(Tq−tei)
+
+(6)
+Proof.The reasoning chainπderives its conclusion from
+retrieved premises{e 1,...,e k}via forward chaining. In pos-
+sibilistic logic [12], the necessity measureNof a conjunction
+obeys min-aggregation:
+N(e1∧···∧e k) =
+k
+min
+i=1
+N(ei)(7)
+Under possibilistic Modus Ponens with the min-t-norm, the
+epistemic support for a conclusion derived solely from a set of
+premises cannot exceed the joint necessity of those premises.
+Assigning each premise the temporal validityV(e i,Tq) =q ei·
+exp(−βj(ei)·(Tq−tei))as its necessity degree, the evidence-
+derived output confidence is clamped:C out≤min iV(ei,Tq).
+4) Sequential Exploration Decay Trigger:Ifρ(φ valid,π)<
+0, Chronofy outputs an actionable directive rather than forcing
+a low-confidence prediction:
+“Temporal context insufficient. Data re-acquisition for [fact type]
+required before reliable inference can proceed. ”
+A physician orders new labs rather than acting on stale results;
+Chronofy applies the same principle to RAG.
+E. Decision-Theoretic Grounding ofβ
+The decay coefficientβ j should not be interpreted as an
+arbitrary age penalty. We provide a principled grounding
+by connectingβ j to the dynamics of the latent state being
+measured.
+Proposition 1(Optimal Decay Rate).Let the latent state
+θgoverning fact typejevolve according to an Ornstein-
+Uhlenbeck process:
+dθ=−κ j(θ−µ j)dt+σ jdW(8)
+whereκ j is the mean-reversion rate andσ j is the volatility.
+Under squared-error epistemic loss, the information content
+of a measurement at timet e about the current stateθ t decays
+as:
+I(te→t)∝exp
+ 
+−2κj·(t−t e)
+
+(9)
+Therefore, the optimal decay coefficient isβ j = 2κj.
+Proof sketch.Under the OU dynamics, the posterior variance
+at timetgiven observationy te is Var(θt|y te) = Σ∞(1−
+e−2κj∆t) +Var(θte |y te)e−2κj∆t whereΣ ∞ =σ 2
+j/(2κj).
+The V oI equals(Σ ∞−Var(θte |y te))e−2κj∆t, decaying at
+rate2κ j.
+Property 2(Temporal Invariance Guarantee).When the latent
+process is stationary on the decision horizon (κ j →0
+with boundedσ j/κj), the optimal decay rateβ j →0and
+exp(−βj·∆t)→1for all∆t. Thus, Chronofy correctly
+preserves the value of temporally stable facts (e.g., blood type,
+genetic markers) regardless of age.
+Thusβ j is not a hyperparameter to tune but an approxima-
+tion of twice the mean-reversion rate of the underlying latent
+process [13], [15]. For discrete event types (e.g., geopolitical
+
+[[page 4]]
+TABLE I
+TKGFORECASTING ONICEWS14 (7,535QUERIES). BESTMRRAT
+β=10.0(+9.4%OVER STATIC).
+Method Hits@1 Hits@3 Hits@10 MRR
+Static GraphRAG 0.389 0.667 0.876 0.556
+Recency-only 0.365 0.663 0.873 0.542
+Chronofyβ=0.50.359 0.660 0.872 0.538
+Chronofyβ=5.00.392 0.694 0.897 0.569
+Chronofyβ=10.00.431 0.742 0.925 0.608
+TABLE II
+TKGFORECASTING ONGDELT (330,827QUERIES). CHRONOFY
+ACHIEVES+48.9% MRROVER STATIC.
+Method Hits@1 Hits@3 Hits@10 MRR
+Static GraphRAG 0.110 0.212 0.371 0.197
+Recency-only 0.059 0.112 0.176 0.105
+Chronofyβ=0.10.168 0.315 0.496 0.276
+Chronofyβ=0.30.185 0.338 0.5090.293
+Chronofyβ=0.50.184 0.336 0.508 0.292
+actions in GDELT), the OU process models the latent contin-
+uous driver (e.g., diplomatic tension) whose intensity governs
+the rate at which categorical events are generated.
+IV. EXPERIMENTALEVALUATION
+All experiments use an NVIDIA RTX 4090 GPU with 64GB
+RAM.
+A. Experiment 1: Decay-Weighted TKG Retrieval
+1) Setup:We evaluate on ICEWS14 [11], a temporal
+knowledge graph benchmark with 7,535 test queries over
+timestamped relational triples. We construct rule graphs from
+training data using the Apriori algorithm and compare retrieval
+with and without exponential decay weighting during Person-
+alized PageRank.
+2) Results:Chronofy withβ= 10.0achieves MRR 0.608,
+a 9.4% improvement over static retrieval. The high optimal
+βreflects the rapid dynamics of political event data. Naive
+recencydegradesperformance (MRR 0.542), showing that
+raw recency without semantic confidence modulation is in-
+sufficient.
+B. Experiment 2: Cross-Domain Generalization on GDELT
+1) Setup:We evaluate on GDELT [11], a larger TKG with
+2.3M training events, 330K test queries, and 20 CAMEO
+relation types with heterogeneous temporal dynamics.
+2) Results:Chronofy achieves a 48.9% MRR improve-
+ment (0.293vs.0.197), while recency-only is catastrophic
+(MRR 0.105,−46.7%). Table III shows per-relationβ ∗ het-
+erogeneity.
+Optimalβ ∗ ranges from 0.3 for diplomatic actions (slower
+decay) to 0.5–0.6 for conflict events (faster decay), directly
+supporting the claim thatβ j should be learned per fact type.
+C. Experiment 3: STL Robustness for Knowledge Validity
+1) Setup:We evaluate on the TimE-Lite News subset [10],
+comprising 897 temporal QA pairs, using Gemini 2.5 Flash
+as the reasoning LLM. For each question, we annotate each
+TABLE III
+PER-RELATION OPTIMALβ ∗ ONGDELT,VALIDATINGPROPOSITION1.
+Relation Typen β ∗ MRR∗
+Make Public Statement 90,414 0.3 0.226
+Diplomatic Cooperation 24,531 0.3 0.299
+Consult 24,023 0.3 0.361
+Appeal 44,260 0.3 0.257
+Provide Aid 19,590 0.4 0.328
+Reduce Relations 4,079 0.6 0.397
+Assault 3,044 0.5 0.503
+Fight 1,177 0.5 0.512
+TABLE IV
+STLROBUSTNESS EVALUATION ONTIME-LITENEWS(897QUESTIONS).
+Metric Value
+Overall accuracy 0.487
+AUROC (robustnessρ) 0.479
+AUROC (LLM confidence) 0.556
+STL satisfaction rate 70.6%
+Confidently-wrong cases 341 / 897
+caught byρ<084 / 341 (24.6%)
+context passage with its temporal validityV= exp(−β·∆t)
+(β= 0.001for news), track which contexts are used in chain-
+of-thought reasoning, and compute the STL robustness score
+ρvia Eq. 5.
+2) Results:The robustness AUROC (0.479) does not out-
+perform LLM confidence (0.556) as a binary discriminator
+on this closed-context benchmark, where all evidence is pre-
+selected as relevant. STL robustness identifies 24.6% ofconfi-
+dently wrongoutputs, where the LLM assigns high confidence
+despite answering incorrectly. On this closed-context bench-
+mark, all passages are pre-selected as topically relevant, which
+compresses the variance of temporal validity scores and limits
+ρ’s discriminative range.
+D. Experiment 4: ClinicalβSensitivity Analysis
+1) Setup:We construct a clinical temporal knowledge
+graph from MIMIC-IV [18], comprising 100 patients with
+127,406 timestamped events across four categories: vital signs
+(78,441 events), lab results (26,172), prescriptions (18,087),
+and diagnoses (4,506). For each category, we sweepβ∈
+[0,10]and measure temporal retrieval MRR.
+2) Results:Diagnoses achieve perfect retrieval withβ ∗=0,
+validating the Temporal Invariance Guarantee (Property 2).
+Lab results require the highest decay rate (β∗=0.05), reflecting
+transient physiological states. The orderingβ ∗
+dx < β∗
+vital ≈
+β∗
+rx < β∗
+lab aligns with clinical intuition and directly validates
+Proposition 1.
+E. Experiment 5: End-to-End RAG Accuracy
+1) Setup:We run a full RAG pipeline on TimE-Lite News
+(897 questions) using Gemini 2.5 Flash with top-5 retrieved
+contexts, comparing vanilla (cosine similarity), recency, oracle
+proximity (gold timestamp), and parsed proximity (extracted
+temporal focus).
+
+[[page 5]]
+TABLE V
+OPTIMALβ ∗ BY CLINICAL FACT CATEGORY(MIMIC-IV),VALIDATING
+PROPERTY2.
+Category Eventsβ ∗ MRR∗
+Vital signs 78,441 0.001 0.198
+Lab results 26,172 0.05 0.377
+Prescriptions 18,087 0.001 0.792
+Diagnoses 4,506 0.0 1.000
+TABLE VI
+END-TO-ENDRAGACCURACY ONTIME-LITENEWS(897QUESTIONS,
+GEMINI2.5 FLASH).
+MethodβAccuracy Gold@5∆Acc
+Vanilla – 0.450 0.341 –
+Recency 0.001 0.381 0.200−15.3%
+Oracle proximity 0.050.4880.498 +8.4%
+Parsed proximity 0.001 0.459 0.337 +2.0%
+2) Results:Table VI confirms that retrieval-level improve-
+ments transfer to end-to-end accuracy. Oracle temporal prox-
+imity yields an 8.4% accuracy gain (0.488 vs. 0.450), while
+recency degrades accuracy by 15.3% (0.381), consistent with
+the TKG experiments. The parsed variant, limited by 37.8%
+temporal focus extraction coverage, shows a modest 2.0%
+gain, identifying temporal focus parsing as the primary de-
+ployment bottleneck.
+F . Experiment 6: Layer Ablation Study
+1) Setup:We ablate on TimE-Lite News (897 questions)
+using oracle temporal focus and Gold@5. Layer 1 uses si-
+nusoidal positional encoding; Layer 2 uses exponential decay
+reranking (score=sim·exp(−β|∆t|)); Layer 3 abstains when
+weakest-link validityρ= min i exp(−β|∆ti|)<γ. We sweep
+t∈{4,8,16,32,64},β∈[0.001,0.2], andγ∈[0.1,0.9].
+2) Results:Layer 2 (decay reranking) is the dominant
+contributor, lifting Gold@5 from 0.341 to 0.567 (+66.3%).
+Layer 1 (temporal embedding) provides a smaller but real
+independent improvement (+12.7%). The layers compose: the
+full pipeline achieves 0.593, a 4.5% gain over Layer 2 alone,
+showing that temporal embedding provides complementary
+signal beyond post-hoc reranking. The optimal temporal sub-
+space is compact (t=4in the full model), indicating that even
+a small temporal footprint suffices when paired with explicit
+decay.
+3) Layer 3: STL Verification as Quality Gate:Layer 3
+operates differently from Layers 1–2: rather than improving
+retrieval, it provides a post-retrieval quality gate. Table VIII
+shows the precision/coverage tradeoff when the system ab-
+stains on questions where the weakest-link validity falls below
+thresholdγ.
+Without temporal retrieval (semantic-only), Layer 3 pro-
+vides real discrimination: atγ=0.9, precision rises from
+0.341 to 0.469 (+37.5%), and abstained questions have lower
+Gold@5 (0.274), showing that STL correctly identifies unre-
+liable retrievals. When Layers 1–2 are active, the gate rarely
+triggers (meanρ= 0.965) because decay-weighted retrieval
+already ensures temporal proximity. The safety net stays quiet
+TABLE VII
+LAYER ABLATION ONTIME-LITENEWS(897QUESTIONS,ORACLE
+TEMPORAL FOCUS).
+Variant Config Gold@5∆
+Semantic-only — 0.341 —
++Layer 1 onlyt=640.385 +12.7%
++Layer 2 onlyβ=0.20.567 +66.3%
+Full (L1+L2)t=4,β=0.20.593+73.9%
+TABLE VIII
+LAYER3 STLGATING:PRECISION VS.COVERAGE. LAYER3IS MOST
+IMPACTFUL WHEN RETRIEVAL LAYERS ARE ABSENT.
+VariantγCoverage Precision Abstain G@5
+Semantic-only
+all 100% 0.341 —
+0.7 48.4% 0.396 0.289
+0.9 34.5%0.4690.274
+Full (L1+L2) all 100% 0.593 —
+0.7 96.3% 0.578 1.000
+when upstream layers work, but provides protection when they
+do not.
+G. Summary of Findings
+Across all benchmarks, four findings hold: (1) explicit tem-
+poral decay improves retrieval over static baselines; (2) naive
+recency is harmful, and learned decay weighted by semantic
+confidence outperforms pure recency in every experiment;
+(3) optimalβvaries from0(stable diagnoses) to10.0(political
+events), requiring domain-specific learning; and (4) temporal
+embedding and decay reranking provide complementary ben-
+efits.
+V. DISCUSSION
+A. The Role of Layer 3
+Layer 3 (STL verification) provides calibrated abstention
+rather than retrieval improvement. Without temporal retrieval,
+it delivers a 37.5% precision gain; with Layers 1–2 active, the
+gate stays quiet. This is the expected behavior: a verification
+layer adds value when upstream components fail.
+B. Limitations
+We evaluated five decay families (exponential, linear,
+power-law, Weibull, half-life) on ICEWS14 and found ex-
+ponential offers the strongest theoretical grounding (Proposi-
+tion 1) with only a single interpretable parameter (β j = 2κj),
+despite marginal gains from Weibull on individual metrics. The
+exponential form cannot capture non-monotonic lifecycles or
+sudden regime shifts; skew-normal [7] or non-parametric [17]
+alternatives address these at the cost of computational over-
+head.
+Proposition 1 assumes stationary Gaussian dynamics; under
+non-stationary or heavy-tailed processes, the exponential form
+remains a first-order approximation, and the learnedβcom-
+pensates for model mismatch empirically, as the per-relation
+β∗ heterogeneity in Tables III and V demonstrates.
+Theβparameters require domain expertise or labeled data
+for learning; cold-start calibration in novel domains remains
+open.
+
+[[page 6]]
+The ablation uses oracle temporal focus (gold timestamps),
+representing an upper bound; in deployment, parsing coverage
+(37.8%) remains a bottleneck that a dedicated temporal tagger
+would address. The full pipeline adds under 5ms overhead
+per query (RTX 4090): Layer 1 concatenation is negligible,
+Layer 2 decay evaluation and Layer 3min()each add<1ms.
+C. Connection to IRI and Broader Applicability
+Chronofy addresses a fundamental IRI challenge: deter-
+miningwhenpreviously captured information remains valid
+for reuse. The architecture is domain-agnostic; applying
+Chronofy’s decay weighting to chunk-overlap and dense vector
+retrieval pipelines is a direct next step. The framework is
+released as an open-source Python package. 1
+VI. CONCLUSION
+We presented Chronofy, a three-layer neuro-symbolic
+framework that integrates temporal decay mathematics, time-
+aware retrieval, and Signal Temporal Logic verification into
+a unified RAG pipeline. Our key contributions are: (1) the
+novel application of STL robustness to knowledge tempo-
+ral validity rather than output confidence; (2) the decision-
+theoretic grounding of exponential decay in latent process
+dynamics via Proposition 1; and (3) the weakest-link bound
+(Theorem 1) providing formal guarantees on output confidence
+under temporal decay.
+Future work will extend Chronofy with learned hazard func-
+tions for non-monotonic lifecycles and agentic re-acquisition.
+We conjecture that any valuation satisfying continuity, dy-
+namic sufficiency, Blackwell monotonicity, and temporal in-
+variance admits a representation as expected improvement in
+a strictly proper epistemic score.
+REFERENCES
+[1] H. K. ˙Ilter, “The 17% gap: Quantifying epistemic decay in AI-assisted
+survey papers,”arXiv preprint arXiv:2601.17431, 2026.
+[2] R. Huang, W. Wei, X. Qu, S. Zhang, D. Chen, and Y . Cheng,
+“Confidence is not timeless: Modeling temporal validity for rule-based
+temporal knowledge graph forecasting,” inProc. ACL, 2024, pp. 10783–
+10794.
+[3] Z. Zhu, H. Liu, M. He, and S. Luo, “Right answer at the right time—
+Temporal retrieval-augmented generation via graph summarization,”
+arXiv preprint arXiv:2510.16715, 2025.
+[4] Z. Mao, A. Bisliouk, R. Nama, and I. Ruchkin, “Temporalizing con-
+fidence: Evaluation of chain-of-thought reasoning with signal temporal
+logic,” inProc. BEA Workshop, 2025, pp. 882–890.
+[5] Z. Maoet al., “Confidence over time: Confidence calibration with
+temporal logic for large language model reasoning,”arXiv preprint
+arXiv:2601.13387, 2026.
+[6] T. Huynhet al., “Efficient temporal-aware Matryoshka adaptation for
+temporal information retrieval,”arXiv preprint arXiv:2601.05549, 2026.
+[7] K. Goel, S. Pandey, K. S. Mahadevan, H. Kumar, and V . Khadaria,
+“Chronocept: Instilling a sense of time in machines,”arXiv preprint
+arXiv:2505.07637, 2025.
+[8] J. Luo, M. Ye, C. Xiao, and F. Ma, “HiTANet: Hierarchical time-aware
+attention networks for risk prediction on electronic health records,” in
+Proc. KDD, 2020, pp. 647–656.
+[9] C. Cui, S. Fries, N. Shah, and S. Koyejo, “TIMER: Temporal instruction
+modeling and evaluation for longitudinal clinical records,”npj Digital
+Medicine, 2025.
+1https://pypi.org/project/chronofy/
+[10] S. Wei, W. Li, F. Song, W. Luo, T. Zhuang, H. Tan, Z. Guo, and H. Wang,
+“TimE: A multi-level benchmark for temporal reasoning of LLMs in
+real-world scenarios,” inProc. NeurIPS(Spotlight), 2025.
+[11] A. Garc ´ıa-Dur´an, S. Duman ˇci´c, and M. Niepert, “Learning sequence
+encoders for temporal knowledge graph completion,” inProc. EMNLP,
+2018.
+[12] D. Dubois and H. Prade, “40 years of research in possibilistic logic,” in
+Proc. IJCAI, 2025, pp. 10427–10435.
+[13] H. Raiffa and R. Schlaifer,Applied Statistical Decision Theory. Boston,
+MA: Harvard Univ. Press, 1961.
+[14] R. A. Howard, “Information value theory,”IEEE Trans. Syst. Sci.
+Cybern., vol. 2, no. 1, pp. 22–26, 1966.
+[15] A. Kosta, N. Pappas, A. Ephremides, and V . Angelakis, “The cost of
+delay in status updates and their value: Non-linear ageing,”IEEE Trans.
+Commun., vol. 68, no. 8, pp. 4905–4918, 2020.
+[16] A. Maatouk, S. Kriouile, M. Assaad, and A. Ephremides, “The age of
+incorrect information: A new performance metric for status updates,”
+IEEE/ACM Trans. Netw., vol. 28, no. 5, pp. 2215–2228, 2020.
+[17] H. Mei and J. Eisner, “The neural Hawkes process: A neurally self-
+modulating multivariate point process,” inProc. NeurIPS, 2017.
+[18] A. Johnsonet al., “MIMIC-IV , a freely accessible electronic health
+record dataset,”Scientific Data, vol. 10, no. 1, p. 1, 2023.

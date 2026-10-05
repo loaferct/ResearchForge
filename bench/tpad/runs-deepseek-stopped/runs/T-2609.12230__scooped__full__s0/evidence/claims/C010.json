@@ -1,0 +1,33 @@
+{
+  "id": "C010",
+  "statement": "Adjacent literature already treats two of the listed distinctions as known concerns in nearby settings: adaptive control of subgraph expansion is an explicit motivation for EntropyRAG (2026, GNN-based entropy-aware retrieval with soft-prompt injection of the subgraph, evaluated on WebQSP/CWQ), and systematic comparisons of augmentation strategies (RAG vs fine-tuning across twelve LMs and several fine-tuning methods) exist in arxiv:2403.01432. Neither performs a matched-token/matched-example comparison between supervision regimes, so the distinctions remain unclaimed for the idea's exact setting, but context-size control and augmentation-strategy comparison are not themselves novel ideas.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "doi:10.2139/ssrn.6794971",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "lack adaptive control over subgraph expansion during retrieval",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2403.01432",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "This paper explores and evaluates the impact of RAG and FT on customizing LMs in handling low-frequency entities on question answering tasks.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "challenge",
+    "context-size",
+    "adjacent"
+  ],
+  "recorded_at": "2026-09-30T05:17:41.367457Z"
+}

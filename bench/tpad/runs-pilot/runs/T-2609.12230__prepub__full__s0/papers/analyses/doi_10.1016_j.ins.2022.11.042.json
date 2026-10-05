@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.1016/j.ins.2022.11.042",
+  "relevance_tier": "high",
+  "problem": "Multi-hop KGQA suffers from incomplete knowledge graphs and delayed rewards in reinforcement learning, making it difficult to learn effective reasoning policies.",
+  "method": "Introduces an anticipation embedding into the reinforcement learning framework to predict future rewards and guide the agent toward more promising reasoning paths in incomplete KGs.",
+  "key_assumptions": [
+    "Anticipation embeddings can accurately estimate future rewards based on current state and action.",
+    "Incorporating anticipation reduces the sparsity of rewards in RL for KGQA."
+  ],
+  "main_contribution": "An anticipation-enhanced reinforcement learning method for multi-hop KGQA that improves reward propagation and reasoning accuracy.",
+  "datasets": [
+    "not stated in abstract"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"not stated in abstract\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.85,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "The paper uses anticipation embedding for RL, whereas our idea proposes context subgraph enrichment and an adaptive repair loop before applying RL on lower-hop instances.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:35:50.697774Z"
+}

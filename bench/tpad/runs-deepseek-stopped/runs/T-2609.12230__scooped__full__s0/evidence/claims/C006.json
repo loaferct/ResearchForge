@@ -1,0 +1,33 @@
+{
+  "id": "C006",
+  "statement": "In the closest work, repair effort is deliberately unequal across error categories (different numbers of generated repair QA items per failure type), and the validation set itself is edited by the repair loop (invalid triples removed; questions for unlearned triples regenerated and re-evaluated). Both practices make the reported post-repair accuracy gains partly attributable to training-data allocation choices and to evaluation-set modification rather than to knowledge repair alone.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 15",
+      "quote": "Since different errors reflect different levels of difficulty, we do not use the same number of repair examples for all failed triples.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 16",
+      "quote": "Invalid triples are removed from the validation set, because repairing the model on unsupported or noisy facts would introduce incorrect supervision. For unlearned triples, validation questions are regenerated and then re-evaluated using",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "critique",
+    "confounder",
+    "repair"
+  ],
+  "recorded_at": "2026-09-30T05:12:53.200545Z"
+}

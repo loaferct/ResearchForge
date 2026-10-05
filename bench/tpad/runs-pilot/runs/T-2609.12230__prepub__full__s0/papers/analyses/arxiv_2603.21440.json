@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2603.21440",
+  "relevance_tier": "high",
+  "problem": "LLMs struggle with knowledge-intensive reasoning tasks such as KBQA requiring accurate multi-hop reasoning; existing approaches use sequential reasoning steps guided by predefined pipelines, restricting flexibility and causing error cascades due to isolated reasoning at each step.",
+  "method": "Proposes KG-Hopper, a novel RL framework that empowers compact open LLMs to perform integrated multi-hop KG reasoning within a single inference round by training a Reasoning LLM that embeds the entire KG traversal and decision process into a unified “thinking” stage, enabling global reasoning over cross-step dependencies and dynamic path exploration with backtracking.",
+  "key_assumptions": [
+    "Embedding the entire KG traversal in an LLM can capture cross-step dependencies and mitigate local biases.",
+    "RL can effectively train LLMs to utilize KG retrieval tools for multi-hop reasoning."
+  ],
+  "main_contribution": "KG-Hopper, based on a 7B-parameter LLM, consistently outperforms larger multi-step systems (up to 70B) and achieves competitive performance with proprietary models such as GPT-3.5-Turbo and GPT-4o-mini, while remaining compact, open, and data-efficient; code publicly available.",
+  "datasets": [
+    "eight KG reasoning benchmarks (not named)"
+  ],
+  "benchmarks": [
+    "those eight benchmarks"
+  ],
+  "baselines": [
+    "larger multi-step systems (up to 70B), proprietary models such as GPT-3.5-Turbo and GPT-4o-mini"
+  ],
+  "metrics": [
+    "not stated in abstract (likely Hits@1 or accuracy)"
+  ],
+  "results": "[\"Outperforms larger multi-step systems; achieves competitive performance with GPT-3.5-Turbo and GPT-4o-mini.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"https://github.com/Wangshuaiia/KG-Hopper\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "The paper uses RL to train an LLM to embed KG traversal in a single inference step, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T08:07:38.791404Z"
+}

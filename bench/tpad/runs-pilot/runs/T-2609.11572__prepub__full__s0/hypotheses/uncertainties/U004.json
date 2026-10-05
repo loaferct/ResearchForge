@@ -1,0 +1,27 @@
+{
+  "id": "U004",
+  "question": "Which metrics should be used to measure answer accuracy in the QA benchmark for evaluating temporal-semantic retrieval?",
+  "description": "While Exact Match and F1 are standard for QA, we need to confirm if other metrics (e.g., precision@k, MRR) are more appropriate for retrieval-augmented QA.",
+  "category": "evaluation",
+  "importance": "low",
+  "status": "resolved",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "READ"
+  ],
+  "confidence": 0.9,
+  "confidence_basis": "Standard practice in open-domain QA evaluation as seen in datasets like SQuAD, Natural Questions, etc.",
+  "rationale": "In retrieval-augmented QA, retrieval metrics (e.g., recall@k) and end-to-end QA metrics both matter. We should decide which to prioritize.",
+  "resolution": "Standard QA metrics Exact Match and F1 are appropriate for measuring answer accuracy in the benchmark, supplemented by retrieval metrics like Recall@k and MRR to evaluate the retrieval component.",
+  "paper_ids": [],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T10:14:15.753460Z",
+  "updated_at": "2026-09-30T10:31:36.129513Z"
+}

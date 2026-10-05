@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2203.10321",
+  "title": "Sequence-to-Sequence Knowledge Graph Completion and Question Answering",
+  "authors": [
+    "Apoorv Saxena",
+    "Adrian Kochsiek",
+    "Rainer Gemulla"
+  ],
+  "year": 2022,
+  "published": "2022-01-01",
+  "venue": "Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+  "url": "https://doi.org/10.18653/v1/2022.acl-long.201",
+  "pdf_url": "https://aclanthology.org/2022.acl-long.201.pdf",
+  "abstract": "Knowledge graph embedding (KGE) models represent each entity and relation of a knowledge graph (KG) with low-dimensional embedding vectors.These methods have recently been applied to KG link prediction and question answering over incomplete KGs (KGQA).KGEs typically create an embedding for each entity in the graph, which results in large model sizes on real-world graphs with millions of entities.For downstream tasks these atomic entity representations often need to be integrated into a multi stage pipeline, limiting their utility.We show that an off-the-shelf encoder-decoder Transformer model can serve as a scalable and versatile KGE model obtaining state-of-the-art results for KG link prediction and incomplete KG question answering.We achieve this by posing KG link prediction as a sequence-tosequence task and exchange the triple scoring approach taken by prior KGE methods with autoregressive decoding.Such a simple but powerful method reduces the model size up to 98% compared to conventional KGE models while keeping inference time tractable.After finetuning this model on the task of KGQA over incomplete KGs, our approach outperforms baselines on multiple large-scale datasets without extensive hyperparameter tuning. 1",
+  "doi": "10.18653/v1/2022.acl-long.201",
+  "arxiv_id": "2203.10321",
+  "openalex_id": "W4285172793",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 152,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T05:04:23.598750Z",
+  "relevance": 0.0714,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "ComplexWebQuestions WebQuestionsSP MetaQA multi-hop KGQA benchmark evaluation"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

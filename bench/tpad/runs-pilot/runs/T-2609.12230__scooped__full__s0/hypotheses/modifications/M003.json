@@ -1,0 +1,28 @@
+{
+  "id": "M003",
+  "title": "Curriculum learning with staged reinforcement learning",
+  "description": "Introduce a curriculum that first trains on 1‑hop QA with context enrichment and adaptive repair, then progressively adds 2‑hop, 3‑hop, etc., applying reinforcement learning at each stage before moving to the next hop count, rather than a single RL phase after repair.",
+  "why_differs": "The proposed idea and arXiv:2609.12230 apply RL after a single repair stage on lower‑hop QA items. UniKGQA and Co‑E do not use RL. A staged curriculum allows the model to solidify foundational reasoning before tackling longer chains, potentially improving stability and performance.",
+  "technical_mechanism": "For hop level h = 1 to H_max: generate QA items of exactly h hops from the KG (or context‑augmented KG), perform supervised fine‑tuning with context enrichment, run the adaptive repair loop to clean the hop‑h model, then apply reinforcement learning using the hop‑h QA items as training episodes; the resulting policy is used to initialize the next hop level.",
+  "expected_benefit": "Better transfer learning across hop counts, reduced catastrophic forgetting, and improved performance on the highest‑hop benchmarks.",
+  "potential_novelty": "Curriculum‑staged RL in the context of context‑enriched triple training and adaptive repair has not been explicitly explored for multi‑hop QA.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Requires generating hop‑specific QA datasets and looping the training‑repair‑RL pipeline, but each stage reuses the same codebase.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Ablation studies can compare final performance with staged RL vs. single‑stage RL and baselines.",
+  "main_risk": "If the curriculum advances too quickly, the model may not adequately learn lower‑hop patterns, causing instability.",
+  "required_baselines": [
+    "single‑stage RL after repair (as in arXiv:2609.12230)",
+    "no RL"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2601.01195",
+    "arxiv:2212.00959"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T07:11:15.700778Z"
+}

@@ -1,0 +1,65 @@
+{
+  "id": "E001",
+  "title": "Evaluating Cross-Passage Context Enrichment with External KG-Verified Adaptive Repair and Staged RL Transfer for Multi-Hop QA",
+  "research_question": "Does fine-tuning language models on context-enriched triple subgraphs that incorporate cross-passage evidence and using external KG-verified adaptive repair, followed by staged RL transfer, yield higher multi-hop QA EM/F1 on open-domain benchmarks than training on isolated triples or on same-passage context alone?",
+  "hypothesis": "The proposed method will achieve higher EM/F1 scores on HotpotQA, MuSiQue, WebQSP, and CWQ compared to baselines that use isolated triples, same-passage context only, or lack external verification and staged RL.",
+  "proposed_method": "1. Retrieve triples from a large KG (e.g., Wikidata) aligned with text corpus (e.g., Wikipedia). \n2. For each target triple (or path) from QA dataset, extract the source passage(s) and gather triples from the same passage (local context) and from other passages containing the same entities (cross-passage context) using a dense retriever (DPR) and triple extraction (OpenIE). \n3. Form a context subgraph combining local and cross-passage triples, limited to top-k by relevance. \n4. Fine-tune a language model (T5-base) under two regimes: KG-grounded (target triple only) and CG-grounded (target triple + context subgraph). \n5. Apply adaptive repair loop: after each epoch, detect one-hop failures (low confidence on single-hop QA), generate corrective examples by querying an external KG (Wikidata) for triples involving the same entities, and replace or augment the training data with verified triples. \n6. After repair, apply reinforcement learning in a staged curriculum: start with 1-hop QA, then 2-hop, etc., using policy gradient rewards based on QA accuracy. \n7. Evaluate on held-out multi-hop QA sets.",
+  "baselines": [
+    "Isolated triple training (target triple only)",
+    "Same-passage context enrichment (as in arXiv:2609.12230)",
+    "Context enrichment without adaptive repair",
+    "Context enrichment with adaptive repair but no external verification",
+    "Context enrichment with adaptive repair and external verification but no staged RL (single-stage RL after repair)",
+    "UniKGQA",
+    "Co-E",
+    "SG-RAG MOT"
+  ],
+  "datasets": [
+    "HotpotQA",
+    "MuSiQue",
+    "WebQSP",
+    "CWQ"
+  ],
+  "workloads": [
+    "Training on QA pairs derived from the datasets and KG"
+  ],
+  "hardware": "4x NVIDIA V100 GPUs",
+  "software_environment": "PyTorch, HuggingFace Transformers, DPR, OpenIE, Wikidata API",
+  "metrics": [
+    "Exact Match (EM)",
+    "F1 score",
+    "Hits@1 (for KGQA)",
+    "Transfer performance (improvement on 3-hop vs 2-hop)"
+  ],
+  "ablations": [
+    "No cross-passage context (only local)",
+    "No external verification in repair (LLM-judged only)",
+    "No staged RL (single-stage after repair)",
+    "No adaptive repair (direct to RL)"
+  ],
+  "controls": [
+    "Same model size",
+    "Same total training steps",
+    "Same optimizer (AdamW)",
+    "Same learning rate schedule",
+    "Same random seed"
+  ],
+  "confounders_addressed": [],
+  "expected_outcomes": "The full method should outperform baselines, demonstrating the value of cross-passage context, external verification, and staged RL.",
+  "failure_conditions": [
+    "If triple extraction noise is too high, performance may degrade",
+    "If external KG is misaligned, verification may filter useful triples"
+  ],
+  "reproducibility_notes": "Provide code, data splits, and hyperparameters.",
+  "related_modification_id": null,
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2212.00959",
+    "arxiv:2607.23278",
+    "doi:10.20944/preprints202505.1992.v1",
+    "doi:10.5753/sbbd.2025.247297"
+  ],
+  "execution": null,
+  "status": "planned",
+  "recorded_at": "2026-09-30T07:27:58.959023Z"
+}

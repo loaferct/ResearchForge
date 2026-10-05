@@ -1,0 +1,225 @@
+{
+  "field_name": "Time-aware retrieval-augmented question answering over evolving, time-stamped and versioned documents",
+  "categories": [
+    {
+      "name": "Temporal QA benchmarks and datasets",
+      "parent": null,
+      "description": "Resources that pair time-dependent questions with an explicit temporal context or target date.",
+      "paper_ids": [
+        "arxiv:2505.20243"
+      ]
+    },
+    {
+      "name": "Web / open-domain temporal QA benchmarks",
+      "parent": "Temporal QA benchmarks and datasets",
+      "description": "Datasets built from web or open-retrieval QA where answers drift with the question's date (e.g., SituatedQA, TimeQA).",
+      "paper_ids": [
+        "arxiv:2109.06157",
+        "arxiv:2505.20243"
+      ]
+    },
+    {
+      "name": "Domain temporal benchmarks (ESG, financial, regulatory)",
+      "parent": "Temporal QA benchmarks and datasets",
+      "description": "Domain-specific corpora with time-stamped or as-of queries: ESG disclosures, SEC filings, central-bank reports.",
+      "paper_ids": [
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.3390/sym18091498",
+        "doi:10.2139/ssrn.7087840"
+      ]
+    },
+    {
+      "name": "Temporal retrieval mechanisms",
+      "parent": null,
+      "description": "Methods that change which evidence is retrieved depending on time, rather than only how it is read.",
+      "paper_ids": [
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.1109/iri69576.2026.00090",
+        "doi:10.3390/sym18091498"
+      ]
+    },
+    {
+      "name": "Graded temporal decay / recency weighting",
+      "parent": "Temporal retrieval mechanisms",
+      "description": "Temporal relevance decays with elapsed time (exponential decay, learnable decay coefficients), treating recency as validity.",
+      "paper_ids": [
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.1109/iri69576.2026.00090"
+      ]
+    },
+    {
+      "name": "Hard as-of / validity-interval filtering",
+      "parent": "Temporal retrieval mechanisms",
+      "description": "Evidence is admitted only if publicly available / in force at the query's as-of date, a binary temporal boundary rather than a graded score.",
+      "paper_ids": [
+        "doi:10.3390/sym18091498"
+      ]
+    },
+    {
+      "name": "Timestamp-aware representation learning",
+      "parent": "Temporal retrieval mechanisms",
+      "description": "Time is encoded into embeddings or model parameters (temporal subspaces, timestamp-conditioned encoders) instead of the ranking score.",
+      "paper_ids": [
+        "doi:10.1109/iri69576.2026.00090",
+        "doi:10.1109/bigdata66926.2025.11402566"
+      ]
+    },
+    {
+      "name": "Iterative / decomposed temporal RAG",
+      "parent": "Temporal retrieval mechanisms",
+      "description": "Retrieval pipelines that decompose underspecified temporal queries and re-retrieve/re-rank with explicit time anchors (e.g., TimeR4, TimeRAG, TempRALM, as reviewed by the survey).",
+      "paper_ids": [
+        "arxiv:2505.20243"
+      ]
+    },
+    {
+      "name": "Reader-side temporal reasoning",
+      "parent": null,
+      "description": "Approaches that leave retrieval unchanged and improve the reader's ability to reason over times (temporal graph fusion, temporal-aware embeddings plus contrastive RL).",
+      "paper_ids": [
+        "doi:10.18653/v1/2023.findings-emnlp.67",
+        "doi:10.18653/v1/2024.findings-emnlp.848"
+      ]
+    },
+    {
+      "name": "Static document retrieval over regulatory / legal corpora",
+      "parent": null,
+      "description": "Sparse, dense and hybrid retrieval benchmarks and systems over regulatory documents with no temporal dimension (no target dates, no versions).",
+      "paper_ids": [
+        "doi:10.2139/ssrn.7087840",
+        "arxiv:2505.20243"
+      ]
+    },
+    {
+      "name": "Temporal QA surveys and meta-analysis",
+      "parent": null,
+      "description": "Work that catalogues tasks, datasets and open challenges without proposing a method or benchmark.",
+      "paper_ids": [
+        "arxiv:2505.20243"
+      ]
+    }
+  ],
+  "idea_position": "The idea sits at the intersection of 'Temporal retrieval mechanisms' (it adopts a graded temporal relevance/decay signal of the kind in the graded-decay sub-category, while the correctness argument depends on the hard as-of validity notion in the other sub-category) and 'Domain temporal benchmarks' — but the domain it targets, continuously amended statutes/regulations with near-duplicate successive versions and validity intervals, is currently served only by the 'Static document retrieval over regulatory/legal corpora' category. Its distinctive placement is as a retrieval-agnostic re-ranking layer that can be attached to any base retriever; every existing temporal-retrieval category instead couples temporal handling to one specific architecture or pipeline, so the plug-in form plus the amended-statute setting is the unoccupied position.",
+  "dominant_approaches": [
+    "Dense semantic retrieval as the default evidence selector, with BM25 and hybrid lexical+dense as baselines",
+    "Explicit temporal decay (usually exponential) multiplied into or learned within retrieval scores",
+    "Hard as-of or availability boundaries that filter evidence by date",
+    "Timestamp-conditioned or temporally-augmented embeddings and contrastive/reinforcement training",
+    "Reader-side temporal graph construction and fusion",
+    "Temporal query decomposition and iterative retrieve-rerank pipelines",
+    "Domain benchmark construction with manually validated temporal queries"
+  ],
+  "common_assumptions": [
+    "A usable timestamp, version date or as-of date is available for every document/passage and for every query",
+    "Temporal relevance is monotone in age: older evidence is less valid (recency-as-validity), so decay is the natural temporal signal",
+    "A single document-level timestamp adequately represents all statements in the document",
+    "The corpus is either static (no versioning) or updated by snapshot replacement, not by tracking amendments to the same text",
+    "Answer accuracy or retrieval precision is the target quantity, so temporal correctness is instrumental rather than measured directly (except where temporal accuracy / leakage is reported)",
+    "The temporal remedy is usually implemented inside one specific pipeline (fixed hybrid, graph retrieval, multimodal verifier) rather than as a component transferable across retrievers"
+  ],
+  "common_datasets": [
+    "SituatedQA (9K questions from four open-retrieval QA datasets)",
+    "TimeQA",
+    "ESG disclosures (TemporalESG: 40,814 docs, 970 temporal queries)",
+    "SEC filings + XBRL (TempFinQA)",
+    "ICEWS14 temporal knowledge graph",
+    "RMA Bhutan payment system reports (static regulatory corpus)",
+    "Legal QA datasets (reviewed; reported as static)"
+  ],
+  "common_benchmarks": [
+    "SituatedQA",
+    "TimeQA (three splits)",
+    "TemporalESG",
+    "TempFinQA",
+    "TimE",
+    "ICEWS14",
+    "RMA RAG benchmark"
+  ],
+  "common_metrics": [
+    "Answer accuracy (EM/F1)",
+    "Temporal accuracy (fraction temporally correct)",
+    "Temporal evidence leakage / contamination",
+    "Hallucination rate",
+    "Entity precision",
+    "Recall / retrieval precision",
+    "ROUGE-1/2/L",
+    "BERTScore F1",
+    "Faithfulness",
+    "No-answer / abstention rate"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "No existing benchmark targets continuously amended statutes/regulations with near-duplicate successive versions, validity metadata and time-stamped queries; the closest temporal benchmarks are ESG disclosures, financial filings and date-annotated web QA, while regulatory-document work is static.",
+      "paper_ids": [
+        "arxiv:2505.20243",
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.3390/sym18091498",
+        "doi:10.2139/ssrn.7087840"
+      ]
+    },
+    {
+      "description": "Temporal relevance is operationalised as recency/decay, which is unjustified when the authoritative text is the version in force at the target date and a superseded clause can be temporally nearest.",
+      "paper_ids": [
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.1109/iri69576.2026.00090"
+      ]
+    },
+    {
+      "description": "Temporal handling is coupled to a specific pipeline (three-signal hybrid, graph retrieval with learned decay, multimodal verifier), so transfer to an arbitrary base retriever is not demonstrated.",
+      "paper_ids": [
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.1109/iri69576.2026.00090",
+        "doi:10.3390/sym18091498"
+      ]
+    },
+    {
+      "description": "Regulatory and legal retrieval resources lack any temporal dimension: questions carry no target date and corpora are treated as static.",
+      "paper_ids": [
+        "doi:10.2139/ssrn.7087840",
+        "arxiv:2505.20243"
+      ]
+    },
+    {
+      "description": "Some evaluations report only end-task answer quality, so temporal correctness of the retrieved evidence is not isolated (e.g., SituatedQA and the temporal-graph fusion work report no temporal-contamination metric).",
+      "paper_ids": [
+        "arxiv:2109.06157",
+        "doi:10.18653/v1/2023.findings-emnlp.67"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "A retrieval-agnostic temporal re-ranking term evaluated across multiple base retrievers (sparse, dense, hybrid) on the same corpus — no analyzed work does this",
+    "Amended statutes/regulations with near-duplicate successive versions, explicit validity intervals (in-force start/end), and time-stamped queries as a benchmark",
+    "Combining a hard validity-interval as-of filter with a graded semantic+temporal score in one framework, so that validity bounds the candidate set while semantic-temporal similarity ranks within it",
+    "Measuring version confusion / temporal contamination (superseded or not-yet-in-force clause retrieved) on legal text, adapting the temporal-evidence-leakage metric from financial point-in-time QA",
+    "Separating document/version timestamp from the validity period of the clause text itself, since the survey flags document-creation-time versus event-time mismatch as a failure mode",
+    "Retrieval-agnostic temporal re-ranking over sparse BM25, given evidence that BM25 can beat hybrid on multi-document regulatory queries",
+    "Benchmarking on jurisdiction-scale statute corpora (e.g., amendment-tracked codes) rather than corporate disclosures, where supersession chains are long and dense"
+  ],
+  "contradictions": [
+    {
+      "description": "Graded temporal decay (recency = validity) versus hard as-of validity: the three-signal hybrid and Chronofy multiply retrieval by exponential decay, whereas TempFinRAG enforces a binary availability boundary and requires 'asymmetric access across time'; the survey independently warns that temporal retrieval fails due to 'recency bias'. These cannot both be right for amended normative text.",
+      "paper_ids": [
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.1109/iri69576.2026.00090",
+        "doi:10.3390/sym18091498",
+        "arxiv:2505.20243"
+      ]
+    },
+    {
+      "description": "Whether the temporal fix is architectural or trainable: the temporal-semantic benchmark paper reports that fine-tuning on 7,000+ temporal examples yields only marginal gains because the limitation is structural, while the TSQA reasoning paper reports significant gains from temporal-aware embeddings plus contrastive reinforcement learning.",
+      "paper_ids": [
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.18653/v1/2024.findings-emnlp.848"
+      ]
+    },
+    {
+      "description": "Sparse versus hybrid retrieval on regulatory text: one regulatory benchmark finds hybrid best overall but BM25 better on multihop queries, while the temporal hybrid framework reports a large advantage for the combined lexical+dense+decay signal; the optimal base retriever for regulatory multi-document reasoning is therefore unsettled.",
+      "paper_ids": [
+        "doi:10.2139/ssrn.7087840",
+        "doi:10.2139/ssrn.7174868"
+      ]
+    }
+  ],
+  "recorded_at": "2026-09-30T04:31:08.140481Z"
+}

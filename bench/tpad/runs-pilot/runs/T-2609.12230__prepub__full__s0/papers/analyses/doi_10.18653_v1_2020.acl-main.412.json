@@ -1,0 +1,42 @@
+{
+  "paper_id": "doi:10.18653/v1/2020.acl-main.412",
+  "relevance_tier": "high",
+  "problem": "Multi-hop KGQA over sparse and incomplete knowledge graphs is challenging because existing methods either rely on external text (which may be unavailable) or impose heuristic neighborhood constraints that can exclude the true answer from the candidate set.",
+  "method": "Proposes EmbedKGQA, which uses Knowledge Graph embeddings (e.g., ComplEx) to mitigate sparsity and relaxes the requirement of answer selection from a pre-specified neighborhood. The model combines a relation scoring function with KG embedding scores to rank candidate answers.",
+  "key_assumptions": [
+    "Knowledge Graph embeddings capture sufficient relational semantics for multi-hop reasoning.",
+    "Relaxing the neighborhood constraint allows the model to consider a broader set of candidate answers, improving recall without harming precision."
+  ],
+  "main_contribution": "EmbedKGQA method that achieves competitive or state-of-the-art Hits@1 on MetaQA (1-/2-/3-hop) and WebQuestionsSP datasets, especially under KG incompleteness (KG-50 settings), demonstrating effectiveness of KG embeddings for multi-hop KGQA.",
+  "datasets": [
+    "MetaQA (1-hop, 2-hop, 3-hop splits)",
+    "WebQuestionsSP (WebQSP)"
+  ],
+  "benchmarks": [
+    "MetaQA",
+    "WebQuestionsSP"
+  ],
+  "baselines": [
+    "VRN, GraftNet, PullNet, KV-Mem (as reported in Sun et al. 2019a)"
+  ],
+  "metrics": [
+    "Hits@1"
+  ],
+  "results": "[\"On MetaQA KG-Full: 1-hop 97.5, 2-hop 98.8, 3-hop 94.8; on MetaQA KG-50: 1-hop 83.9, 2-hop 91.8, 3-hop 70.3. On WebQSP KG-Full: 66.6; on WebQSP KG-50: 53.2, outperforming baselines such as PullNet.\"]",
+  "limitations": [
+    "not explicitly stated in abstract/text; implicit limitations may include reliance on embedding quality and inability to handle relations not well-represented in the embedding space."
+  ],
+  "future_work": [
+    "not explicitly stated in abstract/text"
+  ],
+  "code_availability": "[\"https://github.com/malllabiisc/EmbedKGQA\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "EmbedKGQA uses KG embeddings to answer multi-hop questions, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:22:38.912430Z"
+}

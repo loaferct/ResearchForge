@@ -1,0 +1,27 @@
+{
+  "id": "D004",
+  "direction": "Keep the D003 evaluation design and reframe the contribution as implementation-and-measurement rather than problem identification: enforce valid-time membership at retrieval time (post hoc, across BM25/dense/hybrid), and measure clause-level point-in-time recovery and version contamination, with answer accuracy co-primary only on answer-differential queries. Present the benchmark as filling the named clause-granularity gap, not as discovering it, and present valid-time gating as the correct signal to enforce at retrieval time rather than as a new concept.",
+  "hypothesis": "Enforcing valid-time (as-of) membership at retrieval time, rather than only encoding time in representations, reduces clause-level point-in-time retrieval failures (returning text not in force at the query date) relative to semantic-only retrieval and to elapsed-time decay, and the reduction is larger where successive clause versions are near-duplicates and the authoritative version is not the latest.",
+  "rationale": "The legal-retrieval review states that diachronic failure is the least well integrated into mainstream practice, that solutions are stronger at representation than at retrieval-time enforcement, and that document-granularity versioning obscures structural-unit differentials. This confirms the gap is real and explicitly recognized, while also confirming that the signal (valid-time/bitemporal) and the framing (architecture-agnostic) are not novel. The direction therefore narrows to what remains measurable and unmeasured: retrieval-time enforcement across retrievers plus clause-level point-in-time recovery metrics. It deserves investigation next because it is the smallest claim not contradicted by the retrieved evidence, it is falsifiable with existing tools, and a negative result (retrieval-time gating adds little) would itself be informative about where temporal handling belongs.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": "D003",
+  "research_question": "Does enforcing valid-time (as-of) membership at retrieval time, post hoc across sparse, dense and hybrid retrievers, improve clause-level point-in-time retrieval (returning the text in force at the query date and avoiding superseded or not-yet-in-force versions), compared with semantic-only retrieval, elapsed-time decay, and representation-level temporal handling?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "arxiv:2606.09724",
+    "arxiv:2608.21409",
+    "doi:10.3390/computers15080471",
+    "doi:10.3390/sym18091498",
+    "arxiv:2109.06157",
+    "doi:10.2139/ssrn.7087840"
+  ],
+  "uncertainty_ids": [
+    "U008",
+    "U005",
+    "U013",
+    "U015",
+    "U007"
+  ],
+  "recorded_at": "2026-09-30T04:36:24.184533Z"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "arxiv:2511.11770",
+  "title": "Learning to Refine: An Agentic RL Approach for Iterative SPARQL Query Construction",
+  "authors": [
+    "Floris Vossebeld",
+    "Shenghui Wang"
+  ],
+  "year": 2025,
+  "published": "2025-11-14",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2511.11770",
+  "pdf_url": "https://arxiv.org/pdf/2511.11770v1",
+  "abstract": "Generating complex, logically-sound SPARQL queries for multi-hop questions remains a critical bottleneck for Knowledge Graph Question Answering, as the brittle nature of one-shot generation by Large Language Models (LLMs) hinders reliable interaction with structured data. Current methods lack the adaptive policies needed to dynamically debug queries based on real-time execution feedback. This paper introduces a novel agentic framework where an LLM learns a resilient policy for the sequential process of iterative SPARQL construction. We show that a compact 3B-parameter model, trained exclusively via outcome-driven Reinforcement Learning (GRPO) without supervised fine-tuning, can learn effective policies for this task, discovering how to systematically recover from execution errors and refine its queries toward a correct answer. On a curated, executable single-answer subset of LC-QuAD 2.0, our agent achieves 49.7\\% accuracy post-entity-linking, a significant 17.5 percentage point improvement over the strongest iterative zero-shot baseline. Further analysis reveals that while the agent's capability is driven by RL, its performance is enhanced by an explicit deliberative reasoning step that acts as a cognitive scaffold to improve policy precision. This work presents a generalizable blueprint for teaching agents to master formal, symbolic tools through interaction, bridging the gap between probabilistic LLMs and the structured world of Knowledge Graphs.",
+  "doi": null,
+  "arxiv_id": "2511.11770",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T07:29:35.399947Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "iterative refinement multi-hop question answering knowledge graph"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": [
+    "abstract (from arxiv) never mentions 'Learning to Refine'; it may belong to another work"
+  ]
+}

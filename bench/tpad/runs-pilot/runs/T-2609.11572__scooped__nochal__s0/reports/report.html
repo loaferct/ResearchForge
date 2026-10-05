@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ResearchForge report: T-2609.11572__scooped__nochal__s0</title>
+<style>
+:root{--surface:#f1f3f6;--card:#ffffff;--header:#e6e9ed;--ink:#0f1419;--soft:#5a626c;--rule:rgba(15,20,25,.08);--tint:rgba(15,20,25,.06)}
+@font-face{font-family:"Inter";src:url("/static/fonts/inter.woff2") format("woff2");font-weight:100 900}
+@font-face{font-family:"Inter";src:url("/static/fonts/inter-italic.woff2") format("woff2");font-weight:100 900;font-style:italic}
+@font-face{font-family:"IBM Plex Mono";src:url("/static/fonts/ibm-plex-mono-400.woff2") format("woff2");font-weight:400}
+body{font:16px/1.6 Inter,"Segoe UI",Arial,sans-serif;max-width:72ch;margin:2.5rem auto;padding:0 16px;color:var(--ink);background:var(--card)}
+h1,h2,h3{letter-spacing:-.018em;line-height:1.2;font-weight:600} h1{font-size:1.875rem;font-weight:700;letter-spacing:-.025em} h2{font-size:1.25rem;letter-spacing:-.012em;border-top:1px solid var(--rule);padding-top:1.2rem;margin-top:2.4rem}
+a{color:var(--ink);text-decoration-color:rgba(15,20,25,.3);text-underline-offset:.2em} a:hover{text-decoration-color:currentColor} strong{font-weight:600}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:14px;line-height:1.45;display:block;overflow-x:auto;border:1px solid var(--rule)}
+td,th{border-bottom:1px solid var(--rule);padding:.5rem .75rem;vertical-align:top;text-align:left} th{background:var(--header);color:var(--soft);font:500 11px/1.3 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase}
+code,pre{font-family:"IBM Plex Mono",ui-monospace,monospace;background:var(--tint);border-radius:3px;font-size:.85em} pre{padding:.8rem;overflow:auto;line-height:1.4;border-radius:5px}
+blockquote{border-left:3px solid rgba(15,20,25,.6);margin:1rem 0;padding:.5em 0 .5em 1.25em;color:var(--soft);font-style:italic}
+details{margin:1rem 0} summary{cursor:pointer;font-weight:600}
+</style></head><body>
+<h1>ResearchForge Investigation Report</h1>
+<p>Project <code>T-2609.11572__scooped__nochal__s0</code> · model <code>ollama-cloud/nemotron-3-super</code> · status <strong>incomplete</strong></p>
+<blockquote>
+<p>Labels: <strong>[Evidence]</strong> directly supported by a verified quote from a retrieved source; <strong>[Inference]</strong> reasoning derived from cited evidence; <strong>[Hypothesis]</strong> proposed, not validated; <strong>[Assumption]</strong> taken as given without evidence; <strong>[Experimental result]</strong> observed in an executed experiment.</p>
+</blockquote>
+<h2>1. Executive Summary</h2>
+<p><strong>Investigated:</strong> The reliability of open‑domain question answering drops sharply when source texts are continuously amended, as in statutes, policies, or regulations. In such settings each new amendment supersedes earlier clauses while retaining much of the original wording, creating a dense semantic overlap across successive versions. Existing time‑aware retrieval techniques treat each version as an isolated snapshot and therefore cannot distinguish which revision best matches a time‑specific query. We propose to develop a retrieval‑agnostic framework that enriches any standard document retriever with a temporal relevance component: the rank of a candidate passage will be adjusted according to the elapsed time between the query’s target date and the passage’s version timestamp, while still leveraging its semantic similarity to the query. To evaluate the approach, we will construct a benchmark comprising regulatory documents with overlapping revisions and time‑stamped queries, measuring how well the combined temporal‑semantic ranking improves answer accuracy.</p>
+<p><strong>Research question:</strong> Does adding a temporal relevance component that adjusts passage rankings based on elapsed time between query target date and version timestamp improve answer accuracy (Exact Match and F1) over semantic-only retrievers and existing time-aware baselines for open-domain question answering on versioned regulatory documents?</p>
+<p><strong>Literature investigated:</strong> 94 papers retrieved from 7 searches (openalex: 44, crossref: 24, arxiv: 16, semantic_scholar: 10); 6 analyzed; 2 rated highly relevant.</p>
+<p><strong>Assessment:</strong> Promising but requires experimental validation. <strong>[Inference]</strong> The idea shows promise based on empirical evidence from related work (TempRALM) demonstrating that temporal relevance can significantly improve QA accuracy. However, critical uncertainties remain regarding its effectiveness in the specific context of versioned regulatory text with dense semantic overlap, potential confounding from recency bias, and the feasibility of a truly retrieval-agnostic temporal component. Validation through targeted experimentation is needed.</p>
+<p><strong>Closest existing work:</strong> Re3: Learning to Balance Relevance &amp; Recency for Temporal Information Retrieval (2025) [1]; It's About Time: Incorporating Temporality in Retrieval Augmented Language Models (2024) [2]</p>
+<p><strong>Potential overlap:</strong> Our idea overlaps with existing work in combining temporal relevance with semantic similarity to improve retrieval quality. Re3 uses a query-aware gating mechanism to balance semantic and temporal information in general TIR, while TempRALM uses inverse time difference scoring in a RALM setting. Both demonstrate that temporal signals can enhance retrieval/QA performance.</p>
+<p><strong>Potential distinction:</strong> Our idea differs by targeting retrieval-agnostic application to open-domain QA over versioned regulatory documents, focusing on selecting the correct version for time-specific queries amidst dense semantic overlap across amendments, and proposing a benchmark specifically for regulatory text with overlapping versions. Unlike Re3's general TIR focus or TempRALM's RALM specificity, we aim for broad applicability across retriever types and a use case where temporal validity is critical for correctness.</p>
+<p><strong>Major risk:</strong> The primary risk is that observed improvements may stem from recency bias rather than genuine temporal relevance for time-specific queries; both Re3 and TempRALM optimize for recency (selecting freshest documents), which may not align with selecting the correct version for a specific point in time in regulatory contexts where older versions remain legally valid.</p>
+<p><strong>Recommended experiment:</strong> Evaluating Temporal Relevance Component for Question Answering over Versioned Regulatory Documents (E001)</p>
+<p><strong>Research decision:</strong> Insufficient evidence. <strong>[Inference]</strong> Basis: high-importance questions remain unresolved (U002, U004, U006, U007). This describes the state of the evidence, not the absolute value of the idea.</p>
+<p><strong>Investigation:</strong> 16 steps chosen from the research state; 7 uncertainties raised, 1 resolved, 6 still open or unresolved (Section 13, Appendix C).</p>
+<p><strong>Stopped by a safety limit:</strong> Stopping: iteration budget reached (16). Conclusions below cover only what was recorded before the limit.</p>
+<p><strong>Claim grounding:</strong> 17/19 evidence and inference claims have at least one verified source.</p>
+<p><strong>Incomplete phases:</strong> gaps, modifications. Sections that depend on them are marked as not recorded.</p>
+<p>This report does not declare the idea novel. Absence of a matching paper in these searches does not establish novelty; see Section 13.</p>
+<h2>2. Original Research Idea</h2>
+<blockquote>
+<p>The reliability of open‑domain question answering drops sharply when source texts are continuously amended, as in statutes, policies, or regulations. In such settings each new amendment supersedes earlier clauses while retaining much of the original wording, creating a dense semantic overlap across successive versions. Existing time‑aware retrieval techniques treat each version as an isolated snapshot and therefore cannot distinguish which revision best matches a time‑specific query. We propose to develop a retrieval‑agnostic framework that enriches any standard document retriever with a temporal relevance component: the rank of a candidate passage will be adjusted according to the elapsed time between the query’s target date and the passage’s version timestamp, while still leveraging its semantic similarity to the query. To evaluate the approach, we will construct a benchmark comprising regulatory documents with overlapping revisions and time‑stamped queries, measuring how well the combined temporal‑semantic ranking improves answer accuracy.</p>
+</blockquote>
+<h2>3. Formalized Research Question</h2>
+<p><strong>Research question:</strong> Does adding a temporal relevance component that adjusts passage rankings based on elapsed time between query target date and version timestamp improve answer accuracy (Exact Match and F1) over semantic-only retrievers and existing time-aware baselines for open-domain question answering on versioned regulatory documents?</p>
+<p><strong>Hypothesis:</strong> <strong>[Hypothesis]</strong> Combining temporal relevance with semantic similarity in document ranking will significantly improve answer accuracy (Exact Match and F1) over semantic-only retrievers and existing time-aware baselines on a benchmark of versioned regulatory documents with time-stamped queries.</p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Formalization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Problem</td>
+<td>The reliability of open-domain question answering drops sharply when source texts are continuously amended (e.g., statutes, policies, regulations) due to dense semantic overlap across versions, making it difficult for retrievers to identify the correct version for a time-specific query.</td>
+</tr>
+<tr>
+<td>Target domain</td>
+<td>Open-domain question answering over versioned regulatory documents.</td>
+</tr>
+<tr>
+<td>Proposed method</td>
+<td>A retrieval-agnostic framework that enriches any standard document retriever with a temporal relevance component. The framework adjusts the rank of a candidate passage by combining its semantic similarity to the query with a temporal relevance score based on the elapsed time between the query's target date and the passage's version timestamp (e.g., using a decay function or learned gating mechanism).</td>
+</tr>
+<tr>
+<td>Target system</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>Expected contribution</td>
+<td>A novel temporal relevance component that is retrieval-agnostic, a benchmark for evaluating QA over versioned regulatory documents, and empirical evidence that temporal relevance improves QA accuracy in continuously amended text settings.</td>
+</tr>
+<tr>
+<td>Independent variables</td>
+<td>Retrieval approach (baseline: semantic-only; proposed: semantic + temporal relevance component)</td>
+</tr>
+<tr>
+<td>Dependent variables</td>
+<td>Answer accuracy (Exact Match, F1 score)</td>
+</tr>
+<tr>
+<td>Controls</td>
+<td>Underlying retriever type (e.g., BM25, DPR), Dataset of versioned regulatory documents, Set of time-stamped queries, Evaluation metric</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Assumptions</strong></p>
+<ul>
+<li>Version timestamps are available for each passage.</li>
+<li>Queries have an associated target date.</li>
+<li>Semantic similarity (e.g., from a dense retriever) is a relevant baseline.</li>
+<li>Temporal relevance can be modeled as a decreasing function of elapsed time.</li>
+<li>The framework can be applied to both dense and sparse retrievers without modification to their core.</li>
+</ul>
+<p><strong>Expected benefits / potential risks</strong></p>
+<p><em>None recorded.</em></p>
+<p><strong>Ambiguities</strong></p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Resolution</th>
+<th>Resolved by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How to combine temporal relevance with semantic similarity? (e.g., weighted sum, gating mechanism)</td>
+<td>Look at Re3 paper (arxiv:2509.01306) which uses a query-aware gating mechanism to balance relevance and recency. We can adopt a similar mechanism or use a simple weighted sum.</td>
+<td>literature</td>
+</tr>
+<tr>
+<td>What type of temporal decay function to use? (e.g., linear, exponential, step)</td>
+<td>We will assume an exponential decay function based on common practice, but the exact form can be learned or tuned; this is a design choice to be explored.</td>
+<td>assumption</td>
+</tr>
+<tr>
+<td>What retrieval models to use as base? (dense, sparse)</td>
+<td>We will test with both a dense retriever (e.g., DPR) and a sparse retriever (e.g., BM25) to demonstrate agnosticism.</td>
+<td>assumption</td>
+</tr>
+<tr>
+<td>What benchmark to use for versioned regulatory documents?</td>
+<td>We will construct a benchmark using publicly available versioned regulatory documents (e.g., U.S. Code, Federal Regulations) and create time-stamped queries based on amendment dates.</td>
+<td>assumption</td>
+</tr>
+<tr>
+<td>What evaluation metrics beyond EM/F1?</td>
+<td>We will use Exact Match and F1 as standard QA metrics.</td>
+<td>assumption</td>
+</tr>
+<tr>
+<td>How to handle queries that may have ambiguous target dates?</td>
+<td>We assume each query will have a clear target date (e.g., "as of 2020-01-01").</td>
+<td>assumption</td>
+</tr>
+</tbody>
+</table>
+<h2>4. Existing Research</h2>
+<p>Overlap values are heuristic signals assigned during analysis, not measurements of novelty.</p>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>Relevance</th>
+<th>Method</th>
+<th>Problem / method / evaluation overlap</th>
+<th>Read from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>It's About Time: Incorporating Temporality in Retrieval Augmented Language Models (2024) [2]</td>
+<td>high</td>
+<td>TempRALM augments the retriever with a temporal score 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡 (inverse of time difference) normalized to align with semantic score range, combined with semantic score 𝑠(𝑞,𝑑) = ⟨𝑓𝜃(𝑞),𝑓 𝜃(𝑑)⟩. The retriever fetches documents based on both semantic and temporal relevance.</td>
+<td>0.6 / 0.7 / 0.6</td>
+<td>full_text</td>
+</tr>
+<tr>
+<td>Re3: Learning to Balance Relevance &amp; Recency for Temporal Information Retrieval (2025) [1]</td>
+<td>high</td>
+<td>Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism.</td>
+<td>0.6 / 0.7 / 0.5</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Document Listing on Versioned Documents (2013) [3]</td>
+<td>medium</td>
+<td>Not stated in abstract.</td>
+<td>0.2 / 0.1 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Continuous Temporal Top-k Query over Versioned Documents (2014) [4]</td>
+<td>medium</td>
+<td>Not stated in abstract.</td>
+<td>0.3 / 0.2 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Managing Branch Versioning in Versioned/Temporal XML Documents (n.d.) [5]</td>
+<td>medium</td>
+<td>Not stated in abstract.</td>
+<td>0.3 / 0.2 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Temporal and multi-versioned XML documents: A survey (2014) [6]</td>
+<td>medium</td>
+<td>Not stated in abstract.</td>
+<td>0.3 / 0.2 / 0.1</td>
+<td>abstract</td>
+</tr>
+</tbody>
+</table>
+<details><summary>Full paper analyses</summary>
+
+#### It's About Time: Incorporating Temporality in Retrieval Augmented Language Models (2024) [2]
+
+- **Problem:** Ensuring that users receive the most relevant and up-to-date information, especially in the presence of multiple versions of web content from different time points remains a critical challenge for information retrieval. This challenge has recently been compounded by the increased use of question answering tools trained on Wikipedia or web content and powered by large language models (LLMs) which have been found to make up information (or hallucinate), and in addition have been shown to struggle with the temporal dimensions of information. Even Retriever Augmented Language Models (RALMs) which incorporate a document database to reduce LLM hallucination are unable to handle temporal queries correctly.
+- **Method:** TempRALM augments the retriever with a temporal score 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡 (inverse of time difference) normalized to align with semantic score range, combined with semantic score 𝑠(𝑞,𝑑) = ⟨𝑓𝜃(𝑞),𝑓 𝜃(𝑑)⟩. The retriever fetches documents based on both semantic and temporal relevance.
+- **Main contribution:** TempRALM, a temporally-aware Retriever Augmented Language Model (RALM) with few-shot learning extensions, demonstrating up to 74% improvement in Exact Match over baseline RALM without requiring model pre-training, recalculating or replacing the RALM document index, or adding other computationally intensive elements.
+- **Key assumptions:** Timestamps are available for queries and documents.; Temporal relevance can be modeled as inversely proportional to time difference.; Semantic score from dense retriever (Contriever) is suitable for combining with temporal score.
+- **Datasets / benchmarks:** Tennis grand slam time-sensitive dataset (curated for temporally evolving QA), TPQ-2019 and TPQ-2020 test sets (temporal proximity queries)
+- **Baselines:** Atlas-large (pre-trained RALM model)
+- **Metrics:** Exact Match, Recall@1, Recall@5
+- **Results:** TempRALM improves Exact Match from 64.84 to 71.72 (32-shot), 74.68 to 75.78 (64-shot), 76.88 to 77.80 (128-shot); Recall@1 improves from 0.54 to 0.63 (TPQ-2019) and 0.24 to 0.64 (TPQ-2020); Recall@5 shows similar gains.
+- **Limitations:** not stated in abstract
+- **Future work:** not stated in abstract
+- **Code availability:** not stated in abstract
+- **Relation to idea:** TempRALM augments a specific RALM (Atlas) with a temporal score based on inverse time difference, evaluated on a synthetic tennis dataset. Our idea proposes a retrieval-agnostic temporal relevance component that adjusts passage ranks based on elapsed time between query target date and version timestamp, targeting open-domain QA over continuously amended regulatory documents where amendments create dense semantic overlap across versions. We aim to improve answer accuracy (EM/F1) via a framework applicable to any retriever (dense/sparse), and we propose a benchmark of regulatory documents with overlapping revisions. _(basis: not stated)_
+
+#### Re3: Learning to Balance Relevance & Recency for Temporal Information Retrieval (2025) [1]
+
+- **Problem:** Temporal Information Retrieval (TIR) is a critical yet unresolved task for modern search systems, retrieving documents that not only satisfy a query's information need but also adhere to its temporal constraints.
+- **Method:** Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism.
+- **Main contribution:** Re3 framework and Re2Bench benchmark for disentangling and evaluating Relevance, Recency, and their hybrid combination in temporal information retrieval.
+- **Key assumptions:** not stated in abstract
+- **Datasets / benchmarks:** Re2Bench benchmark, Re2Bench
+- **Baselines:** not stated in abstract
+- **Metrics:** R@1 (Recall@1)
+- **Results:** Re3 achieves state-of-the-art results, leading in R@1 across all three subsets of Re2Bench; ablation studies confirm robustness and generalization across diverse encoders and real-world settings.
+- **Limitations:** not stated in abstract
+- **Future work:** not stated in abstract
+- **Code availability:** Available online at https://anonymous.4open.science/r/Re3-0C5A
+- **Relation to idea:** Re3 addresses general temporal information retrieval balancing relevance and recency via a query-aware gating mechanism. Our idea focuses on open-domain question answering over continuously amended regulatory documents where each new amendment supersedes earlier clauses, creating dense semantic overlap across versions. We propose a retrieval-agnostic temporal relevance component that adjusts passage ranks based on elapsed time between query target date and version timestamp, aiming to select the correct version for a time-specific query. While both incorporate temporal signals, Re3 targets general TIR benchmarks, whereas we target QA accuracy over versioned regulatory text, and our framework is designed to be agnostic to the underlying retriever. _(basis: not stated)_
+
+#### Document Listing on Versioned Documents (2013) [3]
+
+- **Problem:** Not stated in abstract; title suggests document listing on versioned documents.
+- **Method:** Not stated in abstract.
+- **Main contribution:** Not stated in abstract.
+- **Key assumptions:** not stated in abstract
+- **Datasets / benchmarks:** not stated in abstract, not stated in abstract
+- **Baselines:** not stated in abstract
+- **Metrics:** not stated in abstract
+- **Results:** Not stated in abstract.
+- **Limitations:** not stated in abstract
+- **Future work:** not stated in abstract
+- **Code availability:** not stated in abstract
+- **Relation to idea:** The paper focuses on document listing on versioned documents, which is related to versioned document handling. However, without abstract details, specific overlap with our idea (temporal relevance component for QA over regulatory text) cannot be determined. Likely deals with listing documents in a versioned setting rather than retrieval ranking for question answering. _(basis: not stated)_
+
+#### Continuous Temporal Top-k Query over Versioned Documents (2014) [4]
+
+- **Problem:** Not stated in abstract; title suggests continuous temporal top-k query processing over versioned documents.
+- **Method:** Not stated in abstract.
+- **Main contribution:** Not stated in abstract.
+- **Key assumptions:** not stated in abstract
+- **Datasets / benchmarks:** not stated in abstract, not stated in abstract
+- **Baselines:** not stated in abstract
+- **Metrics:** not stated in abstract
+- **Results:** Not stated in abstract.
+- **Limitations:** not stated in abstract
+- **Future work:** not stated in abstract
+- **Code availability:** not stated in abstract
+- **Relation to idea:** The paper focuses on continuous temporal top-k queries over versioned documents, which is related to versioned document retrieval. However, without abstract details, specific overlap with our idea (temporal relevance component for QA over regulatory text) cannot be determined. Likely deals with query processing rather than retrieval ranking for question answering. _(basis: not stated)_
+
+#### Managing Branch Versioning in Versioned/Temporal XML Documents (n.d.) [5]
+
+- **Problem:** Not stated in abstract; title suggests managing branch versioning in versioned/temporal XML documents.
+- **Method:** Not stated in abstract.
+- **Main contribution:** Not stated in abstract.
+- **Key assumptions:** not stated in abstract
+- **Datasets / benchmarks:** not stated in abstract, not stated in abstract
+- **Baselines:** not stated in abstract
+- **Metrics:** not stated in abstract
+- **Results:** Not stated in abstract.
+- **Limitations:** not stated in abstract
+- **Future work:** not stated in abstract
+- **Code availability:** not stated in abstract
+- **Relation to idea:** The paper focuses on managing branch versioning in versioned/temporal XML documents, which is related to versioned document handling. However, without abstract details, specific overlap with our idea (temporal relevance component for QA over regulatory text) cannot be determined. Likely concerns version control mechanisms rather than retrieval ranking for question answering. _(basis: not stated)_
+
+#### Temporal and multi-versioned XML documents: A survey (2014) [6]
+
+- **Problem:** Not stated in abstract; title indicates a survey on temporal and multi-versioned XML documents.
+- **Method:** Not stated in abstract.
+- **Main contribution:** Not stated in abstract.
+- **Key assumptions:** not stated in abstract
+- **Datasets / benchmarks:** not stated in abstract, not stated in abstract
+- **Baselines:** not stated in abstract
+- **Metrics:** not stated in abstract
+- **Results:** Not stated in abstract.
+- **Limitations:** not stated in abstract
+- **Future work:** not stated in abstract
+- **Code availability:** not stated in abstract
+- **Relation to idea:** The paper is a survey on temporal and multi-versioned XML documents, which is related to versioned document handling. However, without abstract details, specific overlap with our idea (temporal relevance component for QA over regulatory text) cannot be determined. Likely surveys versioned XML techniques rather than retrieval ranking for question answering. _(basis: not stated)_
+
+</details>
+
+<h2>5. Research Landscape</h2>
+<pre><code class="language-text">Temporal Information Retrieval for Question Answering over Versioned Text
+├── Temporal Relevance Ranking Methods  [1] [2]
+├── Versioned Document Query Processing  [4] [5] [3]
+└── Surveys on Temporal/Multi-versioned XML  [6]
+</code></pre>
+<p><strong>Where the idea fits:</strong> <strong>[Inference]</strong> Temporal Relevance Ranking Methods</p>
+<p><strong>Dominant approaches</strong></p>
+<ul>
+<li>Temporal relevance scoring combined with semantic similarity</li>
+<li>Query-aware gating mechanisms</li>
+<li>Inverse time difference scoring</li>
+</ul>
+<p><strong>Common assumptions</strong></p>
+<ul>
+<li>Timestamps are available for queries and documents</li>
+<li>Temporal relevance decreases with time difference</li>
+<li>Semantic similarity from retrievers is a relevant signal</li>
+</ul>
+<p><strong>Common datasets</strong></p>
+<ul>
+<li>Re2Bench</li>
+<li>Tennis grand slam time-sensitive dataset</li>
+<li>Versioned XML document collections (not specified)</li>
+</ul>
+<p><strong>Common benchmarks</strong></p>
+<ul>
+<li>Re2Bench</li>
+<li>TPQ-2019/TPQ-2020</li>
+<li>Temporal top-k query benchmarks (not specified)</li>
+</ul>
+<p><strong>Common metrics</strong></p>
+<ul>
+<li>Recall@1</li>
+<li>Exact Match</li>
+<li>F1</li>
+<li>Recall@5</li>
+</ul>
+<p><strong>Underexplored combinations</strong></p>
+<ul>
+<li><strong>[Hypothesis]</strong> Retrieval-agnostic temporal relevance for open-domain QA over regulatory text</li>
+<li><strong>[Hypothesis]</strong> Handling dense semantic overlap across successive amendments</li>
+<li><strong>[Hypothesis]</strong> Benchmark with overlapping versioned regulatory documents and time-stamped queries</li>
+</ul>
+<p><strong>Limitations repeated across papers</strong></p>
+<ul>
+<li>Limited to specific retriever types (e.g., dense only) [2]</li>
+<li>Evaluation on synthetic or narrow datasets [2], [1]</li>
+<li>Lack of generalization to regulatory text </li>
+<li>No consideration of dense semantic overlap across versions </li>
+</ul>
+<p><strong>Contradictions between papers</strong></p>
+<ul>
+<li>Existing time-aware retrieval techniques treat each version as an isolated snapshot, making it difficult to distinguish which revision matches a time-specific query. </li>
+</ul>
+<h2>6. Closest Existing Work</h2>
+<p><strong>[Inference]</strong> Re3 proposes a query-aware gating mechanism to balance relevance and recency in general temporal information retrieval, while TempRALM augments a RALM with inverse time difference scoring. Both combine temporal and semantic signals but target different settings (general TIR and RALMs respectively) and neither specifically addresses retrieval-agnostic application to open-domain QA over continuously amended regulatory documents with dense semantic overlap.</p>
+<ul>
+<li>Re3: Learning to Balance Relevance &amp; Recency for Temporal Information Retrieval (2025) [1]: Re3 addresses general temporal information retrieval balancing relevance and recency via a query-aware gating mechanism. Our idea focuses on open-domain question answering over continuously amended regulatory documents where each new amendment supersedes earlier clauses, creating dense semantic overlap across versions. We propose a retrieval-agnostic temporal relevance component that adjusts passage ranks based on elapsed time between query target date and version timestamp, aiming to select the correct version for a time-specific query. While both incorporate temporal signals, Re3 targets general TIR benchmarks, whereas we target QA accuracy over versioned regulatory text, and our framework is designed to be agnostic to the underlying retriever.</li>
+<li>It's About Time: Incorporating Temporality in Retrieval Augmented Language Models (2024) [2]: TempRALM augments a specific RALM (Atlas) with a temporal score based on inverse time difference, evaluated on a synthetic tennis dataset. Our idea proposes a retrieval-agnostic temporal relevance component that adjusts passage ranks based on elapsed time between query target date and version timestamp, targeting open-domain QA over continuously amended regulatory documents where amendments create dense semantic overlap across versions. We aim to improve answer accuracy (EM/F1) via a framework applicable to any retriever (dense/sparse), and we propose a benchmark of regulatory documents with overlapping revisions.</li>
+</ul>
+<h2>7. Potential Overlap</h2>
+<p><strong>Overlap:</strong> <strong>[Inference]</strong> Our idea overlaps with existing work in combining temporal relevance with semantic similarity to improve retrieval quality. Re3 uses a query-aware gating mechanism to balance semantic and temporal information in general TIR, while TempRALM uses inverse time difference scoring in a RALM setting. Both demonstrate that temporal signals can enhance retrieval/QA performance.</p>
+<p><strong>Potential distinction:</strong> <strong>[Inference]</strong> Our idea differs by targeting retrieval-agnostic application to open-domain QA over versioned regulatory documents, focusing on selecting the correct version for time-specific queries amidst dense semantic overlap across amendments, and proposing a benchmark specifically for regulatory text with overlapping versions. Unlike Re3's general TIR focus or TempRALM's RALM specificity, we aim for broad applicability across retriever types and a use case where temporal validity is critical for correctness.</p>
+<p><strong>Novelty questions</strong></p>
+<p><em>None recorded.</em></p>
+<h2>8. Potential Research Gap</h2>
+<p><em>Not recorded: this phase did not produce the required records.</em></p>
+<h2>9. Critique</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Strongest argument FOR</td>
+<td>Empirical evidence from TempRALM shows that adding temporal relevance (inverse time difference scoring) to a retrieval-augmented language model improves Exact Match by up to 74% over baseline on temporal question answering tasks, demonstrating that temporal signals can significantly enhance QA accuracy when semantic similarity alone is insufficient to distinguish temporally relevant information.</td>
+</tr>
+<tr>
+<td>Strongest argument AGAINST</td>
+<td>The primary risk is that observed improvements may stem from recency bias rather than genuine temporal relevance for time-specific queries; both Re3 and TempRALM optimize for recency (selecting freshest documents), which may not align with selecting the correct version for a specific point in time in regulatory contexts where older versions remain legally valid.</td>
+</tr>
+<tr>
+<td>Most important unresolved question</td>
+<td>Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?</td>
+</tr>
+<tr>
+<td>Most dangerous experimental confounder</td>
+<td>Recency bias: the framework's tendency to favor more recent documents could improve metrics simply by returning newer information, regardless of whether that information is actually valid for the query's target date, especially problematic in regulatory text where older versions may still be legally applicable.</td>
+</tr>
+<tr>
+<td>Closest existing work</td>
+<td>[1], [2]</td>
+</tr>
+<tr>
+<td>Potential contribution</td>
+<td><strong>[Hypothesis]</strong> A retrieval-agnostic temporal relevance component that adjusts passage ranks based on elapsed time between query target date and version timestamp, a benchmark of versioned regulatory documents with overlapping revisions and time-stamped queries, and empirical evidence showing improved answer accuracy (EM/F1) over semantic-only retrievers and existing time-aware baselines in continuously amended text settings.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Technical validity</strong></p>
+<p><em>None recorded.</em></p>
+<p><strong>Experimental validity</strong></p>
+<p><em>None recorded.</em></p>
+<p><strong>Practicality</strong></p>
+<p><em>None recorded.</em></p>
+<h2>10. Proposed Modifications</h2>
+<p><em>Not recorded: this phase did not produce the required records.</em></p>
+<h2>11. Recommended Experimental Design</h2>
+<h3>E001: Evaluating Temporal Relevance Component for Question Answering over Versioned Regulatory Documents</h3>
+<ul>
+<li><strong>Research question:</strong> Does adding a temporal relevance component that adjusts passage rankings based on elapsed time between query target date and version timestamp improve answer accuracy (Exact Match and F1) over semantic-only retrievers and existing time-aware baselines for open-domain question answering on versioned regulatory documents?</li>
+<li><strong>Hypothesis:</strong> <strong>[Hypothesis]</strong> Combining temporal relevance with semantic similarity in document ranking will significantly improve answer accuracy (Exact Match and F1) over semantic-only retrievers and existing time-aware baselines on a benchmark of versioned regulatory documents with overlapping revisions and time-stamped queries.</li>
+<li><strong>Proposed method:</strong> A retrieval-agnostic temporal relevance component that computes a temporal score as a decaying function of elapsed time (e.g., exponential decay) between the query's target date and the document version's timestamp. This temporal score is combined with semantic similarity scores from a retriever (dense or sparse) via a weighted sum or lightweight gating mechanism, without modifying the retriever's core ranking algorithm. The framework is applied to both dense (DPR) and sparse (BM25) retrievers to demonstrate agnosticism.</li>
+<li><strong>Baselines:</strong> BM25 (semantic-only), DPR (semantic-only), Date-filtering baseline (retrieve documents with version timestamp &lt;= query date), Timestamp-aware re-ranking using Re3's query-aware gating mechanism applied to retriever output, Random temporal bias (shuffle temporal scores)</li>
+<li><strong>Datasets:</strong> Constructed benchmark of versioned regulatory documents (e.g., U.S. Code, Code of Federal Regulations) with version timestamps and overlapping revisions, Time-stamped queries generated from amendment logs where answer validity depends on specific version at a given date, Evaluation set annotated by legal experts or via automated verification against official amendment history</li>
+<li><strong>Workloads:</strong> Question answering over regulatory text</li>
+<li><strong>Hardware:</strong> ["Single GPU (NVIDIA RTX 3090 or equivalent) for dense retriever experiments", "CPU-only for sparse retriever (BM25) experiments"]</li>
+<li><strong>Software environment:</strong> ["Python 3.9+", "PyTorch 2.0+", "HuggingFace Transformers", "Faiss or Elasticsearch for vector/BM25 retrieval", "NumPy, pandas"]</li>
+<li><strong>Metrics:</strong> Exact Match, F1 score, Mean Reciprocal Rank (MRR), Recall@5</li>
+<li><strong>Ablations:</strong> No temporal component (semantic-only); Linear temporal decay function; Step temporal decay function; Weighted sum combination vs. gating mechanism; Dense retriever only; Sparse retriever only</li>
+<li><strong>Controls:</strong> Same underlying retriever configuration across conditions; Identical document indexing and preprocessing; Fixed query set and evaluation splits; Consistent random seeds for reproducibility; Same hardware and software environment for comparable runs</li>
+<li><strong>Confounders addressed:</strong> Recency bias (by including queries where the correct version is not the most recent); Timestamp noise (by using exact version timestamps from official sources); Semantic similarity confounding (by selecting document pairs with high lexical overlap but different temporal validity); Query ambiguity (by ensuring each query has a clear target date)</li>
+<li><strong>Expected outcomes:</strong> ["Statistically significant improvement in Exact Match and F1 scores for the proposed temporal relevance component over all baselines, particularly on queries requiring non‑most‑recent versions.", "Ablations show that both the temporal decay function and combination method contribute to gains."]</li>
+<li><strong>Failure conditions:</strong> No significant improvement (p &gt; 0.05) over semantic‑only baselines; Degradation in performance on queries requiring older versions indicating recency bias dominance; High variance across runs suggesting instability</li>
+<li><strong>Reproducibility:</strong> ["Provide open‑source code repository with scripts for benchmark construction, retrieval implementation, training/inference, and evaluation.", "Include detailed README, versioned data preprocessing steps, random seed configuration, and hardware specifications.", "Release the constructed benchmark under a permissive license."]</li>
+<li><strong>Related work:</strong> [1], [2]</li>
+</ul>
+<h2>12. Experimental Results</h2>
+<p>Experiment not performed. The designs in Section 11 are untested.</p>
+<h2>13. Remaining Uncertainty</h2>
+<ul>
+<li>Literature coverage: searched 7 queries over arxiv, crossref, openalex, semantic_scholar. Work outside these queries and sources, very recent preprints, and non-English work may be missing; the absence of matching work here does not establish novelty.</li>
+<li>Some source requests failed and their results are missing: semantic_scholar (api.semanticscholar.org failed after 5 attempts (HTTP 429)).</li>
+<li>Metadata warning for It's About Time: Incorporating Temporality in Retrieval Augmented Language Models (2024) [2]: abstract (from arxiv) never mentions 'It's About Time'; it may belong to another work. Its abstract was not accepted as direct evidence.</li>
+<li>Metadata warning for The COMET Handbook: version 1.0 (2017) [7]: abstract (from openalex) never mentions 'The COMET Handbook'; it may belong to another work. Its abstract was not accepted as direct evidence.</li>
+<li>Metadata warning for PullNet: Open Domain Question Answering with Iterative Retrieval on Knowledge Bases and Text (2019) [8]: abstract (from openalex) never mentions 'PullNet'; it may belong to another work. Its abstract was not accepted as direct evidence.</li>
+<li>Metadata warning for BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding (2019) [9]: abstract (from openalex) never mentions 'BERT'; it may belong to another work. Its abstract was not accepted as direct evidence.</li>
+<li>5 of 6 analyses are based on abstracts only.</li>
+<li>Unresolved question: Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?</li>
+<li>Ambiguity (assumption): What type of temporal decay function to use? (e.g., linear, exponential, step); assumed: We will assume an exponential decay function based on common practice, but the exact form can be learned or tuned; this is a design choice to be explored.</li>
+<li>Ambiguity (assumption): What retrieval models to use as base? (dense, sparse); assumed: We will test with both a dense retriever (e.g., DPR) and a sparse retriever (e.g., BM25) to demonstrate agnosticism.</li>
+<li>Ambiguity (assumption): What benchmark to use for versioned regulatory documents?; assumed: We will construct a benchmark using publicly available versioned regulatory documents (e.g., U.S. Code, Federal Regulations) and create time-stamped queries based on amendment dates.</li>
+<li>Ambiguity (assumption): What evaluation metrics beyond EM/F1?; assumed: We will use Exact Match and F1 as standard QA metrics.</li>
+<li>Ambiguity (assumption): How to handle queries that may have ambiguous target dates?; assumed: We assume each query will have a clear target date (e.g., "as of 2020-01-01").</li>
+<li>Claims without a verified source: C008, C009.</li>
+<li>Phases that did not complete: gaps, modifications.</li>
+<li>No hypothesis in this report has been tested experimentally.</li>
+</ul>
+<p><strong>Uncertainty ledger</strong></p>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>Question</th>
+<th>Category</th>
+<th>Importance</th>
+<th>Status</th>
+<th>Evidence for / against</th>
+<th>Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>U002</td>
+<td>How similar is our proposed method to Re3 (arxiv:2509.01306) which balances relevance and recency via a query-aware gating mechanism?</td>
+<td>overlap</td>
+<td>high</td>
+<td>unresolved</td>
+<td>[1], [2] / none</td>
+<td>Both Re3 and our idea combine semantic and temporal information to improve retrieval/temporal reasoning. However, Re3 uses a query-aware gating mechanism to dynamically balance relevance and recency in general temporal information retrieval, while our idea proposes a retrieval-agnostic temporal relevance component that adjusts passage ranks based on elapsed time between query target date and version timestamp, targeting open-domain QA over continuously amended regulatory documents where amendments create dense semantic overlap. The core concept of integrating temporal signals overlaps, but the mechanisms, evaluation settings, and application specifics differ.</td>
+</tr>
+<tr>
+<td>U004</td>
+<td>Does temporal relevance actually improve QA accuracy, or could it hurt due to noise or misalignment?</td>
+<td>validity</td>
+<td>high</td>
+<td>open</td>
+<td>[2] / none</td>
+<td>Experiment plan designed to test whether adding a temporal relevance component improves QA accuracy on versioned regulatory documents; results pending.</td>
+</tr>
+<tr>
+<td>U006</td>
+<td>Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?</td>
+<td>validity</td>
+<td>high</td>
+<td>unresolved</td>
+<td>[2], [1] / none</td>
+<td>No existing work directly evaluates temporal relevance for QA over versioned regulatory documents; TempRALM uses tennis grand slam data and Re3 focuses on general TIR benchmarks, leaving the effect on versioned regulatory text with dense semantic overlap untested.</td>
+</tr>
+<tr>
+<td>U007</td>
+<td>Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?</td>
+<td>feasibility</td>
+<td>high</td>
+<td>unresolved</td>
+<td>[2], [1] / none</td>
+<td>Existing work shows TempRALM is designed for dense retrievers (Contriever-based) with no mention of sparse retrievers, while Re3 demonstrates generalization across diverse dense encoders but not sparse. No evidence demonstrates application to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to core algorithms, leaving the feasibility of a truly retrieval-agnostic temporal relevance component unresolved.</td>
+</tr>
+<tr>
+<td>U003</td>
+<td>Can we construct a benchmark of versioned regulatory documents with time-stamped queries?</td>
+<td>feasibility</td>
+<td>medium</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U005</td>
+<td>Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?</td>
+<td>confounder</td>
+<td>medium</td>
+<td>partially resolved</td>
+<td>none / none</td>
+<td>While TempRALM's scoring mechanism inherently prefers more recent passages within the valid temporal window, their evaluation shows largest improvements when querying about past events where semantic matching to current text fails (different years), suggesting the temporal component primarily helps select passages from the correct time period rather than merely preferring recent documents. However, their evaluation design (where correct answers are always the most recent valid passage) prevents disentangling whether improvements come from selecting the correct time period versus preferring the most recent passage within that period. Re3's Re2Bench, designed to disentangle relevance and recency, may offer a cleaner assessment.</td>
+</tr>
+<tr>
+<td>U001</td>
+<td>Is there existing work that combines temporal relevance with semantic similarity in a retrieval-agnostic way for QA over versioned regulatory text?</td>
+<td>novelty</td>
+<td>high</td>
+<td>resolved</td>
+<td>[1], [2], [10] / none</td>
+<td>No existing work explicitly combines temporal relevance with semantic similarity in a retrieval-agnostic way for QA over versioned regulatory text. Related work includes Re3 (arxiv:2509.01306) which balances semantic and temporal information via a query-aware gating mechanism for general temporal information retrieval, and TempRALM (arxiv:2401.13222) which adds a temporal score to a specific RALM, but neither targets retrieval-agnostic application to versioned regulatory QA. Policy document QA studies (e.g., arxiv:2601.15457) focus on RAG architectures without temporal components. Thus the gap remains.</td>
+</tr>
+</tbody>
+</table>
+<h2>14. Suggested Next Steps</h2>
+<ol>
+<li>Run the recommended experiment E001 (Evaluating Temporal Relevance Component for Question Answering over Versioned Regulatory Documents) with budget-matched baselines.</li>
+<li>Resolve: Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?</li>
+<li>Design a control for the confounder: Recency bias: the framework's tendency to favor more recent documents could improve metrics simply by returning newer information, regardless of whether that information is actually valid for the query's target date, especially problematic in regulatory text where older versions may still be legally applicable.</li>
+<li>Read the full text of the closest work analyzed only from abstracts: [1].</li>
+<li>Search for work newer than the most recent retrieved paper (2026) before claiming a distinction.</li>
+</ol>
+<h2>15. References</h2>
+<ol>
+<li>Jiawei Cao, Jie Ouyang, Zhaomeng Zhou et al.. <strong>Re3: Learning to Balance Relevance &amp; Recency for Temporal Information Retrieval</strong>. <em>arXiv (preprint)</em>, 2025. <a href="https://arxiv.org/abs/2509.01306">https://arxiv.org/abs/2509.01306</a> (id <code>arxiv:2509.01306</code>; retrieved from arxiv)</li>
+<li>Anoushka Gade, Jorjeta Jetcheva. <strong>It's About Time: Incorporating Temporality in Retrieval Augmented Language Models</strong>. <em>arXiv (preprint)</em>, 2024. <a href="https://arxiv.org/abs/2401.13222">https://arxiv.org/abs/2401.13222</a> (id <code>arxiv:2401.13222</code>; retrieved from arxiv)</li>
+<li>Francisco Claude, J. Ian Munro. <strong>Document Listing on Versioned Documents</strong>. <em>Lecture Notes in Computer Science</em>, 2013. <a href="https://doi.org/10.1007/978-3-319-02432-5_12">https://doi.org/10.1007/978-3-319-02432-5_12</a> (id <code>doi:10.1007/978-3-319-02432-5_12</code>; retrieved from crossref; 8 citations per crossref)</li>
+<li>Chao Lan, Yong Zhang, Chunxiao Xing et al.. <strong>Continuous Temporal Top-k Query over Versioned Documents</strong>. <em>Lecture Notes in Computer Science</em>, 2014. <a href="https://doi.org/10.1007/978-3-319-08010-9_55">https://doi.org/10.1007/978-3-319-08010-9_55</a> (id <code>doi:10.1007/978-3-319-08010-9_55</code>; retrieved from crossref; 0 citations per crossref)</li>
+<li>Luis J. Arévalo Rosado, Antonio Polo Márquez, Jorge Martínez Gil. <strong>Managing Branch Versioning in Versioned/Temporal XML Documents</strong>. <em>Lecture Notes in Computer Science</em>, n.d.. <a href="https://doi.org/10.1007/978-3-540-75288-2_9">https://doi.org/10.1007/978-3-540-75288-2_9</a> (id <code>doi:10.1007/978-3-540-75288-2_9</code>; retrieved from crossref; 4 citations per crossref)</li>
+<li>Sidra Faisal, Mansoor Sarwar. <strong>Temporal and multi-versioned XML documents: A survey</strong>. <em>Information Processing &amp; Management</em>, 2014. <a href="https://doi.org/10.1016/j.ipm.2013.08.003">https://doi.org/10.1016/j.ipm.2013.08.003</a> (id <code>doi:10.1016/j.ipm.2013.08.003</code>; retrieved from crossref; 19 citations per crossref)</li>
+<li>Paula Ruth Williamson, Douglas G. Altman, Heather Bagley et al.. <strong>The COMET Handbook: version 1.0</strong>. <em>Trials</em>, 2017. <a href="https://doi.org/10.1186/s13063-017-1978-4">https://doi.org/10.1186/s13063-017-1978-4</a> (id <code>doi:10.1186/s13063-017-1978-4</code>; retrieved from openalex; 2085 citations per openalex)</li>
+<li>Haitian Sun, Tania Bedrax-Weiss, William W. Cohen. <strong>PullNet: Open Domain Question Answering with Iterative Retrieval on Knowledge Bases and Text</strong>. 2019. <a href="https://doi.org/10.18653/v1/d19-1242">https://doi.org/10.18653/v1/d19-1242</a> (id <code>doi:10.18653/v1/d19-1242</code>; retrieved from openalex; 333 citations per openalex)</li>
+<li>Jacob Devlin, Ming‐Wei Chang, Kenton Lee et al.. <strong>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</strong>. 2019. <a href="https://doi.org/10.18653/v1/n19-1423">https://doi.org/10.18653/v1/n19-1423</a> (id <code>doi:10.18653/v1/n19-1423</code>; retrieved from openalex; 33744 citations per openalex)</li>
+<li>A. Maharjan, Umesh Yadav. <strong>Chunking, Retrieval, and Re-ranking: An Empirical Evaluation of RAG Architectures for Policy Document Question Answering</strong>. <em>arXiv.org</em>, 2026. <a href="https://www.semanticscholar.org/paper/f3d7e0165df8da3fad6cbfb776e0371c31d68c48">https://www.semanticscholar.org/paper/f3d7e0165df8da3fad6cbfb776e0371c31d68c48</a> doi:10.48550/arxiv.2601.15457 (id <code>arxiv:2601.15457</code>; retrieved from semantic_scholar; 3 citations per semantic_scholar)</li>
+</ol>
+<details><summary>Other retrieved papers (not cited in this report)</summary>
+
+- Faster temporal range queries over versioned text (2011) <https://doi.org/10.1145/2009916.2009993> `doi:10.1145/2009916.2009993`
+- ExpandFuse: A Hybrid Retrieval Framework with Query Expansion and Topic-Aware Reranking for Multi-Hop Question Answering (2025) <https://www.semanticscholar.org/paper/985710e9819315617b6fd4c46abf8650efabb30a> `doi:10.1109/bigdata66926.2025.11402490`
+- Enhancing Temporal Knowledge Graph Question Answering via Multi-level Temporal Knowledge Retrieval with Large Language Models (2025) <https://doi.org/10.1109/bigdia68682.2025.11382820> `doi:10.1109/bigdia68682.2025.11382820`
+- MARA: A Multimodal Adaptive Retrieval-Augmented Framework for Document Question Answering (2025) <https://www.semanticscholar.org/paper/b1e326eb8586518b3d1c8b3fed0b438a396a072e> `arxiv:2604.16313`
+- Agnostic Multi-Source Retrieval-Augmented Generation for Documents and Database Question Answering (2026) <https://doi.org/10.62710/qw0ytn73> `doi:10.62710/qw0ytn73`
+- Bridging dual knowledge graphs for multi-hop question answering in construction safety (2025) <https://www.semanticscholar.org/paper/a001f67d26416bdadeb40811e682c169d640770a> `arxiv:2507.13625`
+- DocQA: Document Driven Question Answering (2024) <https://www.semanticscholar.org/paper/6baa3c135c951cadb5dd365c497492d67631a3ea> `doi:10.17148/iarjset.2024.11515`
+- TwiRGCN: Temporally Weighted Graph Convolution for Question Answering over Temporal Knowledge Graphs (2022) <https://arxiv.org/abs/2210.06281> `arxiv:2210.06281`
+- Federated Retrieval Augmented Generation for Multi-Product Question Answering (2025) <https://www.semanticscholar.org/paper/95264cbf4d69375d9d9857cde061bfb8435451fc> `arxiv:2501.14998`
+- LeAdQA: LLM-Driven Context-Aware Temporal Grounding for Video Question Answering (2025) <https://arxiv.org/abs/2507.14784> `arxiv:2507.14784`
+- Question Answering under Temporal Conflict: Evaluating and Organizing Evolving Knowledge with LLMs (2025) <https://arxiv.org/abs/2506.07270> `arxiv:2506.07270`
+- Preparing a collection of radiology examinations for distribution and retrieval (2015) <https://doi.org/10.1093/jamia/ocv080> `doi:10.1093/jamia/ocv080`
+- Membership Inference Attacks for Retrieval Based In-Context Learning for Document Question Answering (2026) <https://www.semanticscholar.org/paper/456f1efeb1ba8ae7df6f9b0c44225a1ef7b5d399> `arxiv:2605.04116`
+- TVQA+: Spatio-Temporal Grounding for Video Question Answering (2019) <https://arxiv.org/abs/1904.11574> `arxiv:1904.11574`
+- Complex Temporal Question Answering on Knowledge Graphs (2021) <https://arxiv.org/abs/2109.08935> `arxiv:2109.08935`
+- ForecastTKGQuestions: A Benchmark for Temporal Question Answering and Forecasting over Temporal Knowledge Graphs (2022) <https://arxiv.org/abs/2208.06501> `arxiv:2208.06501`
+- Relevance of Topic and Focus for Automatic Question Answering (1983) <https://doi.org/10.1007/978-94-009-7016-8_11> `doi:10.1007/978-94-009-7016-8_11`
+- TempRAA: temporal relation-aware alignment for enhancing LLMs reasoning in time-sensitive knowledge graph question answering (2026) <https://doi.org/10.1007/s10844-026-01027-w> `doi:10.1007/s10844-026-01027-w`
+- M3TQA: Multi-View, Multi-Hop and Multi-Stage Reasoning for Temporal Question Answering (2024) <https://doi.org/10.1109/icassp48485.2024.10448071> `doi:10.1109/icassp48485.2024.10448071`
+- Enhancing Visual Question Answering: A Novel Approach to Determining Question Relevance (2024) <https://doi.org/10.1109/icitiit61487.2024.10580857> `doi:10.1109/icitiit61487.2024.10580857`
+- Generative long-form question answering : relevance, faithfulness, and succinctness (n.d.) <https://doi.org/10.14711/thesis-991013106451503412> `doi:10.14711/thesis-991013106451503412`
+- Question Calibration and Multi-Hop Modeling for Temporal Question Answering (2024) <https://doi.org/10.1609/aaai.v38i17.29903> `doi:10.1609/aaai.v38i17.29903`
+- Open Domain Question Answering Using Early Fusion of Knowledge Bases and Text (2018) <https://doi.org/10.18653/v1/d18-1455> `doi:10.18653/v1/d18-1455`
+- Question Answering over Linked Data with Vague Temporal Adverbials (2025) <https://doi.org/10.5220/0013778400004000> `doi:10.5220/0013778400004000`
+- Belief detection and temporal analysis of experts in question answering communities : case strudy on stack overflow (n.d.) <https://doi.org/10.70675/4cc30d33z4a62z4702zaf1cz54bc6900cb64> `doi:10.70675/4cc30d33z4a62z4702zaf1cz54bc6900cb64`
+- Retrieval-Augmented Visual Question Answering via Built-in Autoregressive Search Engines (2025) <https://www.semanticscholar.org/paper/f40a03ac7d216205a70d28cfcea14cd69b9d46fb> `arxiv:2502.16641`
+- EviGraphRAG: Constraint-Verified Retrieval-Augmented Question Answering over Event Knowledge Graphs (2026) <https://www.semanticscholar.org/paper/18792898ea10b2ef47e846c29d7ccbca796507f8> `doi:10.32604/cmc.2026.089159`
+- Parameter-Efficient Abstractive Question Answering over Tables or Text (2022) <https://doi.org/10.18653/v1/2022.dialdoc-1.5> `doi:10.18653/v1/2022.dialdoc-1.5`
+- MoQA: Benchmarking Multi-Type Open-Domain Question Answering (2023) <https://doi.org/10.18653/v1/2023.dialdoc-1.2> `doi:10.18653/v1/2023.dialdoc-1.2`
+- Question Answering For Toxicological Information Extraction (2022) <https://drops.dagstuhl.de/entities/document/10.4230/OASIcs.SLATE.2022.3> `doi:10.4230/oasics.slate.2022.3`
+- Vista: Scene-Aware Optimization for Streaming Video Question Answering under Post-Hoc Queries (2026) <https://arxiv.org/abs/2602.08448> `arxiv:2602.08448`
+- APEX-MEM: Agentic Semi-Structured Memory with Temporal Reasoning for Long-Term Conversational AI (2026) <https://arxiv.org/abs/2604.14362> `arxiv:2604.14362`
+- TDR 2 A：Time-sensitive Decomposition-Retrieval-Reorganization Agent for Temporal Knowledge Graph Question Answering (2025) <https://doi.org/10.2139/ssrn.5624243> `doi:10.2139/ssrn.5624243`
+- Passage retrieval for question answering using sliding windows (2008) <https://doi.org/10.3115/1641451.1641455> `doi:10.3115/1641451.1641455`
+- Comparing Statistical Models for Retrieval based Question-answering Dialogue: BERT vs Relevance Models (2023) <https://doi.org/10.32473/flairs.36.133386> `doi:10.32473/flairs.36.133386`
+- Graph-Structured Representations for Visual Question Answering (2017) <https://doi.org/10.1109/cvpr.2017.344> `arxiv:1609.05600`
+- Progressive Spatio-temporal Perception for Audio-Visual Question Answering (2023) <https://arxiv.org/abs/2308.05421> `arxiv:2308.05421`
+- Improving Multi-hop Question Answering over Knowledge Graphs using Knowledge Base Embeddings (2020) <https://doi.org/10.18653/v1/2020.acl-main.412> `doi:10.18653/v1/2020.acl-main.412`
+- Which academic search systems are suitable for systematic reviews or meta‐analyses? Evaluating retrieval qualities of Google Scholar, PubMed, and 26 other resources (2019) <https://doi.org/10.1002/jrsm.1378> `doi:10.1002/jrsm.1378`
+- Visual information retrieval (1997) <https://doi.org/10.1145/253769.253798> `doi:10.1145/253769.253798`
+- Information retrieval on the web (2000) <https://doi.org/10.1145/358923.358934> `doi:10.1145/358923.358934`
+- CourseTimeQA: A Lecture-Video Benchmark and a Latency-Constrained Cross-Modal Fusion Method for Timestamped QA (2025) <https://arxiv.org/abs/2512.00360> `arxiv:2512.00360`
+- AI-Assisted Pipeline for Dynamic Generation of Trustworthy Health Supplement Content at Scale (2018) <http://arxiv.org/abs/1810.04805> `arxiv:1810.04805`
+- The development of animal personality: relevance, concepts and perspectives (2009) <https://doi.org/10.1111/j.1469-185x.2009.00103.x> `doi:10.1111/j.1469-185x.2009.00103.x`
+- A Long Short-Term Memory Model for Answer Sentence Selection in Question Answering (2015) <https://doi.org/10.3115/v1/p15-2116> `doi:10.3115/v1/p15-2116`
+- Proceedings of the 1st Workshop on Document-grounded Dialogue and Conversational Question Answering (DialDoc 2021) (2021) <https://doi.org/10.18653/v1/2021.dialdoc-1> `doi:10.18653/v1/2021.dialdoc-1`
+- Proceedings of the Second DialDoc Workshop on Document-grounded Dialogue and Conversational Question Answering (2022) <https://doi.org/10.18653/v1/2022.dialdoc-1> `doi:10.18653/v1/2022.dialdoc-1`
+- Proceedings of the Third DialDoc Workshop on Document-grounded Dialogue and Conversational Question Answering (2023) <https://doi.org/10.18653/v1/2023.dialdoc-1> `doi:10.18653/v1/2023.dialdoc-1`
+- Vision-language models for medical report generation and visual question answering: a review (2024) <https://doi.org/10.3389/frai.2024.1430984> `arxiv:2403.02469`
+- Complex Knowledge Base Question Answering: A Survey (2022) <https://doi.org/10.1109/tkde.2022.3223858> `doi:10.1109/tkde.2022.3223858`
+- Is Question Answering fit for the Semantic Web?: A survey (2011) <https://doi.org/10.3233/sw-2011-0041> `doi:10.3233/sw-2011-0041`
+- Bias and Unfairness in Information Retrieval Systems: New Challenges in the LLM Era (2024) <https://doi.org/10.1145/3637528.3671458> `arxiv:2404.11457`
+- How UMass-FSD Inadvertently Leverages Temporal Bias (2020) <https://doi.org/10.1145/3397271.3401306> `doi:10.1145/3397271.3401306`
+- Bounding Knowledge Decay From Agnostic Temporal Generalization (2025) <https://doi.org/10.31219/osf.io/nm7zr_v2> `doi:10.31219/osf.io/nm7zr_v2`
+- Attention-Based Complex Logical Query on Temporal Knowledge Graph via Graph Neural Network (2024) <https://doi.org/10.1109/tbdata.2024.3489421> `doi:10.1109/tbdata.2024.3489421`
+- Temporal Tree of Thought: Reasoning-Guided Visual Cue Search for Long-Video Understanding (2026) <https://arxiv.org/abs/2608.27871> `arxiv:2608.27871`
+- Not All Videos Become Outdated: Short-Video Recommendation by Learning to Deconfound Release Interval Bias (2024) <https://arxiv.org/abs/2408.17332> `arxiv:2408.17332`
+- CAST: Modeling Visual State Transitions for Consistent Video Retrieval (2026) <https://arxiv.org/abs/2603.08648> `arxiv:2603.08648`
+- Deconfounded Video Moment Retrieval with Causal Intervention (2021) <https://doi.org/10.1145/3404835.3462823> `doi:10.1145/3404835.3462823`
+- Multilevel Language and Vision Integration for Text-to-Clip Retrieval (2019) <https://doi.org/10.1609/aaai.v33i01.33019062> `doi:10.1609/aaai.v33i01.33019062`
+- The Web as a Knowledge-Base for Answering Complex Questions (2018) <https://doi.org/10.18653/v1/n18-1059> `arxiv:1803.06643`
+- Reinforcement learning with time intervals for temporal knowledge graph reasoning (2023) <https://doi.org/10.1016/j.is.2023.102292> `doi:10.1016/j.is.2023.102292`
+- A survey on temporal knowledge graph embedding: Models and applications (2024) <https://doi.org/10.1016/j.knosys.2024.112454> `doi:10.1016/j.knosys.2024.112454`
+- Temporal knowledge graph query model fusing fuzzy information modeling and dynamic path memory network (2026) <https://doi.org/10.1016/j.neucom.2026.134983> `doi:10.1016/j.neucom.2026.134983`
+- The Neuroscience of Natural Rewards: Relevance to Addictive Drugs (2002) <https://doi.org/10.1523/jneurosci.22-09-03306.2002> `doi:10.1523/jneurosci.22-09-03306.2002`
+- Semantic Parsing on Freebase from Question-Answer Pairs (2013) <https://doi.org/10.18653/v1/d13-1160> `doi:10.18653/v1/d13-1160`
+- Fintech, regulatory arbitrage, and the rise of shadow banks (2018) <https://doi.org/10.1016/j.jfineco.2018.03.011> `doi:10.1016/j.jfineco.2018.03.011`
+- The imperative for regulatory oversight of large language models (or generative AI) in healthcare (2023) <https://doi.org/10.1038/s41746-023-00873-0> `doi:10.1038/s41746-023-00873-0`
+- Regulatory Question-Answering using Generative AI (2025) <https://www.semanticscholar.org/paper/c38e59b523c7821a6da5fb274234b4013553752c> `s2:c38e59b523c7821a6da5fb274234b4013553752c`
+- Adaptive Retrieval Agents: Internalizing Local Context and Scaling up to the Web (2000) <https://doi.org/10.1023/a:1007653114902> `doi:10.1023/a:1007653114902`
+- Key-Value Retrieval Networks for Task-Oriented Dialogue (2017) <https://doi.org/10.18653/v1/w17-5506> `arxiv:1705.05414`
+- Mapping 'when'-clauses in Latin American and Caribbean languages: an experiment in subtoken-based typology (2024) <https://arxiv.org/abs/2404.18257> `arxiv:2404.18257`
+- Temporal User-Agnostic Ranking: Detecting Preference Evolution while Preserving Ethical Principles (2026) <https://doi.org/10.1145/3805712.3809900> `doi:10.1145/3805712.3809900`
+- Occipito-temporal connections in the human brain (2003) <https://doi.org/10.1093/brain/awg203> `doi:10.1093/brain/awg203`
+- MultiSum: A Multi-Facet Approach for Extractive Social Summarization Utilizing Semantic and Sociological Relationships (2024) <https://doi.org/10.1609/aaai.v38i17.29939> `doi:10.1609/aaai.v38i17.29939`
+- The PRISMA Statement for Reporting Systematic Reviews and Meta-Analyses of Studies That Evaluate Health Care Interventions: Explanation and Elaboration (2009) <https://doi.org/10.1371/journal.pmed.1000100> `doi:10.1371/journal.pmed.1000100`
+- Modeling Relational Data with Graph Convolutional Networks (2018) <https://doi.org/10.1007/978-3-319-93417-4_38> `arxiv:1703.06103`
+- Advances and Open Problems in Federated Learning (2020) <https://doi.org/10.1561/2200000083> `arxiv:1912.04977`
+- When Is a Recommendation Model Wrong? A Model-Agnostic Tree-Based Approach to Detecting Biases in Recommendations (2021) <https://doi.org/10.1007/978-3-030-78818-6_9> `doi:10.1007/978-3-030-78818-6_9`
+- ImageNet classification with deep convolutional neural networks (2017) <https://doi.org/10.1145/3065386> `doi:10.1145/3065386`
+- Domain-agnostic Question-Answering with Adversarial Training (2019) <https://doi.org/10.18653/v1/d19-5826> `doi:10.18653/v1/d19-5826`
+- A Survey of Task-Oriented Knowledge Graph Reasoning: Status, Applications, and Prospects (2025) <https://doi.org/10.36227/techrxiv.174961563.32605293/v1> `doi:10.36227/techrxiv.174961563.32605293/v1`
+- Exploiting Generative AI to Scale up Intelligent Tutoring Systems (2023) <https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ITP.2023.19> `doi:10.4230/lipics.itp.2023.19`
+- Large-scale Semantic Parsing via Schema Matching and Lexicon Extension (2013) <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.361.3926> `openalex:W2163561827`
+
+</details>
+
+<h2>Appendix A. Evidence Ledger</h2>
+<h3>[Evidence] claims (4)</h3>
+<ul>
+<li><strong>[Evidence]</strong> TempRALM introduces a temporal score 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡 (inverse of time difference) normalized to align with semantic score range, combined with semantic score 𝑠(𝑞,𝑑) = ⟨𝑓𝜃(𝑞),𝑓 𝜃(𝑑)⟩, where the retriever fetches documents based on both semantic and temporal relevance. <em>(claim C001, confidence: high)</em></li>
+<li>[2], p. 4 (direct support, verified) "Temporal Score We introduce a new method called TempRALM, which augments the retriever with a temporal score𝜏(𝑞𝑡,𝑑𝑡), where𝑞𝑡 is the timestamp of the query𝑞, and𝑑𝑡 is the timestamp of document𝑑. To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score), and use a scaling factor𝛼 to tune the temporal score’s importance relative to the importance of the semantic score. The temporal score formulation is as follows: 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡"</li>
+<li><strong>[Evidence]</strong> Re3 proposes a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism to address the intertwined challenges of relevance (alignment with query's temporal requirements) and recency (selecting the freshest document) in temporal information retrieval. <em>(claim C002, confidence: high)</em></li>
+<li>[1], abstract (direct support, verified) "To address this gap, we introduce Re2Bench, a benchmark specifically designed to disentangle and evaluate Relevance, Recency, and their hybrid combination. Building on this foundation, we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism."</li>
+<li><strong>[Evidence]</strong> Re3 ablation studies show strong generalization across diverse encoders, indicating the framework works with different dense retriever backbones, but does not mention evaluation with sparse retrievers such as BM25. <em>(claim C017, confidence: high)</em></li>
+<li>[1], abstract (direct support, verified) "Ablation studies with backbone sensitivity tests confirm robustness, showing strong generalization across diverse encoders and real-world settings."</li>
+<li><strong>[Evidence]</strong> TempRALM uses a dense retriever based on Contriever, an information retrieval approach based on continuous dense embeddings, indicating a focus on dense retrievers without mention of sparse retrievers such as BM25. <em>(claim C018, confidence: high)</em></li>
+<li>[2], p. 4 (direct support, verified) "The retriever is based on the Contriever [ 7], an information retrieval approach based on continuous dense embeddings."</li>
+</ul>
+<h3>[Inference] claims (15)</h3>
+<ul>
+<li><strong>[Inference]</strong> A key technical risk is ensuring the temporal relevance component is truly retrieval-agnostic and can be applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without requiring modification to their core ranking algorithms, as differences in score distributions and normalization requirements may affect how temporal scores combine with semantic scores. <em>(claim C003, confidence: medium)</em></li>
+<li>[2], p. 4 (direct support, verified) "Temporal Score We introduce a new method called TempRALM, which augments the retriever with a temporal score𝜏(𝑞𝑡,𝑑𝑡), where𝑞𝑡 is the timestamp of the query𝑞, and𝑑𝑡 is the timestamp of document𝑑. To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score), and use a scaling factor𝛼 to tune the temporal score’s importance relative to the importance of the semantic score. The temporal score formulation is as follows: 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡"</li>
+<li>[1], abstract (direct support, verified) "To address this gap, we introduce Re2Bench, a benchmark specifically designed to disentangle and evaluate Relevance, Recency, and their hybrid combination. Building on this foundation, we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism."</li>
+<li><strong>[Inference]</strong> A major experimental confounder is that observed improvements in answer accuracy could stem from the framework's tendency to favor more recent documents (recency bias) rather than genuinely selecting the correct version for a time-specific query, especially in regulatory texts where older versions may still be legally valid for certain time points. <em>(claim C004, confidence: medium)</em></li>
+<li>[2], p. 4 (direct support, verified) "Temporal Score We introduce a new method called TempRALM, which augments the retriever with a temporal score𝜏(𝑞𝑡,𝑑𝑡), where𝑞𝑡 is the timestamp of the query𝑞, and𝑑𝑡 is the timestamp of document𝑑. To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score), and use a scaling factor𝛼 to tune the temporal score’s importance relative to the importance of the semantic score. The temporal score formulation is as follows: 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡"</li>
+<li>[1], abstract (direct support, verified) "This task is shaped by two challenges: Relevance, ensuring alignment with the query's explicit temporal requirements, and Recency, selecting the freshest document among multiple versions. Existing methods often address the two challenges in isolation, relying on brittle heuristics that fail in scenarios where temporal requirements and staleness resistance are intertwined."</li>
+<li><strong>[Inference]</strong> Re3 uses a query-aware gating mechanism to dynamically balance semantic and temporal information, which may be more complex and less retrieval-agnostic than a simple temporal relevance component based on elapsed time. <em>(claim C006, confidence: medium)</em></li>
+<li>[1], abstract (direct support, verified) "Building on this foundation, we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism."</li>
+<li><strong>[Inference]</strong> Our proposed idea differs from Re3 and TempRALM by targeting retrieval-agnostic application to open-domain question answering over continuously amended regulatory documents, where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query. <em>(claim C007, confidence: medium)</em></li>
+<li>[1], abstract (indirect support, verified) "Building on this foundation, we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism."</li>
+<li>[2], p. 4 (indirect support, unverified) "We show that our approach results in up to 74% improvement in performance over the baseline RALM model, without requiring model pre-training, recalculating or replacing the RALM document index, or adding other computationally intensive elements."</li>
+<li><strong>[Inference]</strong> A key technical risk is ensuring the temporal relevance component is truly retrieval-agnostic and can be applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without requiring modification to their core ranking algorithms, as differences in score distributions and normalization requirements may affect how temporal scores combine with semantic scores. <em>(claim C008, confidence: medium)</em></li>
+<li>[2], p. 4 (indirect support, unverified) "To align the temporal score with the numerical range of the semantic score from equation 1, we employ a normalization process. In particular, we subtract from each temporal score, the mean over the temporal scores of all(𝑞,𝑑) pairs,𝜇𝜏 , and divide by the standard deviation over the temporal scores of all(𝑞,𝑑) pairs, 𝜎𝜏 . The normalized temporal score is then scaled to the range of the relevance score by multiplying with standard deviation of semantic scores𝜎𝑠 and adding mean of semantic scores𝜇𝑠 (both computed over the scores of all(𝑞,𝑑) pairs): 𝜏(𝑞𝑡,𝑑𝑡) = 𝜏(𝑞𝑡,𝑑𝑡)− 𝜇𝜏 𝜎𝜏 ×𝜎𝑠+𝜇𝑠"</li>
+<li>[2], p. 5 (indirect support, unverified) "based on a general-purpose dense retriever that uses a dual- encoder architecture, based on the Contriever [7] and a sequence- to-sequence model built on the Fusion-in-Decoder architecture [3] which uses T5-1.1 [15] with a language modeling adaptation."</li>
+<li><strong>[Inference]</strong> Existing temporal relevance methods like TempRALM are designed for specific retriever types (e.g., dense Contriever-based) with score normalization tailored to those retrievers, while our idea proposes a retrieval-agnostic component that can be applied to both dense and sparse retrievers without modification to their core algorithms. <em>(claim C009, confidence: medium)</em></li>
+<li>[2], p. 5 (indirect support, unverified) "based on a general-purpose dense retriever that uses a dual- encoder architecture, based on the Contriever [7]"</li>
+<li>[2], p. 4 (indirect support, unverified) "To align the temporal score with the numerical range of the semantic score from equation 1, we employ a normalization process"</li>
+<li><strong>[Inference]</strong> A major experimental confounder is that observed improvements in answer accuracy could stem from the framework's tendency to favor more recent documents (recency bias) rather than genuinely selecting the correct version for a time-specific query, especially in regulatory texts where older versions may still be legally valid for certain time points. <em>(claim C010, confidence: medium)</em></li>
+<li>[2], p. 4 (indirect support, verified) "To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score)"</li>
+<li>[1], abstract (indirect support, verified) "This task is shaped by two challenges: Relevance, ensuring alignment with the query's explicit temporal requirements, and Recency, selecting the freshest document among multiple versions."</li>
+<li><strong>[Inference]</strong> TempRALM's evaluation shows that temporal augmentation improves performance most when query and passage time periods don't match (e.g., different years), but within the valid temporal window (passages at or before query time), the inverse time difference scoring still favors more recent passages, creating a potential confound where improvements could stem from recency bias rather than genuine temporal relevance for time-specific queries. <em>(claim C011, confidence: high)</em></li>
+<li>[2], p. 5 (direct support, verified) "Figure 4: Questions asking about the winner, runner-up, finalists and score asked at different timestamps, where the right answer corresponds to the most recent tennis match that occurred before the query timestamp (denoting passages that refer to future information relative to the time of the event specified in the query), to completely eliminate these passages from being considered while ranking the𝑡𝑜𝑝𝑘 . We re-write the retrieval computation as follows: 𝑇𝑒𝑚𝑝𝑅𝑒𝑡 𝑡(𝑞,𝑑,𝑞𝑡,𝑑𝑡 ) = ( 𝑠(𝑞,𝑑)+ 𝜏(𝑞𝑡,𝑑𝑡) if𝑞𝑡≥𝑑𝑡 −∞, otherwise"</li>
+<li>[2], p. 4 (direct support, verified) "To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score)"</li>
+<li>[2], p. 6 (direct support, verified) "However, when the year in the timestamp of the query does not match that in the text passage (TPQ-2020 experiments), TempRALM outperforms unmodified Atlas by 49% in the 32 few-shot learning experiment, 67% in the 64 few-shot learning experiment, and 74% in the 128 few-shot learning experiment."</li>
+<li><strong>[Inference]</strong> Re3 introduces Re2Bench specifically designed to disentangle and evaluate Relevance, Recency, and their hybrid combination, suggesting their evaluation approach aims to separate the effects of semantic content matching from temporal preferences, potentially reducing the recency bias confound present in methods that use simple temporal scoring. <em>(claim C012, confidence: medium)</em></li>
+<li>[1], abstract (direct support, verified) "To address this gap, we introduce Re2Bench, a benchmark specifically designed to disentangle and evaluate Relevance, Recency, and their hybrid combination."</li>
+<li><strong>[Inference]</strong> TempRALM's evaluation results counter the recency bias confound concern: temporal augmentation improves performance most when querying about past events where semantic matching to current text fails (different years), showing the temporal component helps select passages from the correct time period rather than simply preferring recent documents. When query and passage time periods match, semantic alone suffices; when they don't match, temporal augmentation is needed to recover the correct temporal context. <em>(claim C013, confidence: high)</em></li>
+<li>[2], p. 6 (direct support, verified) "We observe that when the timestamp year of the query matches that of the event (and thus the date referenced in the corresponding text passage), the unmodified Atlas model performs comparably to TempRALM. In these scenarios, the semantic score captures the matching date pattern between the query and the passage. However, when the year in the timestamp of the query does not match that in the text passage (TPQ-2020 experiments), TempRALM outperforms unmodified Atlas by 49% in the 32 few-shot learning experiment, 67% in the 64 few-shot learning experiment, and 74% in the 128 few-shot learning experiment."</li>
+<li><strong>[Inference]</strong> TempRALM's evaluation design limits assessment of recency bias confound: their query construction ensures the correct answer always corresponds to the most recent tennis match before the query timestamp, so they never test cases where the correct answer is an older valid passage. This prevents disentangling whether temporal augmentation helps by selecting the correct time period versus simply preferring more recent passages within that period. <em>(claim C014, confidence: medium)</em></li>
+<li>[2], p. 5 (direct support, verified) "Figure 4: Questions asking about the winner, runner-up, finalists and score asked at different timestamps, where the right answer corresponds to the most recent tennis match that occurred before the query timestamp (denoting passages that refer to future information relative to the time of the event specified in the query), to completely eliminate these passages from being considered while ranking the𝑡𝑜𝑝𝑘"</li>
+<li><strong>[Inference]</strong> Re3's Re2Bench benchmark is specifically designed to disentangle and evaluate Relevance, Recency, and their hybrid combination, suggesting their evaluation approach can distinguish between improvements from selecting the correct time period versus simply preferring more recent passages within that period, potentially providing a cleaner assessment of temporal relevance contributions. <em>(claim C015, confidence: medium)</em></li>
+<li>[1], abstract (direct support, verified) "To address this gap, we introduce Re2Bench, a benchmark specifically designed to disentangle and evaluate Relevance, Recency, and their hybrid combination."</li>
+<li><strong>[Inference]</strong> Unlike TempRALM's inverse time difference scoring which gradually prefers more recent passages within the valid temporal window, our proposed temporal relevance component could be designed to primarily filter out future information (passages with timestamps &gt; query target date) while treating all past passages more equally, reducing recency bias confound when the goal is to find the version in effect at a specific time point rather than the most recent version overall. <em>(claim C016, confidence: medium)</em></li>
+<li>[2], p. 4 (indirect support, verified) "To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score)"</li>
+<li>[2], p. 5 (indirect support, verified) "Figure 4: Questions asking about the winner, runner-up, finalists and score asked at different timestamps, where the right answer corresponds to the most recent tennis match that occurred before the query timestamp"</li>
+<li><strong>[Inference]</strong> Re3 uses a query-aware gating mechanism to dynamically balance semantic and temporal information, which requires learning a gating function that may depend on the query and potentially adds complexity compared to a simple temporal relevance component based on elapsed time (e.g., exponential decay) combined with semantic similarity via a weighted sum or lightweight gating. <em>(claim C019, confidence: medium)</em></li>
+<li>[1], abstract (direct support, verified) "Building on this foundation, we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism."</li>
+<li><strong>[Inference]</strong> No existing work directly evaluates whether adding a temporal relevance component improves answer accuracy for open-domain question answering over versioned regulatory documents with overlapping revisions and time-stamped queries; TempRALM is evaluated on a tennis grand slam dataset (p. 5) and Re3 introduces Re2Bench for general temporal information retrieval (abstract). <em>(claim C020, confidence: medium)</em></li>
+<li>[2], p. 5 (direct support, verified) "In particular, we curated a dataset based on tennis grand slam data, where 4 major tournaments take place every year and answers to the queries depend on when the query is asked, with respect to the timing of the tournament."</li>
+<li>[1], abstract (direct support, verified) "To address this gap, we introduce Re2Bench, a benchmark specifically designed to disentangle and evaluate Relevance, Recency, and their hybrid combination."</li>
+</ul>
+<h3>[Assumption] claims (1)</h3>
+<ul>
+<li><strong>[Assumption]</strong> Assumptions underlying the proposed framework: (1) Version timestamps are available for each passage in regulatory documents. (2) Queries have an associated target date indicating when the information should be valid. (3) Semantic similarity from a retriever (e.g., dense or sparse) is a relevant baseline for measuring document relevance to queries. (4) Temporal relevance can be modeled as a decreasing function of elapsed time between query target date and version timestamp. (5) The framework can be applied to both dense and sparse retrievers without modification to their core ranking algorithms. <em>(claim C005, confidence: medium)</em></li>
+<li>[2], p. 4 (direct support, verified) "Temporal Score We introduce a new method called TempRALM, which augments the retriever with a temporal score𝜏(𝑞𝑡,𝑑𝑡), where𝑞𝑡 is the timestamp of the query𝑞, and𝑑𝑡 is the timestamp of document𝑑. To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score), and use a scaling factor𝛼 to tune the temporal score’s importance relative to the importance of the semantic score. The temporal score formulation is as follows: 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡"</li>
+<li>[1], abstract (direct support, verified) "To address this gap, we introduce Re2Bench, a benchmark specifically designed to disentangle and evaluate Relevance, Recency, and their hybrid combination. Building on this foundation, we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism."</li>
+</ul>
+<h2>Appendix B. Search Log</h2>
+<table>
+<thead>
+<tr>
+<th>Query</th>
+<th>Sources (status: results)</th>
+<th>Papers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>temporal relevance retrieval versioned documents</td>
+<td>arxiv (ok: 3), openalex (ok: 5), semantic_scholar (error: 0), crossref (ok: 5)</td>
+<td>13</td>
+</tr>
+<tr>
+<td>temporal relevance question answering</td>
+<td>arxiv (ok: 5), openalex (ok: 5), semantic_scholar (error: 0), crossref (ok: 5)</td>
+<td>15</td>
+</tr>
+<tr>
+<td>references of arxiv:2210.06281</td>
+<td>openalex (ok: 10)</td>
+<td>10</td>
+</tr>
+<tr>
+<td>citations of arxiv:2210.06281</td>
+<td>openalex (ok: 10)</td>
+<td>10</td>
+</tr>
+<tr>
+<td>retrieval agnostic temporal relevance question answering</td>
+<td>arxiv (ok: 5), openalex (ok: 5), semantic_scholar (ok: 5), crossref (ok: 5)</td>
+<td>20</td>
+</tr>
+<tr>
+<td>temporal bias retrieval agnostic</td>
+<td>arxiv (ok: 3), openalex (ok: 5), semantic_scholar (error: 0), crossref (ok: 5)</td>
+<td>12</td>
+</tr>
+<tr>
+<td>versioned regulatory document question answering</td>
+<td>arxiv (ok: 0), openalex (ok: 5), semantic_scholar (ok: 5), crossref (ok: 5)</td>
+<td>15</td>
+</tr>
+</tbody>
+</table>
+<h2>Appendix C. Investigation Log</h2>
+<p>Each step was chosen by the ResearchForge controller from the recorded research state.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Phase</th>
+<th>Action</th>
+<th>Why</th>
+<th>Alternatives considered</th>
+<th>Outcome</th>
+<th>Information gain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>INTAKE</td>
+<td>INTAKE</td>
+<td>Research idea received.</td>
+<td>none</td>
+<td>idea stored in the workspace</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>1</td>
+<td>FORMALIZE</td>
+<td>FORMALIZE</td>
+<td>The idea has not been formalized into a testable research question.</td>
+<td>none</td>
+<td>+13 papers; +1 searches; idea formalized</td>
+<td>3</td>
+</tr>
+<tr>
+<td>2</td>
+<td>PLAN</td>
+<td>PLAN</td>
+<td>No investigation plan exists yet, so it is unclear what must be determined.</td>
+<td>none</td>
+<td>+5 uncertainties; investigation plan recorded</td>
+<td>1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>INVESTIGATE</td>
+<td>SEARCH (temporal relevance)</td>
+<td>Literature coverage is insufficient: at least 2 distinct search queries (have 1).</td>
+<td>none</td>
+<td>+35 papers; +3 searches</td>
+<td>2</td>
+</tr>
+<tr>
+<td>4</td>
+<td>INVESTIGATE</td>
+<td>READ</td>
+<td>Retrieved papers have not been analyzed enough to judge overlap.</td>
+<td>none</td>
+<td>+4 analyses</td>
+<td>2</td>
+</tr>
+<tr>
+<td>5</td>
+<td>INVESTIGATE</td>
+<td>READ</td>
+<td>Retrieved papers have not been analyzed enough to judge overlap.</td>
+<td>none</td>
+<td>+2 analyses</td>
+<td>1</td>
+</tr>
+<tr>
+<td>6</td>
+<td>SYNTHESIZE</td>
+<td>SYNTHESIZE</td>
+<td>Analyses exist but the field has not been mapped.</td>
+<td>none</td>
+<td>landscape recorded</td>
+<td>1</td>
+</tr>
+<tr>
+<td>7</td>
+<td>CRITIQUE</td>
+<td>CRITIQUE</td>
+<td>The idea has not been challenged yet.</td>
+<td>none</td>
+<td>+5 claims; +5 verified claims; +2 uncertainties; critique recorded; uncertainties updated: U002, U004</td>
+<td>6</td>
+</tr>
+<tr>
+<td>8</td>
+<td>UNCERTAINTY</td>
+<td>SEARCH (U001: Is there existing work that combines temporal relevance with semantic simi)</td>
+<td>Most valuable next step for high-importance novelty question U001: score 1.139 = importance 3 x expected gain 0.633 x relevance 1 x evidence deficiency 0.6 / cost 1. Next best: PLAN_EXPERIMENT on U006 (1.08).</td>
+<td>PLAN_EXPERIMENT U006 (1.08); VERIFY U006 (1.08)</td>
+<td>+46 papers; +3 searches; +1 resolved uncertainties; uncertainties updated: U001</td>
+<td>4</td>
+</tr>
+<tr>
+<td>9</td>
+<td>UNCERTAINTY</td>
+<td>PLAN_EXPERIMENT (U006: Does temporal relevance improve QA accuracy on versioned regulatory docume)</td>
+<td>Most valuable next step for high-importance validity question U006: score 1.08 = importance 3 x expected gain 0.4 x relevance 0.9 x evidence deficiency 1 / cost 1. Next best: VERIFY on U006 (1.08).</td>
+<td>VERIFY U006 (1.08); COMPARE U007 (0.84)</td>
+<td>+1 experiment plans</td>
+<td>1</td>
+</tr>
+<tr>
+<td>10</td>
+<td>UNCERTAINTY</td>
+<td>COMPARE (U007: Can a temporal relevance component based on elapsed time be effectively ap)</td>
+<td>Most valuable next step for high-importance feasibility question U007: score 0.84 = importance 3 x expected gain 0.6 x relevance 0.7 x evidence deficiency 1 / cost 1.5. Next best: VERIFY on U007 (0.84).</td>
+<td>VERIFY U007 (0.84); COMPARE U005 (0.72)</td>
+<td>+5 claims; +3 verified claims</td>
+<td>3</td>
+</tr>
+<tr>
+<td>11</td>
+<td>UNCERTAINTY</td>
+<td>COMPARE (U005: Could observed improvements be due to better retrieval of recent documents)</td>
+<td>Most valuable next step for medium-importance confounder question U005: score 0.96 = importance 2 x expected gain 0.8 x relevance 0.9 x evidence deficiency 1 / cost 1.5. Next best: VERIFY on U007 (0.84).</td>
+<td>VERIFY U007 (0.84); VERIFY U005 (0.72)</td>
+<td>+6 claims; +6 verified claims; uncertainties updated: U005</td>
+<td>6</td>
+</tr>
+<tr>
+<td>12</td>
+<td>UNCERTAINTY</td>
+<td>VERIFY (U007: Can a temporal relevance component based on elapsed time be effectively ap)</td>
+<td>Most valuable next step for high-importance feasibility question U007: score 0.84 = importance 3 x expected gain 0.6 x relevance 0.7 x evidence deficiency 1 / cost 1.5. Next best: COMPARE on U002 (0.728).</td>
+<td>COMPARE U002 (0.728); VERIFY U006 (0.648)</td>
+<td>+2 claims; +2 verified claims; uncertainties updated: U007</td>
+<td>2</td>
+</tr>
+<tr>
+<td>13</td>
+<td>UNCERTAINTY</td>
+<td>COMPARE (U002: How similar is our proposed method to Re3 (arxiv:2509.01306) which balance)</td>
+<td>Most valuable next step for high-importance overlap question U002: score 0.728 = importance 3 x expected gain 0.867 x relevance 1 x evidence deficiency 0.42 / cost 1.5. Next best: VERIFY on U006 (0.684).</td>
+<td>VERIFY U006 (0.684); VERIFY U004 (0.479)</td>
+<td>+1 claims; +1 verified claims</td>
+<td>1</td>
+</tr>
+<tr>
+<td>14</td>
+<td>UNCERTAINTY</td>
+<td>VERIFY (U006: Does temporal relevance improve QA accuracy on versioned regulatory docume)</td>
+<td>Most valuable next step for high-importance validity question U006: score 0.684 = importance 3 x expected gain 0.633 x relevance 0.9 x evidence deficiency 0.6 / cost 1.5. Next best: VERIFY on U002 (0.532).</td>
+<td>VERIFY U002 (0.532); VERIFY U004 (0.479)</td>
+<td>+1 claims; +1 verified claims</td>
+<td>1</td>
+</tr>
+<tr>
+<td>15</td>
+<td>UNCERTAINTY</td>
+<td>VERIFY (U002: How similar is our proposed method to Re3 (arxiv:2509.01306) which balance)</td>
+<td>Most valuable next step for high-importance overlap question U002: score 0.448 = importance 3 x expected gain 0.533 x relevance 1 x evidence deficiency 0.42 / cost 1.5. Next best: PLAN_EXPERIMENT on U004 (0.416).</td>
+<td>PLAN_EXPERIMENT U004 (0.416); VERIFY U004 (0.403)</td>
+<td>no recorded change</td>
+<td>0</td>
+</tr>
+<tr>
+<td>16</td>
+<td>UNCERTAINTY</td>
+<td>PLAN_EXPERIMENT (U004: Does temporal relevance actually improve QA accuracy, or could it hurt due)</td>
+<td>Most valuable next step for high-importance validity question U004: score 0.416 = importance 3 x expected gain 0.367 x relevance 0.9 x evidence deficiency 0.42 / cost 1. Next best: READ on U003 (0.35).</td>
+<td>READ U003 (0.35); VERIFY U004 (0.302)</td>
+<td>uncertainties updated: U004</td>
+<td>0</td>
+</tr>
+<tr>
+<td>17</td>
+<td>FINALIZE</td>
+<td>FINALIZE</td>
+<td>Stopping: iteration budget reached (16).</td>
+<td>none</td>
+<td>finalizing</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+</body></html>

@@ -1,0 +1,54 @@
+{
+  "id": "G001",
+  "gap": "No retrieved work establishes whether passage-local context-triple supervision improves multi-hop KGQA at matched supervision volume, with an evaluation set the repair loop cannot edit, and with seed-level variance reported. The closest work size-matches the two disease KGs against each other (not the KG-grounded vs CG-grounded training arms), uses unequal numbers of repair examples across error categories, removes invalid triples from and regenerates validation questions in the set it reports 100% accuracy on, and evaluates only on synthetically generated items; separately, work on subgraph retrieval shows larger context adds noise. Consequently the causal claim (context content rather than more training signal) and the repair claim (repair rather than evaluation-set selection) are both unestablished.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 8",
+      "quote": "Since the original diabetes KG is much larger than the gastroparesis KG, we construct a size-matched diabetes subset to enable a fair comparison between the two disease settings.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 16",
+      "quote": "Invalid triples are removed from the validation set, because repairing the model on unsupported or noisy facts would introduce incorrect supervision.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 30",
+      "quote": "First, the QA datasets used for SFT, repair, RL, and evaluation are synthetically generated.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2202.13296",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "The desired subgraph is crucial as a small one may exclude the answer but a large one might introduce more noises.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2202.13296",
+    "arxiv:2406.09994",
+    "arxiv:2101.03737"
+  ],
+  "why_unaddressed": "The retrieved papers that construct context for the LLM do so either at inference (GraphRAG prompting) or without volume-matched controls; none of the analyzed works reports a token-matched or example-matched comparison between context-augmented and isolated-triple supervision, and none describes an evaluation split isolated from the repair loop. The closest work therefore leaves the decisive control unrun rather than solving it.",
+  "research_question": "At matched supervision token budget and on a frozen, repair-blind held-out test split, does passage-local context-triple supervision (rather than added supervision volume) improve 3-5-hop KGQA accuracy over isolated-triple supervision?",
+  "potential_experiment": "Four-arm factorial on one text-grounded corpus with a frozen test split: (A) isolated triples; (B) isolated triples padded with matched token volume of unrelated triples; (C) context triples from the same passage; (D) context triples plus repair. Match tokens and gradient steps across arms, report per-hop accuracy on the frozen test split with multiple seeds, and additionally run a context-size dose-response (0, k/4, k/2, k, 2k triples) to test for an inverted-U.",
+  "confidence": "medium",
+  "verification_required": "Still to verify by reading the closest work's experimental section and appendix tables in full (only selected passages were read) that no matched-token or matched-example control and no untouched held-out split are reported; and to re-run the literature search once the paper budget allows, in case a recent paper already reports such controls.",
+  "recorded_at": "2026-09-30T05:19:56.028511Z"
+}

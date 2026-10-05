@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2408.15903",
+  "relevance_tier": "high",
+  "problem": "Existing knowledge editing methods for LLMs struggle with multi-hop questions requiring accurate fact identification and sequential logical reasoning, especially after numerous fact updates.",
+  "method": "Introduce Graph Memory-based Editing for Large Language Models (GMeLLo) that merges explicit KG knowledge with LLM linguistic flexibility, using LLMs to convert free-form language into structured queries and fact triples for seamless KG interaction and rapid updates.",
+  "key_assumptions": [
+    "LLMs can effectively convert free-form language into structured queries and fact triples for KG interaction.",
+    "Merging KG knowledge with LLM flexibility improves multi-hop reasoning after knowledge edits."
+  ],
+  "main_contribution": "GMeLLo, a straightforward and effective method that significantly surpasses current SOTA knowledge editing methods on the multi-hop QA benchmark MQuAKE, especially with extensive knowledge edits.",
+  "datasets": [
+    "MQuAKE benchmark (multi-hop question answering)"
+  ],
+  "benchmarks": [
+    "MQuAKE"
+  ],
+  "baselines": [
+    "Current SOTA knowledge editing methods (unspecified)"
+  ],
+  "metrics": [
+    "Not specified in abstract; likely accuracy or exact match"
+  ],
+  "results": "[\"GMeLLo significantly surpasses current SOTA knowledge editing methods in multi-hop QA benchmark MQuAKE, especially in scenarios with extensive knowledge edits.\"]",
+  "limitations": [
+    "Not stated in abstract."
+  ],
+  "future_work": [
+    "Not stated in abstract."
+  ],
+  "code_availability": "[\"Not stated in abstract.\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "This work focuses on knowledge editing for LLMs using KG integration to handle multi-hop questions after updates. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting training data enrichment and iterative correction rather than knowledge editing mechanisms.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:11:48.692763Z"
+}

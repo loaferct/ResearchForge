@@ -1,0 +1,41 @@
+{
+  "paper_id": "doi:10.20944/preprints202505.1992.v1",
+  "relevance_tier": "high",
+  "problem": "Large Language Models (LLMs) often hallucinate, especially on domain-specific tasks requiring reasoning; multi-hop question answering needs improved retrieval to reduce hallucination.",
+  "method": "SG-RAG MOT: SubGraph Retrieval Augmented Generation with Merging and Ordering Triplets. Uses Cypher queries to search the KG and retrieve necessary subgraph, then applies hierarchical merging to reduce redundancy in retrieved triplets, and orders them using BFS traversal.",
+  "key_assumptions": [
+    "Merging overlapping subgraphs reduces redundancy without losing relevant information.",
+    "Ordering triplets via BFS traversal helps the LLM generate more precise answers."
+  ],
+  "main_contribution": "SG-RAG MOT enhances SG-RAG by adding a Merging and Ordering Triplets (MOT) step, providing more accurate answers than Chain-of-Thought and Graph Chain-of-Thought on the MetaQA benchmark.",
+  "datasets": [
+    "MetaQA (movies domain)"
+  ],
+  "benchmarks": [
+    "MetaQA (movies domain)"
+  ],
+  "baselines": [
+    "Chain-of-Thought",
+    "Graph Chain-of-Thought"
+  ],
+  "metrics": [
+    "accuracy (exact match or similar)"
+  ],
+  "results": "\"SG-RAG MOT provides more accurate answers than Chain-of-Thought and Graph Chain-of-Thought on MetaQA.\"",
+  "limitations": [
+    "Not explicitly stated in abstract; potential limitations include dependence on MetaQA dataset and heuristic merging threshold."
+  ],
+  "future_work": [
+    "Not explicitly stated in abstract."
+  ],
+  "code_availability": "[\"Not explicitly stated in abstract.\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "SG-RAG MOT focuses on retrieval-augmented generation with subgraph merging and ordering, whereas the proposed idea enriches training triples with local context subgraphs, adds an adaptive repair loop, and applies RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T06:41:15.393484Z"
+}

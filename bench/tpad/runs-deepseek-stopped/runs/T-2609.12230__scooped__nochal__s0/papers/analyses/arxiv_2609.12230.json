@@ -1,0 +1,55 @@
+{
+  "paper_id": "arxiv:2609.12230",
+  "relevance_tier": "high",
+  "problem": "Training LLMs only on isolated KG head-relation-tail triples may limit their ability to learn the surrounding context needed for multi-hop reasoning; QA often requires reasoning across multiple connected facts rather than a single isolated relation.",
+  "method": "For each primary KG triple, attach supporting triples from the same source text chunk (candidates scored by SapBERT embedding cosine similarity, filtered by threshold) to form a context graph. Generate two supervision regimes (KG-grounded: target triple/path only; CG-grounded: target plus context triples). SFT Qwen3-14B with LoRA under each regime. Then an LLM-judged, history-aware adaptive repair pipeline detects unresolved one-hop failures, generates targeted repair QA items, continually fine-tunes, and quarantines noisy triples. Finally full-model GRPO RL on mixed 1-hop/2-hop items with answer-correctness and KG-path-alignment rewards, evaluated on 3/4/5-hop multiple-choice QA.",
+  "key_assumptions": [
+    "Supporting context triples can be identified as triples extracted from the same source text chunk as the primary triple, filtered by SapBERT embedding similarity above a threshold",
+    "An LLM judge can reliably categorize one-hop validation failures into invalid/noisy triples versus missing knowledge",
+    "Synthetic multiple-choice QA generated from KG/CG paths is a valid proxy for multi-hop question answering",
+    "Repairing the one-hop foundation before RL improves higher-hop generalization"
+  ],
+  "main_contribution": "Proposes and validates a context-augmented KG training framework: attach same-source-chunk supporting triples to each primary triple to form a context graph, generate KG-grounded vs CG-grounded QA items, fine-tune Qwen3-14B under both (KGModel vs CGModel), run an LLM-judged history-aware adaptive repair loop over unresolved one-hop failures, then RL on lower-hop items, and evaluate generalization to 3/4/5-hop questions. Reports that context-augmented supervision consistently improves multi-hop performance over KG-only supervision, and that RL from repaired checkpoints yields larger and more stable gains.",
+  "datasets": [
+    "Disease-specific KGs built with GraphMERT for Gastroparesis and Diabetes (6,000-triple size-matched Diabetes subset)",
+    "6,018 KG-grounded and 6,018 CG-grounded 1-hop QA items (Gastroparesis); 5,954 and 5,954 (Diabetes)",
+    "8,000 synthetic multiple-choice QA items each for 3-hop, 4-hop and 5-hop evaluation"
+  ],
+  "benchmarks": [
+    "Synthetic Gastroparesis KG/CG 1-hop to 5-hop multiple-choice QA",
+    "Synthetic Diabetes KG/CG 1-hop to 5-hop multiple-choice QA",
+    "Answer-option shuffling robustness test"
+  ],
+  "baselines": [
+    "Base Qwen3-14B",
+    "KGModel (KG-grounded SFT)",
+    "CGModel (CG-grounded SFT)",
+    "KGModel-RL / CGModel-RL (RL from unrepaired SFT)",
+    "KGModel-Repaired / CGModel-Repaired (adaptive repair)",
+    "CGModel-Repaired-RL"
+  ],
+  "metrics": [
+    "higher-hop (3-/4-/5-hop) multiple-choice accuracy",
+    "one-hop validation accuracy (repair stage, reported reaching 100% on cleaned retained sets)",
+    "per-hop gain from RL over the corresponding non-RL checkpoint",
+    "option-shuffling robustness (delta accuracy in percentage points)"
+  ],
+  "results": "CGModel improves over KGModel \"in every disease, evaluation setting, and hop length\": Gastroparesis +1.98 / +2.20 / +2.15 percentage points on KG-grounded 3/4/5-hop (and +2.96 / +3.31 / +3.79 on CG-grounded QA); Diabetes +1.59 / +2.66 / +2.02 (and +1.50 / +1.57 / +2.66). The repair stage reaches 100% accuracy on cleaned retained one-hop validation sets. \"RL initialized from unrepaired SFT checkpoints gives small or inconsistent gains, whereas RL initialized from repaired checkpoints produces larger and more stable improvements.\" Option shuffling changes accuracy by under one percentage point on average, i.e. gains are not option-position artefacts.",
+  "limitations": [
+    "Synthetically generated QA datasets for SFT, repair, RL and evaluation (stated explicitly in the Limitations section).",
+    "Validated only on two biomedical disease KGs (Gastroparesis, Diabetes) with multiple-choice items, so the domain and answer-format generality is untested.",
+    "KGModel and CGModel share the base model, LoRA setup, optimizer, sequence length, batch size, epochs and LR schedule, and there are equal numbers of QA items per regime, but the CG examples carry more context tokens per item, so the comparison is not token-matched.",
+    "No random-distractor or unrelated-entity control arm of the kind used in arxiv:2609.10237, so the gain cannot yet be attributed to passage coherence rather than to more context tokens or a different question distribution."
+  ],
+  "future_work": [],
+  "code_availability": "not stated in abstract or in the passages read (no code URL given; no repository linked)",
+  "relation_to_idea": {
+    "problem_overlap": 1.0,
+    "method_overlap": 0.85,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "There is essentially no conceptual difference. The proposed idea is this paper. The only substantive differences are the domain (biomedical disease KGs vs general KBQA), the answer format (multiple-choice vs open answer), the context-selection rule (SapBERT similarity above a threshold within a same-chunk candidate set vs an unspecified 'same source passage' rule), and the failure-detection mechanism (LLM judge with history-aware categorisation vs an unspecified one-hop error signal). These are implementation choices, not a distinct research contribution.",
+    "basis": "Problem overlap 1.0: identical problem statement (isolated-triple training deprives models of surrounding context needed for multi-hop inference). Method overlap 0.85: same three components — (A) attach same-source-chunk supporting triples to each primary triple forming a context graph and compare KG-grounded vs CG-grounded supervision, (B) LLM-judged history-aware adaptive repair of unresolved one-hop failures with targeted corrective examples and quarantine, (C) RL on lower-hop QA items with evaluation on 3/4/5-hop. The residual difference is implementation: SapBERT-similarity selection of context triples, Qwen3-14B with LoRA, GRPO with path-alignment reward, and biomedical multiple-choice synthetic QA rather than standard benchmarks. Evaluation overlap 0.6: both measure accuracy at increasing hop depth, but on synthetic biomedical MCQ rather than MetaQA/WebQSP/CWQ."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:20:31.571817Z"
+}

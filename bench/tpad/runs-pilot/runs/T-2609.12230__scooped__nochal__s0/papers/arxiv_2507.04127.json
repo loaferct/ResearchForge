@@ -1,0 +1,43 @@
+{
+  "id": "arxiv:2507.04127",
+  "title": "BYOKG-RAG: Multi-Strategy Graph Retrieval for Knowledge Graph Question Answering",
+  "authors": [
+    "Costas Mavromatis",
+    "Soji Adeshina",
+    "V. Ioannidis",
+    "Zhen Han",
+    "Qi Zhu",
+    "Ian Robinson",
+    "Bryan Thompson",
+    "H. Rangwala",
+    "George Karypis"
+  ],
+  "year": 2025,
+  "published": "2025-07-05",
+  "venue": "Conference on Empirical Methods in Natural Language Processing",
+  "url": "https://www.semanticscholar.org/paper/7659a9e23031671a51c702c337d94d7c70d0ed25",
+  "pdf_url": null,
+  "abstract": "Knowledge graph question answering (KGQA) presents significant challenges due to the structural and semantic variations across input graphs. Existing works rely on Large Language Model (LLM) agents for graph traversal and retrieval; an approach that is sensitive to traversal initialization, as it is prone to entity linking errors and may not generalize well to custom (\"bring-your-own\") KGs. We introduce BYOKG-RAG, a framework that enhances KGQA by synergistically combining LLMs with specialized graph retrieval tools. In BYOKG-RAG, LLMs generate critical graph artifacts (question entities, candidate answers, reasoning paths, and OpenCypher queries), and graph tools link these artifacts to the KG and retrieve relevant graph context. The retrieved context enables the LLM to iteratively refine its graph linking and retrieval, before final answer generation. By retrieving context from different graph tools, BYOKG-RAG offers a more general and robust solution for QA over custom KGs. Through experiments on five benchmarks spanning diverse KG types, we demonstrate that BYOKG-RAG outperforms the second-best graph retrieval method by 4.5% points while showing better generalization to custom KGs. BYOKG-RAG framework is open-sourced at https://github.com/awslabs/graphrag-toolkit.",
+  "doi": "10.48550/arxiv.2507.04127",
+  "arxiv_id": "2507.04127",
+  "openalex_id": null,
+  "s2_id": "7659a9e23031671a51c702c337d94d7c70d0ed25",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 12,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T06:51:45.980505Z",
+  "relevance": 0.2895,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "passage context enrichment knowledge graph question answering"
+  ],
+  "code_urls": [
+    "https://github.com/awslabs/graphrag-toolkit"
+  ],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

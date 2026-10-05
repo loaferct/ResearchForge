@@ -1,0 +1,31 @@
+{
+  "id": "M001",
+  "title": "Token-matched attribution arm: does passage coherence or context volume produce the gain?",
+  "description": "Keep the isolated-triple versus same-passage-context fine-tuning contrast but add the control arm that the published pipeline omits: a third arm in which the extra context slots are filled with triples of equal token count sampled from unrelated entity neighbourhoods (and a fourth arm with randomly sampled triples from the same KG). Train all arms with identical base model, optimizer steps, LoRA configuration and context-token budget, and report hop-stratified accuracy deltas with confidence intervals. Also include a triple-order-shuffled version of the same-passage arm so serialization is not a free variable.",
+  "why_differs": "The closest work (arxiv:2609.12230) matches example counts, hyperparameters and schedule but not context tokens, and runs no distractor arm; the closest inference-time control (arxiv:2609.10237) swaps in unrelated-entity triples at a fixed triple count but never fine-tunes. This modification moves the matched-context design into the training regime, which neither paper does.",
+  "technical_mechanism": "Fix the context token budget per training example and vary only the provenance of the non-target triples. Arm A: target triple/path plus padding. Arm B: target plus triples drawn from the same source passage. Arm C: target plus triples drawn from an unrelated entity neighbourhood. Arm D: target plus random KG triples. Optional arm E: arm B with triple order permuted. Because every arm sees the same number of supervised answers, the same question set and the same token count, any difference isolates the effect of context relevance rather than context volume or formatting.",
+  "expected_benefit": "Turns a confounded existence claim into an attribution claim. Either the same-passage arm beats the unrelated-entity arm at matched tokens, which would establish passage coherence as the active ingredient and would be a genuinely new causal finding, or it does not, in which case the reported gains are a context-volume effect and the community learns that the published pipeline is measuring the wrong thing.",
+  "potential_novelty": "Moderate and hedged. The attribution experiment itself is not described in the retrieved literature, but it is an ablation of an existing pipeline rather than a new method, so the contribution would be a correction/measurement result. The closest published designs are the inference-time matched-distractor swap in arxiv:2609.10237 (not training) and the matched-configuration but not token-matched comparison in arxiv:2609.12230.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "The control arms reuse the existing QA generation and training code path; only the context-slot filling routine changes (sample equal-token-count triples from unrelated entity neighbourhoods or at random, then verify the token count matches).",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Requires the same training runs plus two extra control arms and a shuffled-order arm, which is a linear increase in fine-tuning cost; the base setup, data and evaluation protocol already exist in arxiv:2609.12230, so no new infrastructure is needed. Power must be adequate because the published effect is only 1.5-3.8 points and near-saturated short-hop splits cannot be used.",
+  "main_risk": "A null result at matched tokens would invalidate the interpretation of the published gains, but a positive result could still be an artefact of the particular generated questions if the question distributions differ across arms; the mitigation is to hold the question distribution fixed and vary only the attached evidence block.",
+  "required_baselines": [
+    "Isolated target triple/path only, token-padded to the same budget",
+    "Same-passage context triples (the published CG arm)",
+    "Unrelated-entity-neighbourhood triples at matched token count",
+    "Random KG triples at matched token count",
+    "Same-passage triples with shuffled order"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2609.10237",
+    "arxiv:2202.13296"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T05:27:52.312194Z"
+}

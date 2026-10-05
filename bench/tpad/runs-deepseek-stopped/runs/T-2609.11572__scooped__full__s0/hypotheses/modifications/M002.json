@@ -1,0 +1,30 @@
+{
+  "id": "M002",
+  "title": "Leakage-controlled tuning and control-arm protocol for temporal re-ranking claims",
+  "description": "Make the evaluation protocol itself a contribution: tune the temporal weight lambda only on a held-out question split; add controls that randomly permute version timestamps across candidate passages and that shift query dates by a fixed offset so elapsed-time order no longer aligns with in-force order; add a content-blind date-only ranker that scores passages using timestamps alone. Report the full lambda sensitivity curve rather than the argmax, and report version-selection accuracy and answer accuracy separately.",
+  "why_differs": "TempRALM selects its temporal scaling factor for relative importance with no reported held-out validation or content-blind control, and Prior et al. have no soft re-ranking arm to control at all. This modification makes explicit the controls that both lines of work leave implicit.",
+  "technical_mechanism": "Data-level controls (permuted timestamps, shifted query dates) plus a date-only scoring arm; protocol-level control by tuning lambda on a held-out split and reporting the sensitivity curve instead of a single tuned value.",
+  "expected_benefit": "Establishes whether any observed temporal gain is genuine retrieval skill or a timestamp shortcut; without it the hypothesis is not testable. A protocol of this kind is also reusable for any future versioned-document retrieval work.",
+  "potential_novelty": "Hedged: neither retrieved paper reports leakage controls for a temporal weight, but benchmark-methodology novelty is inherently weaker and reviewers may treat it as standard good practice rather than a contribution.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "All components are simple data transformations and score re-computation on top of the existing pipeline; no modelling, index rebuild or extra data acquisition is needed.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "The controls are cheap to implement and run, but they require a held-out split, a shuffled-timestamp corpus clone and careful per-regime reporting, which adds orchestration rather than new resources.",
+  "main_risk": "The protocol may show that the soft temporal term has no effect at all, which would be a scientifically useful but not a positive contribution on its own.",
+  "required_baselines": [
+    "Content-blind date-only ranker",
+    "Shuffled-timestamp variant of every temporal arm",
+    "Query-date-offset variant",
+    "Semantic-only retrieval"
+  ],
+  "related_paper_ids": [
+    "arxiv:2401.13222",
+    "arxiv:2605.23497"
+  ],
+  "addresses_gap_ids": [
+    "G002",
+    "G004"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:24:30.087569Z"
+}

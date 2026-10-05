@@ -1,0 +1,31 @@
+{
+  "id": "M003",
+  "title": "Context dose-response sweep testing the inverted-U (precision versus excess) in supervised KGQA",
+  "description": "Replace the binary context/no-context comparison with a dose-response design: sweep the number of attached context triples (for example 0, k/4, k/2, k, 2k) at matched total tokens across arms, and independently sweep context precision (same-passage, same-KG random, semantically related non-passage). Estimate per-hop-depth accuracy curves and test whether the benefit peaks at an intermediate context size, as suggested by work showing fixed larger triple supplies underperform question-fitted ones and that larger subgraphs add noise.",
+  "why_differs": "The idea assumes more same-passage context helps and that benefit grows with hop depth; adjacent work finds excess context distracts and that fixed larger triple supplies are worse than question-fitted ones, so a dose-response with volume held constant tests a qualitatively different hypothesis than the closest work's two-regime comparison.",
+  "technical_mechanism": "Attach a controlled number of context triples to each target triple, holding the total token budget constant by padding with neutral filler where necessary so that size and volume are separately manipulable. Fit accuracy as a function of context size and precision per hop depth, and additionally measure whether attached context triples are recoverable as correct reasoning steps at intermediate hops.",
+  "expected_benefit": "Tests the inverted-U alternative to the monotonic-context assumption behind the original hypothesis, produces a useful design rule for context size in KG supervision, and can explain contradictory outcomes across settings.",
+  "potential_novelty": "Moderate and hedged: context-size control is already an explicit problem at retrieval time (EntropyRAG) and variable versus fixed triple supply has been studied for KBVQA, but no retrieved work runs a supervised context dose-response in LLM KGQA.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "Only the number and selection of attached triples varies; the training and data-generation code is unchanged.",
+  "experimental_difficulty": "high",
+  "experimental_difficulty_basis": "The sweep multiplies the number of training runs (context sizes x precision conditions x hop depths x seeds) at 14B scale; a reduced-backbone or single-corpus version would lower cost but change the claim's scope.",
+  "main_risk": "Compute cost may force a smaller model or corpus, weakening comparability with the closest work; a flat curve would leave the inverted-U question open rather than settled.",
+  "required_baselines": [
+    "Isolated triples (no context)",
+    "Same-passage context at each size",
+    "Random same-KG context at each size",
+    "Semantically related non-passage context at each size"
+  ],
+  "related_paper_ids": [
+    "arxiv:2406.09994",
+    "arxiv:2202.13296",
+    "arxiv:2609.12230",
+    "doi:10.2139/ssrn.6794971"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:20:48.723994Z"
+}

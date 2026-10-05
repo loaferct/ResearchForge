@@ -1,0 +1,46 @@
+{
+  "paper_id": "doi:10.1080/08839514.2026.2626097",
+  "relevance_tier": "high",
+  "problem": "Interpreting Indian tax law is hard because of frequent legislative amendments, complex statutory structures, and the need for precise citation.",
+  "method": "TaxFlow: a domain-specific legal assistant combining hybrid (dense + sparse, FAISS-based) Retrieval-Augmented Generation with LLaMA-3 over a curated corpus of Indian tax statutes, government gazettes and case law. It applies structured extraction, segmentation, dense-sparse indexing, temporal validity filtering so retrieved provisions reflect the legally effective version at query time, and critique-driven generation.",
+  "key_assumptions": [
+    "The legally effective version of a provision at query time can be determined and filtered programmatically",
+    "A curated Indian tax corpus and gazettes capture the relevant amendment history"
+  ],
+  "main_contribution": "An end-to-end hybrid RAG legal assistant with temporal validity filtering, reporting 96.5% accuracy and 95.0% F1 on a unified Indian tax law benchmark.",
+  "datasets": [
+    "Curated Indian tax statutes, government gazettes, and case law",
+    "Unified Indian tax law benchmark (composition not stated in abstract)"
+  ],
+  "benchmarks": [
+    "Unified Indian tax law benchmark"
+  ],
+  "baselines": [
+    "Representative baseline systems (not named in the abstract)"
+  ],
+  "metrics": [
+    "Accuracy",
+    "F1-score",
+    "BLEU",
+    "ROUGE-L"
+  ],
+  "results": "96.5% accuracy and 95.0% F1-score, with reported improvements over representative baselines and in BLEU/ROUGE-L linguistic quality.",
+  "limitations": [
+    "Only the abstract was accessible (publisher returned HTTP 403), so baselines, temporal-filtering mechanism and benchmark details cannot be verified",
+    "Temporal validity is filtered rather than scored, and no comparison to a soft temporal re-ranker is described",
+    "Single-country tax domain; no public benchmark release is stated in the abstract"
+  ],
+  "future_work": [
+    "Not stated in abstract"
+  ],
+  "code_availability": "Not stated in abstract; full text was not accessible (HTTP 403).",
+  "relation_to_idea": {
+    "problem_overlap": 0.9,
+    "method_overlap": 0.6,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "TaxFlow is a system paper that hard-filters to the effective version inside a fixed hybrid-RAG stack; the proposed idea claims retrieval-agnostic soft temporal re-ranking and a new overlapping-revision benchmark, neither of which is described here.",
+    "basis": "Same problem (amended statutes requiring the legally effective version) and the same conceptual component (temporal validity in retrieval), but the mechanism is a hard filter inside an end-to-end system and evaluation is single-domain accuracy/F1. Basis is the abstract only."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:11:08.142768Z"
+}

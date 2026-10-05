@@ -1,0 +1,34 @@
+{
+  "id": "U005",
+  "question": "Are there existing retrieval methods that already combine temporal proximity with semantic similarity for document retrieval in evolving text collections?",
+  "description": "If similar methods already exist, the novelty of our approach may be limited. We need to search for literature on temporal weighting in retrieval, especially for question answering.",
+  "category": "overlap",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "READ",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": 0.8,
+  "confidence_basis": "Based on retrieved abstracts of arxiv:2606.17664 and doi:10.1145/3487553.3524668 which explicitly describe combining temporal and semantic retrieval.",
+  "rationale": "Determining overlap with existing work is crucial for assessing the contribution's novelty. High importance because significant overlap could diminish the expected contribution.",
+  "resolution": "Existing work shows methods that combine temporal proximity with semantic similarity for document retrieval, such as TPOUR (Temporal Preference Optimization for Unsupervised Retrieval) which guides the retriever to favor temporally aligned documents via temporal preference optimization, and semantic modelling of document focus-time for temporal information retrieval. However, these methods often require supervised or specialized training and may not be retrieval-agnostic or tailored to versioned regulatory documents with explicit timestamps.",
+  "paper_ids": [
+    "arxiv:2606.17664",
+    "doi:10.1145/3487553.3524668"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2606.17664",
+    "doi:10.1145/3487553.3524668"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "PLAN",
+  "created_at": "2026-09-30T10:37:17.322221Z",
+  "updated_at": "2026-09-30T10:50:46.348647Z"
+}

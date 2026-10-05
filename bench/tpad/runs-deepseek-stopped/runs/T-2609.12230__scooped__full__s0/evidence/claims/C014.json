@@ -1,0 +1,33 @@
+{
+  "id": "C014",
+  "statement": "The closest work does not maximize context: it filters same-passage candidate triples by a SapBERT similarity threshold (theta = 0.65 for Gastroparesis, 0.60 for Diabetes) chosen by a per-disease preliminary sweep that maximized 1-hop accuracy while keeping a moderate number of context triples per primary triple (mean 1.97 and 2.88 triples after filtering, out of 3.61 and 3.44 candidates before).",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 41",
+      "quote": "These thresholds give the highest 1-hop accuracy in the corresponding CG-grounded setting while retaining a moderate number of context triples per primary triple.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 5",
+      "quote": "The exact CG construction procedure, including candidate context retrieval, semantic similarity scoring, and thresholding, is described in Section 3.3.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "U009",
+    "context-size",
+    "comparison"
+  ],
+  "recorded_at": "2026-09-30T05:27:06.089358Z"
+}

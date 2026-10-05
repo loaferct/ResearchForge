@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2606.22179",
+  "title": "The Score Granularity Gap in Black-Box LLM Classification: A Comparative Study of Confidence Constructions",
+  "authors": [
+    "Ao Sun",
+    "Tian Sun",
+    "Jiaxing Geng"
+  ],
+  "year": 2026,
+  "published": "2026-06-20",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2606.22179",
+  "pdf_url": "https://arxiv.org/pdf/2606.22179v2",
+  "abstract": "Large language models (LLMs) are increasingly deployed as black-box classifiers in pipelines that automate confident decisions and route uncertain ones to human review. Such selective prediction needs a confidence score that an operator can threshold at a chosen risk level. Prior work asks whether LLM confidence is well calibrated or well ranked; we ask a complementary, deployment-oriented question that has been largely overlooked: at what resolution can the score be thresholded? We call the answer the score granularity gap. Through a controlled comparison of seven ways to build a confidence score, from a single verbalized number, to token probabilities, to querying the model many times and combining the answers, across 25 model-dataset pairs (9 LLMs, 3 benchmarks), we find that single-shot verbalized confidence, once correctly converted to a class probability, ranks cases surprisingly well, yet takes only a handful of distinct values. It therefore offers an operator only a few coarse thresholds, no matter how well it ranks. We show which constructions widen this gap, at what inference cost, and with what effect on ranking, notably that multi-query aggregation helps weak models but can degrade already-strong ones. We translate these trade-offs into concrete deployment guidance.",
+  "doi": null,
+  "arxiv_id": "2606.22179",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T11:24:31.208003Z",
+  "relevance": 0.2727,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "confidence threshold routing"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

@@ -1,0 +1,41 @@
+{
+  "questions": [
+    "Which existing methods are closest to each component of the idea (passage-local context-graph supervision, adaptive one-hop repair, lower-hop RL for deeper-hop transfer), and does the closest retrieved work (arxiv:2609.12230) already cover the combined recipe and all four hypotheses (H1-H4) in full?",
+    "Does the mechanism already exist under alternative terminology that the initial searches would miss (context-aware/neighbor-aware knowledge graph completion, GraphRAG / KG-RAG subgraph retrieval, path-based neural-symbolic reasoning, self-training / skill-targeted adaptive training / data-repair loops, RLVR-GRPO style RL for reasoning)?",
+    "Which baselines and evaluation methodology apply: standard multi-hop KGQA benchmarks (WebQSP, ComplexWebQuestions, MetaQA) with open-ended answer EM/F1, or domain-specific KG multiple-choice items as in the closest work, and how do option shuffling, retained/cleaned validation sets, and LLM-judge scoring affect validity?",
+    "Is the idea feasible to execute with a ~14B open-weight LLM: is the full pipeline (KG/CG construction, QA generation, SFT, iterative LLM-judged repair, RL, 3-5-hop evaluation) reproducible at available compute and within budget, and is code/data available from the closest work?",
+    "What residual novel contribution, if any, remains after the closest work, and what re-scoped question is defensible (e.g., independent component decomposition, matched-token control isolating context from supervision volume, or generalization beyond disease-specific KGs)?",
+    "Is the central causal claim - that same-passage context augmentation (not merely added supervision tokens/examples) improves deeper-hop QA - distinguishable from a training-signal-size confounder, and what control arms settle it?",
+    "Does RL on lower-hop items add gains beyond repaired SFT alone, and is the reported transfer to 3-5-hop queries robust to seed variance and to the small size of domain-specific evaluation sets?"
+  ],
+  "search_topics": [
+    "context-augmented supervision for KG question answering",
+    "context graph / context subgraph attached to target triple",
+    "isolated triple vs context supervision ablation LLM fine-tuning",
+    "subgraph retrieval enhanced multi-hop KBQA (GraftNet-style)",
+    "GraphRAG / KG-RAG subgraph retrieval combined with LLMs",
+    "context-aware and neighbor-aware knowledge graph completion/embedding",
+    "path-based neural-symbolic reasoning and RL over knowledge graphs",
+    "reinforcement learning with verifiable rewards (RLVR/GRPO/PPO) for multi-hop reasoning",
+    "curriculum / easy-to-hard transfer and hop-depth generalization in QA",
+    "adaptive data repair, self-training, and skill-targeted adaptive training (STAT)",
+    "LLM-as-judge failure detection and noisy triple quarantine in KG construction",
+    "KG extraction from text (GraphMERT / open information extraction) for QA data generation",
+    "benchmark pitfalls and dataset contamination in KG-RAG evaluation",
+    "standard multi-hop KGQA benchmarks WebQSP ComplexWebQuestions MetaQA metrics"
+  ],
+  "comparison_targets": [
+    "KG-grounded SFT with only target triple/path (isolated-triple baseline, as in arxiv:2609.12230)",
+    "CG-grounded SFT with same-source-chunk supporting triples",
+    "SFT + adaptive one-hop repair (repair without RL)",
+    "SFT + lower-hop RL (RL without repair)",
+    "Full combined pipeline: context-augmented + repaired + RL",
+    "Base Qwen3-14B and/or untuned instruction-tuned LLM (no fine-tuning reference)",
+    "Subgraph-retrieval multi-hop KBQA (e.g., arxiv:2202.13296 Subgraph Retrieval Enhanced Model; SG-RAG MOT doi:10.20944/preprints202505.1992.v1)",
+    "KG-embedding-based KGQA (e.g., EmbedKGQA doi:10.18653/v1/2020.acl-main.412; GreaseLM-style scalable relational reasoning doi:10.18653/v1/2020.emnlp-main.99)",
+    "Path-based RL over KGs (e.g., hierarchical RL doi:10.24963/ijcai.2020/267; adversarial path RL doi:10.1016/j.knosys.2023.110760)",
+    "LLM fine-tuned KGQA frameworks (e.g., ChatKBQA arxiv:2310.08975; Retrieve-Rewrite-Answer arxiv:2309.11206)",
+    "Context-aware KGC / subgraph reasoning (e.g., arxiv:2410.16803)"
+  ],
+  "recorded_at": "2026-09-30T05:05:55.875667Z"
+}

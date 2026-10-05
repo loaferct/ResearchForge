@@ -1,0 +1,51 @@
+{
+  "paper_id": "doi:10.1109/iri69576.2026.00090",
+  "relevance_tier": "high",
+  "problem": "RAG systems treat all retrieved facts as equally valid regardless of temporal provenance, producing temporal hallucination in which plausible but obsolete facts corrupt the output; semantic similarity alone may even prefer stale evidence.",
+  "method": "Chronofy / Temporal-Logical Decay Architecture: Layer 1 reserves a temporal subspace in Matryoshka embeddings so fact age is structurally retained; Layer 2 integrates learnable exponential decay functions into graph-based retrieval with the decay coefficient grounded in Bayesian decision theory; Layer 3 applies Signal Temporal Logic robustness to evaluate temporal validity of retrieved knowledge and bounds output confidence by the most decayed evidence (possibilistic weakest-link).",
+  "key_assumptions": [
+    "Fact age / temporal provenance is known and attachable to retrieved evidence",
+    "Exponential decay is the best-supported decay family",
+    "Older evidence is less valid (age as obsolescence)",
+    "Retrieval over a knowledge graph"
+  ],
+  "main_contribution": "A three-layer neuro-symbolic architecture that embeds temporal validity into the representation, retrieval and reasoning layers of RAG, with principled decay parameters and confidence bounding.",
+  "datasets": [
+    "ICEWS14 (temporal knowledge graph forecasting)",
+    "TimE temporal QA benchmark",
+    "A domain-specific sensitivity analysis dataset"
+  ],
+  "benchmarks": [
+    "ICEWS14",
+    "TimE",
+    "Domain-specific sensitivity analysis"
+  ],
+  "baselines": [
+    "Ablation without temporal retrieval",
+    "Five decay families compared: exponential, linear, power-law, Weibull, half-life"
+  ],
+  "metrics": [
+    "Retrieval precision",
+    "Temporal hallucination",
+    "Temporal validity / abstention calibration"
+  ],
+  "results": "Explicit temporal decay modeling improves retrieval precision and reduces temporal hallucination; Layer 3 without temporal retrieval delivers a 37.5% precision gain but stays quiet once Layers 1-2 are active; exponential decay offers the strongest theoretical grounding with a single interpretable parameter (beta_j = 2*kappa_j), despite marginal Weibull gains on individual metrics.",
+  "limitations": [
+    "Evaluation is on temporal knowledge graph forecasting (ICEWS14) and the TimE QA benchmark, not on versioned statutory/regulatory corpora",
+    "Layer 3 (STL verification) provides calibrated abstention rather than retrieval improvement and adds value only when upstream retrieval fails",
+    "Decay-family comparison was run on ICEWS14"
+  ],
+  "future_work": [
+    "not captured in the sections read"
+  ],
+  "code_availability": "No repository found (GitHub search for 'Chronofy temporal decay RAG' returned no results)",
+  "relation_to_idea": {
+    "problem_overlap": 0.75,
+    "method_overlap": 0.7,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "Chronofy operates on knowledge-graph retrieval with learned decay coefficients and neuro-symbolic logic over clinical/TKG data, not on a model-agnostic additive term re-ranking near-duplicate document versions; it equates age with loss of validity (recency-as-validity) and cites legal supersession only as motivation, whereas the proposal's core difficulty is choosing among semantically near-identical statutory versions in force at a target date.",
+    "basis": "Full-text introduction and method show exponential temporal decay integrated into retrieval and explicit legal-supersession motivation ('regulatory interpretations are superseded by new rulings'), indicating partial conceptual overlap; evaluation benchmarks differ from a versioned-statute retrieval benchmark."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T04:29:04.205119Z"
+}

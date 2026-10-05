@@ -1,0 +1,33 @@
+{
+  "id": "C019",
+  "statement": "Holding 'sequence length' fixed does not equalize supervision volume: maximum sequence length is a truncation cap, while CG-grounded instances carry additional context triples that KG-grounded instances lack, so at equal example counts and equal epochs the CG arm still consumes more supervision tokens per target triple. The closest work therefore controls hyperparameters but not the volume of the training signal, and no retrieved paper (including the dynamic-triple VQA work, the subgraph-size study, SLiNT, or the CDTP alignment benchmark) reports a token-matched or example-matched comparison of supervision regimes in LLM KGQA. The mechanism difference between the idea and the closest work remains implementation-level; the causal-attribution question is an evidence gap, already recorded as G001 and planned as E001.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 14",
+      "quote": "Maximum sequence length 4096 tokens",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 14",
+      "quote": "The only difference between KGModel and CGModel is the type of QA supervision used during training.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "U002",
+    "confounder",
+    "comparison"
+  ],
+  "recorded_at": "2026-09-30T05:29:59.894779Z"
+}

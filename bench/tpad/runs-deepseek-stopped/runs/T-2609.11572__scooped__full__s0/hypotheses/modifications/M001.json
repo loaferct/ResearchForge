@@ -1,0 +1,32 @@
+{
+  "id": "M001",
+  "title": "Validity-interval-aware temporal scoring instead of monotone elapsed-time decay",
+  "description": "Replace the monotone elapsed-time decay f(|t_q - t_v(p)|) with a validity-interval-aware temporal term g(t_q, interval(p)). The temporal component returns a large bonus exactly when t_q lies inside the passage version's in-force interval and a small or zero value otherwise, optionally adding a weak proximity term m * f(|t_q - t_v|) restricted to the in-force set so that simultaneously valid versions can still be distinguished by relevance to the query date. The wrapper remains a scalar addition to s(q,p) applied at re-ranking time with no re-indexing.",
+  "why_differs": "TempRALM uses a reciprocal/exponential decay in the query-document time difference, which is monotone toward the temporally nearest version and has no notion of validity intervals. Prior et al. and TaxFlow use a hard filter that removes all out-of-force versions, giving no graded signal among simultaneously valid versions. This modification keeps the retrieval-agnostic soft score but conditions it on the legal validity relation rather than temporal distance.",
+  "technical_mechanism": "score(q,p) = s(q,p) + lambda * g(t_q, interval(p)), where interval(p) = [effective(p), expiry(p)) and g is a step function equal to 1 when t_q is in force and 0 or a small negative otherwise; a second variant uses g = 1_inforce + mu * f(|t_q - t_v(p)|) to keep graded preference among in-force versions.",
+  "expected_benefit": "Removes the technical mismatch between elapsed time and legal applicability: it cannot favour a temporally near but out-of-force version, so it should match or exceed hard filtering on current-version queries while avoiding the recency-bias failure on historically anchored queries that a monotone decay is prone to.",
+  "potential_novelty": "Hedged: no retrieved work combines an interval-aware temporal term with a retrieval-agnostic re-ranking wrapper, but this is a bounded negative finding because the paper search budget was exhausted and TempRALM could not be citation-expanded through OpenAlex. The novelty claim is therefore provisional.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "The scoring change is a few lines, but it requires effective/expiry dates at passage granularity, which must be curated or extracted from consolidated statute data; without that metadata the variant cannot be instantiated.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Needs the same versioned corpus and held-out tuning effort as the original plan, plus per-regime reporting; no new model training or index rebuild is required, so the incremental experimental cost over the base plan is limited to extra arms and interval metadata handling.",
+  "main_risk": "If every query maps to a single unambiguous in-force version, the interval-aware term degenerates into hard filtering and contributes nothing beyond it; the graded proximity component may then be the only differentiator.",
+  "required_baselines": [
+    "Hard in-force interval filter",
+    "Monotone elapsed-time decay (TempRALM-style)",
+    "Future-mask-only re-ranker",
+    "Semantic-only retrieval",
+    "Recency-only (newest version) ranker",
+    "Oracle in-force filter"
+  ],
+  "related_paper_ids": [
+    "arxiv:2605.23497",
+    "arxiv:2401.13222",
+    "doi:10.1080/08839514.2026.2626097"
+  ],
+  "addresses_gap_ids": [
+    "G002"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T05:24:30.073927Z"
+}

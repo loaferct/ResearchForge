@@ -1,0 +1,42 @@
+{
+  "id": "C020",
+  "statement": "The closest work's SFT stage is LoRA fine-tuning of Qwen3-14B for 8 epochs on a single NVIDIA A100 80GB GPU with maximum sequence length 4096 tokens and effective batch size 32 (micro-batch 1, gradient accumulation 32), which is far cheaper than its RL stage (4xH200) and materially improves the feasibility of re-running the SFT-stage contrasts.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 14",
+      "quote": "Hardware 1×GPU; NVIDIA A100 80GB",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 14",
+      "quote": "Per-device micro-batch size 1 Gradient accumulation steps 32 Effective batch size 32",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 15",
+      "quote": "Fine-tuning method LoRA",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "feasibility",
+    "reproducibility",
+    "comparison"
+  ],
+  "recorded_at": "2026-09-30T05:30:24.494142Z"
+}

@@ -1,0 +1,27 @@
+{
+  "id": "D008",
+  "direction": "Make the version-level retrieval benchmark the primary contribution and the retriever comparison its first use: build version chains and per-clause in-force intervals over an EUR-Lex-like amended legal corpus, label gold by version identity, and include recency-decoupled strata plus the answer-differential screen. Keep the valid-time versus recency comparison as the benchmark's confirmatory experiment. Do not claim novelty for legal MCQA, for temporal validity as a signal, or for hybrid temporal scoring, all of which the compared work already covers.",
+  "hypothesis": "A version-level retrieval benchmark over amended legal text with version-identity gold labels and recency-decoupled strata measures a failure mode that existing legal MCQA and retrieval benchmarks do not, and on that benchmark valid-time gating reduces version contamination and point-in-time failures where recency decay does not.",
+  "rationale": "The compared legal benchmark is multiple-choice with supplied context and answer-option gold labels, and its own paper states that retrieval-oriented legal benchmarks do not assess whether retrieved provisions remain in force; the legal-retrieval review independently identifies document-granularity versioning as the unaddressed failure mode. Together these show the benchmark is the load-bearing, un-pre-empted element while the mechanism and the validity signal are not. This direction deserves investigation next because it reallocates effort from the pre-empted mechanism to the unclaimed resource and its measurement, and because the resource is a prerequisite for every remaining experiment.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": "D007",
+  "research_question": "Using version-identity gold labels and recency-decoupled, time-stamped queries over clause-versioned amended legal text, what retrieval failure rates do existing retrievers exhibit, and does valid-time (as-of) gating reduce version contamination and point-in-time failures where the published recency-decay hybrid does not?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "arxiv:2608.21409",
+    "arxiv:2606.09724",
+    "doi:10.3390/computers15080471",
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.3390/sym18091498",
+    "arxiv:2505.20243"
+  ],
+  "uncertainty_ids": [
+    "U023",
+    "U004",
+    "U021",
+    "U015",
+    "U013"
+  ],
+  "recorded_at": "2026-09-30T04:38:53.681544Z"
+}

@@ -1,0 +1,1109 @@
+{
+  "project": "T-2609.12230__scooped__full__s0",
+  "idea": "Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model training typically uses isolated head‑relation‑tail triples, depriving the model of the surrounding context that supports multi‑step inference. We propose to enrich each target triple (or path) with additional triples drawn from the same source passage, forming a local context subgraph that is presented together with the primary supervision signal. The model will be fine‑tuned under two regimes: one using only the target triple/path and another that also incorporates the supporting context. To improve the reliability of the base facts, we will introduce an adaptive repair loop that detects one‑hop failures, generates corrective examples, and iteratively refines the model. After this cleaning stage, we will apply reinforcement‑learning‑based optimization on lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.",
+  "created_at": "2026-09-30T06:26:38.641746Z",
+  "updated_at": "2026-09-30T07:28:27.422921Z",
+  "status": "incomplete",
+  "dsh_session_id": "session-f5180ae9-ffb8-4098-a609-ad627e474288",
+  "provider": "ollama-cloud",
+  "model": "nemotron-3-super",
+  "phases": [
+    {
+      "name": "formalize",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T06:26:38.646197Z",
+      "finished_at": "2026-09-30T06:30:39.290309Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 9,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "literature",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": null,
+      "finished_at": "2026-09-30T06:30:39.291116Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 8,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "analysis",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T06:33:01.821710Z",
+      "finished_at": "2026-09-30T06:42:29.653040Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 47,
+      "failed_tool_calls": 4
+    },
+    {
+      "name": "landscape",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T06:42:29.664537Z",
+      "finished_at": "2026-09-30T06:43:40.697532Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 2,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "critique",
+      "status": "complete",
+      "attempts": 6,
+      "started_at": "2026-09-30T06:43:40.708753Z",
+      "finished_at": "2026-09-30T06:49:29.764669Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 107,
+      "failed_tool_calls": 15
+    },
+    {
+      "name": "gaps",
+      "status": "complete",
+      "attempts": 3,
+      "started_at": "2026-09-30T07:09:12.511494Z",
+      "finished_at": "2026-09-30T07:11:52.146241Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 26,
+      "failed_tool_calls": 4
+    },
+    {
+      "name": "modifications",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T07:09:12.511525Z",
+      "finished_at": "2026-09-30T07:11:52.146328Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 13,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "experiments",
+      "status": "complete",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": "2026-09-30T07:28:27.368044Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "report",
+      "status": "complete",
+      "attempts": 0,
+      "started_at": "2026-09-30T07:28:27.393783Z",
+      "finished_at": "2026-09-30T07:28:27.422920Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    }
+  ],
+  "error": null,
+  "loop_phase": "FINALIZE",
+  "current_action": "FINALIZE",
+  "current_focus": null,
+  "budget": {
+    "iterations": 15,
+    "tool_calls": 199,
+    "failed_tool_calls": 24,
+    "runtime_failures": 0,
+    "seconds": 3707.84,
+    "tokens": 21945675
+  },
+  "decisions": [
+    {
+      "iteration": 0,
+      "phase": "INTAKE",
+      "action": "INTAKE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Research idea received.",
+      "evidence": "idea: Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model training typically uses isolated head‑relation‑tail triples, depriving the",
+      "expected_outcome": "",
+      "outcome": "idea stored in the workspace",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:26:38.642864Z"
+    },
+    {
+      "iteration": 1,
+      "phase": "FORMALIZE",
+      "action": "FORMALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been formalized into a testable research question.",
+      "evidence": "0 papers from 0 searches, 0 analyzed, 0 claims (0 verified), 0 open uncertainties",
+      "expected_outcome": "Problem, hypothesis, variables, assumptions and search queries recorded.",
+      "outcome": "+37 papers; +3 searches; idea formalized",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_idea_analysis",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 37,
+        "relevant_papers": 32,
+        "searches": 3,
+        "idea_formalized": 1
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:26:38.645433Z"
+    },
+    {
+      "iteration": 2,
+      "phase": "PLAN",
+      "action": "PLAN",
+      "focus": null,
+      "focus_id": null,
+      "reason": "No investigation plan exists yet, so it is unclear what must be determined.",
+      "evidence": "37 papers from 3 searches, 0 analyzed, 0 claims (0 verified), 0 open uncertainties",
+      "expected_outcome": "Questions to answer, search topics and initial uncertainties recorded.",
+      "outcome": "+4 uncertainties; investigation plan recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_investigation_plan",
+        "record_uncertainty"
+      ],
+      "state_changes": {
+        "uncertainties_created": 4,
+        "plan_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:30:39.296633Z"
+    },
+    {
+      "iteration": 3,
+      "phase": "INVESTIGATE",
+      "action": "READ",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Retrieved papers have not been analyzed enough to judge overlap.",
+      "evidence": "37 papers from 3 searches, 0 analyzed, 0 claims (0 verified), 4 open uncertainties",
+      "expected_outcome": "Structured analyses of the most relevant papers.",
+      "outcome": "+6 analyses",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "list_papers",
+        "record_paper_analysis",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "analyses": 6
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:33:01.817172Z"
+    },
+    {
+      "iteration": 4,
+      "phase": "SYNTHESIZE",
+      "action": "SYNTHESIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Analyses exist but the field has not been mapped.",
+      "evidence": "37 papers from 3 searches, 6 analyzed, 0 claims (0 verified), 4 open uncertainties",
+      "expected_outcome": "A landscape placing the idea among approaches.",
+      "outcome": "landscape recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_records",
+        "record_landscape"
+      ],
+      "state_changes": {
+        "landscape_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:42:29.659780Z"
+    },
+    {
+      "iteration": 5,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been challenged yet.",
+      "evidence": "37 papers from 3 searches, 6 analyzed, 0 claims (0 verified), 4 open uncertainties",
+      "expected_outcome": "Strongest objections recorded as critique and uncertainties.",
+      "outcome": "+3 claims; +3 verified claims; critique recorded; uncertainties updated: U001, U002, U003, U004",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_claim",
+        "record_critique",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 3,
+        "verified_claims": 3,
+        "critique_recorded": 1
+      },
+      "info_gain": 4.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:43:40.704072Z"
+    },
+    {
+      "iteration": 6,
+      "phase": "CHALLENGE",
+      "action": "CHALLENGE",
+      "focus": "U005: Does published work contradict the current assessment: Unlike UniKGQA (which unifies via shared architecture/pre-training) and Co-E (which synchronizes memory at inference), the proposed idea enriches training triples with local context subgraphs, adds an adaptive repair loop for fact correction, and uses RL transfer to improve higher-hop performance from lower-hop training.?",
+      "focus_id": "U005",
+      "reason": "The critique's assessment has not been challenged yet (U005); look for published work that contradicts it before investing in anything that builds on it.",
+      "evidence": "37 papers from 3 searches, 6 analyzed, 3 claims (3 verified), 5 open uncertainties",
+      "expected_outcome": "Evidence that confirms, weakens or refutes the assessment (U005).",
+      "outcome": "+11 papers; +1 searches; +1 claims; +1 contradicted conclusions; +1 uncertainties; +1 resolved uncertainties",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "record_challenge_result",
+        "record_claim",
+        "record_uncertainty",
+        "search_paper_text",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 11,
+        "relevant_papers": 8,
+        "searches": 1,
+        "claims": 1,
+        "contradicted": 1,
+        "uncertainties_created": 1,
+        "uncertainties_resolved": 1
+      },
+      "info_gain": 6.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:49:29.772473Z"
+    },
+    {
+      "iteration": 7,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": "Does published work contradict the assessment that, unlike UniKGQA (which unifies via shared architecture/pre-training) and Co-E (which synchronizes memory at inference), the proposed idea enriches training triples with local context subgraphs, adds an adaptive repair loop for fact correction, and u",
+      "focus_id": null,
+      "reason": "The current critique predates contradicting evidence (U006 weakened); the assessment must be revised before continuing.",
+      "evidence": "48 papers from 4 searches, 6 analyzed, 4 claims (3 verified), 6 open uncertainties",
+      "expected_outcome": "A critique that accounts for the contradicting work.",
+      "outcome": "+1 claims; critique recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_claim",
+        "record_critique",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "claims": 1,
+        "critique_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:51:56.195179Z"
+    },
+    {
+      "iteration": 8,
+      "phase": "UNCERTAINTY",
+      "action": "SEARCH",
+      "focus": "U001: Is there existing work that already trains language models on context-enriched triple subgraphs (i.e., not just isolated triples but also surrounding triples from the same passage) for multi-hop KGQA?",
+      "focus_id": "U001",
+      "reason": "Most valuable next step for high-importance novelty question U001: score 1.26 = importance 3 x expected gain 0.6 x relevance 1 x evidence deficiency 0.7 / cost 1. Next best: CHALLENGE on U005 (0.85).",
+      "evidence": "48 papers from 4 searches, 6 analyzed, 5 claims (3 verified), 6 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U001.",
+      "outcome": "+2 papers; +3 searches; +1 resolved uncertainties; uncertainties updated: U001",
+      "candidates": [
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U001",
+          "target": "Is there existing work that already trains language models on context-enriched triple subgraphs (i.e., not just isolated triples but also surrounding triples from the same passage) for multi-hop KGQA?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 0.7,
+          "cost": 1.0,
+          "score": 1.26
+        },
+        {
+          "action": "CHALLENGE",
+          "uncertainty_id": "U005",
+          "target": "Does published work contradict the current assessment: Unlike UniKGQA (which unifies via shared architecture/pre-training) and Co-E (which synchronizes memory at inference), the proposed idea enriches training triples with local context subgraphs, adds an adaptive repair loop for fact correction, and uses RL transfer to improve higher-hop performance from lower-hop training.?",
+          "importance": 3.0,
+          "expected_gain": 0.425,
+          "gain_basis": "prior 0.7, observed mean over 1 earlier CHALLENGE steps, halved for 1 earlier attempt on U005",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.85
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U001",
+          "target": "Is there existing work that already trains language models on context-enriched triple subgraphs (i.e., not just isolated triples but also surrounding triples from the same passage) for multi-hop KGQA?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 0.7,
+          "cost": 1.5,
+          "score": 0.84
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U007",
+          "target": "The conclusion behind U006 was weakened by contradicting work; how should the direction change?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.81
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U001",
+          "target": "Is there existing work that already trains language models on context-enriched triple subgraphs (i.e., not just isolated triples but also surrounding triples from the same passage) for multi-hop KGQA?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 0.7,
+          "cost": 2.0,
+          "score": 0.787
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U002",
+          "target": "How much does the proposed method overlap with existing subgraph retrieval approaches like SG-RAG MOT or UniKGQA that already incorporate surrounding triple information?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.756
+        }
+      ],
+      "expected_gain": 0.6,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "expand_citations",
+        "search_papers",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "papers": 2,
+        "relevant_papers": 1,
+        "searches": 3,
+        "uncertainties_resolved": 1
+      },
+      "info_gain": 2.5,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:54:54.107179Z"
+    },
+    {
+      "iteration": 9,
+      "phase": "UNCERTAINTY",
+      "action": "SEARCH",
+      "focus": "U002: How much does the proposed method overlap with existing subgraph retrieval approaches like SG-RAG MOT or UniKGQA that already incorporate surrounding triple information?",
+      "focus_id": "U002",
+      "reason": "Most valuable next step for high-importance overlap question U002: score 0.903 = importance 3 x expected gain 0.717 x relevance 1 x evidence deficiency 0.42 / cost 1. Next best: CHALLENGE on U005 (0.85).",
+      "evidence": "50 papers from 7 searches, 6 analyzed, 5 claims (3 verified), 5 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U002.",
+      "outcome": "+14 papers; +1 searches; +1 resolved uncertainties; uncertainties updated: U002",
+      "candidates": [
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U002",
+          "target": "How much does the proposed method overlap with existing subgraph retrieval approaches like SG-RAG MOT or UniKGQA that already incorporate surrounding triple information?",
+          "importance": 3.0,
+          "expected_gain": 0.717,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier SEARCH steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.903
+        },
+        {
+          "action": "CHALLENGE",
+          "uncertainty_id": "U005",
+          "target": "Does published work contradict the current assessment: Unlike UniKGQA (which unifies via shared architecture/pre-training) and Co-E (which synchronizes memory at inference), the proposed idea enriches training triples with local context subgraphs, adds an adaptive repair loop for fact correction, and uses RL transfer to improve higher-hop performance from lower-hop training.?",
+          "importance": 3.0,
+          "expected_gain": 0.425,
+          "gain_basis": "prior 0.7, observed mean over 1 earlier CHALLENGE steps, halved for 1 earlier attempt on U005",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.85
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U007",
+          "target": "The conclusion behind U006 was weakened by contradicting work; how should the direction change?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.81
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.717,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier SEARCH steps",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 1.0,
+          "score": 0.703
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U003",
+          "target": "Does an adaptive repair loop that detects one-hop failures and generates corrective examples improve the reliability of base facts in language models trained on KG triples?",
+          "importance": 2.0,
+          "expected_gain": 0.717,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier SEARCH steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.542
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U002",
+          "target": "How much does the proposed method overlap with existing subgraph retrieval approaches like SG-RAG MOT or UniKGQA that already incorporate surrounding triple information?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.504
+        }
+      ],
+      "expected_gain": 0.717,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "search_papers",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "papers": 14,
+        "relevant_papers": 13,
+        "searches": 1,
+        "uncertainties_resolved": 1
+      },
+      "info_gain": 4.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:56:04.070800Z"
+    },
+    {
+      "iteration": 10,
+      "phase": "CHALLENGE",
+      "action": "CHALLENGE",
+      "focus": "U005: Does published work contradict the current assessment: Unlike UniKGQA (which unifies via shared architecture/pre-training) and Co-E (which synchronizes memory at inference), the proposed idea enriches training triples with local context subgraphs, adds an adaptive repair loop for fact correction, and uses RL transfer to improve higher-hop performance from lower-hop training.?",
+      "focus_id": "U005",
+      "reason": "Most valuable next step for high-importance contradiction question U005: score 0.85 = importance 3 x expected gain 0.425 x relevance 1 x evidence deficiency 1 / cost 1.5. Next best: REFINE on U007 (0.81).",
+      "evidence": "64 papers from 8 searches, 6 analyzed, 5 claims (3 verified), 4 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U005.",
+      "outcome": "+1 contradicted conclusions; +1 resolved uncertainties; uncertainties updated: U005",
+      "candidates": [
+        {
+          "action": "CHALLENGE",
+          "uncertainty_id": "U005",
+          "target": "Does published work contradict the current assessment: Unlike UniKGQA (which unifies via shared architecture/pre-training) and Co-E (which synchronizes memory at inference), the proposed idea enriches training triples with local context subgraphs, adds an adaptive repair loop for fact correction, and uses RL transfer to improve higher-hop performance from lower-hop training.?",
+          "importance": 3.0,
+          "expected_gain": 0.425,
+          "gain_basis": "prior 0.7, observed mean over 1 earlier CHALLENGE steps, halved for 1 earlier attempt on U005",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.85
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U007",
+          "target": "The conclusion behind U006 was weakened by contradicting work; how should the direction change?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.81
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.811,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier SEARCH steps",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 1.0,
+          "score": 0.795
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U003",
+          "target": "Does an adaptive repair loop that detects one-hop failures and generates corrective examples improve the reliability of base facts in language models trained on KG triples?",
+          "importance": 2.0,
+          "expected_gain": 0.811,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier SEARCH steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.613
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 1.5,
+          "score": 0.392
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 2.0,
+          "score": 0.367
+        }
+      ],
+      "expected_gain": 0.425,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "record_challenge_result",
+        "record_claim",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "contradicted": 1,
+        "uncertainties_resolved": 1
+      },
+      "info_gain": 4.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:57:14.958262Z"
+    },
+    {
+      "iteration": 11,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": "Does published work contradict the current assessment: Unlike UniKGQA (which unifies via shared architecture/pre-training) and Co-E (which synchronizes memory at inference), the proposed idea enriches training triples with local context subgraphs, adds an adaptive repair loop for fact correction, an",
+      "focus_id": null,
+      "reason": "The current critique predates contradicting evidence (U005 weakened); the assessment must be revised before continuing.",
+      "evidence": "64 papers from 8 searches, 6 analyzed, 5 claims (3 verified), 4 open uncertainties",
+      "expected_outcome": "A critique that accounts for the contradicting work.",
+      "outcome": "+3 claims; +2 verified claims; critique recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_claim",
+        "record_critique",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "claims": 3,
+        "verified_claims": 2,
+        "critique_recorded": 1
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:01:48.237900Z"
+    },
+    {
+      "iteration": 12,
+      "phase": "UNCERTAINTY",
+      "action": "REFINE",
+      "focus": "U007: The conclusion behind U006 was weakened by contradicting work; how should the direction change?",
+      "focus_id": "U007",
+      "reason": "Most valuable next step for high-importance direction question U007: score 0.81 = importance 3 x expected gain 0.5 x relevance 0.9 x evidence deficiency 0.6 / cost 1. Next best: REFINE on U008 (0.81).",
+      "evidence": "64 papers from 8 searches, 6 analyzed, 8 claims (5 verified), 4 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U007.",
+      "outcome": "+1 gaps; +3 modifications; +1 directions",
+      "candidates": [
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U007",
+          "target": "The conclusion behind U006 was weakened by contradicting work; how should the direction change?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.81
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U008",
+          "target": "The conclusion behind U005 was weakened by contradicting work; how should the direction change?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.81
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.811,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier SEARCH steps",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 1.0,
+          "score": 0.795
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U003",
+          "target": "Does an adaptive repair loop that detects one-hop failures and generates corrective examples improve the reliability of base facts in language models trained on KG triples?",
+          "importance": 2.0,
+          "expected_gain": 0.811,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier SEARCH steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.613
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 1.5,
+          "score": 0.392
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 2.0,
+          "score": 0.367
+        }
+      ],
+      "expected_gain": 0.5,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "record_direction",
+        "record_gap",
+        "record_modification",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "gaps": 1,
+        "modifications": 3,
+        "directions": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:09:12.504365Z"
+    },
+    {
+      "iteration": 13,
+      "phase": "CHALLENGE",
+      "action": "CHALLENGE",
+      "focus": "U010: Is direction D001 already explored or contradicted: Modify the method to incorporate cross‑passage context enrichment and external knowledge‑base verification for the adaptive repair loop, and evaluate on open‑domain multi‑hop QA benchmarks.?",
+      "focus_id": "U010",
+      "reason": "Most valuable next step for high-importance contradiction question U010: score 1.8 = importance 3 x expected gain 0.9 x relevance 1 x evidence deficiency 1 / cost 1.5. Next best: INVESTIGATE_GAP on U009 (1.4).",
+      "evidence": "64 papers from 8 searches, 6 analyzed, 8 claims (5 verified), 6 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U010.",
+      "outcome": "+14 papers; +2 searches; +1 claims; +1 resolved uncertainties; uncertainties updated: U010",
+      "candidates": [
+        {
+          "action": "CHALLENGE",
+          "uncertainty_id": "U010",
+          "target": "Is direction D001 already explored or contradicted: Modify the method to incorporate cross‑passage context enrichment and external knowledge‑base verification for the adaptive repair loop, and evaluate on open‑domain multi‑hop QA benchmarks.?",
+          "importance": 3.0,
+          "expected_gain": 0.9,
+          "gain_basis": "prior 0.7, observed mean over 2 earlier CHALLENGE steps",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.8
+        },
+        {
+          "action": "INVESTIGATE_GAP",
+          "uncertainty_id": "U009",
+          "target": "Has gap G001 already been addressed: Lack of evaluation of context‑enriched triple training with adaptive repair and RL transfer on standard open‑domain multi-hop QA benchmarks (e.g., HotpotQA, MuSiQue, WebQSP, CWQ).?",
+          "importance": 3.0,
+          "expected_gain": 0.7,
+          "gain_basis": "prior 0.7",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.4
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.811,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier SEARCH steps",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 1.0,
+          "score": 0.795
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U008",
+          "target": "The conclusion behind U005 was weakened by contradicting work; how should the direction change?",
+          "importance": 3.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.676
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U003",
+          "target": "Does an adaptive repair loop that detects one-hop failures and generates corrective examples improve the reliability of base facts in language models trained on KG triples?",
+          "importance": 2.0,
+          "expected_gain": 0.811,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier SEARCH steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.613
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 1.5,
+          "score": 0.392
+        }
+      ],
+      "expected_gain": 0.9,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "record_challenge_result",
+        "record_claim",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 14,
+        "relevant_papers": 3,
+        "searches": 2,
+        "claims": 1,
+        "uncertainties_resolved": 1
+      },
+      "info_gain": 3.5,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:11:52.158917Z"
+    },
+    {
+      "iteration": 14,
+      "phase": "CHALLENGE",
+      "action": "INVESTIGATE_GAP",
+      "focus": "U009: Has gap G001 already been addressed: Lack of evaluation of context‑enriched triple training with adaptive repair and RL transfer on standard open‑domain multi-hop QA benchmarks (e.g., HotpotQA, MuSiQue, WebQSP, CWQ).?",
+      "focus_id": "U009",
+      "reason": "Most valuable next step for high-importance novelty question U009: score 1.4 = importance 3 x expected gain 0.7 x relevance 1 x evidence deficiency 1 / cost 1.5. Next best: SEARCH on U004 (0.795).",
+      "evidence": "78 papers from 10 searches, 6 analyzed, 9 claims (5 verified), 5 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U009.",
+      "outcome": "+15 papers; +1 searches; +1 claims; +1 verified claims",
+      "candidates": [
+        {
+          "action": "INVESTIGATE_GAP",
+          "uncertainty_id": "U009",
+          "target": "Has gap G001 already been addressed: Lack of evaluation of context‑enriched triple training with adaptive repair and RL transfer on standard open‑domain multi-hop QA benchmarks (e.g., HotpotQA, MuSiQue, WebQSP, CWQ).?",
+          "importance": 3.0,
+          "expected_gain": 0.7,
+          "gain_basis": "prior 0.7",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.4
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.811,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier SEARCH steps",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 1.0,
+          "score": 0.795
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U008",
+          "target": "The conclusion behind U005 was weakened by contradicting work; how should the direction change?",
+          "importance": 3.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.676
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U003",
+          "target": "Does an adaptive repair loop that detects one-hop failures and generates corrective examples improve the reliability of base facts in language models trained on KG triples?",
+          "importance": 2.0,
+          "expected_gain": 0.811,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier SEARCH steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.613
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 1.5,
+          "score": 0.392
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 2.0,
+          "score": 0.367
+        }
+      ],
+      "expected_gain": 0.7,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "record_claim",
+        "search_papers",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "papers": 15,
+        "relevant_papers": 6,
+        "searches": 1,
+        "claims": 1,
+        "verified_claims": 1
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:15:18.201623Z"
+    },
+    {
+      "iteration": 15,
+      "phase": "UNCERTAINTY",
+      "action": "REFINE",
+      "focus": "U008: The conclusion behind U005 was weakened by contradicting work; how should the direction change?",
+      "focus_id": "U008",
+      "reason": "Most valuable next step for high-importance direction question U008: score 0.676 = importance 3 x expected gain 0.417 x relevance 0.9 x evidence deficiency 0.6 / cost 1. Next best: VERIFY on U004 (0.392).",
+      "evidence": "93 papers from 11 searches, 6 analyzed, 10 claims (6 verified), 5 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U008.",
+      "outcome": "+1 directions; +1 experiment plans; +1 resolved uncertainties; uncertainties updated: U008",
+      "candidates": [
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U008",
+          "target": "The conclusion behind U005 was weakened by contradicting work; how should the direction change?",
+          "importance": 3.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.676
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 1.5,
+          "score": 0.392
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U004",
+          "target": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+          "importance": 2.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 0.7,
+          "cost": 2.0,
+          "score": 0.367
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U007",
+          "target": "The conclusion behind U006 was weakened by contradicting work; how should the direction change?",
+          "importance": 3.0,
+          "expected_gain": 0.208,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps, halved for 1 earlier attempt on U007",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.337
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U003",
+          "target": "Does an adaptive repair loop that detects one-hop failures and generates corrective examples improve the reliability of base facts in language models trained on KG triples?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.302
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Does an adaptive repair loop that detects one-hop failures and generates corrective examples improve the reliability of base facts in language models trained on KG triples?",
+          "importance": 2.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.284
+        }
+      ],
+      "expected_gain": 0.417,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "get_goal",
+        "get_research_state",
+        "record_direction",
+        "record_experiment_plan",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "directions": 1,
+        "plans": 1,
+        "uncertainties_resolved": 1
+      },
+      "info_gain": 4.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:20:18.399627Z"
+    },
+    {
+      "iteration": 16,
+      "phase": "FINALIZE",
+      "action": "FINALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Stopping: time budget reached (3600 s).",
+      "evidence": "93 papers from 11 searches, 6 analyzed, 10 claims (6 verified), 5 open uncertainties",
+      "expected_outcome": "Report what was established and what remains open.",
+      "outcome": "finalizing",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:28:27.375572Z"
+    }
+  ],
+  "no_progress": {},
+  "blocked_actions": [],
+  "critiques": 3,
+  "papers_at_last_critique": 64,
+  "finalize_reason": "Stopping: time budget reached (3600 s).",
+  "awaiting_approval": [],
+  "investigation_closed": null,
+  "investigation_closed_at": null,
+  "challenged_refs": [
+    "critique",
+    "G001",
+    "D001",
+    "D002"
+  ],
+  "research_decision": "ALREADY_WELL_EXPLORED",
+  "research_decision_basis": "the direction was rejected or the critique found substantial overlap with existing work"
+}

@@ -1,0 +1,32 @@
+{
+  "id": "U004",
+  "question": "Can a soft elapsed-time temporal relevance term ever outperform (or complement) hard version/validity-interval filtering on amended regulatory texts, or does the hard constraint dominate it?",
+  "description": "Prior et al. (arxiv:2605.23497) report that temporal validity must be enforced as a hard constraint and that 'what is retrieved (the correct timeframe) matters more than how it is retrieved'. TempRALM's soft elapsed-time decay is monotone toward the nearest/newest version, with no notion of in-force intervals, and Prior et al. document recency bias as a failure mode. If hard interval filtering dominates, the soft temporal term may add nothing or actively harm historically anchored queries.",
+  "category": "confounder",
+  "importance": "high",
+  "status": "open",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "CHALLENGE",
+    "COMPARE",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Determines whether the proposed soft temporal component has any value over the simpler, already-demonstrated hard filter; this is the central empirical question after the novelty finding.",
+  "resolution": "",
+  "paper_ids": [],
+  "supporting_paper_ids": [
+    "arxiv:2401.13222"
+  ],
+  "contradicting_paper_ids": [
+    "arxiv:2605.23497"
+  ],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "INVESTIGATE",
+  "created_at": "2026-09-30T05:10:27.624573Z",
+  "updated_at": "2026-09-30T05:10:27.625020Z"
+}

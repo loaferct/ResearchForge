@@ -1,0 +1,42 @@
+{
+  "id": "C005",
+  "statement": "In adjacent settings, context quantity is not monotonically beneficial: larger subgraphs are reported to introduce noise (arxiv:2202.13296), and a question-fitted variable number of triples is reported to work better than a fixed supply, with too many supplied triples framed as unnecessary noise (arxiv:2406.09994). This qualifies the idea's assumption that attaching same-passage context triples helps.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2202.13296",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "The desired subgraph is crucial as a small one may exclude the answer but a large one might introduce more noises.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2406.09994",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "Nevertheless, using a fixed number of triples for all questions may lead to either inadequate information or unnecessary noise, potentially resulting in inaccurate predictions.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2406.09994",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "Through experiments and analysis, we demonstrate that furnishing variable triples for each question improves the reasoning capabilities of the language model in contrast to supplying a fixed number of triples.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "critique",
+    "confounder",
+    "context-size"
+  ],
+  "recorded_at": "2026-09-30T05:12:53.185335Z"
+}

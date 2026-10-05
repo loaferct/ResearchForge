@@ -1,0 +1,34 @@
+{
+  "id": "C027",
+  "statement": "Comparison for U017: the differences from the closest works are largely implementation-level. MHGRN implements 'use the reasoning chain' architecturally (a multi-hop relation module over an extracted subgraph) with QA-label training, whereas the idea would supply chain text as supervision to a fine-tuned LLM; KnowTrace implements a self-training loop with process supervision over knowledge triplets, whereas the idea's repair loop only changes the selection signal (one-hop failures instead of contributive generations). Neither is a new mechanism; both are alternate implementations of established mechanisms.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.18653/v1/2020.emnlp-main.99",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "arxiv:2505.20245",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "comparison",
+    "implementation-difference",
+    "U017",
+    "U024"
+  ],
+  "recorded_at": "2026-09-30T05:31:24.077395Z"
+}

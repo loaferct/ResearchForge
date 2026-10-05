@@ -1,0 +1,43 @@
+{
+  "id": "C030",
+  "statement": "Comparison for U005: 'retrieval-agnostic' should not be presented as a contribution. Retriever-agnostic temporal filtering already exists in another form - an ontology-driven pre-retrieval filter that admits legal sources by jurisdiction, lifecycle status and temporal validity before retrieval - and temporal handling is elsewhere embedded across representation, retrieval and reasoning layers. At the same time, evidence from a regulatory QA benchmark shows base-retriever behaviour is not uniform (BM25 beats hybrid on multihop queries while hybrid wins overall), so portability cannot be assumed and must be measured. The honest status of the plug-in framing is therefore a design constraint plus an empirical result (per-retriever effect sizes and their consistency), not a claimed property of the mechanism; the difference from the ontology-governed filter is only that the proposed gate scores rather than hard-admits, which is an implementation detail.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.2139/ssrn.7087840",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "BM25 outperforms hybrid on multihop queries",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.3390/computers15080471",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "the ontology filters legal sources by jurisdiction, topic, lifecycle status, and temporal validity",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.1109/iri69576.2026.00090",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "embeds temporal validity directly into the representation, retrieval, and reasoning layers of RAG systems",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "retrieval-agnostic",
+    "overlap",
+    "implementation detail",
+    "comparison"
+  ],
+  "recorded_at": "2026-09-30T04:39:25.689760Z"
+}

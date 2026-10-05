@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.18653/v1/d18-1259",
+  "relevance_tier": "high",
+  "problem": "Existing QA datasets do not adequately train systems for complex multi‑hop reasoning or provide explanations for answers, hindering advancements in machine reasoning over natural language.",
+  "method": "Introduces HotpotQA, a dataset of 113k Wikipedia‑based question‑answer pairs requiring reasoning over multiple supporting documents, providing sentence‑level supporting facts for strong supervision and explainability, and including a novel comparison question type to test entity comparison skills.",
+  "key_assumptions": [
+    "Providing gold supporting facts enables models to learn explainable multi‑hop reasoning.",
+    "The dataset’s diversity and explanation supervision facilitate development of models that can retrieve, reason, and explain."
+  ],
+  "main_contribution": "HotpotQA dataset and analysis showing it is challenging for latest QA systems, that supporting facts improve performance and explainability, and that comparison questions test higher‑order entity comparison.",
+  "datasets": [
+    "HotpotQA (113k Wikipedia‑based QA pairs with multi‑hop reasoning, supporting facts, and comparison questions)"
+  ],
+  "benchmarks": [
+    "HotpotQA (distractor and full wiki settings)"
+  ],
+  "baselines": [
+    "BiDAF‑based baseline model reimplemented from Clark and Gardner (2017)"
+  ],
+  "metrics": [
+    "Exact Match (EM), F1 score for answer prediction; EM/F1 for supporting fact prediction; joint EM/F1"
+  ],
+  "results": "[\"Baseline model on distractor setting: answer EM 44.44/F1 58.28, supporting fact EM 21.95/F1 40.86, joint EM 11.56/F1 40.86; on full wiki setting: answer EM 25.23/F1 34.40, supporting fact EM 5.07/F1 17.85, joint EM 2.63/F1 17.85.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "Need for technical advancements to close the gap with human performance; better modeling of supervision over supporting facts; investigation of explainability improvements."
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "HotpotQA is a dataset for evaluating multi‑hop QA with explainability, while our idea proposes a training method that enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:25:53.299911Z"
+}

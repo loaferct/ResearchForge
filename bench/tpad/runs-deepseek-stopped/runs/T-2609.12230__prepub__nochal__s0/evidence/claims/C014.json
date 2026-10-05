@@ -1,0 +1,33 @@
+{
+  "id": "C014",
+  "statement": "Main experimental confounder: the context regime necessarily adds triples/tokens per supervision example, so any accuracy gain may reflect a larger supervision/context budget rather than passage-context relevance. Because the literature disagrees on whether more context helps (SG-RAG MOT: merging overlapping subgraphs helps) or hurts (DrKGC: overly long inputs add noise), the isolated-vs-context comparison must match the number of examples and total tokens and include an equal-length irrelevant-triples control.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2506.00708",
+      "experiment_run_id": null,
+      "location": "p. 1, Introduction (contribution 1)",
+      "quote": "While graph paths or subgraphs can be encoded as text prompts, overly long inputs introduce noise and increase computational costs.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "doi:10.20944/preprints202505.1992.v1",
+      "experiment_run_id": null,
+      "location": "Abstract",
+      "quote": "We also find out that merging (up to some point) highly overlapping subgraphs and defining an order among the triplets helps the LLM to generate more precise answers.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "high",
+  "phase": "critique",
+  "tags": [
+    "confounder",
+    "matched budget",
+    "experimental validity"
+  ],
+  "recorded_at": "2026-09-30T05:20:35.845899Z"
+}

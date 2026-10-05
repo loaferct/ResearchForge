@@ -1,0 +1,41 @@
+{
+  "paper_id": "doi:10.18653/v1/2020.acl-main.412",
+  "relevance_tier": "medium",
+  "problem": "Multi-hop KGQA must reason over multiple edges of a KG, but KGs are often incomplete with many missing links, which is especially challenging for multi-hop questions. Prior work handles KG sparsity using relevant external text, which is not always available.",
+  "method": "EmbedKGQA: uses knowledge base embedding methods (designed for missing link prediction) to reduce KG sparsity for multi-hop KGQA, and relaxes the requirement that answers be selected from a pre-specified neighborhood (a sub-optimal constraint enforced by previous multi-hop KGQA methods).",
+  "key_assumptions": [
+    "KG embeddings trained for link prediction transfer usefully to multi-hop KGQA.",
+    "Answers need not lie inside a pre-specified question neighborhood.",
+    "Reducing sparsity via embeddings substitutes for external text."
+  ],
+  "main_contribution": "First exploration of KG embedding methods for multi-hop KGQA; EmbedKGQA is particularly effective on sparse KGs and removes the hard answer-selection-from-neighborhood constraint.",
+  "datasets": [
+    "Multiple benchmark datasets (names not stated in abstract; typically MetaQA, WebQSP, CWQ)"
+  ],
+  "benchmarks": [
+    "Multiple benchmark datasets (names not stated in abstract)"
+  ],
+  "baselines": [
+    "Other state-of-the-art multi-hop KGQA baselines"
+  ],
+  "metrics": [
+    "Not stated in abstract"
+  ],
+  "results": "Extensive experiments on multiple benchmark datasets demonstrate effectiveness over other state-of-the-art baselines.",
+  "limitations": [
+    "Not stated in abstract"
+  ],
+  "future_work": [
+    "Not stated in abstract"
+  ],
+  "code_availability": "No code URL recorded in the retrieved record; GitHub tools unavailable in this investigation.",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.7,
+    "conceptual_difference": "EmbedKGQA addresses KG incompleteness with embeddings and removes neighborhood-constrained answer selection; it does not enrich supervision with context triples, nor repair one-hop failures, nor use RL over hop depths. It is relevant as a baseline for the idea's claim that base-fact unreliability harms multi-hop QA, since it is an alternative remedy (embedding-based link prediction) already established for sparsity.",
+    "basis": "Problem overlap 0.8: multi-hop KGQA over incomplete KGs. Method overlap 0.3: KG embeddings handle sparsity at the representation level, not by adding context to the supervision signal. Evaluation overlap 0.7: shared benchmark family."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:17:19.105932Z"
+}

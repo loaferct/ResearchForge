@@ -1,0 +1,44 @@
+{
+  "id": "arxiv:2512.16149",
+  "title": "ToolForge: A Data Synthesis Pipeline for Multi-Hop Search without Real-World APIs",
+  "authors": [
+    "Hao Chen",
+    "Zhexin Hu",
+    "Jiajun Chai",
+    "Haocheng Yang",
+    "Hang He",
+    "Xiaohan Wang",
+    "Wei Lin",
+    "Luhang Wang",
+    "Guojun Yin",
+    "Zhuofeng zhao"
+  ],
+  "year": 2025,
+  "published": "2025-12-18",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2512.16149",
+  "pdf_url": "https://arxiv.org/pdf/2512.16149v1",
+  "abstract": "Training LLMs to invoke tools and leverage retrieved information necessitates high-quality, diverse data. However, existing pipelines for synthetic data generation often rely on tens of thousands of real API calls to enhance generalization, incurring prohibitive costs while lacking multi-hop reasoning and self-reflection. To address these limitations, we introduce ToolForge, an automated synthesis framework that achieves strong real-world tool-calling performance by constructing only a small number of virtual tools, eliminating the need for real API calls. ToolForge leverages a (question, golden context, answer) triple to synthesize large-scale tool-learning data specifically designed for multi-hop search scenarios, further enriching the generated data through multi-hop reasoning and self-reflection mechanisms. To ensure data fidelity, we employ a Multi-Layer Validation Framework that integrates both rule-based and model-based assessments. Empirical results show that a model with only 8B parameters, when trained on our synthesized data, outperforms GPT-4o on multiple benchmarks. Our code and dataset are publicly available at https://github.com/Buycar-arb/ToolForge .",
+  "doi": null,
+  "arxiv_id": "2512.16149",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T06:49:49.975538Z",
+  "relevance": 0.1944,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "context enriched triple training multi-hop question answering"
+  ],
+  "code_urls": [
+    "https://github.com/Buycar-arb/ToolForge"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

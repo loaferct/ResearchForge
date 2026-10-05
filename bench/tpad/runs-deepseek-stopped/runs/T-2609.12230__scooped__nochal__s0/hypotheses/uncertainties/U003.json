@@ -1,0 +1,35 @@
+{
+  "id": "U003",
+  "question": "Does RL optimization on lower-hop QA instances actually transfer to deeper multi-hop queries, or does it overfit the low-hop distribution and hurt deeper hops?",
+  "description": "The idea assumes that cleaning/training on lower-hop instances transfers upward. RL path-walking literature (DeepPath doi:10.18653/v1/d17-1060, reward shaping doi:10.18653/v1/d18-1362, intermediate supervision arxiv:2101.03737) suggests gains depend heavily on intermediate/long-horizon supervision, and reward sparsity grows with hop depth. No retrieved paper was checked for hop-depth transfer specifically.",
+  "category": "validity",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "READ",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": 0.6,
+  "confidence_basis": "Grounded in full-text/repo tables for one paper and an abstract for another; four directly relevant RL papers are unread.",
+  "rationale": "If transfer fails, the RL component of the pipeline is unjustified and the contribution must be narrowed to context enrichment plus repair.",
+  "resolution": "Reading arxiv:2101.03737 shows the hop-stratified picture on MetaQA: most methods already perform very well at 1-hop and 2-hop (NSM reports 97.1 / 99.9 / 98.9 on MetaQA-1hop/2-hop/3-hop per the authors' repo table), so the headroom that the idea targets is concentrated at 3-hop and on WebQSP/CWQ, where the same repo reports much lower numbers (68.7 / 47.6). doi:10.18653/v1/d18-1362 confirms that RL over paths suffers from corrupted one-hop rewards (false negatives) that harm test-time generalization, which supports the motivation for a repair stage but also means the RL component needs a stated advantage over existing reward-shaping fixes. Full-text reading did not surface any paper that measures whether RL trained on low-hop instances transfers to higher hops; that specific transfer claim remains untested in the retrieved set. The four no-abstract RL papers (doi:10.1016/j.eswa.2024.124652, doi:10.1016/j.ins.2022.11.042, doi:10.1016/j.knosys.2023.110760, doi:10.1145/3336191.3371812) could not be checked because the indexed sources returned no abstracts.",
+  "paper_ids": [
+    "doi:10.18653/v1/d17-1060",
+    "doi:10.18653/v1/d18-1362",
+    "arxiv:2101.03737"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2101.03737",
+    "doi:10.18653/v1/d18-1362"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T05:05:09.178339Z",
+  "updated_at": "2026-09-30T05:08:46.281043Z"
+}

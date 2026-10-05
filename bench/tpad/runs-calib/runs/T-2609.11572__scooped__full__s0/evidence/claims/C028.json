@@ -1,0 +1,43 @@
+{
+  "id": "C028",
+  "statement": "Comparison and pre-emption verdict for U023: the closest legal benchmark cannot be re-labelled to version-level retrieval evaluation, because its items are multiple-choice questions with answer-option gold labels built from pairs of EUR-Lex passages and their relations, and its grounding axis supplies authoritative reference context rather than requiring a retriever to select among candidate versions. Extending it to version-level retrieval would require new construction - version chains and per-clause in-force intervals with version-identity labels on a candidate pool - not re-labelling. More strongly, the same paper states that retrieval-oriented legal benchmarks do not assess whether retrieved provisions remain in force, which confirms the gap rather than filling it. The pre-emption concern is therefore not realized, but the benchmark must be built from an EUR-Lex-like source with clause-level validity metadata; the difference from the closest work is a genuine difference in evaluation object (which version was retrieved) rather than an implementation detail.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2608.21409",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "Starting from pairs of EUR-Lex document passages and their associated relations",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2608.21409",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "one correct answer, and three distractors",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2608.21409",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "models are provided with authoritative reference context",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "benchmark",
+    "pre-emption",
+    "comparison",
+    "version-level retrieval"
+  ],
+  "recorded_at": "2026-09-30T04:38:53.632941Z"
+}

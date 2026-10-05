@@ -1,0 +1,44 @@
+{
+  "id": "G001",
+  "gap": "No public benchmark evaluates retrieval over overlapping successive regulatory revisions with per-passage version labels and an in-force ground truth. Existing resources either score end answers on synthetic statutory questions (arxiv:2605.23497), measure gold-passage recall on Wikipedia/tennis versions (arxiv:2401.13222), or test temporal QA over non-versioned snippets (doi:10.1145/3589335.3651895).",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "we present a benchmark of 312 expert-validated, time-sensitive German statutory QA pairs spanning three categories",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 6",
+      "quote": "recall@1 and recall@5 metrics, which compute the number of times the correct passage is in the top 1 or top 5 results",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "doi:10.1145/3589335.3651895",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "The TIQ benchmark contains 10,000 questions with ground-truth answers and underlying snippets as supporting evidence.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2605.23497",
+    "arxiv:2401.13222",
+    "doi:10.1145/3589335.3651895"
+  ],
+  "why_unaddressed": "The retrieved benchmarks were designed for different units of analysis: Prior et al. label QA pairs by the version required to answer but evaluate only generated answers with an LLM judge and report no retrieval metrics, while TempRALM evaluates gold-passage recall in a Wikipedia setting without legal validity intervals. No retrieved work labels both retrieval candidates by version validity and queries by target date in a regulatory corpus.",
+  "research_question": "Can a clause-level benchmark of overlapping regulatory revisions with version labels and in-force ground truth be constructed such that retrieval-layer version-selection accuracy can be measured separately from answer accuracy?",
+  "potential_experiment": "Build a clause-level benchmark from amended statutes with archived version snapshots, per-version effective/expiry dates and time-stamped queries, and report version-selection accuracy@k (fraction of top-k passages from the in-force version) alongside end-answer accuracy, stratified by current versus historical query regime.",
+  "confidence": "high",
+  "verification_required": "A broader search of 2024-2026 legal-IR and temporal-retrieval venues for point-in-time or as-of-date statutory retrieval datasets is still required; the present search budget is exhausted and Semantic Scholar was intermittently unavailable, so the absence of such a benchmark is a bounded negative finding.",
+  "recorded_at": "2026-09-30T05:24:06.002030Z"
+}

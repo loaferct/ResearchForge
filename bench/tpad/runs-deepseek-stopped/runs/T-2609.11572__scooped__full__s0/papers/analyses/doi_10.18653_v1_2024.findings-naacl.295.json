@@ -1,0 +1,48 @@
+{
+  "paper_id": "doi:10.18653/v1/2024.findings-naacl.295",
+  "relevance_tier": "medium",
+  "problem": "Open-domain health QA must find relevant evidence in a large knowledge base; existing systems rely on pre-selected evidence and cannot handle novel questions. Document quality attributes such as recency and citation strength are underexplored retrieval knobs.",
+  "method": "A retrieve-then-read open-domain QA pipeline over PubMed. The retriever and reader are held fixed while retrieval settings are varied: number of retrieved documents, sentence selection, articles' publication year, and citation count; the effect on the final answer classification is measured.",
+  "key_assumptions": [
+    "Publication year is a usable proxy for evidence currency",
+    "PubMed is a trustworthy evidence corpus",
+    "Recency preference is always desirable (not conditioned on a query target date)"
+  ],
+  "main_contribution": "Empirical evidence that time-aware evidence retrieval (favouring more recent and more highly cited documents, with fewer retrieved documents) improves health QA macro F1 by up to 10%.",
+  "datasets": [
+    "Three diverse biomedical/health QA datasets",
+    "PubMed evidence corpus"
+  ],
+  "benchmarks": [
+    "Three health QA datasets with classification-style evaluation"
+  ],
+  "baselines": [
+    "Default retrieval settings (more documents, no recency/citation re-weighting)"
+  ],
+  "metrics": [
+    "Precision",
+    "Recall",
+    "Macro F1"
+  ],
+  "results": "Cutting the number of retrieved documents and favouring more recent, highly cited documents improves the final macro F1 score by up to 10%; Figure 1 illustrates an outdated study causing an incorrect prediction while a more recent study yields a correct answer.",
+  "limitations": [
+    "Recency is applied unconditionally (prefer newest), with no query-date conditioning and no versioned/amended documents",
+    "Biomedical literature domain only",
+    "Temporal signal is a coarse publication year rather than version timestamps or validity intervals",
+    "Effect measured as end-task classification F1, not retrieval ranking quality"
+  ],
+  "future_work": [
+    "Managing evidence disagreement",
+    "Crafting user-friendly explanations"
+  ],
+  "code_availability": "Not stated in the retrieved text.",
+  "relation_to_idea": {
+    "problem_overlap": 0.35,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "This work treats recency relative to the present as an unconditional quality signal, whereas the proposed idea adjusts rank by elapsed time between a query's target date and a passage version timestamp; it also lacks any notion of superseded revisions.",
+    "basis": "Shares the core premise that time-aware evidence retrieval improves QA, and directly uses publication year as a retrieval-side temporal signal; but there are no document versions, no query target date, and no regulatory corpus."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:10:27.588244Z"
+}

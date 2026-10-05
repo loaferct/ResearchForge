@@ -1,0 +1,37 @@
+{
+  "id": "U002",
+  "question": "Is context-subgraph supervision for triple/path training genuinely novel, or is it already covered by subgraph-based KGQA, graph-RAG, and KG-completion subgraph retrieval methods (DrKGC, GRAG, GNN-RAG, SG-RAG)?",
+  "description": "Subgraph retrieval-augmentation is a well-populated area at inference time; the open question is whether the specific framing of enriching the TRAINING supervision signal (not just retrieval at test time) with co-passage triples is differentiated.",
+  "category": "novelty",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "COMPARE",
+  "possible_actions": [
+    "READ",
+    "COMPARE",
+    "SEARCH",
+    "CHALLENGE"
+  ],
+  "confidence": 0.6,
+  "confidence_basis": "Based on full-text reads of DrKGC and GNN-RAG and abstracts of GRAG/SG-RAG/UniKGQA; a targeted search for training-time multi-triple supervision was not yet run.",
+  "rationale": "Novelty cannot be claimed until the closest subgraph-augmentation work is read and its overlap with training-time context enrichment is assessed.",
+  "resolution": "Partially resolved: the closest retrieved subgraph-augmentation work constructs context at inference time (GNN-RAG retrieves shortest paths for prompt context; SG-RAG MOT merges/orders retrieved triplets; GRAG retrieves textual subgraphs) or learns a query-specific subgraph at inference with a GCN adapter integrated into a prompt during LLM fine-tuning (DrKGC). None of them derives context from the source passage of the supervision triple. So context-subgraph retrieval per se is not novel, but passage-derived, training-supervision-level context enrichment was not found in the retrieved set. The distinction from DrKGC is narrow and must be argued explicitly.",
+  "paper_ids": [
+    "arxiv:2506.00708",
+    "doi:10.18653/v1/2025.findings-naacl.232",
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "doi:10.20944/preprints202505.1992.v1"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2506.00708",
+    "doi:10.18653/v1/2025.findings-acl.856"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T05:09:01.557183Z",
+  "updated_at": "2026-09-30T05:17:51.056234Z"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "arxiv:2510.11584",
+  "title": "LLMAtKGE: Large Language Models as Explainable Attackers against Knowledge Graph Embeddings",
+  "authors": [
+    "Ting Li",
+    "Yang Yang",
+    "Yipeng Yu",
+    "Liang Yao",
+    "Guoqing Chao",
+    "Ruifeng Xu"
+  ],
+  "year": 2025,
+  "published": "2025-10-13",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2510.11584",
+  "pdf_url": "https://arxiv.org/pdf/2510.11584v1",
+  "abstract": "Adversarial attacks on knowledge graph embeddings (KGE) aim to disrupt the model's ability of link prediction by removing or inserting triples. A recent black-box method has attempted to incorporate textual and structural information to enhance attack performance. However, it is unable to generate human-readable explanations, and exhibits poor generalizability. In the past few years, large language models (LLMs) have demonstrated powerful capabilities in text comprehension, generation, and reasoning. In this paper, we propose LLMAtKGE, a novel LLM-based framework that selects attack targets and generates human-readable explanations. To provide the LLM with sufficient factual context under limited input constraints, we design a structured prompting scheme that explicitly formulates the attack as multiple-choice questions while incorporating KG factual evidence. To address the context-window limitation and hesitation issues, we introduce semantics-based and centrality-based filters, which compress the candidate set while preserving high recall of attack-relevant information. Furthermore, to efficiently integrate both semantic and structural information into the filter, we precompute high-order adjacency and fine-tune the LLM with a triple classification task to enhance filtering performance. Experiments on two widely used knowledge graph datasets demonstrate that our attack outperforms the strongest black-box baselines and provides explanations via reasoning, and showing competitive performance compared with white-box methods. Comprehensive ablation and case studies further validate its capability to generate explanations.",
+  "doi": null,
+  "arxiv_id": "2510.11584",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:00:04.033409Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "fine-tuning large language models on knowledge graph triples with context passage multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

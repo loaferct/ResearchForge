@@ -1,0 +1,38 @@
+{
+  "id": "arxiv:2505.20245",
+  "title": "KnowTrace: Bootstrapping Iterative Retrieval-Augmented Generation with Structured Knowledge Tracing",
+  "authors": [
+    "Rui Li",
+    "Quanyu Dai",
+    "Zeyu Zhang",
+    "Xu Chen",
+    "Zhen-Hua Dong",
+    "Ji-Rong Wen"
+  ],
+  "year": 2025,
+  "published": "2025-05-26",
+  "venue": "Knowledge Discovery and Data Mining",
+  "url": "https://www.semanticscholar.org/paper/50f020a33b403b4c53dcdbd03b97b8ff87536579",
+  "pdf_url": "https://dl.acm.org/doi/pdf/10.1145/3711896.3737015",
+  "abstract": "Recent advances in retrieval-augmented generation (RAG) furnish large language models (LLMs) with iterative retrievals of relevant information to handle complex multi-hop questions. These methods typically alternate between LLM reasoning and retrieval to accumulate external information into the LLM's context. However, the ever-growing context inherently imposes an increasing burden on the LLM to perceive connections among critical information pieces, with futile reasoning steps further exacerbating this overload issue. In this paper, we present KnowTrace, an elegant RAG framework to (1) mitigate the context overload and (2) bootstrap higher-quality multi-step reasoning. Instead of simply piling the retrieved contents, KnowTrace autonomously traces out desired knowledge triplets to organize a specific knowledge graph relevant to the input question. Such a structured workflow not only empowers the LLM with an intelligible context for inference, but also naturally inspires a reflective mechanism of knowledge backtracing to identify contributive LLM generations as process supervision data for self-bootstrapping. Extensive experiments show that KnowTrace consistently surpasses existing methods across three multi-hop question answering benchmarks, and the bootstrapped version further amplifies the gains.",
+  "doi": "10.1145/3711896.3737015",
+  "arxiv_id": "2505.20245",
+  "openalex_id": null,
+  "s2_id": "50f020a33b403b4c53dcdbd03b97b8ff87536579",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 14,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:03:11.200440Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "iterative self-repair data cleaning knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": true,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

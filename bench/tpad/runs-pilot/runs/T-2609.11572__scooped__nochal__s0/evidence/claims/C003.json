@@ -1,0 +1,34 @@
+{
+  "id": "C003",
+  "statement": "A key technical risk is ensuring the temporal relevance component is truly retrieval-agnostic and can be applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without requiring modification to their core ranking algorithms, as differences in score distributions and normalization requirements may affect how temporal scores combine with semantic scores.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "Temporal Score We introduce a new method called TempRALM, which augments the retriever with a temporal score𝜏(𝑞𝑡,𝑑𝑡), where𝑞𝑡 is the timestamp of the query𝑞, and𝑑𝑡 is the timestamp of document𝑑. To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score), and use a scaling factor𝛼 to tune the temporal score’s importance relative to the importance of the semantic score. The temporal score formulation is as follows: 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2509.01306",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "To address this gap, we introduce Re2Bench, a benchmark specifically designed to disentangle and evaluate Relevance, Recency, and their hybrid combination. Building on this foundation, we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "technical risk",
+    "retrieval-agnostic",
+    "dense retriever",
+    "sparse retriever"
+  ],
+  "recorded_at": "2026-09-30T09:52:49.949710Z"
+}

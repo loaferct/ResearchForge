@@ -1,0 +1,49 @@
+{
+  "paper_id": "doi:10.3390/app132413177",
+  "relevance_tier": "medium",
+  "problem": "Open-domain question answering requires retrieving relevant documents from a large corpus. Existing dense retrieval methods improve accuracy but increase computational burden, necessitating efficient models that balance accuracy and speed.",
+  "method": "The authors propose a Korean document retrieval method using ColBERT’s late interaction paradigm to efficiently compute relevance between questions and documents. They construct a Korean dataset from AI-Hub corpora and compare their method against BM25, dense retrieval with BERT-based Korean models (KoBERT), and KoSBERT.",
+  "key_assumptions": [
+    "ColBERT’s late interaction paradigm can efficiently compute relevance for QA retrieval.",
+    "Korean language models (KoSBERT) pre-trained to position semantically similar sentences closely improve retrieval performance.",
+    "The constructed Korean dataset is representative for open-domain QA evaluation."
+  ],
+  "main_contribution": "A Korean open-domain QA retrieval method leveraging ColBERT’s late interaction for efficient relevance computation. Experiments show higher accuracy than BM25 and lower search time than dense retrieval with KoBERT, with best performance using KoSBERT.",
+  "datasets": [
+    "Korean dataset constructed from various AI-Hub corpora"
+  ],
+  "benchmarks": [
+    "BM25",
+    "Dense retrieval with BERT-based Korean models (KoBERT)",
+    "KoSBERT"
+  ],
+  "baselines": [
+    "BM25",
+    "Dense retrieval with BERT-based Korean models (KoBERT)"
+  ],
+  "metrics": [
+    "Search accuracy",
+    "Inference time"
+  ],
+  "results": "\"The proposed method achieves higher accuracy than BM25 and requires less search time than dense retrieval employing KoBERT. The most outstanding performance is observed when using KoSBERT, which positions semantically similar sentences closely in vector space.\"",
+  "limitations": [
+    "Focuses on Korean language QA, not multilingual or cross-lingual.",
+    "Does not consider temporal aspects or document versioning.",
+    "Limited to retrieval efficiency trade-off; does not address evolving document collections."
+  ],
+  "future_work": [
+    "Extend approach to multilingual open-domain QA.",
+    "Incorporate temporal dynamics for evolving document collections.",
+    "Investigate hybrid retrieval combining ColBERT with temporal relevance components."
+  ],
+  "code_availability": "No code availability stated in the abstract.",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.1,
+    "conceptual_difference": "The paper improves retrieval efficiency for open-domain QA using ColBERT, but does not address temporal degradation or versioning of documents. Our work focuses on adding temporal relevance weighting to handle continuously amended texts.",
+    "basis": "Heuristic: both concern open-domain QA retrieval, but differ in focus (efficiency vs temporal robustness) and lack temporal component in the paper."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T10:41:30.053464Z"
+}

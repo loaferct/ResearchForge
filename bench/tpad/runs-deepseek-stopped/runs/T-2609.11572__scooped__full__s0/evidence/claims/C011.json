@@ -1,0 +1,33 @@
+{
+  "id": "C011",
+  "statement": "Main experimental confounder: every benchmark question is anchored to a fact date near a specific gold version, so any monotone timestamp term supplies a partially label-revealing shortcut; the temporal weight lambda can be tuned to upweight whichever version the gold passage came from, inflating accuracy without demonstrating temporal reasoning. A second confounder is that aggregate accuracy mixes current and historical query regimes with opposite expected effects, letting recency bias and post-amendment staleness cancel out and hide both.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "we present a benchmark of 312 expert-validated, time-sensitive German statutory QA pairs spanning three categories",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.18653/v1/2024.findings-naacl.295",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "more recent and highly cited documents can improve the final macro F1 score up to 10%",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "confounder",
+    "experimental-validity",
+    "label-leakage"
+  ],
+  "recorded_at": "2026-09-30T05:15:47.376700Z"
+}

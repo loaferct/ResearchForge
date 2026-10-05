@@ -1,0 +1,29 @@
+{
+  "id": "U006",
+  "question": "How much does training-time context-subgraph supervision overlap with knowledge-graph-augmented LM pretraining (ERNIE, K-BERT, KnowBert, KEPLER) and with neighborhood-aggregation KG embeddings (R-GCN/CompGCN), which already train on entity neighborhoods rather than isolated triples?",
+  "description": "The idea's premise is that training 'typically uses isolated triples'. GNN-based KG embeddings and KG-augmented LMs already condition on neighborhoods or entity descriptions at training time, so the premise may be overstated and the claimed gap smaller than assumed.",
+  "category": "overlap",
+  "importance": "medium",
+  "status": "open",
+  "next_action": "COMPARE",
+  "possible_actions": [
+    "COMPARE",
+    "READ",
+    "SEARCH",
+    "CHALLENGE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "If established methods already train with context beyond isolated triples, the contribution narrows to the specific passage-provenance framing, which materially changes the novelty claim.",
+  "resolution": "",
+  "paper_ids": [],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "PLAN",
+  "created_at": "2026-09-30T05:10:43.289692Z",
+  "updated_at": "2026-09-30T05:10:43.289791Z"
+}

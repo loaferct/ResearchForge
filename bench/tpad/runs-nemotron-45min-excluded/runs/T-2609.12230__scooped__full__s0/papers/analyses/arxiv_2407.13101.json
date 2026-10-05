@@ -1,0 +1,32 @@
+{
+  "paper_id": "arxiv:2407.13101",
+  "relevance_tier": "high",
+  "problem": "Multi-hop question answering is challenging. Existing iterative RAG methods face context overload from multiple retrieval rounds and over-planning/repetitive planning due to lack of recorded retrieval trajectory.",
+  "method": "Proposes ReSP (Retrieve, Summarize, Plan) with a dual-function summarizer that compresses information from retrieved documents, targeting both the overarching question and current sub-question concurrently.",
+  "key_assumptions": [
+    "Compressing retrieved information targeting both overarching and sub-questions reduces context overload",
+    "Recording retrieval trajectory prevents over-planning",
+    "Iterative RAG approaches can improve multi-hop QA performance"
+  ],
+  "main_contribution": "Novel iterative RAG method ReSP with dual-function summarizer that significantly outperforms state-of-the-art and shows excellent robustness concerning context length on HotpotQA and 2WikiMultihopQA.",
+  "datasets": [
+    "HotpotQA",
+    "2WikiMultihopQA"
+  ],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [],
+  "results": "Experimental results on HotpotQA and 2WikiMultihopQA demonstrate that ReSP significantly outperforms state-of-the-art and exhibits excellent robustness concerning context length.",
+  "limitations": [],
+  "future_work": [],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "ReSP focuses on iterative RAG with dual-function summarization to address context overload and over-planning, while our idea focuses on enriching triples with local context subgraphs and adaptive repair loops. Both aim to improve multi-hop QA but ReSP works on retrieval-augmented generation for text QA while our idea targets knowledge graph triple training.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:49:10.198537Z"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "doi:10.62791/20485",
+  "title": "Fine-tuning multimodal large language models for medical visual question answering",
+  "authors": [
+    "Ankitaben Mungalpara"
+  ],
+  "year": null,
+  "published": null,
+  "venue": null,
+  "url": "https://doi.org/10.62791/20485",
+  "pdf_url": null,
+  "abstract": "Multimodal large language models (MLLMs), which can reason across different modalities, are opening up new frontiers in AI development that will soon enable complex reasoning with both visual and textual modalities. One application of multimodal MLLMs is Visual Question Answering (VQA) in healthcare; for example, a clinician can ask questions about medical images in natural language to receive detailed explanations. As suitably adapted for the modern age: \"The art of medicine consists in amusing the patient while nature cures the disease - but in the age of AI, assisting the doctor while learning from the data.\" - Inspired by Voltaire, adapted for modern AI healthcare This research examines the efficacy of fine-tuning multimodal (vision and language) foundational models for performing medical visual question answering. This study aims to evaluate how effectively these models can interpret and respond to medical queries based on visual inputs, ultimately enhancing diagnostic accuracy and patient care. By leveraging the strengths of both vision and language processing, the research seeks to advance the capabilities of AI in medical settings. The author studies three fine-tuned variants derived from the baseline LLaVA-Med architecture: a caption-only baseline trained to generate global descriptions of medical images; a model that uses instruction tuning to better answer diagnostic and region-specific questions, and a variant that incorporates Alpha-CLIP with LLaVA-Med to allow spatially targeted understanding by conditioning responses on user-defined regions of interest (ROIs). All variants are adapted utilizing Low-Rank Adaptation (LoRA), a parameter-efficient fine-tuning (PEFT) technique that facilitates minimal computational overhead. The results show that the foundational LLaVA-Med model, which was trained only on image-caption pairs, performs fairly well with BLEU (0.09) and ROUGE-2 (0.14), but it struggles to answer specific questions compared to the improved version that has the best ROUGE-1 (0.59) and ROUGE-L (0.54). The region-focused Alpha-CLIP combined with LLaVA-Med achieved the best performance on both the ROUGE-2 (0.40) and BLEU (0.28), while still exhibiting accurate and context-sensitive reasoning, which points to the importance of task-specific adaptation in medical VQA. The combined results suggest that concentrating attention on specific areas within images, along with instruction-based reasoning, is essential for medical AI systems that manage diverse types of data. This approach facilitates the comparison of methods and provides a detailed strategy for improving specialized diagnostic medical AI assistants.",
+  "doi": "10.62791/20485",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T05:00:05.630475Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "fine-tuning large language models on knowledge graph triples with context passage multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

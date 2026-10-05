@@ -1,0 +1,36 @@
+{
+  "id": "U011",
+  "question": "Can the full three-stage pipeline be executed within a realistic budget while preserving matched-example and matched-token controls and a provenance-bearing evaluation setting, and are the needed data splits available?",
+  "description": "The pipeline requires a provenance-bearing KG, two matched fine-tuning regimes, an iterative repair loop, and an RL stage, each with its own ablation to make effects attributable. The idea assumes these are independently runnable under a fixed budget (C011) and that the evaluation can be moved off Freebase to a text-grounded KG with comparable baselines (C013). Whether that is achievable at a realistic cost, and whether the required splits exist, is untested.",
+  "category": "feasibility",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "VERIFY",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "SEARCH",
+    "REFINE",
+    "VERIFY"
+  ],
+  "confidence": 0.6,
+  "confidence_basis": "Follows directly from the staged scoping decision (D001/D002, revised M001); the provenance-dataset requirement is evidenced (C001, C013) but no candidate dataset has yet been verified in the retrieved literature.",
+  "rationale": "If the pipeline is not runnable/attributable at acceptable cost, the contribution cannot be demonstrated and the plan must be cut to a single component.",
+  "resolution": "Partially resolved by scoping: because only the Stage-1 context-relevance comparison must be fully resourced up front (revised M001), the compute burden drops from a three-stage pipeline to a four-arm factorial fine-tuning study, with repair and RL gated on Stage-1 outcomes. The remaining feasibility question is narrower and concrete: does a provenance-bearing, text-grounded KG with a usable train/dev/test split and a defensible hop-stratified split exist, or must one be built? That is now a data-availability verification task rather than a pipeline-budget question.",
+  "paper_ids": [
+    "arxiv:2506.00708",
+    "arxiv:2603.21440",
+    "arxiv:2101.03737",
+    "doi:10.1109/ickg66886.2025.00020"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2101.03737"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "CRITIQUE",
+  "created_at": "2026-09-30T05:22:15.776499Z",
+  "updated_at": "2026-09-30T05:30:14.645591Z"
+}

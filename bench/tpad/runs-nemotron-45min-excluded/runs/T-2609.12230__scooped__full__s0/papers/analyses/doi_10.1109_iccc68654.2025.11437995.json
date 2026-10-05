@@ -1,0 +1,31 @@
+{
+  "paper_id": "doi:10.1109/iccc68654.2025.11437995",
+  "relevance_tier": "high",
+  "problem": "Knowledge Graph Question Answering (KGQA) systems face challenges in bridging the gap between knowledge representation and language model understanding for complex queries.",
+  "method": "RAKR framework integrates chain-of-thought reasoning, reflection mechanism, and structured knowledge operations. Uses dual-layer reflection loop (open-ended before generation, closed-loop after generation) and Differentiated Preference Alignment (DAPA) training combining supervised fine-tuning with RL based on human feedback.",
+  "key_assumptions": [
+    "Reflection mechanisms can improve knowledge rewriting quality",
+    "Combining supervised fine-tuning with RL from human feedback improves knowledge rewriting",
+    "Structured knowledge operations can bridge the gap between KG representation and LM understanding"
+  ],
+  "main_contribution": "Introduces RAKR framework with dual-layer reflection loop and DAPA training method for KGQA, achieving up to 10.2% accuracy increase on complex multi-hop questions.",
+  "datasets": [],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [
+    "accuracy"
+  ],
+  "results": "RAKR substantially outperforms existing methods on KGQA benchmark tests, achieving up to a 10.2% increase in accuracy when handling complex questions requiring multi-hop reasoning.",
+  "limitations": [],
+  "future_work": [],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "RAKR focuses on knowledge rewriting via reflection loops and DAPA training for KGQA, while our idea focuses on enriching triples with local context subgraphs and adaptive repair loops for multi-hop QA. Both aim to improve KGQA but through different mechanisms.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:47:47.583387Z"
+}

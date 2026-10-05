@@ -1,0 +1,23 @@
+{
+  "id": "C001",
+  "statement": "TempRALM introduces a temporal score 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡 (inverse of time difference) normalized to align with semantic score range, combined with semantic score 𝑠(𝑞,𝑑) = ⟨𝑓𝜃(𝑞),𝑓 𝜃(𝑑)⟩, where the retriever fetches documents based on both semantic and temporal relevance.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "Temporal Score We introduce a new method called TempRALM, which augments the retriever with a temporal score𝜏(𝑞𝑡,𝑑𝑡), where𝑞𝑡 is the timestamp of the query𝑞, and𝑑𝑡 is the timestamp of document𝑑. To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score), and use a scaling factor𝛼 to tune the temporal score’s importance relative to the importance of the semantic score. The temporal score formulation is as follows: 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "critique",
+  "tags": [
+    "temporal scoring",
+    "TempRALM"
+  ],
+  "recorded_at": "2026-09-30T09:52:32.551932Z"
+}

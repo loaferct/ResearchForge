@@ -1,0 +1,1779 @@
+[[page 1]]
+Ontology-Guided Evidence Path Inference for Multi-hop
+Knowledge Graph Question Answering
+Yongxue Shan
+National University of Defense
+Technology
+Changsha, China
+shanyongxue001@nudt.edu.cn
+Meihan Wu
+Pengcheng Laboratory
+Shenzhen, China
+wumh@pcl.ac.cn
+Cundi Fang
+National University of Defense
+Technology
+Changsha, China
+fangcundi@nudt.edu.cn
+Jie Peng
+National University of Defense
+Technology
+Changsha, China
+pengjie@nudt.edu.cn
+Xiaodong Wang
+National University of Defense
+Technology
+Changsha, China
+xdwang@nudt.edu.cn
+ABSTRACT
+Knowledge graph question answering (KGQA) aims to answer
+natural-language questions by reasoning over structured facts. Ex-
+isting multi-hop KGQA methods mainly rely on topic-centered ex-
+pansion, which faces two key challenges: the search space rapidly
+grows with noisy mixed-type paths, and retrieved paths may fail to
+satisfy the semantic constraints of complex questions. To address
+these challenges, we propose OPI, an ontology-guided evidence
+path inference framework for multi-hop KGQA. OPI introduces a
+relation-centric ontology graph to capture the head-tail type con-
+straints of relations, providing a compact interface for answer-side
+constraints. Based on this ontology graph, OPI first introduces a
+bidirectional retrieval mechanism by mapping the predicted answer
+type to compatible final-hop relations and combining topic-side
+prefix expansion with answer-side final-hop matching, thereby sup-
+pressing noisy mixed-type expansion. OPI further adopts an itera-
+tive refinement strategy to reassess retrieved paths and candidate
+answers under the question context, filtering type-compatible but
+question-irrelevant evidence for more reliable answer prediction.
+Experiments on WebQSP, CWQ, and MetaQA show that OPI sub-
+stantially reduces the search space, improves Hit@1/F1 by 4.6/5.0
+points on WebQSP and 8.9/3.3 points on CWQ over the strongest
+prior results, and achieves near-saturated Hit@1 on MetaQA with
+the retrieval module alone.
+PVLDB Reference Format:
+Yongxue Shan, Meihan Wu, Cundi Fang, Jie Peng, and Xiaodong Wang.
+Ontology-Guided Evidence Path Inference for Multi-hop Knowledge Graph
+Question Answering. PVLDB, 14(1): XXX-XXX, 2020.
+doi:XX.XX/XXX.XX
+PVLDB Artifact Availability:
+The source code, data, and/or other artifacts have been made available at
+https://github.com/shanyongxue/OPI_KGQA.
+This work is licensed under the Creative Commons BY-NC-ND 4.0 International
+License. Visit https://creativecommons.org/licenses/by-nc-nd/4.0/ to view a copy of
+this license. For any use beyond those covered by this license, obtain permission by
+emailing info@vldb.org. Copyright is held by the owner/author(s). Publication rights
+licensed to the VLDB Endowment.
+Proceedings of the VLDB Endowment, Vol. 14, No. 1 ISSN 2150-8097.
+doi:XX.XX/XXX.XX
+1 INTRODUCTION
+Knowledge graph question answering (KGQA) aims to answer
+natural-language questions by reasoning over entities and rela-
+tions in a knowledge graph, and has been applied in domains such
+as healthcare [ 8], agriculture [ 46], and multimedia [ 20]. Driven
+by the rapid advances of large language models (LLMs), recent
+studies increasingly integrate LLMs with KGs to support question
+understanding, reasoning planning, and graph-grounded answer
+generation [33]. These methods explore diverse strategies, includ-
+ing iterative graph exploration, relation-path planning, and graph-
+constrained decoding, and have advanced multi-hop reasoning over
+KGs [22, 24–26, 40, 42, 45]. Nevertheless, complex multi-hop KGQA
+remains challenging over large-scale KGs, where increasing scale,
+heterogeneity, and structural complexity introduce large search
+spaces and ambiguous reasoning evidence [7, 10, 34].
+A common paradigm for multi-hop KGQA is to retrieve evidence
+paths or subgraphs rooted at the topic entity and use them to derive
+answers. To improve retrieval efficiency, many methods control
+the expansion space through local subgraph construction, iterative
+graph exploration, and path pruning [40, 42, 45]. To improve reason-
+ing quality, recent methods further introduce semantic signals such
+as relation-path planning, graph-structured prompting, and LLM-
+based evidence reasoning [22, 24–26]. Despite these advances, most
+retrieval procedures are still primarily driven by topic-centered
+expansion: they start from the topic entity and progressively ex-
+plore neighboring entities and relations. Consequently, retrieval
+often produces numerous structurally reachable paths that are in-
+consistent with the expected answer type, while also introducing
+spurious candidate paths that fail to satisfy the complex semantic
+constraints of the question.
+This topic-centered retrieval paradigm faces two challenges in
+multi-hop KGQA, as illustrated in Figure 1. The first ispath ex-
+plosion: unconstrained forward expansion from the topic entity
+produces a massive expansion of candidate paths ending in hetero-
+geneous types, the vast majority of which are completely irrelevant
+to the expected answer type. As shown in the upper part of Fig-
+ure 1, paths starting from the same topic entity may branch into
+countries, persons, awards, clubs, languages, and other mixed-type
+arXiv:2606.28076v1  [cs.AI]  26 Jun 2026
+
+[[page 2]]
+Topic-centered expansion quickly produces many mixed-type candidate paths.
+Q: Which official language is spoken in the country where Lionel Messi was born?
+A: Spanish
+Challenge 1: Path Explosion Expected answer type:
+• Language
+Challenge 2: Semantic Misalignment
+Answer-type-compatible paths still violate the semantic constraints implied by the question.
+Constraints:
+• country of birth + official language
+Lionel 
+Messi
+…Paris Saint-
+Germain F.C.
+[Club]
+Paris Saint-
+Germain F.C.
+[Club]
+…
+Argentina
+Spanish
+[Language]
+Spanish
+[Language]
+Argentina
+Spanish
+[Language]
+Pablo 
+Javkin
+[Person]
+Pablo 
+Javkin
+[Person]
+Milei
+[Person]
+Milei
+[Person]
+Pablo 
+Javkin
+[Person]
+Milei
+[Person]
+Santa Fe 
+Province
+Argentina
+[Country]
+Argentina
+[Country]
+Santa Fe 
+Province
+Argentina
+[Country]
+Brazil
+Portuguese
+[Language]
+Portuguese
+[Language]
+Brazil
+Portuguese
+[Language]
+Mogi das 
+Cruzes
+Rosario NeymarArgentina national 
+football team …FIFA World Cup 
+Golden Ball
+[Award]
+FIFA World Cup 
+Golden Ball
+[Award]
+France
+[Country]
+France
+[Country]
+…Paris Saint-
+Germain F.C.
+[Club]
+…
+Argentina
+Spanish
+[Language]
+Pablo 
+Javkin
+[Person]
+Milei
+[Person]
+Santa Fe 
+Province
+Argentina
+[Country]
+Brazil
+Portuguese
+[Language]
+Mogi das 
+Cruzes
+Rosario NeymarArgentina national 
+football team …FIFA World Cup 
+Golden Ball
+[Award]
+France
+[Country]
+Lionel 
+Messi
+…Paris Saint-
+Germain F.C.
+[Club]
+…
+Argentina
+Spanish
+[Language]
+Pablo 
+Javkin
+[Person]
+Milei
+[Person]
+Santa Fe 
+Province
+Argentina
+[Country]
+Brazil
+Portuguese
+[Language]
+Mogi das 
+Cruzes
+Rosario NeymarArgentina national 
+football team …FIFA World Cup 
+Golden Ball
+[Award]
+France
+[Country]
+Type-compatible but semantically misaligned paths:
+Correct evidence path:
+hL born_in located_in official_languageArgentina Sionel M o panisessi R sario⎯⎯⎯⎯⎯⎯ → ⎯⎯⎯⎯⎯⎯⎯ → ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ ⎯ →
+eL teammate_of nationality official_languageNeymar Brazil Po ortuguei nel Mes ssi ⎯⎯⎯⎯⎯⎯⎯⎯ ⎯ → ⎯⎯⎯⎯⎯⎯⎯ → ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ ⎯ →
+…
+play_for loc hLated_iionel Messi n official_languageArge Sntina national football team Argen stina pani⎯⎯⎯⎯⎯⎯ → ⎯⎯⎯⎯⎯⎯⎯ → ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ ⎯ →
+Figure 1: Illustration of two main challenges in multi-hop
+KGQA. The upper part shows that topic-centered expansion
+produces many mixed-type candidate paths, while the lower
+part shows that even answer-type-compatible paths may still
+violate the semantic constraints implied by the question.
+endpoints. The second issemantic misalignment: even when can-
+didate paths reach answer-type-compatible entities, they may still
+violate the implicit constraints of the question and thus deviate
+from the intended reasoning semantics. As shown in the lower part
+of Figure 1, several paths can lead to plausible language entities,
+but only the path that captures both the birth-country constraint
+and the official-language constraint provides the correct reasoning
+evidence. Therefore, an effective multi-hop KGQA framework re-
+quires the ability to both mitigate the explosion of candidate paths
+and identify reasoning chains that satisfy the complex semantic
+constraints of the question.
+To address these challenges, we propose OPI, anOntology-guided
+evidencePathInference framework for multi-hop KGQA. Rather
+than relying on unconstrained topic-centered expansion that pro-
+duces noisy, mixed-type paths, OPI introduces a relation-centric
+ontology graph as the structural basis for evidence path inference.
+This graph abstracts the knowledge graph into a type-level repre-
+sentation that captures how relations connect head and tail entity
+types, providing a compact interface for answer-side constraints.
+Driven by this compact interface, OPI replaces unconstrained topic-
+centered retrieval with a two-stage inference paradigm that ad-
+dresses the two challenges. It first leverages a bidirectional retrieval
+mechanism to impose answer-side constraints and prune the ex-
+plosive search space early. It then applies an iterative refinement
+strategy to filter spurious evidence and improve semantic alignment
+with the question.
+Specifically, OPI leveragesa bidirectional retrieval mechanism
+to obtain a set of answer-type-compatible evidence paths. Given
+a question, OPI predicts the implied answer type and maps it to
+a small set of answer-type-compatible final-hop relations. It then
+combines topic-side prefix expansion with answer-side final-hop
+matching, so that retrieval is no longer driven by unconstrained
+topic-centered expansion alone. This bidirectional retrieval mecha-
+nism effectively suppresses mixed-type path growth and mitigates
+structural path explosion. After retrieval, OPI appliesan iterative
+answer refinement strategyto reassess the retrieved paths and can-
+didate answers under the question context. The generator produces
+an answer hypothesis from the current path and answer contexts,
+while the refiner evaluates the hypothesis together with the re-
+trieved evidence and returns structured feedback. This feedback
+updates the focused path context and candidate answer context,
+enabling OPI to filter type-compatible but question-irrelevant evi-
+dence and generate more reliable final answers.
+Our main contributions are summarized as follows:
+• We introduce a relation-centric ontology graph, which cap-
+tures how relations connect head and tail entity types and
+provides the structural basis for answer-side constrained
+path retrieval.
+• We propose an ontology-guided bidirectional retrieval mech-
+anism, which combines topic-side prefix expansion with
+answer-side final-hop matching to reduce noisy mixed-type
+expansion and alleviate path explosion.
+• We design an iterative answer refinement strategy, which
+jointly reassesses retrieved paths and candidate answers
+under the question context to filter type-compatible but
+question-irrelevant evidence.
+• We conduct extensive experiments on WebQSP, CWQ, and
+MetaQA, demonstrating the effectiveness of OPI and its key
+components across different KGQA benchmarks.
+2 PRELIMINARIES
+In this section, we formalize the KGQA task considered in this paper
+by defining the knowledge graph, its type-level abstraction, and
+the answer prediction objective.
+2.1 Knowledge Graph and Ontology Graph
+Knowledge graph.A knowledge graph is denoted byG=(E,R,T) ,
+where:
+• Eis the set of entities;
+• Ris the set of relations;
+• T⊆E×R×Eis the set of factual triples.
+Each factual triple(𝑒ℎ,𝑟,𝑒 𝑡)∈T indicates that the head entity𝑒ℎ
+is connected to the tail entity𝑒𝑡 by relation𝑟.
+Ontology graph.The ontology graph provides a type-level
+abstraction of the knowledge graph through relation signatures. It
+is denoted byO=(C,R,S), where:
+• Cis the set of semantic types associated with entities;
+• Ris the relation set shared with the knowledge graph;
+• S⊆C×R×Cis the set of type-level relation signatures.
+2
+
+[[page 3]]
+Ontology Graph
+Knowledge Graph
+Abstraction
+Neymar
+Lionel Messi
+FIFA World Cup 
+Golden Ball
+Rosario
+Argentina national 
+football team Spanish
+Argentina
+official_language
+located_in
+born_in
+award_received
+teammate_of
+Brazilnationality Santa Fe 
+Province
+located_in
+Portugueseofficial_
+languageNeymar
+Lionel Messi
+FIFA World Cup 
+Golden Ball
+Rosario
+Argentina national 
+football team Spanish
+Argentina
+official_language
+located_in
+born_in
+award_received
+teammate_of
+Brazilnationality Santa Fe 
+Province
+located_in
+Portugueseofficial_
+language
+Football 
+Player
+Award
+Location
+Football Team Language
+Country
+official_language
+located_in
+nationality
+born_in
+award_received
+located_inteammate_of
+Football 
+Player
+Award
+Location
+Football Team Language
+Country
+official_language
+located_in
+nationality
+born_in
+award_received
+located_inteammate_of
+Figure 2: An example of a knowledge graph and its ontology
+graph. The ontology graph abstracts entity-level triples into
+type-level relation signatures.
+Each relation signature(𝑐ℎ,𝑟,𝑐 𝑡)∈S specifies that relation𝑟 can
+connect head entities of type 𝑐ℎ to tail entities of type 𝑐𝑡 at the
+ontology level. While the knowledge graph stores concrete entity-
+level facts, the ontology graph captures type-level compatibility
+through these relation signatures. Figure 2 illustrates how entity-
+level triples in the knowledge graph are abstracted into type-level
+relation signatures in the ontology graph.
+2.2 Knowledge Graph Question Answering
+Given a natural language question𝑞, we assume that a topic entity
+𝑒𝑞∈E mentioned in the question is identified following standard
+KGQA settings [16, 24]. An evidence path rooted at𝑒𝑞 is a sequence
+of connected factual triples:
+𝑝=(𝑒 0
+𝑟1
+−→𝑒1
+𝑟2
+−→···
+𝑟𝑙
+− →𝑒𝑙),(1)
+where𝑒0 =𝑒𝑞 and(𝑒𝑖−1,𝑟𝑖,𝑒𝑖)∈T for each1 ≤𝑖≤𝑙 . The terminal
+entity𝑒𝑙 of an evidence path is regarded as a candidate answer
+grounded in the knowledge graph.
+For each question, the ground-truth answer set is denoted by
+Y∗⊆E. The task is to learn a function
+𝑓𝜃(𝑞,𝑒𝑞,G,O)→ ˆ𝑦,(2)
+where ˆ𝑦∈E denotes the final predicted answer. We assume that
+each correct answer 𝑦∈ Y∗ can be reached from the topic en-
+tity through at least one bounded-length evidence path inG. The
+objective is therefore to produce an answer prediction ˆ𝑦 that is
+graph-reachable from the topic entity and semantically consistent
+with the constraints expressed by the question.
+3 METHOD
+3.1 Overall Architecture
+OPI consists of three tightly connected modules: ontology graph
+construction, ontology-guided bidirectional retrieval, and itera-
+tive answer refinement. It first abstracts the original knowledge
+graph into a relation-centric ontology graph, where each relation
+is represented by a type-level relation signature. Based on this on-
+tology graph, OPI predicts the answer type implied by the question
+and maps it to a set of answer-type-compatible final-hop relations,
+enabling bidirectional retrieval that combines topic-side prefix ex-
+pansion with answer-side final-hop matching. OPI then refines
+the retrieved evidence and candidate answers through a generator-
+refiner loop, where structured feedback iteratively updates both
+the path context and the answer context. Figure 3 summarizes the
+main inference pipeline of OPI.
+3.2 Ontology Graph Construction
+In large-scale knowledge graphs, the entity-level graph is often
+dense and highly heterogeneous. As the hop count increases, un-
+constrained topic-centered expansion can easily produce a large
+number of noisy evidence paths, causing rapid search-space growth.
+This motivates us to construct a compact type-level abstraction of
+the knowledge graph, so that repetitive entity-level facts can be
+summarized into more stable relation-type patterns.
+Specifically, we abstract the factual knowledge graph G into
+a relation-centric ontology graph O. In this graph, entity-level
+facts are summarized by type-level relation signatures of the form
+(𝑐ℎ,𝑟,𝑐 𝑡), where 𝑐ℎ and𝑐𝑡 denote the head and tail entity types
+associated with relation 𝑟, respectively. Rather than preserving
+all concrete entity-level triples, the ontology graph captures how
+relations connect semantic types at the schema level. Since different
+knowledge bases expose type information in different forms, we
+adopt two construction strategies: schema-based extraction for
+knowledge bases with explicit schema predicates, and data-driven
+induction for knowledge bases without explicit schema predicates.
+3.2.1 For Freebase-style Knowledge Bases.When explicit schema
+predicates are available, relation signatures can be extracted directly
+from the schema. Specifically, we construct the ontology graph from
+the Freebase RDF dump [28] under the canonical namespace http:
+//rdf.freebase.com/ns/. For each relation, we pair type.property.
+schema with type.property.expected_type to obtain the head
+and tail types in its relation signature. The former specifies the
+domain type of the relation, while the latter specifies its expected
+range type. In this way, each schema-defined relation can be trans-
+formed into a type-level triple(𝑐 ℎ,𝑟,𝑐 𝑡).
+To improve the reliability of the resulting ontology graph, we fil-
+ter out non-semantic or administrative types, such ascommon.topic,
+and retain only relations with complete head-tail signatures. For a
+small number of missing or under-specified relations, we perform
+conservative completion using only the training split to avoid infor-
+mation leakage. Specifically, we aggregate the observed head and
+tail entity sets of each such relation from the training data, infer
+their dominant types, and accept the completion only when both
+sides admit a consistent type assignment. This strategy leverages
+the explicit schema structure of Freebase while improving coverage
+3
+
+[[page 4]]
+Iterative Answer Refinement
+Structured feedback
+Stop if high-confidence or answer-stable
+Final Answer:
+Spanish
+( 1) ( 1) ( 1) ( ), , , , t t t tq c P A F ya
+− − − →
+Generator produces the answer hypothesis
+( 1) ( 1) ( 1) ( ), , , , t t t tq c P A F ya
+− − − →
+Generator produces the answer hypothesis
+LLM
+LLM
+LLM
+LLM
+(t)
+()
+Answer hypothesis and 
+selected focused paths 
+ y
+tP
+(t)
+()
+Answer hypothesis and 
+selected focused paths 
+ y
+tP
+( ) ( ) ( ), , , t t taq c P y F→
+(t)Refiner critiques on focusey d  paths
+( ) ( ) ( ), , , t t taq c P y F→
+(t)Refiner critiques on focusey d  paths
+Ontology-Guided Bidirectional Retrieval
+Instruction 
+Finetuning
+Question: Which  official language is spoken in 
+the country where Lionel Messi was born?
+hL born_in located_in official_languageArgentina Sionel M o panisessi R sario⎯⎯⎯⎯⎯⎯ → ⎯⎯⎯⎯⎯⎯⎯ → ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ →
+eL teammate_of nationality official_languageNeymar Brazil Po ortuguei nel Mes ssi ⎯⎯⎯⎯⎯⎯⎯⎯⎯ → ⎯⎯⎯⎯⎯⎯⎯→ ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ →
+play_for loc hLated_iionel Messi n official_languageArge Sntina national football team Argen stina pani⎯⎯⎯⎯⎯⎯ → ⎯⎯⎯⎯⎯⎯⎯ → ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ →
+# Candidate Answers:
+   Spanish, Portuguese
+# Retrieved Evidence Paths:
+# Candidate Answers:
+   Spanish, Portuguese
+# Retrieved Evidence Paths:
+Bidirectional Retrieval: Prefix endpoint further filters the final hop
+topic entity . . . final-hop relationspenultimate nodetopic entity . . . final-hop relationspenultimate node
+LLM
+LLM
+Ontology GraphOntology Graph
+Knowledge Graph
+Knowledge Graph
+()
+Update path 
+ context tP
+()
+Update path 
+ context tP
+()
+Update answer
+   context tA
+()
+Update answer
+   context tA
+aPredict answer entity type: c ={language}
+Lionel Messi official_language
+official_language
+official_language
+official_language
+lastMap c  to candidate final-hop relations: o fficial_languageaca
+
+=
+Figure 3: Overall inference pipeline of OPI. The left part shows ontology-guided bidirectional retrieval, which retrieves tail-
+type-compatible evidence paths. The right part shows iterative answer refinement, where a generator–refiner loop refines
+these paths and candidate answers to produce the final answer.
+for rare or incomplete relations. The same construction principle
+naturally extends to other KGs with explicit schema predicates,
+such as DBpedia, where rdfs:domain and rdfs:range provide
+analogous type constraints.
+3.2.2 For Wiki-Movie-style Knowledge Bases.When explicit schema
+predicates are unavailable, relation signatures are induced directly
+from data. In Wiki-Movie-style KGs, the original graph does not
+provide schema predicates that explicitly define the domain and
+range types of each relation. Therefore, we first infer entity types
+from the training QA pairs and their associated type-path anno-
+tations. Each entity is assigned a single main type according to
+its most frequent observation, which reduces type sparsity and
+avoids unstable relation signatures caused by overly fine-grained
+or inconsistent type assignments.
+After obtaining entity-level type assignments, we aggregate the
+observed head-tail type pairs for each relation. For a relation𝑟, all
+training triples containing𝑟 are mapped from entity-level triples
+(𝑒ℎ,𝑟,𝑒 𝑡) to type-level observations(𝑐ℎ,𝑟,𝑐 𝑡). We then retain the
+dominant head-tail type pair as the relation signature of 𝑟. This
+data-driven strategy allows ontology graph construction even when
+no explicit schema is available. More generally, for KGs such as
+Wikidata, relation signatures can also be induced by mapping enti-
+ties to type sets via P31 (instance of) and optionally generalizing
+them with P279 (subclass of), followed by relation-wise aggregation
+of head and tail type statistics.
+In both settings, the final ontology graph takes the same form:
+each relation is associated with a relation signature(𝑐ℎ,𝑟,𝑐 𝑡). This
+unified relation-signature interface makes OPI applicable across
+heterogeneous knowledge graphs. More importantly, it provides
+the structural link from ontology construction to retrieval: in the
+next stage, predicted answer types are mapped to answer-type-
+compatible final-hop relations through exactly this interface.
+3.3 Ontology-Guided Bidirectional Retrieval
+Building on the relation-signature interface defined above, OPI
+introduces an ontology-guided bidirectional retrieval mechanism
+to alleviate path explosion. Here,bidirectionaldoes not refer to
+conventional two-sided entity-level BFS from the topic entity and
+concrete answer entities. Instead, it means that retrieval is jointly
+constrained by topic-side prefix expansion and answer-side type
+constraints. Specifically, OPI first predicts the answer type implied
+by the question, maps it to answer-type-compatible final-hop re-
+lations through the ontology graph, and then combines topic-side
+prefix expansion with answer-side final-hop matching to retrieve
+evidence paths and candidate answers.
+3.3.1 Answer-Type Prediction.The relation-signature interface makes
+answer-type prediction a natural target for retrieval guidance. Com-
+pared with direct answer-entity prediction, answer-type prediction
+is substantially more compact and stable: questions with different
+surface forms and different gold answers often still share the same
+answer-side semantic category, such asperson,film, orlocation. Pre-
+dicting the answer type before graph retrieval therefore provides a
+coarse but reliable target that can later be translated into structural
+constraints on the final hop.
+To construct supervision, given a question𝑞 with topic entity𝑒𝑞
+and gold answer𝑒𝑎, we extract the shortest factual path𝑤𝑧(𝑒𝑞,𝑒𝑎)=
+(𝑒𝑞
+𝑟1
+−→···
+𝑟𝑙
+− →𝑒𝑎) with relation sequence𝑧=(𝑟 1,...,𝑟 𝑙) inG. We
+use this path only as a minimal supervision signal. In particular,
+4
+
+[[page 5]]
+we take its last-hop relation 𝑟𝑙 and query the ontology graph O
+for relation signatures of the form(𝑐ℎ,𝑟𝑙,𝑐𝑎), where𝑐ℎ is a head
+type and𝑐𝑎 is a tail type. The tail type in such a signature is then
+regarded as a valid answer entity type for the question. This yields
+the target set
+C𝑎 ={𝑐𝑎 :∃𝑐 ℎ,(𝑐 ℎ,𝑟𝑙,𝑐𝑎)∈S },(3)
+If multiple ontology-consistent answer entity types are induced,
+we treat them as equally valid and define the supervision target as
+𝑄(𝑐𝑎|𝑞,𝑒 𝑞,𝑒𝑎,G,O)=
+ 
+
+1
+|C𝑎|, 𝑐 𝑎∈C𝑎,
+0,otherwise.
+(4)
+Following Luo et al. [24], we use this simple target distribution to
+supervise answer-type prediction.
+We then fine-tune a large language model to generate the answer
+entity type conditioned on the question𝑞. This defines a conditional
+prior
+log𝑃𝜙(𝑐𝑎|𝑞)=
+|𝑐𝑎|∑︁
+𝑖=1
+log𝑃𝜙(𝑠𝑖|𝑠 <𝑖,𝑞).(5)
+where𝜙 denotes the model parameters,𝑠𝑖 is the𝑖-th generated token,
+and𝑠<𝑖 denotes the token prefix before position 𝑖. The resulting
+prediction is subsequently mapped to answer-type-compatible final-
+hop relations for retrieval.
+3.3.2 Answer-Type-Guided Bidirectional Retrieval.Given a predicted
+answer type𝑐𝑎, OPI uses the ontology graph to identify which re-
+lations can end at entities of this type. Specifically, we search the
+relation-signature setS for all signatures whose tail type is𝑐𝑎. For
+each matched signature(𝑐ℎ,𝑟,𝑐 𝑎), the relation𝑟 is regarded as a
+candidate final-hop relation, because it can connect some head type
+𝑐ℎ to the predicted answer type𝑐𝑎 at the ontology level. Formally,
+we define the answer-type-compatible final-hop relation set as
+Rlast
+𝑐𝑎 ={𝑟:∃𝑐 ℎ,(𝑐 ℎ,𝑟,𝑐 𝑎)∈S },(6)
+Through this relation-signature interface, the predicted answer type
+is converted into a set of structurally plausible final-hop relations
+for subsequent retrieval.
+Retrieval then proceeds bidirectionally. On the forward side, we
+start from the topic entity and traverse the factual graph along the
+original edge directions, expanding candidate path prefixes hop by
+hop under bounded depth and path budgets. On the answer side,
+rather than starting from concrete answer entities, OPI represents
+the answer constraint by a set of ontology-compatible final-hop
+relationsRlast
+𝑐𝑎 induced by the predicted answer type. Importantly,
+this set is defined at the ontology level and may still contain multi-
+ple admissible relations for the target tail type. However, under a
+specific question, the feasible last hop is further constrained by the
+endpoint of the forward prefix. Concretely, for each prefix ending
+at a penultimate node𝑣, only those relations inRlast
+𝑐𝑎 for which the
+type of𝑣 matches the required head-side signature remain valid.
+Therefore, many ontology-legitimate final hops are eliminated im-
+mediately once the forward context is fixed, and the candidate set
+at the last step is typically reduced to only a few relations, and in
+many cases to a unique one.
+The two sides thus meet at the penultimate node. For each for-
+ward prefix ending at𝑣, we check whether𝑣 can serve as a valid
+head entity for some𝑟∈R last
+𝑐𝑎 . If so, we append the matched final
+hop and obtain a complete evidence path. Rather than expanding
+all outgoing relations at the final step, the search explicitly reserves
+the last hop for ontology-guided completion. This design not only
+enforces answer-type consistency, but also avoids introducing a
+large number of spurious branches that would otherwise arise from
+unconstrained topic-centered expansion.
+This mechanism constrains the search space and reduces search
+complexity. Let𝑏 denote the average branching factor of the fac-
+tual knowledge graph. Without answer-side constraints, an uncon-
+strained𝑥-hop forward expansion from the topic entity explores
+|P full
+𝑥 (𝑒𝑞)|=𝑂(𝑏 𝑥).(7)
+With answer-type-guided final-hop constraints, retrieval is re-
+formulated as searching for valid(𝑥− 1)-hop prefixes followed by
+a constrained one-hop completion. LetRlast
+𝑐𝑎 denote the set of final-
+hop relations compatible with the predicted answer type𝑐𝑎, and
+let𝛽(𝑐𝑎) denote the effective branching factor after applying these
+final-hop constraints at prefix endpoints. Since the constrained
+completion is selected from the original outgoing branches, we
+have𝛽(𝑐𝑎)≤𝑏 . The resulting search space is therefore bounded by
+|P bi
+𝑥(𝑒𝑞,𝑐𝑎)|=𝑂  𝑏𝑥−1·𝛽(𝑐 𝑎).(8)
+This formulation shows that OPI reduces the last-hop expansion
+from unconstrained entity-level branching to answer-type-constrained
+completion. The reduction depends on the selectivity of the answer-
+side constraints, rather than assuming that all ontology-compatible
+relation sets are uniformly small.
+3.3.3 Fallback Retrieval and Evidence Reranking.If no answer type
+is predicted, or if the predicted answer type cannot be mapped to
+any answer-type-compatible final-hop relation through the relation-
+signature interface, we do not perform answer-side constrained
+matching. Instead, we revert to topic-centered forward retrieval
+from the topic entity and enumerate candidate paths up to a bounded
+number of hops. This fallback preserves a graph-grounded evidence
+source even when answer-type guidance is unavailable.
+After candidate paths are obtained, we retain the top-𝑘 evidence
+paths under a fixed path budget. In the current implementation,
+the candidate paths and the question are encoded by a pretrained
+language model (e.g., SentenceBERT [35]), and their semantic rel-
+evance is measured in the embedding space. The top-𝑘 paths are
+then retained and converted into readable path strings. Candidate
+answers are finally extracted from the tail entities of the retained
+paths, ensuring that the final answer space remains grounded in
+explicit graph evidence.
+3.4 Iterative Answer Refinement
+After ontology-guided bidirectional retrieval, OPI obtains a bounded
+set of candidate evidence paths and candidate answers extracted
+from their tail entities. Although this retrieval stage substantially
+reduces the search space, the remaining paths may still contain
+competing branches, partially relevant evidence, or semantically
+incomplete support for the final answer. OPI therefore does not di-
+rectly return the top-ranked candidate. Instead, it performs iterative
+answer refinement through a generator-refiner loop.
+5
+
+[[page 6]]
+3.4.1 Generator-Refiner Loop.At iteration 𝑡, the generator pro-
+duces an answer hypothesis from the question𝑞 and the current
+retrieval context. In the current implementation, this context in-
+cludes the predicted answer-type constraints𝑐𝑎, the reasoning-path
+context𝑃(𝑡−1) , the answer context𝐴(𝑡−1) , and the refinement feed-
+back from the previous round 𝐹(𝑡−1) . Thus, the first iteration is
+already grounded in retrieved evidence, while later iterations are
+further constrained by revision signals.
+Formally, the generation step at iteration𝑡is defined as
+𝑦(𝑡) =𝐺𝜃(𝑞,𝑐𝑎,𝑃(𝑡−1),𝐴(𝑡−1),𝐹(𝑡−1)),(9)
+where𝑦(𝑡) is the current answer hypothesis. OPI further introduces
+a refiner that takes the current answer hypothesis together with
+a refinement-specific evidence subset and converts it into explicit
+revision actions:
+𝐹(𝑡) =𝑅𝜓(𝑞,𝑐𝑎, ¯𝑃(𝑡),𝑦(𝑡)),(10)
+where ¯𝑃(𝑡) is the refinement-specific path subset selected from
+the initial reranked path pool according to the current answer hy-
+pothesis. The refiner output includes a confidence score, an issue
+tag, retained answers, forbidden answers, prioritized paths, sup-
+plementary paths, dropped paths, and a short feedback summary.
+The generator proposes answer hypotheses, whereas the refiner
+converts the current answer state into structured revision actions.
+3.4.2 Refiner-Guided Context Update.Starting from the second
+iteration, OPI no longer directly reuses the full retrieved path set
+in the next generator call. Instead, it reconstructs the next-round
+path context from the initial reranked path pool and the previous
+refinement result. Paths aligned with retained answers are preferred.
+If no retained answers are available, the system falls back to paths
+aligned with the previous generated answers. When the refiner
+indicates conflict or answer-set noise, OPI supplements the focused
+paths with a small number of neutral paths. Prioritized paths are
+promoted, supplementary paths are appended, and dropped paths
+are removed.
+Formally, the next-round context is updated as
+𝑃(𝑡) =Update𝑃
+ 𝑃(0),𝑦(𝑡),𝐹(𝑡) ,(11)
+𝐴(𝑡) =Update𝐴
+ 𝑦(𝑡),𝐹(𝑡) .(12)
+where𝑃(0) denotes the initial reranked path pool. In the current im-
+plementation,𝐴(𝑡) corresponds to the retained answers exposed to
+the next generator round, while forbidden answers are injected sep-
+arately through refinement feedback and explicit type-level answer
+constraints. Thus, the next-round path context is reconstructed
+from the initial path pool under refinement guidance, whereas the
+next-round answer context is formed by the supported answers
+retained by the refiner. If the stopping criterion is met, this context
+update is skipped.
+3.4.3 Iterative Revision and Stopping.OPI adopts an adaptive stop-
+ping strategy based on two signals: refiner confidence and answer
+stability. The refiner outputs a discrete confidence level together
+with structured revision actions. The refinement loop terminates
+when the refiner assigns the highest confidence level, indicating
+that the current answer is sufficiently supported by the retrieved
+evidence. We use this highest confidence level as a conservative
+Algorithm 1OPI Inference Procedure
+Input:Question 𝑞, topic entity𝑒𝑞, knowledge graphG, ontology graph
+O, path budget𝑘, maximum refinement rounds𝑇
+Output:Final answer ˆ𝑦
+1:Step 1: Ontology-Guided Bidirectional Retrieval
+2:Predict answer type:𝑐 𝑎←PredictType(𝑞)
+3:Map𝑐 𝑎 to valid final-hop relations:R last
+𝑐𝑎 ←MapToLastHop(𝑐 𝑎,O)
+4:ifR last
+𝑐𝑎 ≠∅then
+5:Retrieve candidate evidence paths by bidirectional search:
+6:𝑃 (0)←BidirectionalRetrieve(𝑒 𝑞,R last
+𝑐𝑎 ,G)
+7:else
+8:Retrieve candidate evidence paths by fallback search:
+9:𝑃 (0)←FallbackRetrieve(𝑒 𝑞,G)
+10:end if
+11:Rerank and retain the top-𝑘paths:
+12:𝑃 (0)←RerankTopK(𝑞,𝑃 (0),𝑘)
+13:Extract initial answer candidates:
+14:𝐴 (0)←ExtractAnswers(𝑃 (0))
+15:Step 2: Iterative Answer Refinement
+16:Initialize refinement feedback:𝐹 (0)←∅
+17:for𝑡=1to𝑇do
+18:Generate the current answer hypothesis:
+19:𝑦 (𝑡) ←Generate(𝑞,𝑐 𝑎,𝑃(𝑡−1),𝐴(𝑡−1),𝐹(𝑡−1))
+20:Select the refinement-specific path subset:
+21: ¯𝑃(𝑡) ←SelectRefinePaths(𝑃 (0),𝑦(𝑡))
+22:Refine the current answer and obtain revision actions:
+23:𝐹 (𝑡) ←Refine(𝑞,𝑐 𝑎, ¯𝑃(𝑡),𝑦(𝑡))
+24:Derive the refined answer for the current round:
+25:𝑦 (𝑡) ←PostRefine(𝑦 (𝑡),𝐹(𝑡))
+26:ifShouldStop(𝐹 (𝑡),𝑦(𝑡))then
+27:break
+28:end if
+29:Update the next-round path context and answer context:
+30:𝑃 (𝑡) ←UpdatePathContext(𝑃(0),𝑦(𝑡),𝐹(𝑡))
+31:𝐴 (𝑡) ←UpdateAnswerContext(𝑦 (𝑡),𝐹(𝑡))
+32:end for
+33:return ˆ𝑦←𝑦 (𝑡)
+stopping threshold to avoid premature termination when the evi-
+dence remains ambiguous.
+OPI also stops when the post-refinement answer remains un-
+changed across consecutive iterations. This stability criterion cap-
+tures cases where further refinement no longer changes the final
+prediction. If either stopping condition is satisfied, OPI returns the
+answer from the current refinement round. Otherwise, the updated
+path context, answer context, answer-type constraints, and refine-
+ment feedback are passed to the next generator round. If no early
+stopping condition is triggered, OPI returns the answer from the
+final refinement round.
+Overall, OPI closes the loop between retrieved evidence and
+final answer prediction. The generator proposes answer hypotheses
+under graph-grounded retrieval context, while the refiner converts
+the current answer state into explicit revision actions. The path and
+answer contexts are then updated accordingly for the next round.
+This adaptive process helps suppress noisy branches and improves
+answer reliability beyond single-pass retrieval-and-readout.
+6
+
+[[page 7]]
+4 EXPERIMENTS
+We conduct extensive experiments to answer the following research
+questions:RQ1: Does OPI outperform existing KGQA methods on
+WebQSP and CWQ?RQ2: Is ontology-guided bidirectional retrieval
+effective as an independent retrieval module?RQ3: How much does
+each component of OPI contribute to the overall performance?RQ4:
+Why do ontology-based constraints improve retrieval effectiveness?
+RQ5: Is OPI robust across different LLM backbones?RQ6: Can OPI
+reduce retrieval cost and evidence noise?
+4.1 Experimental Settings
+Datasets.We evaluate our method on three widely used KGQA
+benchmarks: WebQuestionsSP (WebQSP) [47], ComplexWebQues-
+tions (CWQ) [41], and MetaQA [51]. These benchmarks are built on
+two knowledge graphs and cover both open-domain and domain-
+specific QA scenarios. Specifically, WebQSP and CWQ are based on
+Freebase [3], while MetaQA is constructed on Wiki-Movie [29]. As
+shown in Table 1, they vary in dataset size, reasoning depth, and
+question complexity, providing a comprehensive evaluation setting
+for multi-hop KGQA.
+For the Freebase setting, we evaluate OPI on WebQSP and CWQ,
+two standard benchmarks based on the preprocessed Freebase
+subgraphs widely used in prior work [11, 24]. OPI constructs the
+relation-centric ontology graph from the full Freebase dump for
+more complete type-level constraints, while restricting retrieval
+and evaluation to the benchmark subgraphs for fair comparison.
+WebQSP contains 4,737 questions and mainly involves relatively
+simple reasoning, with answers typically located within two hops
+of the topic entity. CWQ is more challenging, containing 34,699
+questions with compositional structures and additional constraints,
+often requiring up to four hops of reasoning. We follow the standard
+data splits for both datasets [39].
+For the Wiki-Movie setting, we adopt MetaQA, a movie-domain
+KGQA benchmark built on the Wiki-Movie knowledge graph, which
+contains 43,234 entities, 9 relations, and 133,582 triples. MetaQA
+includes more than 400K questions and is divided into three subsets
+by reasoning depth: MetaQA-1hop, MetaQA-2hop, and MetaQA-
+3hop. Following prior work [11], we evaluate on all three subsets
+and construct the one-shot setting by randomly sampling one train-
+ing instance for each question template, resulting in 161, 210, and
+150 training examples for the three subsets, respectively.
+Table 1: Statistics of the experiment datasets.
+Datasets KG #Train #Dev #Test Max #Hops
+WebQSP Freebase 2,826 246 1628 2
+CWQ Freebase 27,639 3,519 3,531 4
+MetaQA-1hop Wiki-Movie 96,106 9,992 9,947 1
+MetaQA-2hop Wiki-Movie 118,980 14,872 14,872 2
+MetaQA-3hop Wiki-Movie 114,196 14,274 14,274 3
+Evaluation Metrics.Following prior work [ 24, 39, 40], we use
+Hit@1 and F1 as the primary evaluation metrics. Hit@1 measures
+whether the top-ranked prediction matches any gold answer, re-
+flecting top-1 answer accuracy. F1 evaluates the predicted answer
+set by jointly considering precision and recall, which is important
+for questions with multiple correct answers. In the ablation studies,
+we additionally report precision and recall for a more fine-grained
+analysis of prediction quality.
+Comparison Baselines.We compare OPI with representative
+KGQA methods from four categories: embedding-based methods,
+retrieval-based methods, standalone LLMs, and KG-enhanced LLM
+methods. The first two categories cover conventional KG reasoning
+models that learn KG representations or retrieve question-relevant
+subgraphs, while standalone LLMs evaluate reasoning with para-
+metric knowledge alone. We further include recent KG-enhanced
+LLM methods, such as ToG, RoG, ORT, and GCR, which are the most
+direct competitors to OPI. For MetaQA, we additionally compare
+with representative methods reported in prior work to evaluate
+retrieval-only multi-hop structural reasoning.
+Implementation Details.OPI uses LLaMA2-Chat-7B as the
+fine-tuned backbone LLM for answer-type prediction. The model
+is instruction-tuned for three epochs on four A100-40G GPUs with
+batch size 4, learning rate 2e-5, cosine learning rate scheduling,
+and a warmup ratio of 0.03. The joint training time is about 4.7
+hours for WebQSP and CWQ, 44.0 hours for the MetaQA 1–3 hop
+data, and 0.42 hours for the MetaQA-oneshot setting. For ontology-
+guided bidirectional retrieval, we set the maximum reasoning depth
+according to dataset hop statistics, using two hops for WebQSP
+and four hops for CWQ. Retrieved evidence paths are ranked by
+Sentence-BERT similarity between the question and the path text,
+with all-mpnet-base-v2 as the ranking model, and at most 256 ev-
+idence paths are retained for each question. For answer refinement,
+we use prompt-based LLMs with temperature 0.2, maximum output
+length 128, and one sampled response per question. Since different
+prompt-based models may exhibit different refinement behaviors,
+the number of refinement rounds is selected on the validation set:
+three rounds for DeepSeek-v3 and one round for GPT-4o. In all
+cases, OPI allows at most three refinement rounds and stops early
+when the refiner reaches high confidence or when two consecutive
+rounds produce stable answers.
+4.2 Overall Evaluation (RQ1)
+Table 2 reports the main results on WebQSP and CWQ. We com-
+pare OPI with four groups of representative methods, including
+embedding-based methods, retrieval-based methods, standalone
+LLMs, and recent KG-enhanced LLM methods. Overall, OPI achieves
+the best metric-wise performance on both datasets. Taking the best
+score among the two OPI variants for each metric, OPI achieves
+92.3 Hit@1 and 76.8 F1 on WebQSP. Compared with the strongest
+previous results, it improves Hit@1 by 4.6 points and F1 by 5.0
+points over ORT. On the more complex CWQ dataset, OPI achieves
+76.5 Hit@1 and 62.7 F1, outperforming the metric-wise strongest
+prior results by 8.9 points in Hit@1 and 3.3 points in F1. These gains
+show that OPI is effective not only on WebQSP questions, which
+are generally less compositional, but also on complex questions in
+CWQ that require more careful multi-hop evidence retrieval.
+Beyond the overall performance, we further analyze the behavior
+of different method categories. Traditional embedding-based and
+retrieval-based methods can exploit KG structure through learned
+representations or retrieved subgraphs, but they still struggle on
+7
+
+[[page 8]]
+Table 2: Comparison of methods on WebQSP and CWQ. The backbone model used by each method is shown in parentheses.
+Type Methods WebQSP CWQ
+Hit@1 F1 Hit@1 F1
+Embedding-based
+KV-Mem [29] 46.7 34.5 18.4 15.7
+NSM [11] 68.7 62.8 47.6 42.4
+TransferNet [37] 71.4 — 48.6 —
+KGT5 [36] 56.1 — 36.5 —
+Retrieval-based
+GraftNet [39] 66.7 62.4 36.8 32.7
+PullNet [38] 68.1 — 45.9 —
+SR+NSM [50] 68.9 64.1 50.2 47.1
+UniKGQA [16] 77.2 72.2 51.2 49.1
+LLMs
+Llama-2-7B [44] 56.4 36.5 28.4 21.4
+Llama-3.1-8B [27] 55.5 34.8 28.1 22.4
+ChatGPT [30] 59.3 43.5 34.7 30.2
+GPT-4o [31] 61.8 43.6 38.2 32.9
+DeepSeek-v3 [5] 64.0 43.9 41.1 33.8
+KGs+LLMs
+ToG (GPT-4) [40] 82.6 — 67.6 —
+RoG (Llama-2-7B) [24] 85.7 70.8 62.6 56.2
+SymAgent (Llama-2-7B) [21] 55.5 41.3 35.1 31.2
+GNN-RAG (Llama-2-7B) [26] 85.7 71.3 66.8 59.4
+𝑅2 (Llama-2-7B) [48] 87.2 72.4 64.0 58.0
+ORT (GPT-4o) [22] 87.7 71.8 65.4 58.7
+GCR (Llama-2-7B + GPT-4o) [25] 87.5 71.5 66.0 58.5
+OPI(Llama-2-7B + GPT-4o)91.376.872.362.7
+OPI(Llama-2-7B + DeepSeek-v3) 92.374.976.559.6
+compositionally complex questions, as reflected by their consis-
+tently lower scores on CWQ. Standalone LLMs achieve reason-
+able results without explicit graph retrieval, but they generally
+lag behind KG-enhanced LLM methods, indicating that paramet-
+ric knowledge alone is insufficient for reliable multi-hop KGQA.
+Recent KGs+LLMs methods further improve performance by com-
+bining LLM reasoning with graph evidence, yet many of them still
+retrieve evidence mainly from the topic entity side. As the hop
+number increases, such topic-centered expansion can introduce
+many type-mixed paths and semantically ambiguous candidates.
+In contrast, OPI incorporates type-level answer-side constraints
+into bidirectional retrieval and further refines candidate answers
+through a generator-refiner loop, improving both evidence quality
+and answer selection.
+We also observe different strengths between the two OPI vari-
+ants. OPI with DeepSeek-v3 achieves the highest Hit@1 on both
+WebQSP and CWQ, suggesting stronger top-answer selection. OPI
+with GPT-4o obtains the best F1 on both datasets, suggesting bet-
+ter coverage and calibration when multiple candidate answers are
+involved. Despite this difference, both variants consistently out-
+perform prior KG-enhanced LLM methods, suggesting that the
+improvement is not tied to a specific backbone model, but is largely
+attributable to OPI’s ontology-guided bidirectional retrieval and
+iterative refinement framework.
+4.3 Effectiveness of Ontology-Guided
+Bidirectional Retrieval (RQ2)
+To further examine whether ontology-guided bidirectional retrieval
+can provide effective graph evidence by itself, we evaluate OPI un-
+der a pure retrieval-only setting. In this setting, candidate answers
+are directly extracted from the endpoints of retrieved evidence
+paths, without any subsequent LLM-based answer generation or
+iterative refinement.
+Table 3: Retrieval-only comparison with reproduced RoG
+and GCR on WebQSP and CWQ.
+Methods WebQSP CWQ
+Hit@1 F1 Hit@1 F1
+RoG-BR [24] 76.97 53.84 52.56 21.50
+GCR-BR [25] 92.1958.0369.1239.44
+OPI-BR 95.3939.0988.9529.78
+Results on WebQSP and CWQ.Table 3 compares OPI with
+reproduced RoG and GCR variants under the same retrieval-only
+setting. OPI-BR achieves the highest Hit@1 on both datasets, reach-
+ing 95.39 on WebQSP and 88.95 on CWQ. The improvement is par-
+ticularly clear on CWQ, where compositional questions make topic-
+centered expansion more likely to introduce noisy and type-mixed
+paths. These results indicate that answer-side ontology constraints
+8
+
+[[page 9]]
+can effectively restrict retrieval to structurally more plausible end-
+points under complex multi-hop reasoning, thereby providing use-
+ful graph-grounded evidence for subsequent answer generation
+and refinement.
+However, the F1 results show a different trend. On WebQSP,
+OPI-BR obtains an F1 of 39.09, lower than RoG-BR and GCR-BR.
+On CWQ, OPI-BR improves over RoG-BR in F1, but still lags be-
+hind GCR-BR. This is because RoG and GCR already incorporate
+question-level semantics during path construction: RoG prompts
+the LLM to generate relation paths, while GCR further constrains
+this process with graph structure. In contrast, OPI-BR in this exper-
+iment mainly applies answer-side ontology constraints to retrieve
+answer-type-compatible endpoints, but does not yet perform full
+question-aware path verification or answer-set refinement. As a
+result, its raw retrieved endpoints may still contain type-compatible
+but question-irrelevant entities, which limits F1. Overall, this com-
+parison shows that ontology-guided bidirectional retrieval is par-
+ticularly effective for top-answer reachability and search-space
+reduction, but answer-set completeness still benefits from the sub-
+sequent refinement stages.
+Results on MetaQA.We further evaluate the bidirectional
+retrieval module of OPI on MetaQA, where questions are more
+template-like and relation paths are relatively regular. Compared
+with WebQSP and CWQ, MetaQA relies more on structural path
+matching and less on complex semantic disambiguation, making it
+suitable for evaluating pure retrieval-only reasoning. Therefore, we
+report bidirectional retrieval results without additional LLM-based
+answer generation, because the retrieved endpoints already provide
+a direct test of whether the structural relation path can reach the
+correct answer. Here, BR denotes bidirectional retrieval and does
+not include any subsequent LLM-based answer generation.
+Table 4 reports the results on the full MetaQA benchmark. OPI-
+BR achieves near-saturated Hit@1 across all three subsets, with
+100.00 on 1-hop, 99.99 on 2-hop, and 99.96 on 3-hop questions.
+OPI-BR-oneshot obtains very close performance, especially on 2-
+hop and 3-hop questions. These results show that when evidence
+paths are regular and answer-side constraints are reliable, ontology-
+guided bidirectional retrieval alone can already provide sufficient
+evidence for accurate answer prediction.
+4.4 Ablation Study (RQ3)
+We conduct ablation studies to assess three key designs in OPI:
+type-level search space, early answer-side constraint, and itera-
+tive answer refinement. All variants use the same Llama-2-7B +
+DeepSeek-v3 setting. Table 5 reports the results on WebQSP and
+CWQ in terms of Hit@1, F1, precision, and recall.
+Effect of type-level search space.This variant removes the
+type-level path space and directly traverses the original KG from the
+topic entity. When the number of outgoing edges is large, it keeps
+the top-𝑘 paths according to the SentenceBERT similarity between
+each path and the question. This change leads to the largest perfor-
+mance drop: Hit@1/F1 decrease by 10.19/13.95 points on WebQSP
+and by 22.37/18.54 points on CWQ. The degradation suggests that
+direct topic-centered expansion is easily affected by large branching
+factors. Although similarity-based pruning reduces the search cost,
+it may discard correct paths before they reach the answer side. By
+contrast, OPI uses type-level relation signatures to form a more
+compact search space, which helps preserve answer-relevant paths
+under multi-hop expansion.
+Effect of in-retrieval answer-side constraint.This variant re-
+moves answer-side constraints from the retrieval process. Instead,
+it first performs topic-side forward expansion and then applies
+answer-type-compatible final-hop relations as a post-retrieval fil-
+ter. F1 decreases from 74.91 to 66.75 on WebQSP and from 59.59
+to 45.61 on CWQ, showing that answer-side constraints are more
+effective when they participate in retrieval rather than only filter-
+ing completed paths. Since relevant paths may already be pruned
+during topic-centered forward expansion, post-retrieval filtering
+cannot recover them. Nevertheless, this variant still outperforms
+w/o type-level search space, because the delayed final-hop filter can
+still remove some answer-type-incompatible endpoints.
+Effect of iterative answer refinement.This variant directly
+uses the single-pass output of the same prompt-based LLM as
+the final answer, without applying generator-refiner iterations. It
+achieves higher Hit@1 and recall on both datasets, but lower preci-
+sion and F1. For example, compared with full OPI on CWQ, recall
+increases from 71.23 to 78.06, while precision decreases from 58.96
+to 52.32 and F1 decreases from 59.59 to 56.42. This indicates that
+single-pass generation tends to retain a broader answer set, but also
+introduces more false positives. Iterative refinement therefore does
+not simply maximize coverage; instead, it trades part of the aggres-
+sive candidate retention for a cleaner answer set, suggesting that
+refinement acts more as a precision-oriented filtering mechanism
+than as a recall-maximizing step.
+4.5 Analysis of Ontology Graph (RQ4)
+Table 6 reports the construction statistics of the ontology graphs for
+Freebase and Wiki-Movie. The results show that the proposed con-
+struction procedure is feasible under different schema settings. For
+Freebase, which provides explicit schema predicates, the pipeline
+processes 71,210 schema entries from the RDF dump and completes
+in approximately 6,958 seconds (≈1.93 hours) on a single machine.
+For Wiki-Movie, where explicit schema predicates are unavailable,
+the ontology graph is induced directly from 134,741 triples and
+constructed in approximately 1.17 seconds. This contrast mainly
+reflects the much larger scale and richer schema structure of Free-
+base, while also showing that the same ontology abstraction can
+be instantiated efficiently for compact domain-specific KGs.
+The constructed ontology graphs cover most relations used in
+downstream KGQA benchmarks. For WebQSP, only 19 out of 5,726
+relations have missing or incomplete signatures, accounting for
+0.33%. For CWQ, this number is 21 out of 6,576, accounting for
+0.32%. Moreover, 19 missing or incomplete signatures are shared by
+WebQSP and CWQ, corresponding to only 0.28% of the 6,837 unique
+relations across both datasets. These results show that the Freebase-
+derived ontology graph covers nearly all benchmark relations. For
+MetaQA, all 9 relations have valid head–tail type signatures under
+the induced Wiki-Movie ontology.
+The resulting ontology graphs are also compact relative to their
+underlying knowledge bases. The Freebase ontology graph contains
+32,195 relation signatures and 12,369 entity types, providing broad
+schema coverage without direct expansion over dense entity-level
+9
+
+[[page 10]]
+Table 4: Comparison of methods on MetaQA. Results of prior methods are reported as in their original papers. Our results are
+reported with two decimal places for better distinction near saturation.
+Methods MetaQA-1hop MetaQA-2hop MetaQA-3hop
+Hit@1 F1 Hit@1 F1 Hit@1 F1
+KV-Mem [29] 96.2 — 82.7 — 48.9 —
+NSM [11] 97.1 — 99.9 — 98.9 —
+GraftNet [39] 97.0 — 94.8 — 77.7 —
+UniKGQA [16] 97.5 — 99.0 — 99.1 —
+StructGPT [13] 97.1 — 97.3 — 87.0 —
+ReasoningLM [14] 96.5 — 98.3 — 92.7 —
+KG-GPT [18] 96.3 — 94.4 — 94.0 —
+Retrieval & Reasoning [12] — — — — 76.0 33.8
+RoG [24] — — — — 84.8 41.3
+BYOKG [1] 95.3 — 81.9 — 75.7 —
+ARG [49] — — — — 87.7 —
+SymAgent [21] — — — — 57.0 25.8
+KG-Agent [15] 97.1 — 98.0 — 92.1 —
+RDPG [6] 99.7 — 98.6 — 87.7 —
+𝑅2 [48] — — — — 85.2 42.5
+OPI-BR 100.00 96.94 99.99 83.51 99.96 59.19
+OPI-BR-oneshot99.68 95.68 99.94 83.50 99.86 58.60
+Table 5: Ablation study results on WebQSP and CWQ. All variants use the same Llama-2-7B + DeepSeek-v3 setting.
+Method WebQSP CWQ
+Hit@1 F1 Precision Recall Hit@1 F1 Precision Recall
+OPI92.3274.91 80.1678.95 76.52 59.59 58.96 71.23
+w/o type-level search space 82.13 60.96 65.35 66.47 54.15 41.05 41.24 48.13
+w/o in-retrieval answer-side constraint 86.43 66.75 73.46 69.96 59.08 45.61 46.88 51.90
+w/o iterative answer refinement93.4370.95 70.0484.96 81.2856.42 52.3278.06
+Table 6: Statistics of ontology graph construction for Freebase and Wiki-Movie.
+Item Freebase Wiki-Movie
+Schema setting Explicit schema predicates No explicit schema predicates
+Input entries 71,210 schema entries 134,741 triples
+Total pipeline time (single machine)≈1.93 h≈1.17 s
+Incomplete signatures in WebQSP 19/5,726 (0.33%) -
+Incomplete signatures in CWQ 21/6,576 (0.32%) -
+Shared incomplete signatures in WebQSP and CWQ 19/6,837 (0.28%) -
+Incomplete signatures in MetaQA - 0/9 (0.00%)
+Relations in ontology graph 32,195 9
+Entity types in ontology graph 12,369 11
+facts. The Wiki-Movie ontology graph is much smaller, with only 9
+relation signatures and 11 entity types, yet still preserves the type-
+level constraints required by MetaQA. These statistics suggest that
+the ontology graph serves as a lightweight abstraction: it retains the
+type semantics needed for retrieval while substantially simplifying
+the structure used during multi-hop reasoning.
+Overall, these results show that ontology graph construction is
+scalable and effective across heterogeneous KG settings. Explicit
+schema predicates provide reliable relation signatures for schema-
+rich KGs, while schema-light KGs can be handled through data-
+driven induction. Thus, the ontology graph offers a lightweight and
+practical type-level interface for retrieval in multi-hop KGQA.
+10
+
+[[page 11]]
+4.6 Effect of Different LLM Backbones (RQ5)
+Table 7: Performance of different LLM backbone variants on
+WebQSP and CWQ.
+Fine-tuned
+models
+Prompt-based
+models
+WebQSP CWQ
+Hit@1 F1 Hit@1 F1
+Qwen2-1.5B DeepSeek-v3 91.28 73.47 75.70 58.71
+GPT-4o 90.66 76.28 71.40 61.85
+Qwen2-7B DeepSeek-v3 91.03 73.51 75.64 59.03
+GPT-4o 90.36 75.64 70.57 61.19
+Llama-2-7B DeepSeek-v3 92.32 74.91 76.52 59.59
+GPT-4o 91.34 76.83 72.33 62.73
+To examine whether OPI depends on a specific LLM backbone,
+we evaluate different combinations of fine-tuned models and prompt-
+based models. The fine-tuned models are task-adapted LLMs used
+for answer-type prediction, including Qwen2-1.5B, Qwen2-7B, and
+Llama-2-7B. The prompt-based models are instruction-following
+LLMs used in the answer refinement stage, including DeepSeek-v3
+and GPT-4o. Table 7 reports the results on WebQSP and CWQ.
+Overall, OPI performs consistently well across different model
+combinations. On WebQSP, all variants achieve over 90 Hit@1 and
+over 73 F1. On CWQ, they also maintain strong performance, with
+Hit@1 ranging from 70.57 to 76.52 and F1 ranging from 58.71 to
+62.73. These results indicate that OPI is not tied to a single LLM
+choice. Instead, its effectiveness largely stems from the ontology-
+guided bidirectional retrieval and iterative answer refinement frame-
+work, which can be adapted to different fine-tuned and prompt-
+based models.
+We further observe complementary behaviors between prompt-
+based models. Variants using DeepSeek-v3 generally achieve higher
+Hit@1, especially on CWQ, suggesting stronger top-answer selec-
+tion. In contrast, variants using GPT-4o obtain higher F1 on both
+datasets, indicating better answer-set calibration when multiple
+candidate answers are involved. Among the fine-tuned models,
+Llama-2-7B achieves the best overall results under both prompt-
+based models. Nevertheless, Qwen2-1.5B and Qwen2-7B remain
+competitive, showing that OPI can also operate effectively with
+smaller models for answer-type prediction.
+4.7 Efficiency and Robustness Analysis (RQ6)
+Search-space and retrieval-cost reduction.We compare OPI’s
+ontology-guided bidirectional retrieval with a forward-only base-
+line by measuring the average number of candidate paths, candidate
+answers, and retrieval time. As shown in Figures 4(a) and 4(b), OPI
+reduces candidate paths by 98.7% on WebQSP and over 99% on CWQ,
+candidate answers by 98.9% and 99.97%, and retrieval time by 95.1%
+and 95.3%, respectively. These reductions show that answer-side
+type constraints effectively prevent uncontrolled topic-centered ex-
+pansion. By reserving the final hop for ontology-guided matching,
+OPI avoids exploring many type-incompatible evidence paths and
+therefore lowers retrieval cost.
+Evidence cleanliness and answer coverage.We evaluate the
+retrieved evidence before answer generation using precision, recall,
+gold-hit rate, and top-1 hit rate. Figures 4(c) and 4(d) show that
+OPI improves precision by 30.85% on WebQSP and 23.88% on CWQ,
+and improves top-1 hit rate by 54.24% and 31.12%, respectively.
+Although recall and gold-hit rate slightly decrease, they remain
+at 88.73%/93.98% on WebQSP and 87.19%/88.98% on CWQ. This
+indicates that OPI filters noisy evidence while preserving most
+answer-relevant candidates.
+Quality-efficiency tradeoff of adaptive refinement.We com-
+pare fixed-round refinement with adaptive refinement, where the
+refinement process stops based on answer stability and refiner con-
+fidence. As shown in Figures 4(e) and 4(f), adaptive refinement
+achieves 74.91 F1 with only 1.31 rounds on WebQSP, slightly out-
+performing fixed three-round refinement. On CWQ, it achieves
+59.59 F1 with 1.61 rounds, closely matching the fixed three-round
+result. This reduces the average number of refinement rounds by
+56.4% and 46.5%, respectively, showing that adaptive refinement
+avoids unnecessary iterations while maintaining answer quality.
+Benefits on semantically challenging questions.We com-
+pare the initial answer and the final refined answer across temporal,
+attribute/numerical, constrained, and simple questions. Figures 4(g)
+and 4(h) show consistent F1 gains across all categories. On WebQSP,
+the largest gain appears on simple questions, with a 5.01-point im-
+provement, followed by constrained questions with a 3.91-point
+gain. On CWQ, temporal questions benefit the most, with an 8.23-
+point improvement, while constrained and simple questions im-
+prove by 3.37 and 3.13 points, respectively. These results suggest
+that iterative answer refinement helps OPI mitigate semantic am-
+biguity, complementing bidirectional retrieval, which primarily
+addresses structural path explosion.
+5 RELATED WORK
+5.1 Multi-hop Knowledge Graph Question
+Answering
+Existing multi-hop KGQA methods can be broadly grouped into
+embedding-based methods, retrieval-based methods, standalone
+LLM methods, and KG-enhanced LLM methods. Early embedding-
+based methods, such as KV-Mem [29], NSM [11], TransferNet [37],
+and KGT5 [36], learn graph-aware representations by encoding
+questions and entities in continuous spaces or propagating question-
+aware signals over graph structures. Although effective, their rea-
+soning process is often implicit and may not preserve explicit multi-
+hop path semantics. Retrieval-based methods instead construct
+question-relevant subgraphs or evidence paths before answer pre-
+diction, as in GraftNet [ 39], SR+NSM [ 50], and UniKGQA [ 16].
+While these methods improve interpretability by exposing support-
+ing evidence, they typically rely on topic-centered expansion and
+may retrieve many structurally reachable but semantically irrele-
+vant paths as reasoning depth increases.
+With the emergence of large language models, standalone LLMs
+have been applied to KGQA through prompting, in-context learn-
+ing, or chain-of-thought reasoning. Models such as Llama-2, Llama-
+3.1, ChatGPT, GPT-4o, and DeepSeek-v3 show strong language
+understanding and reasoning abilities [5, 27, 30, 31, 44], but they
+may hallucinate unsupported facts and are limited by the absence
+of explicit graph-grounded evidence. Recent KG-enhanced LLM
+methods address this limitation by incorporating retrieved triples,
+11
+
+[[page 12]]
+Candidate
+Paths
+Candidate
+Answers
+Retrieval
+Time
+100
+101
+102
+103
+104
+Count / Time (ms)
+8287.8
+4748.7
+20.3
+106.5
+51.6
+1.0
+(a) WebQSP Search/Cost
+Forward
+Bidirectional
+Candidate
+Paths
+Candidate
+Answers
+Retrieval
+Time
+102
+103
+104
+105
+106
+107
+Count / Time (ms)
+12476778.3
+221224.1
+22704.3
+147.2
+70.2
+1066.8
+(b) CWQ Search/Cost
+Forward
+Bidirectional
+Precision Recall Gold Hit Top-1 Hit
+0
+20
+40
+60
+80
+100Percentage (%)
+0.17
+94.18 95.76
+4.18
+31.02
+88.73
+93.98
+58.42
+(c) WebQSP Evidence Quality
+Forward
+Bidirectional
+Precision Recall Gold Hit Top-1 Hit
+0
+20
+40
+60
+80
+100Percentage (%)
+0.00
+96.09 96.57
+1.70
+23.88
+87.19 88.98
+32.82
+(d) CWQ Evidence Quality
+Forward
+Bidirectional
+0.0 0.5 1.0 1.5 2.0 2.5 3.0
+Average refinement rounds
+70
+71
+72
+73
+74
+75
+76F1 (%)
+Gen-1
+Ref-1
+Ref-2 Ref-3
+Adaptive
+Avg rounds = 1.31
+Round saving = 56.4%
+(e) WebQSP Quality-Efficiency Tradeoff
+Fixed-round Refinement
+Adaptive Refinement
+0.0 0.5 1.0 1.5 2.0 2.5 3.0
+Average refinement rounds
+56
+57
+58
+59
+60
+61F1 (%)
+Gen-1
+Ref-1
+Ref-2
+Ref-3
+Adaptive
+Avg rounds = 1.61
+Round saving = 46.5%
+(f) CWQ Quality-Efficiency Tradeoff
+Fixed-round Refinement
+Adaptive Refinement
+Temporal
+(n=90)
+Attr./Num.
+(n=26)
+Constrained
+(n=188)
+Simple
+(n=1324)
+40
+50
+60
+70
+80
+90
+100F1 (%)
+44.26
+87.54
+75.12
+69.50
+46.61
+90.54
+79.03
+74.51
+(g) WebQSP Category Gains
+Initial Answer
+Final Answer
+Temporal
+(n=66)
+Attr./Num.
+(n=131)
+Constrained
+(n=2339)
+Simple
+(n=995)
+45
+50
+55
+60
+65
+70F1 (%)
+49.87 49.72
+56.83
+54.08
+58.10
+52.53
+60.20
+57.21
+(h) CWQ Category Gains
+Initial Answer
+Final Answer
+Figure 4: Efficiency and robustness analysis of OPI. (a)-(b) Search-space and retrieval-cost comparison between forward-only
+and bidirectional retrieval. (c)-(d) Evidence quality comparison before answer generation. (e)-(f) Quality-efficiency tradeoff of
+adaptive refinement. (g)-(h) F1 gains across question categories.
+evidence paths, graph structures, or symbolic tools into LLM-based
+reasoning. For example, ToG explores reasoning chains over KGs
+with LLM guidance [40], RoG generates relation paths for graph-
+grounded reasoning [24], SymAgent combines symbolic reasoning
+with agentic LLM behaviors [21], GNN-RAG integrates graph neural
+retrieval with LLM generation [26], and GCR further improves KG-
+enhanced reasoning through graph-context reasoning [25]. Recent
+work such as𝑅2 also emphasizes reliable reasoning with LLMs over
+KGs [48]. These methods substantially improve graph-grounded
+answer generation, but their retrieval stages are still largely driven
+by topic-side exploration or post-retrieval evidence selection. In
+contrast, OPI introduces answer-side type constraints into the re-
+trieval process itself, using a relation-centric ontology graph to
+guide final-hop matching and reduce noisy path explosion before
+LLM-based answer refinement.
+5.2 Ontology and Type-level Guidance
+Ontology and schema information provide high-level semantic
+structures for organizing entities, relations, types, and constraints
+in knowledge graphs. Compared with entity-level triples, type-level
+abstractions capture more stable semantic regularities, such as the
+expected head and tail types of relations. Recent studies have ex-
+plored LLMs for ontology construction, enhancement, and learning
+[2, 9, 43], as well as ontology construction from large RDF resources
+or capability-question-driven workflows [4, 19]. These studies show
+that ontology construction and enrichment can provide useful foun-
+dations for knowledge-intensive tasks.
+In KGQA, ontology information has been used to improve the
+semantic alignment between natural-language questions and graph
+structures. For example, ontology-guided prompting and reverse-
+thinking strategies have been introduced to strengthen multi-hop
+reasoning and generalization [17, 22], while OntoTune aligns LLMs
+with domain ontologies through ontology-driven self-training [23].
+However, most existing methods use ontology information only
+as auxiliary signals, providing limited graph-grounded constraints
+in large heterogeneous retrieval spaces. Industrial systems such
+as Palantir further show that ontology can serve as a structured
+interface connecting data, reasoning, and downstream actions [32].
+OPI follows this motivation but specializes it for multi-hop KGQA:
+it constructs a relation-centric ontology graph from the KG itself
+and uses type-level signatures to map the predicted answer type to
+compatible final-hop relations, thereby integrating type-level and
+entity-level path search.
+6 CONCLUSION
+In this paper, we proposed OPI, an ontology-guided evidence path
+inference framework for multi-hop KGQA. OPI introduces a relation-
+centric ontology graph to make answer-side type constraints ex-
+plicit, and combines topic-side prefix expansion with answer-side
+final-hop matching to reduce noisy path explosion. It further em-
+ploys a generator-refiner loop to jointly reassess retrieved evidence
+and answer hypotheses, filtering type-compatible but question-
+irrelevant candidates. Experiments on WebQSP, CWQ, and MetaQA
+show that OPI consistently outperforms representative multi-hop
+KGQA methods. These results demonstrate that OPI provides a
+compact and reusable relation-centric ontology graph for retrieval,
+while effectively alleviating path explosion and semantic misalign-
+ment in multi-hop KGQA.
+In future work, we plan to extend OPI to knowledge graphs
+with weaker or less reliable type information. A key direction is
+to construct and update relation signatures when entity types are
+missing, noisy, or only partially available, so that ontology-guided
+retrieval remains effective beyond KGs with well-defined schemas.
+Such an extension would broaden the applicability of OPI to open-
+domain and dynamically evolving knowledge graphs.
+12
+
+[[page 13]]
+REFERENCES
+[1] Dhruv Agarwal, Rajarshi Das, Sopan Khosla, and Rashmi Gangadharaiah. 2024.
+Bring your own KG: Self-supervised program synthesis for zero-shot KGQA. In
+Findings of the association for computational linguistics: NAACL 2024. Association
+for Computational Linguistics, Mexico City, Mexico, 896–919.
+[2] Hamed Babaei Giglou, Jennifer D’Souza, and Sören Auer. 2023. LLMs4OL: Large
+language models for ontology learning. InInternational Semantic Web Conference.
+Springer, 408–427.
+[3] Kurt Bollacker, Colin Evans, Praveen Paritosh, Tim Sturge, and Jamie Taylor.
+2008. Freebase: a collaboratively created graph database for structuring human
+knowledge. InProceedings of the 2008 ACM SIGMOD international conference
+on Management of data. Association for Computing Machinery, Vancouver, BC,
+Canada, 1247–1250.
+[4] Deyan Chen and Hong Zhao. 2018. Research on the method of extracting domain
+knowledge from the freebase RDF dumps.IEEE Access6 (2018), 50306–50322.
+[5] DeepSeek-AI, Aixin Liu, Bei Feng, Bing Xue, Bingxuan Wang, Bochao Wu,
+Chengda Lu, Chenggang Zhao, Chengqi Deng, Chenyu Zhang, Chong Ruan,
+et al. 2024.DeepSeek-V3 Technical Report. Technical Report arXiv:2412.19437.
+DeepSeek-AI. https://arxiv.org/abs/2412.19437
+[6] Lianhong Ding, Na Ding, Qi Tao, and Peng Shi. 2025. Enhancing graph multi-hop
+reasoning for question answering with llms: An approach based on adaptive path
+generation.Journal of Intelligent Information Systems63, 5 (2025), 1455–1485.
+[7] Xin Luna Dong. 2023. Generations of Knowledge Graphs: The Crazy Ideas
+and the Business Impact.Proc. VLDB Endow.16, 12 (Aug. 2023), 4130–4137.
+https://doi.org/10.14778/3611540.3611636
+[8] Giacomo Frisoni, Alessio Cocchieri, Alex Presepi, Gianluca Moro, and Zaiqiao
+Meng. 2024. To Generate or to Retrieve? On the Effectiveness of Artificial
+Contexts for Medical Open-Domain Question Answering. InProceedings of the
+62nd Annual Meeting of the Association for Computational Linguistics (Volume 1:
+Long Papers), Lun-Wei Ku, Andre Martins, and Vivek Srikumar (Eds.). Association
+for Computational Linguistics, Bangkok, Thailand, 9878–9919. https://doi.org/
+10.18653/v1/2024.acl-long.533
+[9] Maurice Funk, Simon Hosemann, Jean Christoph Jung, and Carsten Lutz. 2023.
+Towards ontology construction with language models. InJoint proceedings of
+the 1st workshop on Knowledge Base Construction from Pre-Trained Language
+Models (KBC-LM) and the 2nd challenge on Language Models for Knowledge
+Base Construction (LM-KBC) co-located with the 22nd International Semantic Web
+Conference (ISWC 2023), Vol. 3577.
+[10] Congcong Ge, Xiaoze Liu, Lu Chen, Yunjun Gao, and Baihua Zheng. 2021.
+LargeEA: aligning entities for large-scale knowledge graphs.Proceedings of the
+VLDB Endowment15, 2 (Oct. 2021), 237–245. https://doi.org/10.14778/3489496.
+3489504
+[11] Gaole He, Yunshi Lan, Jing Jiang, Wayne Xin Zhao, and Ji-Rong Wen. 2021.
+Improving multi-hop knowledge base question answering by learning interme-
+diate supervision signals. InProceedings of the 14th ACM international conference
+on web search and data mining. Association for Computing Machinery, Online,
+553–561.
+[12] Yixin Ji, Kaixin Wu, Juntao Li, Wei Chen, Mingjie Zhong, Xu Jia, and Min Zhang.
+2024. Retrieval and reasoning on KGs: Integrate knowledge graphs into large
+language models for complex question answering. InFindings of the Associa-
+tion for Computational Linguistics: EMNLP 2024. Association for Computational
+Linguistics, Miami, Florida, USA, 7598–7610.
+[13] Jinhao Jiang, Kun Zhou, Zican Dong, Keming Ye, Wayne Xin Zhao, and Ji-Rong
+Wen. 2023. Structgpt: A general framework for large language model to reason
+over structured data. InProceedings of the 2023 Conference on Empirical Meth-
+ods in Natural Language Processing. Association for Computational Linguistics,
+Singapore, 9237–9251.
+[14] Jinhao Jiang, Kun Zhou, Wayne Xin Zhao, Yaliang Li, and Ji-Rong Wen. 2023.
+Reasoninglm: Enabling structural subgraph reasoning in pre-trained language
+models for question answering over knowledge graph. InProceedings of the 2023
+Conference on Empirical Methods in Natural Language Processing. Association for
+Computational Linguistics, Singapore, 3721–3735.
+[15] Jinhao Jiang, Kun Zhou, Wayne Xin Zhao, Yang Song, Chen Zhu, Hengshu Zhu,
+and Ji-Rong Wen. 2025. KG-Agent: An efficient autonomous agent framework
+for complex reasoning over knowledge graph. InProceedings of the 63rd Annual
+Meeting of the Association for Computational Linguistics (Volume 1: Long Papers).
+Association for Computational Linguistics, Vienna, Austria, 9505–9523.
+[16] Jinhao Jiang, Kun Zhou, Xin Zhao, and Ji-Rong Wen. 2023. UniKGQA: Unified
+Retrieval and Reasoning for Solving Multi-hop Question Answering Over Knowl-
+edge Graph. InThe Eleventh International Conference on Learning Representations.
+ICLR, OpenReview.net, Kigali, Rwanda, 16. https://openreview.net/forum?id=
+Z63RvyAZ2Vh
+[17] Longquan Jiang, Junbo Huang, Cedric Moller, and Ricardo Usbeck. 2025.
+Ontology-Guided, Hybrid Prompt Learning for Generalization in Knowledge
+Graph Question Answering. In2025 19th International Conference on Semantic
+Computing (ICSC). IEEE Computer Society, 28–35.
+[18] Jiho Kim, Yeonsu Kwon, Yohan Jo, and Edward Choi. 2023. KG-GPT: A general
+framework for reasoning on knowledge graphs using large language models. In
+Findings of the Association for Computational Linguistics: EMNLP 2023. Association
+for Computational Linguistics, Singapore, 9410–9421.
+[19] Vamsi Krishna Kommineni, Birgitta König-Ries, and Sheeba Samuel. 2024. From
+human experts to machines: An LLM supported approach to ontology and knowl-
+edge graph construction.arXiv preprint arXiv:2403.08345(2024).
+[20] Junlin Lee, Yequan Wang, Jing Li, and Min Zhang. 2024. Multimodal Reasoning
+with Multimodal Knowledge Graph. InProceedings of the 62nd Annual Meeting
+of the Association for Computational Linguistics (Volume 1: Long Papers), Lun-Wei
+Ku, Andre Martins, and Vivek Srikumar (Eds.). Association for Computational
+Linguistics, Bangkok, Thailand, 10767–10782. https://doi.org/10.18653/v1/2024.
+acl-long.579
+[21] Ben Liu, Jihai Zhang, Fangquan Lin, Cheng Yang, Min Peng, and Wotao Yin.
+2025. Symagent: A neural-symbolic self-learning agent framework for complex
+reasoning over knowledge graphs. InProceedings of the ACM on Web Conference
+2025. Association for Computing Machinery, Sydney, Australia, 98–108.
+[22] Runxuan Liu, Luobei Luobei, Jiaqi Li, Baoxin Wang, Ming Liu, Dayong Wu,
+Shijin Wang, and Bing Qin. 2025. Ontology-Guided Reverse Thinking Makes
+Large Language Models Stronger on Knowledge Graph Question Answering.
+InProceedings of the 63rd Annual Meeting of the Association for Computational
+Linguistics (Volume 1: Long Papers), Wanxiang Che, Joyce Nabende, Ekaterina
+Shutova, and Mohammad Taher Pilehvar (Eds.). Association for Computational
+Linguistics, Vienna, Austria, 15269–15284. https://doi.org/10.18653/v1/2025.acl-
+long.741
+[23] Zhiqiang Liu, Chengtao Gan, Junjie Wang, Yichi Zhang, Zhongpu Bo, Mengshu
+Sun, Huajun Chen, and Wen Zhang. 2025. Ontotune: Ontology-driven self-
+training for aligning large language models. InProceedings of the ACM on Web
+Conference 2025. 119–133.
+[24] Linhao Luo, Yuan-Fang Li, Gholamreza Haffari, and Shirui Pan. 2024. Reasoning
+on Graphs: Faithful and Interpretable Large Language Model Reasoning. InThe
+Twelfth International Conference on Learning Representations. OpenReview.net,
+Vienna, Austria, 1–24. https://openreview.net/forum?id=ZGNWW7xZ6Q
+[25] Linhao Luo, Zicheng Zhao, Gholamreza Haffari, Yuan-Fang Li, Chen Gong,
+and Shirui Pan. 2025. Graph-constrained Reasoning: Faithful Reasoning on
+Knowledge Graphs with Large Language Models. InProceedings of the 42nd
+International Conference on Machine Learning, Vol. 267. Proceedings of Machine
+Learning Research, Vancouver, Canada, 41540–41565. https://proceedings.mlr.
+press/v267/luo25t.html
+[26] Costas Mavromatis and George Karypis. 2025. Gnn-rag: Graph neural retrieval
+for efficient large language model reasoning on knowledge graphs. InFind-
+ings of the Association for Computational Linguistics: ACL 2025. Association for
+Computational Linguistics, Vienna, Austria, 16682–16699.
+[27] Meta. 2024. Build the future of ai with meta llama 3. https://llama.meta.com/
+llama3/
+[28] Microsoft. 2015. FastRDFStore-data. https://download.microsoft.com/download/
+A/E/4/AE428B7A-9EF9-446C-85CF-D8ED0C9B1F26/FastRDFStore-data.zip
+[29] Alexander Miller, Adam Fisch, Jesse Dodge, Amir-Hossein Karimi, Antoine
+Bordes, and Jason Weston. 2016. Key-value memory networks for directly
+reading documents. InProceedings of the 2016 conference on empirical methods in
+natural language processing. Association for Computational Linguistics, Austin,
+Texas, 1400–1409.
+[30] OpenAI. 2022. Introducing ChatGPT. https://openai.com/index/chatgpt/
+[31] OpenAI. 2024. Hello gpt-4o. https://openai.com/index/hello-gpt-4o/
+[32] Palantir. 2024. Connecting AI to Decisions with the Palantir Ontol-
+ogy. https://blog.palantir.com/connecting-ai-to-decisions-with-the-palantir-
+ontology-c73f7b0a1a72. Accessed: 2026-04-29.
+[33] Shirui Pan, Linhao Luo, Yufei Wang, Chen Chen, Jiapu Wang, and Xindong Wu.
+2024. Unifying Large Language Models and Knowledge Graphs: A Roadmap.
+IEEE Transactions on Knowledge and Data Engineering36, 7 (2024), 3580–3599.
+https://doi.org/10.1109/TKDE.2024.3352100
+[34] Kashif Rabbani, Matteo Lissandrini, and Katja Hose. 2023. Extraction of Validating
+Shapes from Very Large Knowledge Graphs.Proceedings of the VLDB Endowment
+16, 5 (Jan. 2023), 1023–1032. https://doi.org/10.14778/3579075.3579078
+[35] Nils Reimers and Iryna Gurevych. 2019. Sentence-bert: Sentence embeddings
+using siamese bert-networks. InProceedings of the 2019 conference on empirical
+methods in natural language processing and the 9th international joint conference
+on natural language processing (EMNLP-IJCNLP). 3982–3992.
+[36] Apoorv Saxena, Adrian Kochsiek, and Rainer Gemulla. 2022. Sequence-to-
+sequence knowledge graph completion and question answering. InProceedings
+of the 60th annual meeting of the association for computational linguistics (vol-
+ume 1: long papers). Association for Computational Linguistics, Dublin, Ireland,
+2814–2828.
+[37] Jiaxin Shi, Shulin Cao, Lei Hou, Juanzi Li, and Hanwang Zhang. 2021. Transfernet:
+An effective and transparent framework for multi-hop question answering over
+relation graph. InProceedings of the 2021 Conference on Empirical Methods in
+Natural Language Processing. Association for Computational Linguistics, Online
+and Punta Cana, Dominican Republic, 4149–4158.
+13
+
+[[page 14]]
+[38] Haitian Sun, Tania Bedrax-Weiss, and William Cohen. 2019. Pullnet: Open
+domain question answering with iterative retrieval on knowledge bases and text.
+InProceedings of the 2019 conference on empirical methods in natural language
+processing and the 9th international joint conference on natural language processing
+(EMNLP-IJCNLP). Association for Computational Linguistics, Hong Kong, China,
+2380–2390.
+[39] Haitian Sun, Bhuwan Dhingra, Manzil Zaheer, Kathryn Mazaitis, Ruslan Salakhut-
+dinov, and William Cohen. 2018. Open Domain Question Answering Using Early
+Fusion of Knowledge Bases and Text. InProceedings of the 2018 Conference on Em-
+pirical Methods in Natural Language Processing. Association for Computational
+Linguistics, Brussels, Belgium, 4231–4242.
+[40] Jiashuo Sun, Chengjin Xu, Lumingyuan Tang, Saizhuo Wang, Chen Lin, Yeyun
+Gong, Lionel Ni, Heung-Yeung Shum, and Jian Guo. 2024. Think-on-Graph: Deep
+and Responsible Reasoning of Large Language Model on Knowledge Graph.
+InThe Twelfth International Conference on Learning Representations. OpenRe-
+view.net, Vienna, Austria, 31. https://openreview.net/forum?id=nnVO1PvbTv
+[41] Alon Talmor and Jonathan Berant. 2018. The Web as a Knowledge-Base for
+Answering Complex Questions. InProceedings of the 2018 Conference of the
+North American Chapter of the Association for Computational Linguistics: Human
+Language Technologies, Volume 1 (Long Papers). Association for Computational
+Linguistics, New Orleans, Louisiana, 641–651.
+[42] Xingyu Tan, Xiaoyang Wang, Qing Liu, Xiwei Xu, Xin Yuan, and Wenjie Zhang.
+2025. Paths-over-Graph: Knowledge Graph Empowered Large Language Model
+Reasoning. InProceedings of the ACM on Web Conference 2025(Sydney NSW,
+Australia)(WWW ’25). Association for Computing Machinery, New York, NY,
+USA, 3505–3522. https://doi.org/10.1145/3696410.3714892
+[43] Sabrina Toro, Anna V. Anagnostopoulos, Sue Bello, Kai Blumberg, Rhiannon
+Cameron, Leigh Carmody, Alexander D. Diehl, Damion M. Dooley, William
+Duncan, Petra Fey, Pascale Gaudet, Nomi L. Harris, marcin p. joachimiak, Leila
+Kiani, Tiago Lubiana, Monica C. Munoz-Torres, Shawn T. O’Neil, David Osumi-
+Sutherland, Aleix Puig, Justin Reese, Leonore Reiser, Sofia M C Robb, Troy
+Ruemping, James Seager, Eric Sid, Ray Stefancsik, Magalie Weber, Valerie Wood,
+Melissa A. Haendel, and Christopher J. Mungall. 2024. Dynamic retrieval aug-
+mented generation of ontologies using artificial intelligence (DRAGON-AI).Jour-
+nal of Biomedical Semantics15, 1 (2024), 19.
+[44] Hugo Touvron, Louis Martin, Kevin Stone, Peter Albert, Amjad Almahairi,
+Yasmine Babaei, Nikolay Bashlykov, Soumya Batra, Prajjwal Bhargava, Shruti
+Bhosale, et al. 2023. Llama 2: Open Foundation and Fine-Tuned Chat Models.
+https://doi.org/10.48550/arXiv.2307.09288 arXiv:2307.09288 [cs.CL]
+[45] Yilin Wen, Zifeng Wang, and Jimeng Sun. 2024. MindMap: Knowledge Graph
+Prompting Sparks Graph of Thoughts in Large Language Models. InProceedings
+of the 62nd Annual Meeting of the Association for Computational Linguistics
+(Volume 1: Long Papers), Lun-Wei Ku, Andre Martins, and Vivek Srikumar (Eds.).
+Association for Computational Linguistics, Bangkok, Thailand, 10370–10388.
+https://doi.org/10.18653/v1/2024.acl-long.558
+[46] Tian Yang, Yupeng Mei, Ling Xu, Huihui Yu, and Yingyi Chen. 2024. Applica-
+tion of question answering systems for intelligent agriculture production and
+sustainable management: A review.Resources, Conservation and Recycling204
+(2024), 107497. https://doi.org/10.1016/j.resconrec.2024.107497
+[47] Wen-tau Yih, Matthew Richardson, Christopher Meek, Ming-Wei Chang, and
+Jina Suh. 2016. The value of semantic parse labeling for knowledge base question
+answering. InProceedings of the 54th Annual Meeting of the Association for Com-
+putational Linguistics (Volume 2: Short Papers). Association for Computational
+Linguistics, Berlin, Germany, 201–206.
+[48] Changsen Yuan, Rui Lin, and Cunhan Guo. 2026. Reliable reasoning: Learning and
+inference based on the ability of large language models.Applied Soft Computing
+190 (2026), 114618.
+[49] Han Zhang, Langshi Zhou, and Hanfang Yang. 2025. Learning to Retrieve and
+Reason on Knowledge Graph through Active Self-Reflection. https://doi.org/10.
+48550/arXiv.2502.14932 arXiv:2502.14932 [cs.CL]
+[50] Jing Zhang, Xiaokang Zhang, Jifan Yu, Jian Tang, Jie Tang, Cuiping Li, and Hong
+Chen. 2022. Subgraph Retrieval Enhanced Model for Multi-hop Knowledge
+Base Question Answering. InProceedings of the 60th Annual Meeting of the
+Association for Computational Linguistics (Volume 1: Long Papers). Association
+for Computational Linguistics, Dublin, Ireland, 5773–5784.
+[51] Yuyu Zhang, Hanjun Dai, Zornitsa Kozareva, Alexander Smola, and Le Song.
+2018. Variational reasoning for question answering with knowledge graph. In
+Proceedings of the AAAI conference on artificial intelligence, Vol. 32. AAAI Press,
+New Orleans, Lousiana, USA, 6069–6076.
+14

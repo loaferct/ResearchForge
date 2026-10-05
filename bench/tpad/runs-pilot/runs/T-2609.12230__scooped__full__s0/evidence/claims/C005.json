@@ -1,0 +1,43 @@
+{
+  "id": "C005",
+  "statement": "The paper arXiv:2609.12230 proposes a context-augmented training framework that enriches each target KG triple with supporting triples from the same source text chunk (forming a context graph), uses an LLM-judged history-aware adaptive repair pipeline to fix one-hop failures, and applies reinforcement learning from lower-hop QA to improve higher-hop generalization.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "For each primary KG triple, we attach supporting triples extracted from the same source text chunk to form a context graph (CG).",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote found only in a flagged abstract (abstract (from semantic_scholar) never mentions 'Repair Before Reinforce'; it may belong to another work)"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "We introduce an LLM-judged, history-aware adaptive repair pipeline that identifies unresolved one-hop failures, continually fine-tunes on targeted repair examples, and removes or quarantines problematic noisy triples.",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote found only in a flagged abstract (abstract (from semantic_scholar) never mentions 'Repair Before Reinforce'; it may belong to another work)"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "Finally, we employ reinforcement learning (RL) using lower-hop question-answer items and evaluate generalization on harder 3-hop, 4-hop, and 5-hop tasks.",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote found only in a flagged abstract (abstract (from semantic_scholar) never mentions 'Repair Before Reinforce'; it may belong to another work)"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "closest work",
+    "context enrichment",
+    "adaptive repair",
+    "RL transfer"
+  ],
+  "recorded_at": "2026-09-30T06:54:08.068768Z"
+}

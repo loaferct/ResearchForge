@@ -1,0 +1,47 @@
+{
+  "paper_id": "arxiv:2305.13691",
+  "relevance_tier": "high",
+  "problem": "Few-shot learning for open domain multi-hop question answering relies on large language models (LLMs) which are inefficient at inference time; need to improve smaller language models with limited human-annotated question-answer pairs.",
+  "method": "Data synthesis framework: start from Wikipedia document pairs, prompt LLMs to generate questions, answers, and queries (single or two), verify queries via retrievers, then fine-tune smaller language models on the synthetic data.",
+  "key_assumptions": [
+    "Not explicitly stated in the paper."
+  ],
+  "main_contribution": "Proposes a data synthesis framework that enables improving smaller LMs (e.g., LLaMA 7B/65B) with fewer than 10 human-annotated QA pairs, achieving competitive performance with prior methods while using much smaller model sizes; demonstrates significant improvements on HotpotQA, MuSiQue, 2WikiQA, and FEVER benchmarks.",
+  "datasets": [
+    "HotpotQA",
+    "MuSiQue",
+    "2WikiMultiHopQA (2WikiQA)",
+    "FEVER"
+  ],
+  "benchmarks": [
+    "HotpotQA",
+    "MuSiQue",
+    "2WikiMultiHopQA",
+    "FEVER"
+  ],
+  "baselines": [
+    "Prior few-shot prompting approaches (SelfAsk, DSP), re-implemented with LLaMA, plus self-consistency"
+  ],
+  "metrics": [
+    "Exact Match (EM)",
+    "F1 score",
+    "accuracy (for FEVER)"
+  ],
+  "results": "Fine-tuned LLaMA 65B on synthetic data: HotpotQA EM 46.4%, F1 58.6%; MuSiQue EM 29.6%, F1 38.6%; 2WikiQA EM 49.3%, F1 56.6%; FEVER accuracy 64.1%. With self-consistency improves further (e.g., HotpotQA EM 49.7%, F1 62.1%).",
+  "limitations": [
+    "Approach depends on synthesizing large amounts of data, which is expensive even with smaller LLMs; fine-tuning language models is not applicable to closed-source language models (e.g., GPT-3); third limitation not fully captured in available text."
+  ],
+  "future_work": [
+    "Finding the exact optimal amount of finetuning data for future work."
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "Both aim to improve multi-hop QA performance via training data augmentation: the idea enriches each target triple with local context subgraphs from the same passage and uses an adaptive repair loop to generate corrective examples from one-hop failures followed by RL lower-hop transfer, while this paper synthesizes new question-answer-claim tuples via LLMs from document pairs, filters them, and fine-tunes smaller LMs on the synthetic data. Overlap in generating additional training data; differences in mechanism (local context enrichment + failure-driven correction vs LLM-based question generation + verification) and additional components (adaptive repair loop, RL lower-hop transfer) in the idea.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T09:16:06.431485Z"
+}

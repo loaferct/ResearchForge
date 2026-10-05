@@ -1,0 +1,41 @@
+{
+  "paper_id": "doi:10.1609/aaai.v32i1.12057",
+  "relevance_tier": "high",
+  "problem": "It is challenging to build QA systems that learn to reason over knowledge graphs from question-answer pairs alone due to noisy question expressions and the need for multi-hop logic reasoning.",
+  "method": "Proposes a novel unified deep learning architecture and an end-to-end variational learning algorithm that handles noise in questions and learns multi-hop reasoning simultaneously.",
+  "key_assumptions": [
+    "Variational inference can effectively model uncertainty in question expressions and multi-hop reasoning.",
+    "The unified architecture can jointly handle noise and learn reasoning."
+  ],
+  "main_contribution": "A unified deep learning architecture with variational learning achieving state-of-the-art performance on a recent benchmark dataset, plus new benchmark datasets for multi-hop reasoning, paraphrased questions, and human voice questions.",
+  "datasets": [
+    "a recent benchmark dataset (unspecified)",
+    "derived benchmark datasets: questions for multi-hop reasoning, questions paraphrased by neural translation model, questions in human voice"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"state-of-the-art performance on the recent benchmark dataset; very promising results on derived datasets\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.15,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "The paper uses a variational learning algorithm for noise handling and multi-hop reasoning, whereas the idea enriches target triples with local context subgraphs from source passages, adds an adaptive repair loop for factual reliability, and applies RL transfer from lower-hop QA.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T06:24:51.802323Z"
+}

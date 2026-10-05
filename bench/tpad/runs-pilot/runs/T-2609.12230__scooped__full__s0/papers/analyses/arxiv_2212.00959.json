@@ -1,0 +1,56 @@
+{
+  "paper_id": "arxiv:2212.00959",
+  "relevance_tier": "high",
+  "problem": "Multi-hop Question Answering over Knowledge Graph (KGQA) aims to find the answer entities that are multiple hops away from the topic entities mentioned in a natural language question on a large-scale Knowledge Graph (KG). To cope with the vast search space, existing work usually adopts a two-stage approach: it first retrieves a relatively small subgraph related to the question and then performs the reasoning on the subgraph to find the answer entities accurately.",
+  "method": "We propose UniKGQA, a novel approach for multi-hop KGQA task, by unifying retrieval and reasoning in both model architecture and parameter learning. UniKGQA consists of a semantic matching module based on a pre-trained language model (PLM) for question-relation semantic matching, and a matching information propagation module to propagate the matching information along the directed edges on KGs. For parameter learning, we design a shared pre-training task based on question-relation matching for both retrieval and reasoning models, and then propose retrieval- and reasoning-oriented fine-tuning strategies.",
+  "key_assumptions": [
+    "Retrieval and reasoning can be unified via a shared pre-training task on question-relation matching.",
+    "A semantic matching module and a matching information propagation module are sufficient for unified retrieval-reasoning."
+  ],
+  "main_contribution": "UniKGQA unifies retrieval and reasoning in both architecture and learning, demonstrating effectiveness on three benchmark datasets (MetaQA, WebQSP, CWQ) and outperforming state-of-the-art baselines by a large margin (e.g., 8.1% Hits@1 improvement on WebQSP, 2.0% on CWQ).",
+  "datasets": [
+    "MetaQA-1hop",
+    "MetaQA-2hop",
+    "MetaQA-3hop",
+    "WebQSP",
+    "CWQ"
+  ],
+  "benchmarks": [
+    "MetaQA-1hop",
+    "MetaQA-2hop",
+    "MetaQA-3hop",
+    "WebQSP",
+    "CWQ"
+  ],
+  "baselines": [
+    "KV-Mem",
+    "GraftNet",
+    "EmbedKGQA",
+    "NSM",
+    "TransferNet",
+    "PullNet",
+    "KGPT",
+    "BERTGRAG"
+  ],
+  "metrics": [
+    "Hits@1",
+    "F1"
+  ],
+  "results": "\"On WebQSP and CWQ, UniKGQA outperforms existing state-of-the-art baselines by a large margin (e.g., 8.1% improvement of Hits@1 on WebQSP and 2.0% improvement of Hits@1 on CWQ).\"",
+  "limitations": [
+    "Not explicitly stated in the abstract or text."
+  ],
+  "future_work": [
+    "Not explicitly stated in the abstract or text."
+  ],
+  "code_availability": "Codes and data are publicly available at https://github.com/RUCAIBox/UniKGQA",
+  "relation_to_idea": {
+    "problem_overlap": 0.9,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "UniKGQA unifies retrieval and reasoning via shared architecture and pre-training, whereas the proposed idea enriches training triples with local context subgraphs, adds an adaptive repair loop, and applies RL transfer to improve multi-hop QA.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T06:40:38.597213Z"
+}

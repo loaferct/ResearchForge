@@ -1,0 +1,44 @@
+{
+  "paper_id": "arxiv:2604.26176",
+  "relevance_tier": "high",
+  "problem": "Existing LLM-driven KGQA systems act as stateless planners, generating retrieval plans in isolation without exploiting historical query patterns, leading to schema hallucinations and limited retrieval coverage.",
+  "method": "Propose CacheRAG, a systematic cache-augmented architecture for LLM-based KGQA that transforms stateless planners into continual learners via three design principles: (1) Schema-agnostic user interface with Intermediate Semantic Representation and Backend Adapter; (2) Diversity-optimized cache retrieval using hierarchical index and MMR; (3) Bounded heuristic expansion with deterministic depth/breadth subgraph operators.",
+  "key_assumptions": [
+    "Caching retrieval plans can improve KGQA performance by exploiting historical query patterns.",
+    "Schema-agnostic interface and backend adapter enable safe interaction with local schema context.",
+    "Diversity-optimized cache retrieval mitigates reasoning homogeneity.",
+    "Bounded heuristic expansion enhances retrieval recall without unbounded API execution."
+  ],
+  "main_contribution": "CacheRAG architecture that significantly outperforms state-of-the-art baselines (e.g., +13.2% accuracy and +17.5% truthfulness on CRAG dataset) by making LLM-driven KGQA continual learners through caching.",
+  "datasets": [
+    "CRAG dataset (unspecified)",
+    "multiple benchmarks (unspecified)"
+  ],
+  "benchmarks": [
+    "CRAG dataset"
+  ],
+  "baselines": [
+    "state-of-the-art baselines (unspecified)"
+  ],
+  "metrics": [
+    "accuracy",
+    "truthfulness"
+  ],
+  "results": "[\"CacheRAG significantly outperforms state-of-the-art baselines (+13.2% accuracy and +17.5% truthfulness on CRAG dataset).\"]",
+  "limitations": [
+    "Not stated in abstract."
+  ],
+  "future_work": [
+    "Not stated in abstract."
+  ],
+  "code_availability": "[\"Not stated in abstract.\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "This work focuses on caching retrieval plans to improve LLM-based KGQA performance. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting training data enrichment and iterative correction rather than caching mechanisms.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:12:09.663274Z"
+}

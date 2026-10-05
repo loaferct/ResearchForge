@@ -1,0 +1,39 @@
+{
+  "id": "arxiv:2506.21575",
+  "title": "STRuCT-LLM: Unifying Tabular and Graph Reasoning with Reinforcement Learning for Semantic Parsing",
+  "authors": [
+    "Josefa Lia Stoisser",
+    "Marc Boubnovski Martell",
+    "Lawrence Phillips",
+    "Casper Hansen",
+    "Julien Fauqueur"
+  ],
+  "year": 2025,
+  "published": "2025-06-15",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2506.21575",
+  "pdf_url": "https://arxiv.org/pdf/2506.21575v1",
+  "abstract": "We propose STRuCT-LLM, a unified framework for training large language models (LLMs) to perform structured reasoning over both relational and graph-structured data. Our approach jointly optimizes Text-to-SQL and Text-to-Cypher tasks using reinforcement learning (RL) combined with Chain-of-Thought (CoT) supervision. To support fine-grained optimization in graph-based parsing, we introduce a topology-aware reward function based on graph edit distance. Unlike prior work that treats relational and graph formalisms in isolation, STRuCT-LLM leverages shared abstractions between SQL and Cypher to induce cross-formalism transfer, enabling SQL training to improve Cypher performance and vice versa - even without shared schemas. Our largest model (QwQ-32B) achieves substantial relative improvements across tasks: on semantic parsing, Spider improves by 13.5\\% and Text2Cypher by 73.1\\%. The model also demonstrates strong zero-shot generalization, improving performance on downstream tabular QA (TableBench: 8.5\\%) and knowledge graph QA (CR-LT-KGQA: 1.7\\%) without any QA-specific supervision. These results demonstrate both the effectiveness of executable queries as scaffolds for structured reasoning and the synergistic benefits of jointly training on SQL and Cypher (code available at https://github.com/bouv/STRuCT-LLM).",
+  "doi": null,
+  "arxiv_id": "2506.21575",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:05:06.733335Z",
+  "relevance": 0.6875,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "reinforcement learning LLM chain-of-thought knowledge graph reasoning training"
+  ],
+  "code_urls": [
+    "https://github.com/bouv/STRuCT-LLM"
+  ],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

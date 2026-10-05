@@ -1,0 +1,36 @@
+{
+  "id": "U002",
+  "question": "Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+  "description": "The idea mentions applying reinforcement‑learning‑based optimization on lower‑hop QA instances but does not specify the RL method.",
+  "category": "feasibility",
+  "importance": "medium",
+  "status": "partially_resolved",
+  "next_action": "REFINE",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Different RL algorithms have varying sample efficiency, stability, and suitability for structured action spaces like KG paths.",
+  "resolution": "Evidence shows that Multi-Agent Reinforcement Learning (MARL) combined with Attention-based LSTM (ALMARL) is used and yields significant improvements in knowledge graph reasoning tasks (claim C007), and another work uses an unspecified RL algorithm with Focus-Relation Alignment (FRA) and reports improved Hits@1. However, no comparative evaluation identifies a single RL algorithm as most suitable for optimizing lower-hop QA instances.",
+  "paper_ids": [
+    "doi:10.1109/icbase59196.2023.10303211",
+    "doi:10.1109/bigdata66926.2025.11402141"
+  ],
+  "supporting_paper_ids": [
+    "doi:10.1109/icbase59196.2023.10303211",
+    "doi:10.1109/bigdata66926.2025.11402141"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C007"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T07:32:14.687419Z",
+  "updated_at": "2026-09-30T08:13:09.648341Z"
+}

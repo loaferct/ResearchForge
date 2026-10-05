@@ -1,0 +1,20 @@
+{
+  "id": "C015",
+  "statement": "Our idea of enriching each target triple with local context subgraphs from the same passage shares with KG-o1 the motivation to augment LLMs with richer contextual information from knowledge graphs, but differs in that KG-o1 constructs a dataset via filtering entities, constructing logical paths, and using rejection sampling and DPO to train LLMs to imitate long-term reasoning, whereas our idea enriches individual training triples with passage-level context and includes an adaptive repair loop for one-hop failures.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2508.15790",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "We first filter out initial entities and generate complex subgraphs. Secondly, we construct logical paths for subgraphs and then use knowledge graphs to build a dataset with a complex and extended brainstorming process, which trains LLMs to imitate long-term reasoning. Finally, we employ rejection sampling to generate a self-improving corpus for direct preference optimization (DPO), further refining the LLMs’ reasoning abilities.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [],
+  "recorded_at": "2026-09-30T07:07:50.315514Z"
+}

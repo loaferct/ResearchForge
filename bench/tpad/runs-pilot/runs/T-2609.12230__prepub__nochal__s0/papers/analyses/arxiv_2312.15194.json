@@ -1,0 +1,41 @@
+{
+  "paper_id": "arxiv:2312.15194",
+  "relevance_tier": "high",
+  "problem": "Knowledge editing for multi-hop question answering requires updating models with up-to-date facts while avoiding expensive retraining; existing methods that mix prompts for editing and reasoning suffer from unreliable reasoning due to coupling of disparate tasks.",
+  "method": "PokeMQA: a programmable knowledge editing framework that decouples jobs by using a trainable scope detector to detect conflicts and a knowledge prompt generator to retrieve relevant contextual information, allowing LLMs to be prompted with augmented input to answer multi-hop questions based on edited facts without modifying model parameters.",
+  "key_assumptions": [
+    "Not explicitly stated in the paper."
+  ],
+  "main_contribution": "PokeMQA demonstrates superior performance in knowledge editing of multi-hop QA across three LLM backbones and two benchmark datasets (MQUAKE-CF-3K and MQUAKE-T), outperforming baselines by a large margin and consistently producing reliable reasoning processes.",
+  "datasets": [
+    "MQUAKE-CF-3K",
+    "MQUAKE-T"
+  ],
+  "benchmarks": [
+    "MQUAKE-CF-3K",
+    "MQUAKE-T"
+  ],
+  "baselines": [
+    "FT (fine-tuning), ROME, MEMIT, MeLLo (memory-based)"
+  ],
+  "metrics": [
+    "Multi-hop accuracy (Hop-Acc)"
+  ],
+  "results": "PokeMQA achieves the highest Hop-Acc across all settings, e.g., for LLaMa-2-7B with 1 edited batch ~45.8% and for GPT-3.5-turbo-instruct with 1 edited batch ~67.3%, significantly outperforming baselines such as MeLLo (~57.4% and ~88.1%? Actually MeLLo higher for GPT-3.5? We note PokeMQA outperforms baselines by large margin in almost all settings.",
+  "limitations": [
+    "The scope detector architecture is not task‑specific optimized for higher fact retrieval accuracy; context length pressure on LLM reasoning capabilities for complex multi‑hop questions is not fully mitigated."
+  ],
+  "future_work": [
+    "Improving the scope detector for higher fact retrieval accuracy and mitigating context length pressure; addressing challenges of combining more facts for complex reasoning processes."
+  ],
+  "code_availability": "https://github.com/Hengrui-Gu/PokeMQA",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "Both aim to improve multi-hop QA correctness under knowledge changes: the idea enriches training triples with local context subgraphs from the same passage and uses an adaptive repair loop to generate corrective examples from one‑hop failures followed by RL lower‑hop transfer, while PokeMQA uses a trainable scope detector and knowledge prompt generator to detect conflicts and generate appropriate prompts for knowledge editing at inference time without modifying model weights. Overlap in using additional components to guide LLMs; differences in mechanism (training data enrichment + failure‑driven correction vs inference‑time detection + prompting) and stage (training vs inference).",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T09:19:09.347877Z"
+}

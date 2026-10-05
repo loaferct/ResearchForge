@@ -1,0 +1,42 @@
+{
+  "paper_id": "arxiv:2211.05351",
+  "relevance_tier": "high",
+  "problem": "Biomedical multi-hop KGQA faces challenges due to missing links in heterogeneous knowledge graphs like Hetionet, requiring effective question understanding and relation encoding to retrieve correct answers.",
+  "method": "Uses language models (RoBERTa, BioBERT) for question embedding, knowledge graph embeddings (ComplEx) for Hetionet, entity extraction and embedding, question classification to select appropriate LM, and an answer scoring module that scores candidate answers based on head, question, and answer embeddings. The system creates a multi-hop biomedical QA dataset from Hetionet for training and evaluation.",
+  "key_assumptions": [
+    "Language models can capture question context effectively in biomedical domain.",
+    "Knowledge graph embeddings (ComplEx) can mitigate missing links in Hetionet.",
+    "Separate models per hop size improve performance."
+  ],
+  "main_contribution": "An integrated KGQA system combining RoBERTa/BioBERT with ComplEx KG embeddings, accompanied by a newly created multi-hop biomedical QA dataset derived from Hetionet, achieving hits@10 of up to 0.9158 for 2-hop questions (BioBERT+ComplEx).",
+  "datasets": [
+    "Hetionet knowledge graph (47031 nodes, 2250197 relations)",
+    "manually created multi-hop biomedical question-answering dataset from Hetionet (161168 train, 20146 test, 20146 validation)"
+  ],
+  "benchmarks": [
+    "Hetionet QA dataset (1-hop, 2-hop, 3-hop splits)"
+  ],
+  "baselines": [
+    "not explicitly stated; compares RoBERTa+ComplEx vs BioBERT+ComplEx"
+  ],
+  "metrics": [
+    "hits@10"
+  ],
+  "results": "[\"1-hop: RoBERTa+ComplEx 0.7709, BioBERT+ComplEx 0.7421; 2-hop: RoBERTa+ComplEx 0.7705, BioBERT+ComplEx 0.9158; 3-hop: RoBERTa+ComplEx 0.8506, BioBERT+ComplEx 0.7687\"]",
+  "limitations": [
+    "not stated in full text"
+  ],
+  "future_work": [
+    "not stated in full text"
+  ],
+  "code_availability": "\"not stated in full text\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "The paper focuses on integrating LMs and KG embeddings for biomedical KGQA with question classification, while the idea enriches target triples with local context subgraphs from source passages, adds an adaptive repair loop for factual reliability, and applies RL transfer from lower-hop QA.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:50:03.819196Z"
+}

@@ -1,0 +1,48 @@
+{
+  "paper_id": "arxiv:2101.03737",
+  "relevance_tier": "medium",
+  "problem": "Multi-hop KBQA lacks supervision at intermediate reasoning steps, so models receive feedback only from the final answer, making learning unstable or ineffective and prone to spurious reasoning.",
+  "method": "A teacher-student approach: the student is a neural state machine that answers the query, and the teacher learns intermediate supervision signals (intermediate entity distributions) using both forward and backward reasoning; the teacher's signals train the student to improve reasoning and reduce spurious paths.",
+  "key_assumptions": [
+    "Intermediate step supervision can be approximated by a learned teacher rather than annotated.",
+    "Bidirectional (forward and backward) reasoning yields more reliable intermediate supervision than one direction.",
+    "WebQSP, CWQ and MetaQA cover the multi-hop KBQA setting. [abstract]"
+  ],
+  "main_contribution": "A teacher-student method that generates intermediate supervision signals via bidirectional reasoning, improving multi-hop KBQA effectiveness on three benchmark datasets; code released.",
+  "datasets": [
+    "WebQSP",
+    "CWQ",
+    "MetaQA (three benchmark datasets per abstract)"
+  ],
+  "benchmarks": [
+    "WebQSP",
+    "CWQ",
+    "MetaQA"
+  ],
+  "baselines": [
+    "Neural state machine (NSM) student without teacher signals",
+    "Prior multi-hop KBQA methods compared in Section 5.3 (specific list not extracted)"
+  ],
+  "metrics": [
+    "Hits@1 (QA accuracy)",
+    "Not fully extracted; the paper's results tables report Hits@1 on the three benchmarks."
+  ],
+  "results": "The teacher-student approach with bidirectional intermediate supervision improves multi-hop KBQA on WebQSP, CWQ and MetaQA relative to the student baseline; exact deltas not extracted here.",
+  "limitations": [
+    "Supervision is at the level of intermediate entity distributions for an embedding state machine, not textual context for an LLM; no context-graph construction, no repair loop, no RL.",
+    "Requires a teacher network whose reliability depends on the bidirectional reasoning assumption."
+  ],
+  "future_work": [
+    "Not extracted from the retrieved text."
+  ],
+  "code_availability": "Code released: https://github.com/RichardHGL/WSDM2021_NSM (stated in the abstract).",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.45,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "This work enriches supervision by synthesizing intermediate step signals (entity distributions) from a learned teacher; the idea enriches supervision by adding passage-local context triples to each target triple. Both are answers to 'multi-hop training lacks the supporting signal that multi-step inference needs', but the added signal differs in kind (intermediate reasoning distributions vs surrounding factual context) and this paper has no LLM SFT/repair/RL and no deeper-hop transfer evaluation.",
+    "basis": "Problem overlap 0.6 because both target insufficient multi-hop supervision; method overlap 0.45 because both modify the training signal rather than the inference architecture, but intermediate entity supervision is a different mechanism from context-triple augmentation; evaluation overlap 0.4 because WebQSP/CWQ/MetaQA Hits@1 partially overlaps the idea's multi-hop evaluation goal while the idea's concrete benchmark is undetermined."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:08:34.059014Z"
+}

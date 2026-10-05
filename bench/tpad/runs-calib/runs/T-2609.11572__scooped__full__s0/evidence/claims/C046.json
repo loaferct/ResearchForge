@@ -1,0 +1,43 @@
+{
+  "id": "C046",
+  "statement": "Assessment for U038: the harm from retrieving a wrong clause version is conditional and has two separable channels, so the contamination rate is not an error rate. The content channel operates only where the amendment changed the operative answer, and it is attenuated by the near-duplicate wording that defines this setting, since a reader may recover the correct answer from superseded text - the reported independence between near-complete temporal compliance and far lower answer accuracy in a point-in-time system is consistent with that attenuation. The normative channel operates regardless of content: citing a provision that was not in force at the target date is treated in legal analysis as a failure of retrieval output, so a contaminated retrieval can be defective even when the generated answer happens to match. The observed reader difficulty with frequently-updated answers supports the first channel; no retrieved work quantifies the probability of a correct answer given a contaminated retrieval. Settling this requires an intervention rather than more observation, which is why plan E009 substitutes versions while holding the reader, prompt and query fixed.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "models struggle with producing answers that are frequently updated or from uncommon locations",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "RAG-augmented legal AI tends instead to cite real documents in ways that are anachronistic",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "improves answer accuracy from 66.7% to 78.9% over hybrid RAG while reducing temporal evidence leakage from 10.8% to 1.7% and hallucination from 17.3% to 7.9%",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "harm decomposition",
+    "content channel",
+    "normative channel",
+    "intervention"
+  ],
+  "recorded_at": "2026-09-30T04:44:14.037825Z"
+}

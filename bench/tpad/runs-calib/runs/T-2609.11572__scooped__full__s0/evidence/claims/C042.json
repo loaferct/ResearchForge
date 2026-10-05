@@ -1,0 +1,52 @@
+{
+  "id": "C042",
+  "statement": "Assessment for U036: the proxies are unvalidated for legal traffic, and the literature itself implies they cannot be treated as interchangeable, because temporal orientation varies across past, present and future queries and must be inferred per query - so a single prevalence constant is the wrong model of the quantity. Web-QA situated questions are drawn from a general-population information need over Wikipedia, while exam-style and MCQA legal sets are curated to test reasoning with supplied authority, so neither measures practitioner query mix; the fact that deployed legal RAG is observed to cite documents anachronistically shows the failure occurs in practice but supplies no rate. Consequence for the design: do not anchor the deployment-weighted estimate on a single proxy; keep the sensitivity sweep and stratum-separated reporting as the primary outputs, treat any proxy-derived prevalence as an illustrative assumption labelled as such, and if a prevalence figure is quoted it must be calibrated against a real information-seeking source rather than assumed. This does not weaken the benchmark's measurement contribution, which is about failure rates conditional on a query type rather than about query mix.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2505.20243",
+      "experiment_run_id": null,
+      "location": "p. 23",
+      "quote": "Joho et al. (2013) studied the prevalence of different temporal orientations of user queries, and the strategies user apply to find temporally relevant content from the past, future or present.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2505.20243",
+      "experiment_run_id": null,
+      "location": "p. 22",
+      "quote": "inferring when the query is directed in time rather than analyzing any specific document",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "RAG-augmented legal AI tends instead to cite real documents in ways that are anachronistic",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "roughly 16.5% of NQ-Open",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "proxy validity",
+    "prevalence",
+    "design consequence",
+    "conditional measurement"
+  ],
+  "recorded_at": "2026-09-30T04:43:21.613867Z"
+}

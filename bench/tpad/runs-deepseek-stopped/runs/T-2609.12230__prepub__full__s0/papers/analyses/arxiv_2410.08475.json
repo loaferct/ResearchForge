@@ -1,0 +1,53 @@
+{
+  "paper_id": "arxiv:2410.08475",
+  "relevance_tier": "medium",
+  "problem": "Retrieval-based LLM reasoning depends on dense, high-quality non-parametric knowledge, which is expensive or infeasible for scientific/corner domains with very sparse knowledge graphs.",
+  "method": "GIVE is a training-free prompting framework that couples parametric and non-parametric memory: it prompts the LLM to decompose a query into concepts and attributes, construct entity groups of relevant entities, and build an augmented reasoning chain by probing potential (factual and extrapolated) relationships among node pairs across groups, then generates the answer progressively.",
+  "key_assumptions": [
+    "The LLM can meaningfully extrapolate plausible links between entity groups when the KG is too sparse.",
+    "Very sparse KGs (e.g., UMLS with 135 nodes and 5877 edges) are the target regime.",
+    "Prompted structured decomposition substitutes for training.",
+    "Additional (extrapolated) concepts improve reasoning without additional training cost."
+  ],
+  "main_contribution": "A training-free graph-inspired veracity-extrapolation framework that integrates parametric and non-parametric memory to improve retrieval and step-wise reasoning on very sparse KGs; reported to let GPT3.5-turbo outperform GPT4 without additional training cost.",
+  "datasets": [
+    "PubmedQA",
+    "BioASQ",
+    "Processbank",
+    "CommonsenseQA (validation)",
+    "UMLS (sparse KG)",
+    "ConceptNet"
+  ],
+  "benchmarks": [
+    "Biomedical yes-no QA (PubmedQA, BioASQ)",
+    "multiple-choice (Processbank)",
+    "CommonsenseQA"
+  ],
+  "baselines": [
+    "GPT3.5-turbo",
+    "GPT4",
+    "retrieval-based reasoning approaches"
+  ],
+  "metrics": [
+    "accuracy"
+  ],
+  "results": "GIVE enables GPT3.5-turbo to outperform advanced models like GPT4 without additional training cost on reasoning-intense biomedical and commonsense QA benchmarks; ablations vary ConceptNet sparsity and the number of additional concepts per group.",
+  "limitations": [
+    "Relies on LLM-extrapolated (potentially unsupported) relationships rather than verifiable facts.",
+    "Targets extremely sparse scientific KGs rather than standard multi-hop KGQA benchmarks.",
+    "No training; error propagation across reasoning steps is not quantified in the abstract."
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.35,
+    "evaluation_overlap": 0.15,
+    "conceptual_difference": "GIVE is a training-free prompting method for very sparse scientific commonsense KGs (UMLS, ConceptNet) and deliberately extrapolates non-existent links to compensate for sparsity; the idea is a supervised fine-tuning/RL method on passage-grounded triples for benchmark multi-hop KGQA with no link extrapolation.",
+    "basis": "Problem overlap moderate: both address sparse-KG reasoning with limited external facts, but GIVE is not the benchmark multi-hop KGQA setting. Method overlap moderate: both assemble a local relational context around query concepts, but GIVE's context is prompt-only and includes extrapolated edges. Evaluation overlap low: datasets (PubmedQA, BioASQ, Processbank, CommonsenseQA) and metrics differ from MetaQA/WebQSP/CWQ Hits@1."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:09:51.286150Z"
+}

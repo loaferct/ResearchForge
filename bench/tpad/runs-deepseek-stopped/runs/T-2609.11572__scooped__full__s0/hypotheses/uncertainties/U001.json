@@ -1,0 +1,35 @@
+{
+  "id": "U001",
+  "question": "Is the proposed elapsed-time temporal relevance adjustment novel, given that TempRALM (arxiv:2401.13222) already combines semantically and temporally relevant documents in a retrieval-augmented LM, and Prior et al. (arxiv:2605.23497) already enforce temporal validity via fact-date extraction and version filtering in statutory QA?",
+  "description": "TempRALM reports up to 74% improvement by ranking documents by combining semantic and temporal relevance; Prior et al. build a time-sensitive statutory QA benchmark and a RAG variant that filters document versions by extracted fact date. If either already constitutes a retrieval-agnostic elapsed-time re-ranking wrapper over versioned documents, the proposed core mechanism is pre-empted.",
+  "category": "novelty",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "CHALLENGE",
+  "possible_actions": [
+    "READ",
+    "COMPARE",
+    "CHALLENGE",
+    "SEARCH"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "This uncertainty directly determines whether the contribution can stand as stated; it must be resolved before investing in benchmark construction.",
+  "resolution": "Full-text reading of TempRALM (arxiv:2401.13222) shows the proposed core mechanism is already published: it computes an elapsed-time temporal score tau(q_t,d_t), normalizes it, and sums it with the semantic score (TempRet_t = s(q,d) + tau(q_t,d_t)), explicitly claiming it \"could be used to extend any retriever that ranks documents using a numerical similarity score\" and requiring no re-indexing. This matches the idea's \"retrieval-agnostic semantic + elapsed-time temporal adjustment\" almost exactly. Prior et al. (arxiv:2605.23497) additionally show that hard version filtering is the effective mitigation for statutory QA. The remaining open part -- whether a continuous elapsed-time term can beat hard validity-interval filtering specifically on amended regulatory texts -- is tracked as U004.",
+  "paper_ids": [
+    "arxiv:2401.13222",
+    "arxiv:2605.23497"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2401.13222",
+    "arxiv:2605.23497"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T05:05:30.789688Z",
+  "updated_at": "2026-09-30T05:10:27.618936Z"
+}

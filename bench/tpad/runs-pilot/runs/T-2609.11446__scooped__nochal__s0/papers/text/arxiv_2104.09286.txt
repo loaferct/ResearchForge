@@ -1,0 +1,855 @@
+[[page 1]]
+Learning to Cascade: Conﬁdence Calibration for Improving the Accuracy and
+Computational Cost of Cascade Inference Systems
+Shohei Enomoto, Takeharu Eda
+NTT Software Innovation Center
+{shohei.enomoto.ab, takeharu.eda.bx}@hco.ntt.co.jp
+Abstract
+Recently, deep neural networks have become to be used in
+a variety of applications. While the accuracy of deep neural
+networks is increasing, the conﬁdence score, which indicates
+the reliability of the prediction results, is becoming more im-
+portant. Deep neural networks are seen as highly accurate but
+known to be overconﬁdent, making it important to calibrate
+the conﬁdence score. Many studies have been conducted on
+conﬁdence calibration. They calibrate the conﬁdence score
+of the model to match its accuracy, but it is not clear whether
+these conﬁdence scores can improve the performance of sys-
+tems that use conﬁdence scores. This paper focuses on cas-
+cade inference systems, one kind of systems using conﬁdence
+scores, and discusses the desired conﬁdence score to improve
+system performance in terms of inference accuracy and com-
+putational cost. Based on the discussion, we propose a new
+conﬁdence calibration method, Learning to Cascade. Learn-
+ing to Cascade is a simple but novel method that optimizes
+the loss term for conﬁdence calibration simultaneously with
+the original loss term. Experiments are conducted using two
+datasets, CIFAR-100 and ImageNet, in two system settings,
+and show that naive application of existing calibration meth-
+ods to cascade inference systems sometimes performs worse.
+However, Learning to Cascade always achieves a better trade-
+off between inference accuracy and computational cost. The
+simplicity of Learning to Cascade allows it to be easily ap-
+plied to improve the performance of existing systems.
+Introduction
+In recent years, deep learning has dramatically developed
+and achieved state-of-the-art performance in a variety of
+applications. While the accuracy of deep learning has im-
+proved over the years, the conﬁdence score, which indicates
+whether the prediction result is correct or not is becoming
+more and more important. In critical decision-making sys-
+tems such as automated driving (Levinson et al. 2011) and
+medical diagnostics (Miotto et al. 2016), humans must make
+the ﬁnal decisions when deep neural networks are not con-
+ﬁdent in their predictive results to prevent serious accidents.
+Cascade inference systems (Kang et al. 2017; Wang et al.
+2018; Zhou, Gao, and Wu 2017; Panda, Sengupta, and Roy
+2016; Teerapittayanon, McDanel, and Kung 2016; Huang
+et al. 2018), achieve highly accurate and low computational
+Copyright © 2021, Association for the Advancement of Artiﬁcial
+Intelligence (www.aaai.org). All rights reserved.
+cost inference by combining multiple deep learning mod-
+els; it decides whether to terminate or continue inference
+based on the conﬁdence score. Recent deep neural networks
+are known to be overconﬁdent and require calibration of the
+conﬁdence score when applied to these critical systems (Guo
+et al. 2017).
+Several studies have been conducted on conﬁdence cali-
+bration (Guo et al. 2017; Zhang, Dalca, and Sabuncu 2019;
+Thulasidasan et al. 2019; Wan et al. 2018; Kull et al. 2019).
+These studies have focused on decision-making systems, in
+which humans decide whether or not to perform inference
+based on the conﬁdence score of the deep learning model.
+It is assumed that humans are almost 100% accurate. If the
+prediction of the model is correct, the prediction result is
+employed. And if it is incorrect, humans perform manual in-
+ference. In this way, the system can perform inferences with
+100% accuracy with a small number of human inferences.
+To achieve such a best trade-off between accuracy and hu-
+man effort, it is important to obtain a conﬁdence score that
+can accurately indicate whether the prediction result of the
+model is correct or not.
+To the best of our knowledge, no study has focused on
+conﬁdence calibration for cascade inference systems. Cas-
+cade inference is an important technique for performing
+real-time and accurate inference given limited computing re-
+sources such as MEC servers. It combines more than two
+models to perform inference: a highly-accurate but expen-
+sive model with a low-accuracy but fast model, and deter-
+mines whether the expensive model should make a predic-
+tion or not based on the conﬁdence score of the fast model.
+Unlike humans, expensive models are less accurate than
+100%. If the prediction of the fast model is correct, its re-
+sult is employed. If it is incorrect, the expensive model is
+used instead to make a prediction, but the expensive model
+prediction may also be incorrect. At this time, the accuracy
+of cascade inference does not change, but the computational
+cost is increased due to the extra calculations incurred by the
+expensive model. Therefore, it is important to have a conﬁ-
+dence score that reﬂects not only the prediction result relia-
+bility of the fast model but also the prediction result of the
+expensive model.
+In this paper, we discuss conﬁdence scores suitable for
+cascade inference. We propose Learning to Cascade (LtC) ,
+a conﬁdence calibration method for cascade inference. LtC
+arXiv:2104.09286v1  [cs.LG]  15 Apr 2021
+
+[[page 2]]
+introduces a new loss term to output conﬁdence scores suit-
+able for cascade inference; it simultaneously optimizes this
+loss term and the original loss term. LtC simply adds just a
+single new loss term and it does not require any changes to
+the network architecture or optimization method used. Thus
+it can be easily added to any existing implementations.
+We evaluate Learning to Cascade using CIFAR-100
+(Krizhevsky, Hinton et al. 2009) and ImageNet (Rus-
+sakovsky et al. 2015), a standard image classiﬁcation task.
+The effectiveness of LtC is shown by experiments in two set-
+tings: model cascading and model splitting. The experiments
+show that existing conﬁdence calibration methods may not
+improve the trade-off between accuracy and the computa-
+tional cost of inference. LtC, however, always achieves a
+better trade-off.
+The main contributions of this paper are as follows.
+• We discuss conﬁdence scores suitable for cascade infer-
+ence and introduce a new loss term for conﬁdence cali-
+bration.
+• We propose a simple calibration method, LtC, which si-
+multaneously optimizes the original loss term and the loss
+term for cascade inference. LtC is easily applied to ex-
+isting implementations because it adds just the new loss
+term.
+• In experiments with various settings, we show that LtC
+achieves the better trade-off between inference accuracy
+and computational cost than the existing methods.
+The rest of the paper is organized as follows: Section 2
+brieﬂy reviews related works in the ﬁeld of conﬁdence cal-
+ibration and cascade inference systems. The problem state-
+ment of cascade inference systems is given in Section 3. The
+proposed method, called Learning to Cascade, is described
+in Section 4. The experiments are provided in Section 5.
+Conclusions and future work are summarized in Section 6.
+Related Works
+Conﬁdence Calibration
+Guo et al. (Guo et al. 2017) point out that recent deep learn-
+ing models are overconﬁdent. Starting with this paper, sev-
+eral conﬁdence calibration methods are proposed (Zhang,
+Dalca, and Sabuncu 2019; Thulasidasan et al. 2019; Wan
+et al. 2018; Kull et al. 2019). These studies conduct evalu-
+ations using some metrics such as Expected Calibration Er-
+ror (ECE). As these metrics are calculated solely from the
+prediction results and labels, it does not evaluate the perfor-
+mance of systems that use conﬁdence scores. It is not clear
+whether these calibration methods can improve the perfor-
+mance of systems such as a decision-making system and
+cascade inference systems.
+Individually optimized models may not be optimal for
+systems that use conﬁdence scores. Bansal et al. (Bansal
+et al. 2020) propose a method for training models to opti-
+mize the performance of the entire decision-making system.
+They assume 100% human accuracy and evaluate only sim-
+ple machine learning models and binary classiﬁcation tasks.
+In practice, human accuracy is less than 100% for the multi-
+classiﬁcation tasks commonly used in deep learning (e.g.,
+94% for CIFAR-10 (Krizhevsky, Hinton et al. 2009)).
+Several conﬁdence calibration methods for out-of-
+distribution (OoD) detection have also been studied (Liang,
+Li, and Srikant 2018; Hsu et al. 2020; Chen et al. 2020; Lee
+et al. 2018; DeVries and Taylor 2018; LEE et al. 2018).
+These studies calibrate conﬁdence scores to detect OoD
+data. Although the problem setting is different from this pa-
+per, the perspective of conﬁdence calibration to improve the
+performance of the task (or system) is the same.
+Cascade Inference Systems
+In this paper, we refer to a system that combines multiple
+models with different computational costs and accuracies to
+perform inference as cascade inference systems. Cascade in-
+ference determines whether the expensive model will make
+accurate predictions or not based on the conﬁdence score of
+the fast model. Cascade inference systems work well with
+edge-cloud environment and there is a lot of studies in this
+ﬁeld (Grulich and Nawab 2018; Li, Zhou, and Chen 2018;
+Chinchali et al. 2018; Shao and Zhang 2020a,b). There are
+two types of cascade inference systems, model cascading
+and model splitting. In model cascading, models with dif-
+ferent architectures (e.g., MobileNet (Howard et al. 2017;
+Sandler et al. 2018; Howard et al. 2019) and ResNet (He
+et al. 2016)) are combined. Model splitting allows for dy-
+namic inference by creating a model with multiple early exit
+points.
+Model cascading is originally proposed in the context of
+face detection in image processing (Viola and Jones 2001);
+recent studies attempt to apply it to speed up heavy com-
+putation of deep learning inference. NoScope is a system
+that enables fast and accurate object detection as it com-
+bines Difference detector, Specialized Model and Reference
+NN (Kang et al. 2017). It decides whether the Reference NN
+should make the prediction or not based on the maximum
+prediction probability of the Specialized Model. There is an-
+other approach that provides an additional model to deter-
+mine whether to use the fast model or the expensive model
+to make predictions (Wang et al. 2018; Zhou, Gao, and Wu
+2017; Chinchali et al. 2019). The method of preparing ad-
+ditional models can provide accurate conﬁdence scores, but
+deploying the models increases the computational cost and
+requires more computational resources. It also needs extra
+training effort, such as hyper-parameter tuning.
+Instead of connecting different models, the other ap-
+proaches split a single large model by creating early exit
+points (Panda, Sengupta, and Roy 2016; Teerapittayanon,
+McDanel, and Kung 2016; Huang et al. 2018). These ar-
+chitectures reduce the computational cost by making most
+of the easy samples predictions at the earliest possible exit
+points. Although harder samples predictions are made at the
+later exit points, the intermediate layers are shared with the
+earlier exit points and their computation are completed, so
+the increase in computational cost is less. Either the maxi-
+mum class probability or entropy of the immediately prior
+exit point is used as the conﬁdence score. However, these
+studies focus on just the network architecture and not on the
+conﬁdence score.
+
+[[page 3]]
+confidence
+score /g1865/g3033/g3028/g3046/g3047
+prediction
+Yes
+/g1865/g3032/g3051/g3043
+prediction
+No
+/g1855/g1867/g1866/g1858/g3408/g2012
+raw
+sample
+feature
+map
+model cascading
+model splitting
+Figure 1: Cascade inference systems diagram for two ele-
+ments case. mfast is the fast model, mexp is the expensive
+model.
+Problem Statement of Cascade Inference
+Figure 1 shows the system diagram of cascade inference sys-
+tems for two elements case. In the model cascading setting,
+it uses models with different accuracy and computational
+costs. In the model splitting setting, each early exit point is
+treated as a fast or expensive model. There can be more than
+two models. First, the fast model makes a prediction which
+then conﬁdence score conf is assigned to. It is easy to use
+the maximum predicted probability or entropy as the con-
+ﬁdence score. Next, conf is compared with predetermined
+thresholdδ. Ifconf is aboveδ, the prediction result is likely
+to be correct and the inference is terminated with that result.
+If it is belowδ, the prediction result is likely to be incorrect,
+so the expensive model is activated to make a prediction and
+its output is used as the prediction result. The inputs of the
+expensive model are raw samples and feature maps in the
+model cascading setting and the model splitting setting, re-
+spectively.
+This conﬁguration works well with edge-cloud environ-
+ment. The fast model is deployed on the edge device as it has
+limited computing resources, while the expensive model is
+deployed on the resource-rich cloud. Cascade inference can
+perform most of the inferences using only the fast model on
+the edge device without losing accuracy. This reduces com-
+munication costs for data transfer to the cloud and lowers
+latency due to proximity of the edge device to the applica-
+tion.
+The goal of cascade inference is to achieve a good trade-
+off between accuracy and computational cost of inference.
+The accuracy is likely to increase if the expensive model is
+used, but the computational cost is high and the inference
+speed is slow. We begin with dataset D = {(xi,yi)}N
+i=1,
+wherex are the samples, andy are the category labels forK
+classes. The number of samples predicted by the expensive
+model is given by the following equation.
+Nexp =
+N∑
+i=1
+1confi≤δ (1)
+1 is an indicator function that returns 1 if the content is true
+and 0 if it is false.
+The problem of cascade inference can be formulated as
+minimizing Nexp while achieving the desired accuracy. In
+this paper, the desired accuracy is assumed to be that of the
+expensive model (Accexp). It can be formulated as an opti-
+mization problem as follows.
+minimize N exp
+subjectto Acc casc≥ (1−ϵ)Accexp
+ϵ is an acceptable accuracy degradation and is set to suit
+the application requirements. In this paper, we set ϵ = 0 .
+Acccasc is the accuracy by cascade inference and is formu-
+lated as the following equation.
+Acccasc = 1
+N
+∑N
+i=1{1confi>δ1yi=arg max
+j
+ˆyf ast(j)
+i
++ 1confi≤δ1yi=arg max
+j
+ˆyexp(j)
+i
+} (2)
+j is the class index, j∈{ 1, 2,...,K}. ˆyfast (j)
+and ˆyexp(j)
+are the predicted probabilities of the fast and expensive mod-
+els, respectively. It is possible to obtain the desired trade-off
+by adjusting δ. When δ is close to 0, the expensive model
+makes fewer predictions, which decreases the computational
+cost but accuracy is not expected to increase. Conversely,
+whenδ is close to 1, the expensive model makes more pre-
+dictions, which increases the computational cost but accu-
+racy is expected to increase.
+Learning to Cascade
+Conﬁdence Calibration for Cascade Inference
+The existing methods calibrate the conﬁdence score of the
+model to match its accuracy. However, it is not clear whether
+such calibration improves the performance of systems that
+use conﬁdence scores, such as decision-making systems and
+cascade inference systems.
+In this section, we call the ﬁrst deep learning model that
+makes predictions a “model” and human or highly-accurate
+deep learning model that makes decisions based on the con-
+ﬁdence scores of its predictions a “ﬁnal decision-maker”.
+Let us assume that the ﬁnal decision-maker of the systems
+that use conﬁdence scores is 100% accurate. If the sys-
+tems can accurately determine whether the predictions of the
+model are correct or not, the accuracy of the systems will be
+improved. Because if the prediction result of the model is
+correct, it is employed; if it is not, the ﬁnal decision-maker
+makes the prediction instead and get the correct answer,
+thus achieving 100% accuracy with less effort. We consider
+that existing conﬁdence calibration methods can improve the
+performance of these systems because they obtain a conﬁ-
+dence score that indicates whether the prediction result of
+the model is correct or not. However, in general, neither
+humans nor highly-accurate deep neural networks will ever
+be 100% accurate. In other words, the ﬁnal decision-maker
+can get predictions wrong. If the predictions of the model
+and the predictions of the ﬁnal decision-maker are both in-
+correct, there is no beneﬁt from the predictions of the ﬁnal
+decision-maker. Therefore, conﬁdence scores should reﬂect
+information about whether the ﬁnal decision-maker is cor-
+rect or not. In this paper, we focus on the cascade inference
+systems problems stated in Section 3 and discuss a conﬁ-
+dence score suitable for such systems.
+
+[[page 4]]
+In cascade inference, the predictions of expensive models
+are costly compared to fast models predictions. This cost in-
+cludes computation time, computational resources, and data
+transfer rate (when in edge-cloud setting), and so on. If
+the prediction of the fast model is incorrect but the predic-
+tion of the expensive model is correct, then the expensive
+model should be used because while it is more costly, it can
+increase accuracy. However, in other cases, the expensive
+model prediction will only increase the cost and not the ac-
+curacy, even if the expensive model is correct. Of particular
+note, in a case in which the prediction of the fast model is
+correct but the prediction of the expensive model is incor-
+rect, using the expensive model will increase the computa-
+tional cost and decrease the accuracy. Therefore, if only the
+prediction of the expensive model is correct, the conﬁdence
+score should be smaller. In other cases, the conﬁdence score
+should be larger. Especially, when only the prediction of the
+fast model is correct, it is most important to obtain a larger
+conﬁdence score.
+Based on the previous discussion, the new loss term for
+cascade inference is given by the following equation.
+Lcasc = 1
+N
+∑N
+i=1{confi1yi⁄=arg max
+j
+ˆyf ast(j)
+i
++ (1−confi)(1yi⁄=arg max
+j
+ˆyexp(j)
+i
++C)} (3)
+conf is the conﬁdence score, which is the maximum soft-
+max prediction probability of the fast model. C is the pa-
+rameter accounting for the cost of the expensive model infer-
+ence. It is determined based on system requirements such as
+computation time, computational resources, and data trans-
+fer rate. In our experiments, we useC = 0.5.
+Overall Loss Function
+Using Equation 3, we propose a conﬁdence calibration
+method for cascade inference, called Learning to Cascade
+(LtC). LtC simultaneously optimizes the original loss term
+and the loss term for cascade inference; it improves clas-
+siﬁcation accuracy and calibrates the conﬁdence score. In
+this paper, we use softmax cross entropy as the original loss
+term,Lorg. The overall loss function is as follows.
+L =Lorg +wLcasc (4)
+w is a parameter that determines the weight of the loss term
+for cascade inference. An overview of LtC is shown in Fig-
+ure 2.
+Beyond the Two Elements Cascade
+LtC can be applied to cascade inference systems even when
+there are M models (M ≥ 3). The M models are sorted
+in order of inference speed and modelm is the m-th model
+(m∈{ 1, 2,...,M}).
+In the model cascading setting, modelM is initially
+trained by the original loss function. Next, modelM−1 is
+trained by the LtC loss function with modelM as the ex-
+pensive model. This procedure is repeated until all models
+/g1877 /g3548/g3032/g3051/g3043
+/g1877 /g3548/g3033/g3028/g3046/g3047
+labels
+correct/incorrect
+confidence score
+correct/incorrect
+model cascading
+model splitting
+Cost
+Figure 2: Learning to Cascade overview. Lorg is calcu-
+lated from ˆyfast and labels. Lcasc is calculated from cor-
+rect/incorrect of the model prediction result, the value of the
+conﬁdence score, and costC.
+are trained. The loss function ofmodelm is given by the fol-
+lowing equation.
+L(m) =
+{
+L(M )
+org (m =M )
+L(m)
+org +wL(m,m+1)
+casc (m≤M− 1) (5)
+In the model splitting setting, each early exit classiﬁer
+is treated as a single model. Unlike the model cascading
+setting, all models are trained at the same time. The m-
+th early exit point is treated as a fast model ( modelm)
+and the (m + 1)-th early exit point as an expensive model
+(modelm+1). LtC computes Lcasc for all pairs of modelm
+andmodelm+1 and adds their sum to the original loss term.
+The loss function is given by the following equation.
+L = ∑M−1
+m=1{L(m)
+org +wL(m,m+1)
+casc } +L(M )
+org (6)
+Experiments
+We conducted experiments on two datasets and in two set-
+tings to show that LtC achieves a good trade-off between
+accuracy and computational cost.
+Experimental Setup
+Datasets: We used CIFAR-100 (Krizhevsky, Hinton et al.
+2009) and ImageNet (ILSVRC 2012) (Russakovsky et al.
+2015). CIFAR-100 is composed of 50,000 training images
+and 10,000 test images. We randomly split the training im-
+ages into training and validation images at the ratio of 9:1.
+ImageNet is composed of 1.3 million training images and
+50,000 test images. We randomly split the training images
+into training and validation images at the ratio of 99:1. The
+best values of parameters of LtC,δ andw were searched us-
+ing the validation images. The CIFAR-100 experiment was
+conducted 5 times with different random seeds, and the Ima-
+geNet experiment was conducted 3 times with different ran-
+dom seeds.
+Networks and Training Details: The experiments were
+conducted in two settings, model cascading and model split-
+ting.
+In the model cascading setting, we used AlexNet
+(Krizhevsky, Sutskever, and Hinton 2012), VGG11 (Si-
+monyan and Zisserman 2015) and MobileNetV2 (Sandler
+et al. 2018) for the fast model, and ResNet18 and ResNet152
+
+[[page 5]]
+Dataset Model Accuracy[%] MACs
+CIFAR-100 AlexNet 65.57 ± 0.16 285.4[M]
+VGG11 67.26 ± 0.17 191.8[M]
+MobileNetV2 67.18 ± 0.10 67.6[M]
+ResNet18 74.63 ± 0.08 556.8[M]
+ResNet152 77.20 ± 0.28 3737[M]
+ImageNet MobileNetV2 68.52 ± 0.12 314.13[M]
+ResNet152 77.24 ± 0.07 11.559[G]
+Table 1: Accuracy and MACs of evaluated models results.
+(He et al. 2016) for the expensive model. We used SGD
+with momentum 0.9 as the optimizer. In CIFAR-100 ex-
+periments, all models were trained with batch size of 128
+for 200 epochs with weight decay of 0.0005. The learning
+rate started with 0.1 and decreased by the factor of 0.2 at
+60, 120, 160 training epochs. In ImageNet experiments, all
+models were trained with batch size of 256 for 100 epochs
+with weight decay of 0.0001. The learning rate started with
+0.1 and decreased by the factor of 0.1 at 30, 60, 90 train-
+ing epochs. Table 1 shows the accuracy and MACs of each
+model.
+In the model splitting setting, we used MSDNet (Huang
+et al. 2018), the state-of-the-art early exit architecture for im-
+age classiﬁcation tasks. MSDNet has several parameters that
+determine the architecture. nBlocks is the number of early
+exit points, base is the number of layers in the ﬁrst block,
+andstep is the number of layers after the second block. We
+tested several combinations of parameters. We also used a
+setting wherein the number of layers after the second block
+increased linearly. MSDNet was trained in the same conﬁg-
+uration as (Huang et al. 2018).
+Evaluation Metrics: Two metrics were used to evaluate
+the results. The ﬁrst isAcccasc, which is the accuracy in cas-
+cade inference shown in Equation 2. The second is multiply-
+accumulate (MACscasc), which is the computational cost
+of cascade inference given by the following equation.
+MACscasc =MACsfast + Nexp
+N MACsexp (7)
+MACsfast and MACsexp are MACs for the fast and ex-
+pensive models, respectively. Based on the formulation in
+Section 3,Acccasc should be larger than or equal toAccexp;
+the smaller theMACscasc is, the better the system is.
+Methods for Comparison: In the model cascading set-
+ting, we compared LtC with four existing methods.
+• Baseline: Baseline is a method using the maximum pre-
+dicted probability of the fast model as the conﬁdence
+score.
+• IDK: IDK Cascades (Wang et al. 2018) employs an ad-
+ditional model to obtain conﬁdence scores for the model
+cascading. We used a CNN with one fully connected layer
+for an additional model (Same model as ConfNet (Wan
+et al. 2018)).
+• ConfNet: ConfNet (Wan et al. 2018) also employs an ad-
+ditional model to obtain accurate conﬁdence scores but
+does not consider cascade inference. We used a CNN with
+one fully connected layer as the additional model.
+• Temp. Scaling: Temperature Scaling (Guo et al. 2017)
+is the general conﬁdence calibration method attained by
+dividing the logits with the temperatureT .
+Results
+The Model Cascading Setting: Model cascading per-
+forms inferences by combining multiple models with dif-
+ferent computational costs and accuracies. We used a set of
+validation images to search for the δ with the highest cas-
+cade accuracy and used that value for testing.
+In the CIFAR-100 experiment, we ﬁrst examined two el-
+ements cascade. Three different fast models and two differ-
+ent expensive models were used. The accuracy and MACs
+results for model cascading setting are shown in Table 2,
+3. From Tables 1 and 2, the mean values of accuracy
+for all methods and the expensive model differed slightly,
+but were within the standard error. All methods meet the
+condition (Acccasc ≥ Accexp) as deﬁned by Section 3.
+From Tables 1 and 3, all methods achieve lower MACs
+than the expensive model, except for the combination of
+AlexNet and ResNet18. Furthermore, LtC achieves the low-
+est MACscasc in many cases. LtC reduces the MACs of
+ResNet18 and ResNet152 by up to 31% and 36%, respec-
+tively, with no accuracy degradation. LtC achieves a better
+trade-off between accuracy and computational cost than ex-
+isting methods. The reason why AlexNet does not improve
+the trade-off is in its classic architecture; it does not have so
+smaller MACs compared to that of ResNet18. As equation 7
+shows, MACs of the fast model needs to be relatively smaller
+than that of the expensive model in order to achieve a better
+trade-off in cascade inference systems. The conﬁdence cal-
+ibration methods, ConfNet and Temperature Scaling, some-
+times yield worse results than Baseline. As discussed in Sec-
+tion 4, a desirable conﬁdence score in cascade inference sys-
+tems should reﬂect not only the prediction of the fast model
+but also the prediction of the expensive model. Since these
+methods calibrate the conﬁdence score to a value that indi-
+cates only whether the prediction of the fast model is correct
+or not, these methods cannot obtain the desirable conﬁdence
+score. As a result, these methods may not improve the accu-
+racy and computational cost of cascade inference systems.
+Next, we examined three elements cascade. We used Mo-
+bileNetV2 as the fast model, ResNet18 as the middle fast
+model and ResNet152 as the expensive model. The results
+are shown in Table 4. By using LtC, cascade inference can
+reduce the computational cost by 55% while improving the
+accuracy of ResNet152.
+In the ImageNet experiment, we used MobileNetV2 as the
+fast model and ResNet152 as the expensive model. The ac-
+curacy and MACs results for model cascading setting are
+shown in Table 5. LtC reduces the MACs of ResNet152 by
+about 30% , with no accuracy degradation. LtC also achieves
+a better trade-off between accuracy and computational cost
+in difﬁcult tasks such as ImageNet.
+The Model Splitting Setting: We evaluated LtC using
+MSDNet with several network architecture parameters. Ex-
+
+[[page 6]]
+mf ast mexp Acccasc[%]
+Baseline / IDK / ConfNet / Temp. Scaling / LtC
+AlexNet 74.60 ± 0.08 / 74.55 ± 0.10 / 74.60 ± 0.09 / 74.62 ± 0.07 / 74.60 ± 0.07
+VGG11 ResNet18 74.69 ± 0.07 / 74.64 ± 0.10 / 74.60 ± 0.07 / 74.69 ± 0.09 / 74.66 ± 0.09
+MobileNetV2 74.71 ± 0.09 / 74.69 ± 0.06 / 74.72 ± 0.09 / 74.71 ± 0.09 / 74.69 ± 0.08
+AlexNet 77.17 ± 0.30 / 77.18 ± 0.30 / 77.18 ± 0.28 / 77.17 ± 0.28 / 77.02 ± 0.28
+VGG11 ResNet152 77.19 ± 0.28 / 77.13 ± 0.28 / 77.18 ± 0.27 / 77.19 ± 0.27 / 77.12 ± 0.30
+MobileNetV2 77.22 ± 0.28 / 77.22 ± 0.28 / 77.21 ± 0.28 / 77.20 ± 0.28 / 77.15 ± 0.26
+Table 2: Accuracy comparison results of model cascading setting on CIFAR-100.
+mf ast mexp M ACscasc[M]
+Baseline / IDK / ConfNet / Temp. Scaling / LtC
+AlexNet 722.56 ± 50.70 / 650.78 ± 24.70 / 841.47 ± 0.46 / 678.22 ± 14.21 / 617.88 ± 8.92
+VGG11 ResNet18 527.92 ± 11.40 / 484.99 ± 9.00 / 747.87 ± 0.22 / 562.64 ± 13.05 / 485.83 ± 11.15
+MobileNetV2 435.91 ± 23.80 / 424.07 ± 29.56 / 421.17 ± 10.18 / 450.95 ± 18.09 / 383.08 ± 13.85
+AlexNet 3748.18 ± 274.22 / 3451.98 ± 275.01 / 4020.01 ± 0.63 / 3141.66 ± 74.29 / 2720.73 ± 64.24
+VGG11 ResNet152 3089.84 ± 344.71 / 2411.88 ± 59.33 / 3925.21 ± 1.20 / 2819.06 ± 99.87 / 2381.08 ± 66.62
+MobileNetV2 3100.55 ± 238.31 / 2990.83 ± 233.00 / 3122.52 ± 282.78 / 3019.76 ± 225.20 / 2645.08 ± 136.97
+Table 3: MACs comparison results of model cascading setting on CIFAR-100.
+Acccasc[%] M ACscasc[G]
+Baseline / LtC
+77.48 ± 0.27 / 77.53 ± 0.18 1.91 ± 0.22 / 1.68 ± 0.13
+Table 4: Accuracy and MACs comparison results of three
+elements cascade on CIFAR-100.
+Acccasc[%] M ACscasc[G]
+Baseline / LtC
+77.22 ± 0.10 / 77.24 ± 0.08 8.36 ± 0.65 / 8.08 ± 0.21
+Table 5: Accuracy and MACs comparison results of model
+cascading setting on ImageNet.
+periments were conducted using CIFAR-100 only. The re-
+sults are shown in Figure 3. For all parameter settings, LtC
+achieves a better trade-off between accuracy and computa-
+tional cost than the original MSDNet. Since we only need to
+add just a loss term, it can be easily applied to state-of-the-
+art architectures such as MSDNet. LtC shows its simplicity
+and effectiveness by this result.
+Discussion
+Effect of LtC on the accuracy of the fast model: Since
+LtC simultaneously optimizes the loss term of the original
+task and the loss term for cascade inference, we investigated
+the effect of LtC on the original classiﬁcation task. Table 6
+shows the accuracy of each model trained by only the origi-
+nal loss function and by the LtC loss function. Note that this
+is not the accuracy of the cascade inference, but the accu-
+racy of the fast model. The model accuracy trained by the
+LtC loss function is a little lower in AlexNet and VGG11,
+but a little higher in MobileNetV2. We consider that adding
+the loss term for cascade inference does not adversely affect
+the classiﬁcation accuracy of the fast model.
+Figure 3: MSDNet and MSDNet w/ LtC comparison re-
+sults. MSDNet parameters are nBlocks=2, step=2, base=4
+(top left), nBlocks=5, step=1, base=4 (top right), nBlocks=7,
+step=1, base=1 (bottom left), nBlocks=10, step=2, base=4
+(bottom right), respectively.
+Effects of LtC Parameters: LtC has two parameters, C
+andw. We investigated the relationship between the two pa-
+rameters and inference performance(Accuracy, MACs). We
+examined the model cascading setting using MobileNetV2
+as the fast model and ResNet18 and ResNet152 as the ex-
+pensive model. The results are shown in Figure 4. To sum-
+marize,C is not correlated withAcccasc, but it is correlated
+withMACscasc.C is the prediction cost of the expensive
+model. When C is large, the expensive model makes fewer
+predictions; when C is small, the expensive model makes
+more predictions. C and MACscasc are inversely propor-
+
+[[page 7]]
+Dataset Model Difference
+CIFAR-100 AlexNet(w/ ResNet18 LtC) −0.30
+AlexNet(w/ ResNet152 LtC) −0.48
+VGG11(w/ ResNet18 LtC) −0.21
+VGG11(w/ ResNet152 LtC) −0.21
+MobileNetV2(w/ ResNet18 LtC) +0.10
+MobileNetV2(w/ ResNet152 LtC) +0.08
+ImageNet MobileNetV2(w/ ResNet152 LtC) +0.28
+Table 6: The difference in accuracy between the model
+trained by the LtC loss function and the model trained by
+the original loss function. The ‘w/’ refers to which model
+was used as the expensive model.
+Figure 4: The relationship between LtC parameters ( C and
+w) and inference performance ( Acccasc and MACscasc).
+The expensive model is set to ResNet18 (left), the expensive
+model is set to ResNet152 (right), when C is varied (top)
+and whenw is varied (bottom).
+tional to each other. C is a parameter that should be deter-
+mined based on the system requirements, such as inference
+speed or computational resources available. On the other
+hand, there is no correlation between w and inference per-
+formance. In order to obtain a good trade-off in cascade in-
+ference system, we need to search for the optimalw.
+Analysis of How LtC Works: Given combination of Mo-
+bileNetV2 and ResNet18, we compared conﬁdence scores
+of Baseline and LtC for each combination of the fast model
+and the expensive model prediction result. The results are
+shown in Figure 5. In all combinations, LtC has high conﬁ-
+dence scores. The number of conﬁdence scores is especially
+high around 1. According to the discussion in Section 4, a
+low conﬁdence score is desirable for case ”mexp Only Cor-
+rect” and a high conﬁdence score is desirable for the other
+cases. So, LtC has a negative impact on case ” mexp Only
+Correct”, but a positive impact on the other cases. In par-
+ticular, LtC obtains a high conﬁdence score in case ”mfast
+Only Correct”, which is the most important case because
+of its impact on both accuracy and computational cost. We
+Figure 5: Conﬁdence comparison of LtC and Baseline. Both
+prediction results are correct (top left), only the mfast pre-
+diction results are correct (top right), only the mexp predic-
+tion results are correct (bottom left), and both prediction re-
+sults are incorrect (bottom right).
+consider that LtC can improve the performance of cascade
+inference because its good effects outweighed its negative
+impact.
+Conclusion
+In this paper, we propose Learning to Cascade (LtC), a con-
+ﬁdence calibration method for cascade inference. Existing
+conﬁdence calibration methods implicitly assume that hu-
+man accuracy is 100%. However, neither humans nor deep
+learning models can achieve 100% accuracy for difﬁcult
+tasks such as those targeted by deep learning. Therefore, we
+optimize the conﬁdence score not only for the model but also
+for the entire system, including the decision-maker (human
+or more accurate deep learning model). To improve system
+performance, we introduce a new loss term for conﬁdence
+calibration. LtC simultaneously optimizes this loss term and
+the original loss term. We evaluate LtC in two datasets and
+two system settings. LtC achieves a low computational cost
+in most cases with almost the same level of accuracy as ex-
+isting methods and the expensive model. In addition, in the
+three elements cascade conﬁguration, LtC achieves higher
+accuracy than ResNet152 at 55% lower computational cost.
+It is also shown that existing conﬁdence calibration meth-
+ods fail to improve accuracy and computational cost in some
+cases. Because of its simplicity, LtC can be easily applied to
+state-of-the-art architectures such as MSDNet to improve a
+trade-off, which is also veriﬁed in our experiments.
+In future work, we would like to elucidate the cause of the
+high conﬁdence score in the case of ” mexp Only Correct”
+and improve the loss term. We will also show the effective-
+ness of LtC for other architectures and tasks.
+
+[[page 8]]
+References
+Bansal, G.; Nushi, B.; Kamar, E.; Horvitz, E.; and Weld,
+D. S. 2020. Optimizing AI for Teamwork. arXiv preprint
+arXiv:2004.13102 .
+Chen, J.; Wu, X.; Liang, Y .; Jha, S.; et al. 2020. Robust Out-
+of-distribution Detection in Neural Networks.arXiv preprint
+arXiv:2003.09711 .
+Chinchali, S.; Sharma, A.; Harrison, J.; Elhafsi, A.; Kang,
+D.; Pergament, E.; Cidon, E.; Katti, S.; and Pavone,
+M. 2019. Network Ofﬂoading Policies for Cloud
+Robotics: a Learning-based Approach. arXiv preprint
+arXiv:1902.05703 .
+Chinchali, S. P.; Cidon, E.; Pergament, E.; Chu, T.; and
+Katti, S. 2018. Neural Networks Meet Physical Networks:
+Distributed Inference Between Edge Devices and the Cloud.
+In Proceedings of the 17th ACM Workshop on Hot Topics in
+Networks, 50–56.
+DeVries, T.; and Taylor, G. W. 2018. Learning Conﬁdence
+for Out-of-distribution Detection in Neural Networks. arXiv
+preprint arXiv:1802.04865 .
+Grulich, P. M.; and Nawab, F. 2018. Collaborative Edge
+and Cloud Neural Networks for Real-time Video Processing.
+Proceedings of the VLDB Endowment 11(12): 2046–2049.
+Guo, C.; Pleiss, G.; Sun, Y .; and Weinberger, K. Q. 2017.
+On Calibration of Modern Neural Networks. InProceedings
+of the 34th International Conference on Machine Learning,
+volume 70, 1321–1330.
+He, K.; Zhang, X.; Ren, S.; and Sun, J. 2016. Deep Residual
+Learning for Image Recognition. InProceedings of the IEEE
+Conference on Computer Vision and Pattern Recognition ,
+770–778.
+Howard, A.; Sandler, M.; Chu, G.; Chen, L.; Chen, B.; Tan,
+M.; Wang, W.; Zhu, Y .; Pang, R.; Vasudevan, V .; et al. 2019.
+Searching for Mobilenetv3. In Proceedings of the IEEE In-
+ternational Conference on Computer Vision, 1314–1324.
+Howard, A. G.; Zhu, M.; Chen, B.; Kalenichenko, D.; Wang,
+W.; Weyand, T.; Andreetto, M.; and Adam, H. 2017. Mo-
+bilenets: Efﬁcient Convolutional Neural Networks for Mo-
+bile Vision Applications. arXiv preprint arXiv:1704.04861
+.
+Hsu, Y .; Shen, Y .; Jin, H.; and Kira, Z. 2020. Generalized
+Odin: Detecting Out-of-distribution Image without Learning
+from Out-of-distribution Data. In Proceedings of the IEEE
+Conference on Computer Vision and Pattern Recognition ,
+10951–10960.
+Huang, G.; Chen, D.; Li, T.; Wu, F.; van der Maaten, L.; and
+Weinberger, K. 2018. Multi-Scale Dense Networks for Re-
+source Efﬁcient Image Classiﬁcation. In International Con-
+ference on Learning Representations.
+Kang, D.; Emmons, J.; Abuzaid, F.; Bailis, P.; and Zaharia,
+M. 2017. NoScope: Optimizing Neural Network Queries
+Over Video at Scale. Proceedings of the VLDB Endowment
+10(11): 1586–1597.
+Krizhevsky, A.; Hinton, G.; et al. 2009. Learning Multi-
+ple Layers of Features from Tiny Images. Technical report,
+Citeseer.
+Krizhevsky, A.; Sutskever, I.; and Hinton, G. E. 2012. Im-
+agenet Classiﬁcation with Deep Convolutional Neural Net-
+works. In Advances in Neural Information Processing Sys-
+tems, 1097–1105.
+Kull, M.; Perello Nieto, M.; K ¨angsepp, M.; Silva Filho,
+T.; Song, H.; and Flach, P. 2019. Beyond Temperature
+Scaling: Obtaining Well-calibrated Multi-class Probabilities
+with Dirichlet Calibration. In Advances in Neural Informa-
+tion Processing Systems, 12316–12326.
+Lee, K.; Lee, K.; Lee, H.; and Shin, J. 2018. A Simple Uni-
+ﬁed Framework for Detecting Out-of-distribution Samples
+and Adversarial Attacks. In Advances in Neural Informa-
+tion Processing Systems, 7167–7177.
+LEE, K.; Lee, K.; Lee, H.; and Shin, J. 2018. Train-
+ing Conﬁdence-calibrated Classiﬁers for Detecting Out-of-
+distribution Samples. In International Conference on Learn-
+ing Representations.
+Levinson, J.; Askeland, J.; Becker, J.; Dolson, J.; Held, D.;
+Kammel, S.; Kolter, J. Z.; Langer, D.; Pink, O.; Pratt, V .;
+et al. 2011. Towards Fully Autonomous Driving: Systems
+and Algorithms. In IEEE Intelligent Vehicles Symposium ,
+163–168.
+Li, E.; Zhou, Z.; and Chen, X. 2018. Edge Intelligence: On-
+demand Deep Learning Model Co-inference with Device-
+edge Synergy. In Proceedings of the 2018 Workshop on Mo-
+bile Edge Communications, 31–36.
+Liang, S.; Li, Y .; and Srikant, R. 2018. Enhancing the Relia-
+bility of Out-of-distribution Image Detection in Neural Net-
+works. In International Conference on Learning Represen-
+tations.
+Miotto, R.; Li, L.; Kidd, B. A.; and Dudley, J. T. 2016. Deep
+Patient: An Unsupervised Representation to Predict the Fu-
+ture of Patients from the Electronic Health Records. Scien-
+tiﬁc Reports 6(1): 1–10.
+Panda, P.; Sengupta, A.; and Roy, K. 2016. Conditional
+Deep Learning for Energy-efﬁcient and Enhanced Pattern
+Recognition. In Design, Automation and Test in Europe
+Conference and Exhibition, 475–480.
+Russakovsky, O.; Deng, J.; Su, H.; Krause, J.; Satheesh, S.;
+Ma, S.; Huang, Z.; Karpathy, A.; Khosla, A.; Bernstein, M.;
+et al. 2015. Imagenet Large Scale Visual Recognition Chal-
+lenge. International Journal of Computer Vision 115(3):
+211–252.
+Sandler, M.; Howard, A.; Zhu, M.; Zhmoginov, A.; and
+Chen, L. 2018. Mobilenetv2: Inverted Residuals and Lin-
+ear Bottlenecks. In Proceedings of the IEEE Conference on
+Computer Vision and Pattern Recognition, 4510–4520.
+Shao, J.; and Zhang, J. 2020a. Bottlenet++: An End-to-
+end Approach for Feature Compression in Device-edge Co-
+inference Systems. In IEEE International Conference on
+Communications Workshops, 1–6.
+
+[[page 9]]
+Shao, J.; and Zhang, J. 2020b. Communication-
+Computation Trade-Off in Resource-Constrained Edge In-
+ference. arXiv preprint arXiv:2006.02166 .
+Simonyan, K.; and Zisserman, A. 2015. Very deep convolu-
+tional networks for large-scale image recognition. In Inter-
+national Conference on Learning Representations.
+Teerapittayanon, S.; McDanel, B.; and Kung, H. 2016.
+Branchynet: Fast Inference via Early Exiting from Deep
+Neural Networks. In 23rd International Conference on Pat-
+tern Recognition, 2464–2469.
+Thulasidasan, S.; Chennupati, G.; Bilmes, J. A.; Bhat-
+tacharya, T.; and Michalak, S. 2019. On Mixup Training:
+Improved Calibration and Predictive Uncertainty for Deep
+Neural Networks. In Advances in Neural Information Pro-
+cessing Systems, 13888–13899.
+Viola, P.; and Jones, M. 2001. Rapid Object Detection Using
+a Boosted Cascade of Simple Features. InProceedings of the
+IEEE Conference on Computer Vision and Pattern Recogni-
+tion, volume 1.
+Wan, S.; Wu, T.; Wong, W. H.; and Lee, C. 2018. Confnet:
+Predict with Conﬁdence. In IEEE International Conference
+on Acoustics, Speech and Signal Processing, 2921–2925.
+Wang, X.; Luo, Y .; Crankshaw, D.; Tumanov, A.; Yu, F.; and
+Gonzalez, J. E. 2018. IDK Cascades: Fast Deep Learning by
+Learning not to Overthink. In Conference on Uncertainty in
+Artiﬁcial Intelligence.
+Zhang, Z.; Dalca, A. V .; and Sabuncu, M. R. 2019. Conﬁ-
+dence Calibration for Convolutional Neural Networks Using
+Structured Dropout. arXiv preprint arXiv:1906.09551 .
+Zhou, H.; Gao, B.; and Wu, J. 2017. Adaptive Feed-
+ing: Achieving Fast and Accurate Detections by Adaptively
+Combining Object Detectors. In Proceedings of the IEEE
+International Conference on Computer Vision, 3505–3513.

@@ -1,0 +1,26 @@
+{
+  "id": "C014",
+  "statement": "TempRALM's evaluation design limits assessment of recency bias confound: their query construction ensures the correct answer always corresponds to the most recent tennis match before the query timestamp, so they never test cases where the correct answer is an older valid passage. This prevents disentangling whether temporal augmentation helps by selecting the correct time period versus simply preferring more recent passages within that period.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 5",
+      "quote": "Figure 4: Questions asking about the winner, runner-up, finalists and score asked at different timestamps, where the right answer corresponds to the most recent tennis match that occurred before the query timestamp (denoting passages that refer to future information relative to the time of the event specified in the query), to completely eliminate these passages from being considered while ranking the𝑡𝑜𝑝𝑘",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "TempRALM",
+    "evaluation design",
+    "recency bias confound",
+    "query construction",
+    "most recent passage"
+  ],
+  "recorded_at": "2026-09-30T10:19:21.838559Z"
+}

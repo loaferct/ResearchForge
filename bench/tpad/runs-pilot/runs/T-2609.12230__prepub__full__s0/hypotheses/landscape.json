@@ -1,0 +1,112 @@
+{
+  "field_name": "Knowledge Graph Question Answering Approaches",
+  "categories": [
+    {
+      "name": "Reinforcement Learning Enhancements",
+      "parent": null,
+      "description": "Methods that augment RL frameworks with additional signals such as multi-perspective information, anticipation embeddings, or trajectory sampling.",
+      "paper_ids": [
+        "doi:10.1016/j.eswa.2024.124652",
+        "doi:10.1016/j.ins.2022.11.042",
+        "arxiv:2601.01195"
+      ]
+    },
+    {
+      "name": "Context Subgraph Enrichment with Adaptive Repair",
+      "parent": "Reinforcement Learning Enhancements",
+      "description": "Proposed approach: enriching triple supervision with local context subgraphs from source passages and applying an adaptive repair loop before RL optimization.",
+      "paper_ids": []
+    },
+    {
+      "name": "Embedding-based Relational Chain Integration",
+      "parent": null,
+      "description": "Integrates explicit relational chains from questions and implicit chains from the knowledge graph via embedding modules.",
+      "paper_ids": [
+        "arxiv:2110.12679"
+      ]
+    },
+    {
+      "name": "Language Model + Knowledge Graph Embedding Fusion",
+      "parent": null,
+      "description": "Combines language model representations with knowledge graph embeddings to mitigate missing links and fuse semantic and structural information.",
+      "paper_ids": [
+        "arxiv:2211.05351"
+      ]
+    },
+    {
+      "name": "Question Decomposition to SPARQL",
+      "parent": null,
+      "description": "Parses complex questions into simpler sub-questions, converts them to SPARQL queries, and executes them over the KG.",
+      "paper_ids": [
+        "arxiv:2501.16350"
+      ]
+    }
+  ],
+  "idea_position": "Context Subgraph Enrichment with Adaptive Repair",
+  "dominant_approaches": [
+    "Reinforcement Learning Enhancements",
+    "Embedding-based Relational Chain Integration"
+  ],
+  "common_assumptions": [
+    "Knowledge graph embeddings can effectively capture missing link information.",
+    "Language models can accurately capture the contextual meaning of questions.",
+    "Reinforcement learning frameworks can integrate additional perspective or embedding signals to improve policy learning.",
+    "Generated reasoning trajectories from LLMs capture valid reasoning paths for supervised learning.",
+    "Explicit relational chains from questions and implicit chains from the KG are complementary and can be jointly utilized.",
+    "Source passages contain sufficient triples to construct meaningful local context subgraphs around target triples/paths.",
+    "An adaptive repair loop can reliably detect one-hop prediction failures and generate useful corrective examples.",
+    "Reinforcement learning on lower-hop QA instances transfers to improved performance on higher-hop queries."
+  ],
+  "common_datasets": [
+    "MetaQA (1-hop, 2-hop, 3-hop)",
+    "WebQuestionsSP (WebQSP)",
+    "Complex WebQuestions (CWQ)",
+    "Temporal KGQA benchmarks",
+    "Hetionet knowledge graph",
+    "PeCoQ dataset (Persian complex questions)"
+  ],
+  "common_benchmarks": [
+    "MetaQA",
+    "WebQSP",
+    "CWQ",
+    "TKGQA benchmarks",
+    "Hetionet-based biomedical QA",
+    "PeCoQ"
+  ],
+  "common_metrics": [
+    "Hits@1",
+    "accuracy",
+    "F1-score",
+    "precision",
+    "recall"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Reliance on external large models (e.g., GPT-4) for trajectory sampling or prompt engineering may limit accessibility and reproducibility.",
+      "paper_ids": [
+        "arxiv:2601.01195"
+      ]
+    },
+    {
+      "description": "Limited discussion of limitations, computational cost, or generalizability to other knowledge graphs or languages.",
+      "paper_ids": [
+        "arxiv:2110.12679",
+        "arxiv:2211.05351",
+        "arxiv:2501.16350"
+      ]
+    },
+    {
+      "description": "Dependence on high-quality few-shot datasets or handcrafted templates for effective performance.",
+      "paper_ids": [
+        "arxiv:2601.01195"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Combining context subgraph enrichment with explicit/implicit relational chain integration to leverage both contextual and structural signals.",
+    "Integrating adaptive repair loops with question decomposition approaches to improve SPARQL generation fidelity.",
+    "Applying reinforcement learning transfer across different KG domains (e.g., from biomedical to general KGQA) after context enrichment and repair."
+  ],
+  "contradictions": [],
+  "recorded_at": "2026-09-30T07:40:59.019180Z"
+}

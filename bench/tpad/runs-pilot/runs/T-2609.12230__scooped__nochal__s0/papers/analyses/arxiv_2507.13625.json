@@ -1,0 +1,44 @@
+{
+  "paper_id": "arxiv:2507.13625",
+  "relevance_tier": "high",
+  "problem": "Information retrieval and question answering from safety regulations are essential for automated construction compliance checking but are hindered by linguistic and structural complexity of regulatory text. Many queries are multi-hop, requiring synthesis across interlinked clauses.",
+  "method": "Introduces BifrostRAG, a dual-graph retrieval-augmented generation (RAG) system that models both linguistic relationships and document structure. Supports a hybrid retrieval mechanism combining graph traversal with vector-based semantic search, enabling LLMs to reason over both content and structure of text.",
+  "key_assumptions": [
+    "Modeling both linguistic relationships and document structure improves retrieval for complex regulatory text.",
+    "Hybrid retrieval combining graph traversal and vector-based semantic search is effective for multi-hop questions."
+  ],
+  "main_contribution": "BifrostRAG, a dual-graph RAG system with hybrid retrieval mechanism that achieves 92.8% precision, 85.5% recall, and 87.3% F1 score on a multi-hop question dataset, significantly outperforming vector-only and graph-only RAG baselines.",
+  "datasets": [
+    "Multi-hop question dataset (not further specified)"
+  ],
+  "benchmarks": [
+    "Vector-only RAG baseline",
+    "Graph-only RAG baseline"
+  ],
+  "baselines": [
+    "Vector-only RAG",
+    "Graph-only RAG"
+  ],
+  "metrics": [
+    "Precision",
+    "recall",
+    "F1 score"
+  ],
+  "results": "[\"92.8% precision, 85.5% recall, and 87.3% F1 score on multi-hop question dataset, significantly outperforming baselines.\"]",
+  "limitations": [
+    "Not stated in abstract."
+  ],
+  "future_work": [
+    "Not stated in abstract."
+  ],
+  "code_availability": "[\"Not stated in abstract.\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "This work uses a dual-graph RAG system with hybrid retrieval for multi-hop QA in construction safety. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than dual-graph RAG for specific domain applications.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T06:39:59.449968Z"
+}

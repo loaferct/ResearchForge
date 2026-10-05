@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.1109/bigdata66926.2025.11402141",
+  "relevance_tier": "high",
+  "problem": "Existing state observation methods in reinforcement learning-based multi-hop KGQA encode the multi-hop question as a static vector, overlooking the dynamic evolution of question focus and reasoning focus across timesteps, and overlooking the semantic gap between natural language queries and KG relations, leading to ineffective exploration and semantic drift.",
+  "method": "Introduces Focus-Relation Alignment (FRA) framework providing a dynamic and adaptive state representation that bridges the evolving question focus with candidate KG relations, enabling the agent to capture temporal progression of the query while grounding it in semantically consistent relations, thereby narrowing the semantic gap and reducing spurious exploration.",
+  "key_assumptions": [
+    "A dynamic state representation that aligns question focus with KG relations improves exploration purposefulness and reduces semantic drift.",
+    "Synchronizing the dynamic representation of multi-hop questions with focus-enhanced relation signals yields more effective reasoning trajectories."
+  ],
+  "main_contribution": "FRA framework that achieves notable improvements in reasoning accuracy on multiple benchmarks, outperforming prior methods by 2.55 points Hits@1 on the PQ 2H dataset.",
+  "datasets": [
+    "three widely used datasets (not specified in abstract)"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "prior methods (not specified)"
+  ],
+  "metrics": [
+    "Hits@1"
+  ],
+  "results": "[\"FRA outperforms prior methods by 2.55 points Hits@1 on the PQ 2H dataset.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "FRA focuses on dynamic state representation for RL agents to align question focus with KG relations, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:09:58.668790Z"
+}

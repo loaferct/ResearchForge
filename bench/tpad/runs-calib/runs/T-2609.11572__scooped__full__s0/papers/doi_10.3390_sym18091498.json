@@ -1,0 +1,39 @@
+{
+  "id": "doi:10.3390/sym18091498",
+  "title": "TempFinRAG: Multimodal Temporal Retrieval-Augmented Generation for Point-in-Time Financial Question Answering",
+  "authors": [
+    "Lanju Tao",
+    "Zhengji Li",
+    "Yingrui Ji",
+    "Chih-Ting Liao",
+    "Xi Xiao",
+    "Xin Cao"
+  ],
+  "year": 2026,
+  "published": "2026-09-07",
+  "venue": "Symmetry",
+  "url": "https://doi.org/10.3390/sym18091498",
+  "pdf_url": null,
+  "abstract": "Financial question answering is often treated as document question answering, although financial evidence is both multimodal and time-dependent. Semantically equivalent facts expressed in narrative text, tables, page images, or Extensible Business Reporting Language (XBRL) should support consistent answers, whereas a disclosure may support a query only after becoming public. We formalise this combination as crossmodal evidence symmetry under a causal temporal boundary and introduce TempFinRAG, a multimodal temporal retrieval-augmented generation (RAG) framework for point-in-time financial question answering. Given a question, company, and as-of date, the framework enforces the information boundary defined by U.S. Securities and Exchange Commission (SEC) filing availability; aligns page layout, text, table structure, and XBRL facts; retrieves time-valid evidence; executes auditable financial calculations; and generates a cited answer. A verifier checks temporal validity, claim support, numerical consistency, and the need to abstain. We further introduce TempFinQA, a point-in-time evaluation protocol built from public filings and XBRL facts, and evaluate the framework on complementary evidence-grounded, numerical, conversational, and multi-table benchmarks. On TempFinQA, TempFinRAG improves answer accuracy from 66.7% to 78.9% over hybrid RAG while reducing temporal evidence leakage from 10.8% to 1.7% and hallucination from 17.3% to 7.9%. Reliable financial question answering therefore requires consistent treatment across evidence representations and deliberately asymmetric access across time.",
+  "doi": "10.3390/sym18091498",
+  "arxiv_id": null,
+  "openalex_id": "W7211906679",
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T04:14:50.458500Z",
+  "relevance": 0.375,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal question answering retrieval time-sensitive documents versioned statutes",
+    "point-in-time retrieval amended legislation temporal versioning benchmark"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

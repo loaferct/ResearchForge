@@ -1,0 +1,34 @@
+{
+  "id": "arxiv:2506.07270",
+  "title": "Question Answering under Temporal Conflict: Evaluating and Organizing Evolving Knowledge with LLMs",
+  "authors": [
+    "Atahan Özer",
+    "Çağatay Yıldız"
+  ],
+  "year": 2025,
+  "published": "2025-06-08",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2506.07270",
+  "pdf_url": "https://arxiv.org/pdf/2506.07270v1",
+  "abstract": "Large language models (LLMs) exhibit remarkable capabilities in question answering and reasoning thanks to their extensive parametric memory. However, their knowledge is inherently limited by the scope of their pre-training data, while real-world information evolves continuously. Updating this knowledge typically requires costly and brittle re-training, or in-context learning (ICL), which becomes impractical at scale given the volume and volatility of modern information. Motivated by these limitations, we investigate how LLMs perform when exposed to temporal text corpora, or documents that reflect evolving knowledge over time, such as sports biographies where facts like a player's \"current team\" change year by year. To this end, we introduce two new benchmarks: Temporal Wiki, which captures factual drift across historical Wikipedia snapshots, and Unified Clark, which aggregates timestamped news articles to simulate real-world information accumulation. Our analysis reveals that LLMs often struggle to reconcile conflicting or outdated facts and can be misled when multiple versions of a fact appear in context. To address these issues, we propose a lightweight, agentic framework that incrementally builds a structured, external memory from source documents without requiring re-training. This knowledge organization strategy enables models to retrieve and reason over temporally filtered, relevant information at inference time. Empirically, our method outperforms ICL and RAG baselines across both benchmarks, especially on questions requiring more complex reasoning or integration of conflicting facts.",
+  "doi": null,
+  "arxiv_id": "2506.07270",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T09:42:52.783570Z",
+  "relevance": 0.3,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal relevance retrieval versioned documents"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

@@ -1,0 +1,25 @@
+{
+  "id": "D001",
+  "direction": "Narrow the project to a single token-matched attribution study of context-augmented KG supervision, and drop the adaptive repair loop and the low-hop RL stage as contributions. The original three-component pipeline should be treated as existing work (arxiv:2609.12230) rather than re-implemented; what remains worth doing is the control the published pipeline omits: holding the context-token budget and optimization steps fixed and replacing same-passage supporting triples with unrelated-entity or random triples, plus a serialization-held-fixed and order-shuffled arm. A second, optional branch is external validity on open-answer general-domain benchmarks with gold evidence paths, if passage provenance can be constructed cheaply. Concretely, the next investigation should execute modification M001 first, because it is cheap, decisive, and determines whether the whole line has any interpretable claim left.",
+  "hypothesis": "At a fixed context-token budget and fixed optimization steps, same-passage supporting triples produce a larger multi-hop accuracy gain than random or unrelated-entity triples of equal token count; if they do not, the reported gains from context-augmented supervision are a context-volume or question-distribution effect rather than a passage-coherence effect.",
+  "rationale": "Three lines of evidence force the narrowing. First, the idea is already implemented and validated: arxiv:2609.12230 proposes same-source-chunk context graphs with KG-grounded versus CG-grounded supervision, an adaptive repair loop over detected one-hop failures, and repair-before-RL with 3/4/5-hop evaluation, reporting gains in every setting (C014-C017, U001 resolved). Second, the technical premise itself is no longer contested in the training regime: component (A) alone produces a measurable effect before repair and RL are applied (U010 resolved, U006 weakened), so continuing to test existence would reproduce a published result. Third, that same evidence has a specific, unaddressed weakness: the arms match example counts and hyperparameters but not context tokens, and no distractor-context arm exists (C014, C019, C020), while the only matched-context swap in the literature was inference-time and never trained (C001, C005). Narrowing to that attribution question preserves something genuinely open (G001), whereas keeping the full pipeline would only re-derive arxiv:2609.12230 and would inherit the same confound. The residual deltas are ranked: the token-matched attribution arm is cheap and decisive (M001, gap G001); the selection-rule comparison with a context-dependence probe is moderately novel but riskier (M003, gap G003); the open-answer external-validity replication is valuable but expensive and may become a data-construction project (M002, gap G002); the structured-triples-versus-raw-passage contrast targets a gap the implementing paper explicitly names as future work (M004). The direction deserves investigation next because M001 is the cheapest experiment that can change the interpretation of an already-published positive result, and because a null or positive outcome is informative either way.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": null,
+  "research_question": "At a fixed context-token budget and a fixed number of optimization steps, does replacing same-passage supporting triples with random or unrelated-entity triples of equal size reduce the multi-hop QA gain from fine-tuning a language model on knowledge-graph-derived supervision?",
+  "confidence": "medium",
+  "modification_id": "M001",
+  "paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2609.10237",
+    "arxiv:2202.13296",
+    "arxiv:2101.03737"
+  ],
+  "uncertainty_ids": [
+    "U006",
+    "U010",
+    "U011",
+    "U012",
+    "U014"
+  ],
+  "recorded_at": "2026-09-30T05:28:33.498726Z"
+}

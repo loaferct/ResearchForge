@@ -1,0 +1,36 @@
+{
+  "id": "G003",
+  "gap": "The value of peripheral (non-answer-chain) context triples has been tested only at inference time, where they are nearly inert (+0.003 F1) and inflated context adds accuracy-depressing distractors. No retrieved study tests whether peripheral context triples contribute to the learned representation during training, or whether they are simply noise that also harms training.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.10237",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Holding the number of triples fixed and replacing every triple that is not on the chain with material from an unrelated entity changes answer accuracy by +0.003 F1, while removing the chain costs most of what the graph was worth.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2509.21035",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "introducing distractors that depress accuracy",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.10237",
+    "arxiv:2509.21035",
+    "doi:10.18653/v1/2020.emnlp-main.99",
+    "doi:10.1609/aaai.v32i1.12057"
+  ],
+  "why_unaddressed": "The closest controlled evidence is an inference-time prompt-composition study over gold subgraphs, and the training-time works found supervise paths, embeddings, or executable queries without a peripheral-context arm at matched budget. So the question is untested on the training side.",
+  "research_question": "Do peripheral same-passage context triples improve multi-hop KGQA when they appear in training supervision, or is any observed gain explained by the reasoning chain and/or token budget alone?",
+  "potential_experiment": "Train three arms at matched token budget and identical templates: isolated triples/paths; chain + same-passage peripheral triples; chain + shuffled/unrelated triples of equal length. Evaluate each under identical inference context and report per-hop Hits@1 and one-hop failure rate; the shuffled arm isolates whether any gain is due to relevance versus added tokens.",
+  "confidence": "medium",
+  "verification_required": "Search for training-time ablations of context relevance in graph-augmented fine-tuning (random vs relevant subgraph at matched budget) and for work on distractor robustness in KG-grounded language model training; confirm no such matched-budget training ablation already exists.",
+  "recorded_at": "2026-09-30T05:25:47.751841Z"
+}

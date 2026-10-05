@@ -1,0 +1,41 @@
+{
+  "id": "arxiv:2608.08512",
+  "title": "Time Present and Time Past: Benchmarking Large Language Models on Temporally Evolving Document Understanding",
+  "authors": [
+    "Mahbub E Sobhani",
+    "Md. Faiyaz Abdullah Sayeedi",
+    "Fahmid Hasan Chowdhury",
+    "Md Adnan Arefeen",
+    "Farig Sadeque",
+    "Md. Faizul Bari",
+    "Swakkhar Shatabda"
+  ],
+  "year": 2026,
+  "published": "2026-08-09",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2608.08512",
+  "pdf_url": "https://arxiv.org/pdf/2608.08512v3",
+  "abstract": "Evolving documents, such as laws, tax codes, and software documentation, are amended, replaced, and sometimes reverted over time, so a question has different correct answers at different dates. In contrast to encyclopedic knowledge, where an old fact is simply overwritten, an amendment is itself an official text that states what it replaces and when it takes effect, and the earlier version stays correct for its validity period. The central challenge is therefore version resolution, that is, identifying the version in force on the queried date. Existing temporal QA datasets treat time only as an annotation, so version resolution stays untested. We present TIDE, an expert-verified benchmark of 3,050 QA pairs over 644 official customs instruments issued between 1969 and 2025 by the Government of Bangladesh, covering eight task types over deeply code-mixed documents that are heterogeneous in layout and dated in two calendars. In addition, we evaluate nine recent LLMs under a single protocol across parametric, gold-context, and retrieval access, scored by a three-judge LLM council with a hard date gate separating correct meaning from correct time. The best macro-averaged accuracy is only 68.5%. Resolving a version from an implicit date reaches 59.7%, and detecting that the supplied version does not govern the query reaches only 26.7%. Models are more likely to find correct versions than to reject incorrect ones, and they tend to follow a confident parametric answer over the supplied authoritative text. All code and data are available at https://github.com/icsetepa44/TIDE",
+  "doi": null,
+  "arxiv_id": "2608.08512",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T10:31:11.109559Z",
+  "relevance": 0.4,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal document versioning question answering"
+  ],
+  "code_urls": [
+    "https://github.com/icsetepa44/TIDE"
+  ],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

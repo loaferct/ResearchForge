@@ -1,0 +1,38 @@
+{
+  "id": "doi:10.1109/tip.2016.2624198",
+  "title": "A Bottom-Up Approach for Pancreas Segmentation Using Cascaded Superpixels and (Deep) Image Patch Labeling",
+  "authors": [
+    "Amal A. Farag",
+    "Le Lü",
+    "Holger R. Roth",
+    "Jiamin Liu",
+    "Evrim Bengi Turkbey",
+    "Ronald M. Summers"
+  ],
+  "year": 2016,
+  "published": "2016-11-01",
+  "venue": "IEEE Transactions on Image Processing",
+  "url": "https://doi.org/10.1109/tip.2016.2624198",
+  "pdf_url": null,
+  "abstract": "Robust organ segmentation is a prerequisite for computer-aided diagnosis, quantitative imaging analysis, pathology detection, and surgical assistance. For organs with high anatomical variability (e.g., the pancreas), previous segmentation approaches report low accuracies, compared with well-studied organs, such as the liver or heart. We present an automated bottom-up approach for pancreas segmentation in abdominal computed tomography (CT) scans. The method generates a hierarchical cascade of information propagation by classifying image patches at different resolutions and cascading (segments) superpixels. The system contains four steps: 1) decomposition of CT slice images into a set of disjoint boundary-preserving superpixels; 2) computation of pancreas class probability maps via dense patch labeling; 3) superpixel classification by pooling both intensity and probability features to form empirical statistics in cascaded random forest frameworks; and 4) simple connectivity based post-processing. Dense image patch labeling is conducted using two methods: efficient random forest classification on image histogram, location and texture features; and more expensive (but more accurate) deep convolutional neural network classification, on larger image windows (i.e., with more spatial contexts). Over-segmented 2-D CT slices by the simple linear iterative clustering approach are adopted through model/parameter calibration and labeled at the superpixel level for positive (pancreas) or negative (non-pancreas or background) classes. The proposed method is evaluated on a data set of 80 manually segmented CT volumes, using six-fold cross-validation. Its performance equals or surpasses other state-of-the-art methods (evaluated by \"leave-one-patient-out\"), with a dice coefficient of 70.7% and Jaccard index of 57.9%. In addition, the computational efficiency has improved significantly, requiring a mere 6 ~ 8 min per testing case, versus ≥ 10 h for other methods. The segmentation framework using deep patch labeling confidences is also more numerically stable, as reflected in the smaller performance metric standard deviations. Finally, we implement a multi-atlas label fusion (MALF) approach for pancreas segmentation using the same data set. Under six-fold cross-validation, our bottom-up segmentation method significantly outperforms its MALF counterpart: 70.7±13.0% versus 52.51±20.84% in dice coefficients.",
+  "doi": "10.1109/tip.2016.2624198",
+  "arxiv_id": null,
+  "openalex_id": "W377632744",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 191,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T11:34:12.899571Z",
+  "relevance": 0.3333,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "confidence cascade calibration"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

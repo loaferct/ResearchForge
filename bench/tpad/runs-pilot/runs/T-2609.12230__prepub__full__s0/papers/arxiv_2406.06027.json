@@ -1,0 +1,39 @@
+{
+  "id": "arxiv:2406.06027",
+  "title": "HOLMES: Hyper-Relational Knowledge Graphs for Multi-hop Question Answering using LLMs",
+  "authors": [
+    "Pranoy Panda",
+    "Ankush Agarwal",
+    "Chaitanya Devaguptapu",
+    "Manohar Kaul",
+    "Prathosh Ap"
+  ],
+  "year": 2024,
+  "published": "2024-06-10",
+  "venue": "Annual Meeting of the Association for Computational Linguistics",
+  "url": "https://www.semanticscholar.org/paper/aae6991b9ebdc53523931a0115c8b51bd5e4cc94",
+  "pdf_url": null,
+  "abstract": "Given unstructured text, Large Language Models (LLMs) are adept at answering simple (single-hop) questions. However, as the complexity of the questions increase, the performance of LLMs degrade. We believe this is due to the overhead associated with understanding the complex question followed by filtering and aggregating unstructured information in the raw text. Recent methods try to reduce this burden by integrating structured knowledge triples into the raw text, aiming to provide a structured overview that simplifies information processing. However, this simplistic approach is query-agnostic and the extracted facts are ambiguous as they lack context. To address these drawbacks and to enable LLMs to answer complex (multi-hop) questions with ease, we propose to use a knowledge graph (KG) that is context-aware and is distilled to contain query-relevant information. The use of our compressed distilled KG as input to the LLM results in our method utilizing up to $67\\%$ fewer tokens to represent the query relevant information present in the supporting documents, compared to the state-of-the-art (SoTA) method. Our experiments show consistent improvements over the SoTA across several metrics (EM, F1, BERTScore, and Human Eval) on two popular benchmark datasets (HotpotQA and MuSiQue).",
+  "doi": "10.48550/arxiv.2406.06027",
+  "arxiv_id": "2406.06027",
+  "openalex_id": null,
+  "s2_id": "aae6991b9ebdc53523931a0115c8b51bd5e4cc94",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 42,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T07:29:31.838693Z",
+  "relevance": 0.4286,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering dataset evaluation metric Hits@1 EM F1"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": [
+    "abstract (from semantic_scholar) never mentions 'HOLMES'; it may belong to another work"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "U002",
+  "question": "How should temporal and semantic scores be combined (e.g., weighted sum, product, learned) to optimize retrieval performance for time-specific queries over versioned documents?",
+  "description": "The combination strategy determines whether the temporal component acts as a filter, a modifier, or a learned interaction with semantic similarity. Poor combination may negate benefits of either signal.",
+  "category": "validity",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "COMPARE",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": 0.75,
+  "confidence_basis": "Re3's empirical results showing improved performance with learned gating vs baselines on temporal IR benchmarks.",
+  "rationale": "Recent work (e.g., Re3) learns to balance relevance and recency, suggesting that fixed combination rules may be suboptimal. We need to investigate learned vs. fixed combination methods.",
+  "resolution": "Re3 demonstrates that a learned query-aware gating mechanism can effectively balance semantic and temporal information, but optimal combination strategy for versioned regulatory QA needs investigation.",
+  "paper_ids": [
+    "arxiv:2509.01306"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2509.01306"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T10:13:49.305807Z",
+  "updated_at": "2026-09-30T10:31:13.875220Z"
+}

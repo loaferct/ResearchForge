@@ -1,0 +1,34 @@
+{
+  "id": "arxiv:2209.01559",
+  "title": "Hierarchical Transformer with Spatio-temporal Context Aggregation for Next Point-of-interest Recommendation",
+  "authors": [
+    "Jiayi Xie",
+    "Zhenzhong Chen"
+  ],
+  "year": 2023,
+  "published": "2023-08-04",
+  "venue": "ACM Transactions on Information Systems",
+  "url": "https://doi.org/10.1145/3597930",
+  "pdf_url": "https://dl.acm.org/doi/pdf/10.1145/3597930",
+  "abstract": "Next point-of-interest (POI) recommendation is a critical task in location-based social networks, yet remains challenging due to a high degree of variation and personalization exhibited in user movements. In this work, we explore the latent hierarchical structure composed of multi-granularity short-term structural patterns in user check-in sequences. We propose a Spatio-Temporal context AggRegated Hierarchical Transformer (STAR-HiT) for next POI recommendation, which employs stacked hierarchical encoders to recursively encode the spatio-temporal context and explicitly locate subsequences of different granularities. More specifically, in each encoder, the global attention layer captures the spatio-temporal context of the sequence, while the local attention layer performed within each subsequence enhances subsequence modeling using the local context. The sequence partition layer infers positions and lengths of subsequences from the global context adaptively, such that semantics in subsequences can be well preserved. Finally, the subsequence aggregation layer fuses representations within each subsequence to form the corresponding subsequence representation, thereby generating a new sequence of higher-level granularity. The stacking of hierarchical encoders captures the latent hierarchical structure of the check-in sequence, which is used to predict the next visiting POI. Extensive experiments on three public datasets demonstrate that the proposed model achieves superior performance while providing explanations for recommendations.",
+  "doi": "10.1145/3597930",
+  "arxiv_id": "2209.01559",
+  "openalex_id": "W4385583963",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 41,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T04:17:45.006834Z",
+  "relevance": 0.0,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "recency-aware dense retrieval temporal decay document version timestamp"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

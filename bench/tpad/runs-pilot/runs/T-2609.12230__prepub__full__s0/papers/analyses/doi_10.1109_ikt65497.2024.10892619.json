@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.1109/ikt65497.2024.10892619",
+  "relevance_tier": "high",
+  "problem": "Existing retrieval-augmented generation methods for multi-hop question answering may not effectively leverage knowledge graph structure to enhance generation quality.",
+  "method": "Proposes a knowledge graph based retrieval-augmented generation approach to enhance multi-hop question answering, likely by integrating KG embeddings or graph-based retrieval into the RAG pipeline.",
+  "key_assumptions": [
+    "Incorporating KG-based retrieval improves the relevance and accuracy of generated answers.",
+    "The proposed method effectively combines retrieval and generation for multi-hop QA."
+  ],
+  "main_contribution": "A KG-based retrieval-augmented generation method for enhancing multi-hop question answering.",
+  "datasets": [
+    "not stated in abstract"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"not stated in abstract\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "The paper focuses on KG-based RAG for QA enhancement, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:56:54.115182Z"
+}

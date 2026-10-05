@@ -1,0 +1,138 @@
+{
+  "strongest_for": "The underlying mechanism has convergent support from independent lines of work: restricting reasoning to a relevant subgraph improves multi-hop KBQA over the full KB (arxiv:2202.13296), supplying additional intermediate supervision improves multi-hop training (arxiv:2101.03737), and question-fitted KG triples as context improve reasoning in knowledge-based QA (arxiv:2406.09994); the closest work also reports consistent context-over-KG gains across two diseases with robustness to option shuffling (C004). Critically, no retrieved paper reports the decisive ablation — matched-token/matched-example arms with an untouched held-out test set — so a rigorous decomposition could still produce a valuable (possibly negative) finding.",
+  "strongest_against": "The idea in its stated form is already implemented end-to-end in arxiv:2609.12230 — same-passage context triples attached to each primary triple, KG- vs CG-grounded SFT of a 14B model, LLM-judged adaptive one-hop repair, lower-hop RL, and 3-5-hop evaluation (C002, C003, C004) — so executing it unchanged is a replication, and its reported gains are not yet cleanly established because repair effort is allocated unequally across error categories and the repair loop edits the validation set it is evaluated on (C006), while context augmentation is confounded with more tokens per instance (C007) and adjacent work indicates that excess context can hurt (C005).",
+  "most_important_unresolved_question": "Does passage-local context specifically improve deeper-hop (3-5 hop) KGQA at matched supervision volume, once the repair loop is prevented from editing the evaluation set — and if the effect survives those controls, how much of it is attributable to context versus repair versus lower-hop RL?",
+  "most_dangerous_confounder": "Supervision volume rather than context content: CG-grounded instances carry more tokens (supporting triples) than KG-grounded instances, and in the closest work repair effort is also allocated unequally across error categories (different numbers of generated repair items per failure type, C006), so a CG-over-KG or repaired-over-unrepaired gain can be produced by extra training signal and targeted example allocation without any contribution from passage-local context or genuine knowledge repair. The closest work reports size-matching the two disease KGs (C007) but no matched-token or matched-example control between the supervision regimes.",
+  "closest_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2202.13296",
+    "arxiv:2406.09994",
+    "arxiv:2101.03737"
+  ],
+  "closest_work_explanation": "arxiv:2609.12230 ('Repair Before Reinforce', 2026) is not merely adjacent: its contribution list and Section 3.3 implement the idea's exact mechanism — attaching same-source-chunk supporting triples to each primary KG triple with SapBERT similarity thresholding, KG-grounded vs CG-grounded SFT of Qwen3-14B, an LLM-judged history-aware adaptive repair stage for unresolved one-hop failures with quarantine and validation refresh, and lower-hop RL evaluated on 3-5-hop items (C002, C003, C004; method overlap 1.0, evaluation overlap 0.9). arxiv:2202.13296 and arxiv:2406.09994 are the closest on the context-quantity question (subgraph size noise; variable vs fixed triples), and arxiv:2101.03737 is the closest alternative answer to the same missing-multi-hop-supervision problem.",
+  "potential_contribution": "If re-scoped, the defensible contribution is a rigorous, pre-registered decomposition rather than the mechanism: (i) matched-token and matched-example arms that isolate passage localization from supervision volume; (ii) an untouched held-out test set that the repair loop can never edit, separating repair from evaluation-set selection; (iii) a context-size sweep testing the inverted-U suggested by arxiv:2406.09994 and arxiv:2202.13296; (iv) seed-level variance for the RL-transfer claim; and (v) a head-to-head comparison of context-triple supervision against intermediate-step supervision (arxiv:2101.03737) on a text-grounded corpus other than the two disease KGs. This is a methodological/negative-result contribution and would still be valuable if the effect shrinks under controls.",
+  "overlap_summary": "Problem overlap 1.0, method overlap 1.0, evaluation overlap 0.9 with arxiv:2609.12230: the same context graph constructed from the same source text chunk, the same two supervision regimes, the same adaptive one-hop repair loop, the same lower-hop RL stage, and the same 3-5-hop transfer evaluation (C002, C003, C004). The broader field also contains close partial overlaps: subgraph-retrieval KBQA with explicit context-size/noise trade-offs (arxiv:2202.13296, overlap ~0.7/0.55/0.35) and dynamic KG-triple context in KBVQA (arxiv:2406.09994, ~0.45/0.5/0.2).",
+  "distinction_summary": "The only distinctions that survive are evaluation-protocol and scope distinctions, not mechanism: (i) matched-token/matched-example arms separating passage locality from supervision volume (absent from arxiv:2609.12230); (ii) an untouched held-out evaluation set that the repair loop never edits (the closest work removes invalid triples and regenerates validation questions, C006); (iii) a context-size sweep testing whether excess context distracts, as suggested by arxiv:2406.09994 and arxiv:2202.13296 (C005); (iv) seed-level variance and external validity beyond two disease-specific synthetic MCQ sets; (v) head-to-head comparison against intermediate-step supervision (arxiv:2101.03737).",
+  "novelty": [
+    {
+      "question": "Has essentially the same idea already been proposed?",
+      "finding": "Yes. arxiv:2609.12230 proposes the same context-augmented KG supervision framework (supporting triples from the same source text chunk attached to each primary triple), the same KG-grounded vs CG-grounded supervision settings, the same LLM-judged adaptive repair of unresolved one-hop failures, and lower-hop RL evaluated on 3-5-hop tasks, trained on Qwen3-14B. Every component of the stated idea is present in a single retrieved paper.",
+      "severity": "high",
+      "claim_ids": [
+        "C002",
+        "C003",
+        "C004"
+      ],
+      "paper_ids": [
+        "arxiv:2609.12230"
+      ]
+    },
+    {
+      "question": "Is the difference only implementation-level?",
+      "finding": "Yes, the remaining difference is implementation- and protocol-level: matched-token/matched-example controls, an independent held-out evaluation set, seed-level significance, a context-size sweep, and generalization beyond two disease-specific KGs. These change how convincingly the claim is established, not what mechanism is proposed.",
+      "severity": "high",
+      "claim_ids": [
+        "C004",
+        "C007"
+      ],
+      "paper_ids": [
+        "arxiv:2609.12230"
+      ]
+    }
+  ],
+  "technical_validity": [
+    {
+      "question": "Could the repair loop's reported gains be an evaluation-set-cleaning artifact?",
+      "finding": "The adaptive repair stage removes invalid triples from the validation set and regenerates validation questions for unlearned triples, and the paper's headline '100% accuracy on the cleaned retained one-hop validation sets' is measured on exactly that edited set; additionally, repair strength is deliberately unequal across error categories. Post-repair accuracy therefore conflates knowledge repair with evaluation-set selection and uneven targeted-example allocation.",
+      "severity": "high",
+      "claim_ids": [
+        "C006"
+      ],
+      "paper_ids": [
+        "arxiv:2609.12230"
+      ]
+    },
+    {
+      "question": "Is the context effect confounded with supervision volume?",
+      "finding": "Attaching supporting triples lengthens CG-grounded instances relative to KG-grounded ones; the closest work reports size-matching KGs across diseases but no matched-token/matched-example control between the two supervision regimes, and adjacent results show larger subgraphs add noise while fixed larger triple counts underperform question-fitted ones. Context content is therefore not separated from context volume.",
+      "severity": "high",
+      "claim_ids": [
+        "C005",
+        "C007"
+      ],
+      "paper_ids": [
+        "arxiv:2609.12230",
+        "arxiv:2202.13296",
+        "arxiv:2406.09994"
+      ]
+    },
+    {
+      "question": "Is the pipeline reproducible from available artifacts?",
+      "finding": "No code or data repository was found for arxiv:2609.12230 or for GraphMERT, whereas the simpler retrieval and intermediate-supervision baselines do release code (arxiv:2202.13296, arxiv:2101.03737); reproducing the exact pipeline therefore requires re-implementation, with attendant risk of divergence from the original setup.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C008"
+      ],
+      "paper_ids": [
+        "arxiv:2609.12230",
+        "arxiv:2202.13296",
+        "arxiv:2101.03737"
+      ]
+    }
+  ],
+  "experimental_validity": [
+    {
+      "question": "Are baselines strong and are training budgets matched across arms?",
+      "finding": "The primary baseline (KG-grounded SFT with the same backbone) is appropriate and internally consistent, but no external baselines (subgraph-retrieval or intermediate-supervision methods such as arxiv:2202.13296 and arxiv:2101.03737) are compared, standard benchmarks are not used, and the training budgets of the two supervision regimes are not reported as matched — so the comparison is internally suggestive but not externally anchored, and budget matching is an unchecked assumption (C008).",
+      "severity": "high",
+      "claim_ids": [
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "paper_ids": [
+        "arxiv:2609.12230",
+        "arxiv:2202.13296",
+        "arxiv:2101.03737"
+      ]
+    },
+    {
+      "question": "Does the evaluation support external validity?",
+      "finding": "Evaluation uses only two disease-specific KG/CG datasets with synthetically generated multiple-choice items; option-shuffling robustness (average change under one percentage point) is a useful positive control but does not establish generalization to established benchmarks or to naturally occurring questions.",
+      "severity": "high",
+      "claim_ids": [
+        "C006",
+        "C008"
+      ],
+      "paper_ids": [
+        "arxiv:2609.12230"
+      ]
+    },
+    {
+      "question": "Can the mechanism even be applied to standard benchmarks to test generalization?",
+      "finding": "The mechanism requires triples traceable to a source passage; standard WebQSP/CWQ/MetaQA KGs do not ship passage provenance, so the natural generalization test may be infeasible without substituting a text-grounded corpus, which changes what is being compared (U010).",
+      "severity": "moderate",
+      "claim_ids": [],
+      "paper_ids": [
+        "arxiv:2609.12230",
+        "arxiv:2202.13296"
+      ]
+    }
+  ],
+  "practicality": [
+    {
+      "question": "Is the proposal feasible to execute?",
+      "finding": "The full pipeline (KG/CG construction with passage provenance, 1-5-hop QA generation, 14B SFT, multiple LLM-judged repair rounds with continual fine-tuning, and RL) is multi-stage and compute-heavy, and no code or data was found for the closest work or GraphMERT (U004). A reduced-scope variant — smaller open model, public text-grounded corpus, a single repair round, matched-token arms, and an untouched test split — is feasible and sufficient to test the decisive controls, though it would not reproduce the 14B setting.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C008"
+      ],
+      "paper_ids": [
+        "arxiv:2609.12230"
+      ]
+    }
+  ],
+  "overall_status": "substantial_overlap",
+  "status_rationale": "The decisive fact is that arxiv:2609.12230 already implements and evaluates the idea's exact mechanism, including its central comparative claim, so as written the idea is a replication (novelty: high-severity overlap). Technical validity is additionally weakened by two unresolved artifacts in the closest work — unequal repair-example allocation and validation-set editing by the same loop (C006), and the absence of a matched-token control between supervision regimes (C007) — while adjacent evidence that excess context distracts (C005) undermines the monotonic-context assumption behind H1/H4. The idea is therefore not weak or flawed in principle, but it is not novel as stated: it becomes defensible only by re-scoping to a controlled decomposition whose outcome could be null.",
+  "recorded_at": "2026-09-30T05:13:58.937098Z"
+}

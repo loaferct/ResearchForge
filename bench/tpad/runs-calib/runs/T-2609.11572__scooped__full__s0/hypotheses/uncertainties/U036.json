@@ -1,0 +1,33 @@
+{
+  "id": "U036",
+  "question": "Are web-QA and exam-style legal question mixes valid proxies for the prevalence of date-constrained questions in real legal information-seeking traffic?",
+  "description": "The prevalence reweighting depends on proxy sources for the mix of questions legal users actually ask, but the available proxies are web QA (situated questions over Wikipedia) and legal exam-style or MCQA sets, neither of which matches information-seeking legal practice. If the proxies are badly miscalibrated in either direction, the weighted deployment figure inherits that error, and the sensitivity curve would be built on an unrepresentative anchor.",
+  "category": "validity",
+  "importance": "medium",
+  "status": "partially_resolved",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "COMPARE",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": 0.6,
+  "confidence_basis": "Verified statements show temporal intent is heterogeneous and that anachronistic citation occurs in deployed legal RAG, but no retrieved source reports the prevalence needed to test the proxies, so the conclusion is that they are unvalidated rather than that they are wrong.",
+  "rationale": "The deployment-weighted estimate and the go/no-go judgement on practical significance both rest on this proxy, and no retrieved work validates such a transfer.",
+  "resolution": "Partially resolved in the negative: no retrieved source validates web-QA or exam-style sets as proxies for real legal question traffic, and the literature implies no single constant is appropriate because temporal orientation varies across past, future and present queries and must be inferred per query. Curated exam-style and MCQA sets supply authority with the question, so they cannot measure whether a questioner would have asked for a dated state; web-QA situated questions conflate temporal with geographical dependence. Evidence that legal RAG systems cite documents anachronistically confirms that date-sensitive failure occurs in practice but gives no rate. Consequence adopted for the design: prevalence remains a swept, labelled assumption rather than a validated constant, stratum-separated rates remain the primary reported output, and any headline deployment figure must be calibrated against a real information-seeking source (plan E008). The benchmark's own contribution is unaffected, since it measures failure rates conditional on query type rather than query mix.",
+  "paper_ids": [
+    "arxiv:2109.06157",
+    "arxiv:2608.21409",
+    "arxiv:2505.20243",
+    "arxiv:2606.09724"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T04:42:34.308644Z",
+  "updated_at": "2026-09-30T04:43:23.922640Z"
+}

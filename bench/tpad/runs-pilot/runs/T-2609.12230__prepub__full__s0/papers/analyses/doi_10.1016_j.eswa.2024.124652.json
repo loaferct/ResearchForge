@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.1016/j.eswa.2024.124652",
+  "relevance_tier": "high",
+  "problem": "Multi-hop knowledge graph question answering requires effective reasoning over relational paths; existing reinforcement learning methods may not leverage diverse perspectives (e.g., different relation paths, entity contexts) to improve policy learning.",
+  "method": "Incorporates multi-perspective information (e.g., multiple relation paths or entity views) into the reinforcement learning framework to enrich the state representation and improve the policy for multi-hop KGQA.",
+  "key_assumptions": [
+    "The multi-perspective information provides complementary signals that reduce uncertainty in path selection.",
+    "The reinforcement learning framework can effectively integrate additional perspective features."
+  ],
+  "main_contribution": "A reinforcement learning approach that integrates multi-perspective information to enhance reasoning over knowledge graphs for multi-hop question answering.",
+  "datasets": [
+    "not stated in abstract"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"not stated in abstract\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.6,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "The paper focuses on multi-perspective information in RL, while our idea emphasizes local context subgraph enrichment from source passages and an adaptive repair loop before RL optimization.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:35:40.808007Z"
+}

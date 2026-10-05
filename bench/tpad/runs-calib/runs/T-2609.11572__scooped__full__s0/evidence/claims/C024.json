@@ -1,0 +1,43 @@
+{
+  "id": "C024",
+  "statement": "Mechanism comparison: the idea as originally stated is largely covered by existing work. 'Semantic score plus temporal term in a hybrid ranking' is the published three-signal BM25+dense+exponential-decay framework; 'learnable temporal scoring with explicit validity checking' is Chronofy; 'hard as-of/point-in-time gating with a temporal-evidence-leakage metric' is TempFinRAG; and 'temporal validity in a legal benchmark' is LEGAL-LINK-EU. The differences that remain are packaging and measurement, not mechanism: post-hoc application so the base retriever is untouched (Chronofy instead modifies representation and retrieval layers), a hard valid-time gate rather than learnable decay, clause-version identity as the gold label rather than MCQA options, and a cross-retriever interaction test that no reviewed work runs. Treating the temporal term as the contribution would therefore be an implementation-level difference.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.2139/ssrn.7174868",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "We propose a three-signal hybrid framework integrating BM25 lexical matching, dense semantic embeddings, and exponential temporal decay, which achieves 99.8% temporal accuracy and 50.8% entity precision across all three languages",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "temporal evidence leakage",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.1109/iri69576.2026.00090",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "Layer 2 integrates learnable exponential decay functions into graph-based retrieval",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "overlap",
+    "novelty",
+    "mechanism comparison",
+    "substantial overlap"
+  ],
+  "recorded_at": "2026-09-30T04:38:02.992620Z"
+}

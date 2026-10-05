@@ -1,0 +1,29 @@
+{
+  "id": "C018",
+  "statement": "Learned temporal weighting functions (e.g., via temporal preference optimization or adaptive decay surfaces) are more likely to effectively shift retrieval behavior toward temporal correctness without being overwhelmed by semantic signals compared to fixed exponential decay, because they can learn the appropriate balance from data.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2606.17664",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "We propose TPOUR (Temporal Preference Optimization for Unsupervised Retriever), which uses our novel training method Temporal Retrieval Preference Optimization (TRPO). TRPO reinterprets preference learning in the temporal dimension, guiding the retriever to favor temporally aligned documents.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2604.26970",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "We propose a hierarchical framework that replaces uniform decay with a continuous decay surface parameterized by two orthogonal signals: velocity (how frequently a concept is observed) and volatility (how much the value changes between observations, measured via embedding distance).",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [],
+  "recorded_at": "2026-09-30T10:57:51.240561Z"
+}

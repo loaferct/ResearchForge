@@ -1,0 +1,47 @@
+{
+  "paper_id": "arxiv:2608.13588",
+  "relevance_tier": "high",
+  "problem": "Multi-hop question answering requires complex reasoning across multiple evidence segments, which often overwhelms retrieval-augmented generation systems with lengthy and noisy contexts, thereby undermining both efficiency and accuracy.",
+  "method": "IterCOMP: a unified, training-free prompt compression framework that incorporates multi-hop reasoning within an iterative compression loop. It decomposes documents into evidence segments, evaluates question answerability, and generates targeted follow-up questions to iteratively integrate essential evidence, producing a compact, reasoning-oriented prompt.",
+  "key_assumptions": [
+    "The underlying LLM can accurately judge whether provided evidence is sufficient to answer a question and identify missing information.",
+    "Iterative compression loop can retain essential evidence while discarding irrelevant or noisy content."
+  ],
+  "main_contribution": "IterCOMP achieves substantial improvements in Exact Match and F1 scores while reducing token budget, outperforming existing prompt compression baselines and demonstrating robustness as reasoning complexity increases.",
+  "datasets": [
+    "MuSiQue",
+    "2WikiMultiHopQA",
+    "HotpotQA"
+  ],
+  "benchmarks": [
+    "MuSiQue",
+    "2WikiMultiHopQA",
+    "HotpotQA"
+  ],
+  "baselines": [
+    "Raw Documents (no compression), Oracle (gold supporting documents only), Selective-Context, RECOMP (extractive), MLingua, LLMLingua-2, LongLLMLingua, R2C"
+  ],
+  "metrics": [
+    "Exact Match (EM)",
+    "F1 score",
+    "Compression ratio (Ratio)"
+  ],
+  "results": "On MuSiQue: EM increased from 9.69 to 16.67, F1 from 19.92 to 27.36, compression ratio 0.14. On 2WikiMultiHopQA: EM from 24.06 to 27.39, F1 from 36.75 to 39.69, ratio 0.37. On HotpotQA: EM from 31.60 to 37.65, F1 from 43.63 to 51.78, ratio 0.19.",
+  "limitations": [
+    "Effectiveness depends on the reasoning capability of the underlying LLM for answerability judgment and missing information detection, introducing risk of error propagation.",
+    "Existing abstractive compression methods (e.g., RECOMP, CompAct) were excluded from main comparison due to inconsistent length-control mechanisms."
+  ],
+  "future_work": [
+    "Validating generalization to diverse reasoning types and non-Wikipedia domains."
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "IterCOMP focuses on prompt compression for retrieval-augmented generation by iteratively integrating essential evidence via follow-up questions, while the idea enriches training triples with local context subgraphs from the same source passage and uses an adaptive repair loop for one-hop failures. Both aim to improve reasoning efficiency and accuracy, but IterCOMP operates at inference time via prompt compression, whereas the idea operates at training time via data enrichment and failure-driven example generation.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T08:16:32.916493Z"
+}

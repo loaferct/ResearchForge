@@ -1,0 +1,46 @@
+{
+  "paper_id": "doi:10.18653/v1/2020.emnlp-main.99",
+  "relevance_tier": "medium",
+  "problem": "Question answering augmented with external knowledge (e.g., knowledge graphs) either struggles to model multi-hop relations efficiently or lacks transparency into the model's prediction rationale.",
+  "method": "A multi-hop graph relation network (MHGRN) plugged into a pretrained language model that performs multi-hop, multi-relational reasoning over subgraphs extracted from an external knowledge graph, unifying path-based reasoning and graph neural networks for interpretability and scalability.",
+  "key_assumptions": [
+    "Multi-hop reasoning benefits from jointly reasoning over a text encoder and a KG subgraph.",
+    "Subgraphs extracted from an external KG are sufficient relational context.",
+    "Unifying path-based reasoning and GNNs yields better interpretability and scalability than either alone."
+  ],
+  "main_contribution": "GreaseLM/MHGRN equips pretrained language models with a multi-hop graph relation network that performs multi-hop, multi-relational reasoning over subgraphs extracted from external knowledge graphs, unifying path-based reasoning and GNNs for better interpretability and scalability.",
+  "datasets": [
+    "CommonsenseQA",
+    "OpenbookQA"
+  ],
+  "benchmarks": [
+    "CommonsenseQA",
+    "OpenbookQA"
+  ],
+  "baselines": [
+    "not stated in abstract (compared to existing knowledge-augmented QA models)"
+  ],
+  "metrics": [
+    "accuracy",
+    "scalability"
+  ],
+  "results": "Empirically effective and scalable on CommonsenseQA and OpenbookQA with interpretable behaviors shown in case studies; exact numbers not stated in abstract.",
+  "limitations": [
+    "Requires an external KG and subgraph extraction at inference.",
+    "Multiple-choice commonsense QA rather than open multi-hop KGQA; hop-depth generalization not studied.",
+    "Model-specific architecture, not a general LLM fine-tuning recipe."
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "Code for experiments released (stated in abstract).",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "GreaseLM conditions a language model on an extracted subgraph as an architectural/input module and is trained on downstream QA labels; it does not compare triple-only vs context-enriched supervision, does not use same-source-passage context triples, has no repair loop, and does not test hop-depth transfer. It is a strong 'context at inference' comparison target.",
+    "basis": "Problem overlap moderate-high: both add KG subgraph structure to a language model for multi-hop reasoning. Method overlap moderate: GreaseLM uses a graph relation module over subgraphs, whereas the idea changes the supervision examples. Evaluation overlap low-moderate: CommonsenseQA/OpenbookQA (multiple choice with an external KG) differ from MetaQA/WebQSP/CWQ multi-hop KGQA."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:10:57.267715Z"
+}

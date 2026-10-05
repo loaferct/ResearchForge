@@ -1,0 +1,41 @@
+{
+  "id": "U007",
+  "question": "Is the three-component pipeline (context-enriched supervision + adaptive repair + lower-hop RL) too confounded to support a clean claim, such that the investigation should scope down to a single testable component?",
+  "description": "Each component is a separate intervention with its own failure modes; running all three jointly makes it impossible to attribute gains and multiplies the chance of a null result. The likely refinement is to first establish the context-enrichment effect alone under matched controls, then add repair, then RL.",
+  "category": "direction",
+  "importance": "medium",
+  "status": "resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "REFINE",
+    "CHALLENGE",
+    "PLAN_EXPERIMENT",
+    "COMPARE"
+  ],
+  "confidence": 0.7,
+  "confidence_basis": "Grounded in explicit evidence that the auxiliary components are separately precedented and in two recorded assumptions that the pipeline depends on; the judgement that the bundle cannot support a clean claim is an inference about experimental design rather than a measured result.",
+  "rationale": "Scoping decisions at this point determine whether the contribution is a clean, attributable result or an uninterpretable bundle.",
+  "resolution": "Resolved in favour of scoping down. The evidence shows the pipeline cannot support a single clean claim: the repair loop depends on the unevidenced locality assumption that one-hop failures localize bad base facts (C010), the three stages are assumed independently ablatable without evidence (C011), and both auxiliary components are separately precedented in prior work — intermediate supervision (NSM) and RL for multi-hop KG reasoning (KG-Hopper) — so the bundled contribution adds attribution risk without adding novelty (C012). Meanwhile the context-relevance question is separately testable and has a clean negative-result path (C014, C015, C019). Enacted by direction D001 and the revised M001: a gated, staged protocol with a single primary hypothesis (Stage 1: does context relevance beat an equal-length irrelevant control under matched budgets?), a conditional repair hypothesis (Stage 2, only if one-hop failures are shown to localize base-fact errors), and a deferred RL hypothesis (Stage 3, only if supervised lower-hop training leaves a transfer gap).",
+  "paper_ids": [
+    "arxiv:2101.03737",
+    "arxiv:2603.21440",
+    "arxiv:2506.00708",
+    "doi:10.1109/ickg66886.2025.00020"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C010",
+    "C011",
+    "C012",
+    "C014",
+    "C015",
+    "C019"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "PLAN",
+  "created_at": "2026-09-30T05:10:43.295666Z",
+  "updated_at": "2026-09-30T05:31:13.615009Z"
+}

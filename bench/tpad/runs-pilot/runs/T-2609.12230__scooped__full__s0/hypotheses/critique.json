@@ -1,0 +1,22 @@
+{
+  "strongest_for": "The idea addresses a key limitation: current LM training uses isolated triples, depriving models of contextual clues that support multi-hop inference. Enriching triples with local context subgraphs provides richer supervision, and UniKGQA shows that unifying retrieval and reasoning improves performance, suggesting contextual enrichment can help.",
+  "strongest_against": "The main technical risk is that context enrichment may introduce noise from imperfect triple extraction, leading to overfitting or incorrect facts. Moreover, the closely related work arXiv:2609.12230 already proposes essentially the same idea (context‑augmented training, adaptive repair, RL transfer), indicating limited novelty.",
+  "most_important_unresolved_question": "Does fine‑tuning on context‑enriched triple subgraphs yield a statistically significant improvement in multi‑hop QA EM/F1 over training on isolated triples when controlling for triple extraction noise and compared to the recently proposed context‑augmented framework?",
+  "most_dangerous_confounder": "Performance heavily depends on the quality of triple extraction from source passages; if extraction introduces spurious triples, the enriched context subgraph may inject incorrect facts, confounding any observed gains.",
+  "closest_paper_ids": [
+    "arxiv:2212.00959",
+    "arxiv:2607.23278",
+    "arxiv:2609.12230"
+  ],
+  "closest_work_explanation": "UniKGQA (arxiv:2212.00959) unifies retrieval and reasoning via shared architecture and pre‑training, showing that integrating retrieval and reasoning helps; Co‑E (arxiv:2607.23278) synchronizes graph and text memory at inference, highlighting the value of context but also its limits in correcting persistent errors; arXiv:2609.12230 directly matches the proposed idea by enriching training triples with local context subgraphs, adding an LLM‑judged adaptive repair pipeline, and applying RL from lower‑hop to higher‑hop QA, demonstrating that the core components have already been explored.",
+  "potential_contribution": "A training framework that enriches each target triple with a local context subgraph from the same passage, incorporates an adaptive repair loop to detect and correct one‑hop failures, and applies reinforcement learning transfer from lower‑hop to higher‑hop QA, aiming to improve multi‑hop reasoning accuracy and generalization.",
+  "overlap_summary": "Overlaps with UniKGQA in seeking better integration of retrieval and reasoning, with Co‑E in leveraging graph‑text interactions, and with arXiv:2609.12230 in the specific combination of context‑augmented training, adaptive repair, and RL transfer.",
+  "distinction_summary": "Unlike UniKGQA (which unifies via shared architecture/pre‑training) and Co‑E (which synchronizes memory at inference), and unlike arXiv:2609.12230 (which evaluates on disease‑specific KGs), the proposed idea aims to be general across open‑domain KGs and may differ in implementation details of the adaptive repair loop and RL scheme, but the core is substantially overlapping.",
+  "novelty": [],
+  "technical_validity": [],
+  "experimental_validity": [],
+  "practicality": [],
+  "overall_status": "substantial_overlap",
+  "status_rationale": "The retrieved work arXiv:2609.12230 already demonstrates a context‑augmented training framework with adaptive repair and RL transfer, showing positive results on disease‑specific KGs. This indicates the core idea is not novel, though further validation on open‑domain benchmarks could still be useful.",
+  "recorded_at": "2026-09-30T07:08:49.763910Z"
+}

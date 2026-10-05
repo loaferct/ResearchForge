@@ -1,0 +1,26 @@
+{
+  "id": "D005",
+  "direction": "Keep the D004 scope (retrieval-time valid-time enforcement over a clause-level, recency-decoupled benchmark) and make the retrieval-agnostic claim conditional and testable: the primary analysis is the retriever x signal interaction with per-retriever effects, a pre-registered consistency criterion for calling the layer agnostic, and a representation-level retriever-adapted baseline. If the effect is confined to some retrievers, drop the agnostic framing and report the conditionality rather than pooling it away.",
+  "hypothesis": "Applying a valid-time (as-of) gate post hoc reduces clause-level point-in-time retrieval failures across sparse, dense and hybrid base retrievers, with the same sign and a non-trivial effect size in each retriever family, and comparably to or better than a retriever adapted to temporal context; if the effect is retriever-dependent, the retrieval-agnostic framing does not hold.",
+  "rationale": "The closest temporal systems hard-code time into one pipeline and prior temporal QA fine-tunes separate retriever and reader models per temporal context, so both the 'agnostic' framing and the post-hoc mechanism are untested against alternatives. The legal-retrieval review's remark that solutions are stronger at representation than at retrieval-time enforcement makes the comparison pointed rather than cosmetic. No retrieved study varies the base retriever while holding the temporal mechanism fixed, which is exactly the comparison that decides whether the contribution is architectural or merely a repackaging of an existing hybrid. This deserves investigation next because it is the difference between a substantive agnostic claim and a benchmark-only paper, and the retriever x signal interaction is cheap to estimate once the query set exists.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": "D004",
+  "research_question": "Does a post-hoc valid-time (as-of) gate improve clause-level point-in-time retrieval consistently across sparse, dense and hybrid base retrievers - showing the same sign and non-trivial effect size in each - and does it match or exceed a retriever adapted to temporal context, or is its benefit retriever-dependent?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.2139/ssrn.7174868",
+    "arxiv:2109.06157",
+    "doi:10.3390/sym18091498",
+    "arxiv:2606.09724",
+    "doi:10.2139/ssrn.7087840"
+  ],
+  "uncertainty_ids": [
+    "U005",
+    "U008",
+    "U017",
+    "U013"
+  ],
+  "recorded_at": "2026-09-30T04:37:05.705725Z"
+}

@@ -1,0 +1,30 @@
+{
+  "id": "M002",
+  "title": "Relevance-selected context triples with an explicit precision/recall budget",
+  "description": "Define an explicit relevance-selection operator for co-passage triples instead of taking all of them. Candidate operators: (i) graph-distance/connectivity to the target path or question entities; (ii) relation-type matching against the target relation; (iii) a learned scorer trained on whether a context triple helps answer the question; (iv) passage-position proximity. Treat the number of retained triples as an explicit precision/recall budget and report an ablation curve over context size, since the IKG study shows scope trades recall against precision.",
+  "why_differs": "Differs from the closest work in exactly one defensible way: prior relevance studies operate on prompts at inference (IKG/KGSweetSpot) or choose compact subgraphs by design (DrKGC), whereas this applies selection to the per-example training supervision and reports the precision/recall trade-off as a training-time ablation.",
+  "technical_mechanism": "For each target triple/path, score each co-passage triple with the chosen operator, rank, and keep the top-k under a token budget. Ablate k and the operator. Use the same serialization template across arms so the only difference is which triples appear.",
+  "expected_benefit": "Directly addresses the demonstrated failure mode that imprecise KG context can degrade performance below the no-context baseline, and turns the underexplored 'which co-passage triples' question into a measurable design axis.",
+  "potential_novelty": "Hedged and possibly low: relevance filtering of KG context is studied at inference time by the IKG/KGSweetSpot work, so novelty depends entirely on applying selection to the training supervision signal and on the matched-budget curve. Should be positioned as a component of modification 1, not as a standalone contribution, unless the training-time selection dynamics differ demonstrably.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Simple heuristics (i), (ii), (iv) are easy, but a learned relevance scorer needs labels for 'helpful context triple', which must be constructed or bootstrapped.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Requires an ablation curve over context size and selection operators (several training runs), plus a relevance annotation proxy; manageable but not a single-run study.",
+  "main_risk": "The selection operator may itself be the main effect, turning the contribution into 'better retrieval' — which overlaps heavily with existing subgraph-retrieval work (GNN-RAG, DrKGC, ToG-3) and with the IKG relevance-filtering study. The overlap must be argued by stage (training supervision vs. inference retrieval) and by the budget-matched ablation.",
+  "required_baselines": [
+    "All-context (no selection) arm",
+    "Relevance-selected arm at matched token count",
+    "Random/irrelevant context at matched token count"
+  ],
+  "related_paper_ids": [
+    "doi:10.1109/ickg66886.2025.00020",
+    "arxiv:2506.00708",
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "arxiv:2509.21710"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:28:13.490718Z"
+}

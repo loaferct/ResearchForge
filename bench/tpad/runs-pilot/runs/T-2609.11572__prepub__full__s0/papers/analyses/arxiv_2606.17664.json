@@ -1,0 +1,52 @@
+{
+  "paper_id": "arxiv:2606.17664",
+  "relevance_tier": "medium",
+  "problem": "Unsupervised dense retrievers struggle to capture temporal relevance, retrieving semantically related but temporally misaligned documents when the collection spans multiple time periods, causing temporal ambiguity in queries like \"Who is the president in 2019?\".",
+  "method": "TPOUR (Temporal Preference Optimization for Unsupervised Retriever) uses a novel training method Temporal Retrieval Preference Optimization (TRPO) that reinterprets preference learning in the temporal dimension to guide the retriever to favor temporally aligned documents, and generalizes to unseen time periods via interpolation in a learned time embedding.",
+  "key_assumptions": [
+    "Temporal intent of queries can be detected (explicit or implicit).",
+    "Time vectors extracted from retrievers fine-tuned on specific periods can be interpolated for continuous temporal alignment."
+  ],
+  "main_contribution": "(1) TPOUR, a preference-based training method that injects temporal information into unsupervised dense retrievers via TRPO; (2) Demonstrates improved temporal alignment and generalization to unseen/intermediate time periods via time vector interpolation.",
+  "datasets": [
+    "SituatedQA (yearly temporal QA dataset, 2018-2021 subset)",
+    "RealTimeQA (monthly temporal QA dataset)",
+    "BEIR (general retrieval benchmark)"
+  ],
+  "benchmarks": [
+    "SituatedQA",
+    "RealTimeQA",
+    "BEIR"
+  ],
+  "baselines": [
+    "Contriever",
+    "DPR",
+    "Nomic Embed v2 MoE",
+    "Qwen-Embedding-8B",
+    "Standard Retrievers",
+    "Temporal-Aware Retrievers",
+    "Mixture-of-TPOUR"
+  ],
+  "metrics": [
+    "nDCG@5",
+    "N@5",
+    "N@10"
+  ],
+  "results": "[\"TPOUR Contriever improves average nDCG@5 by +4.04 (+12.15%) on explicit and +4.98 (+15.21%) on implicit queries compared to Qwen-Embedding-8B; outperforms both unsupervised and supervised baselines on temporal information retrieval; achieves better timestamp prediction and interpolation/extrapolation capabilities.\"]",
+  "limitations": [
+    "Relies on temporally distributed document collections (e.g., Wikipedia dumps) for training; discrete temporal models limited in modeling continuous time; requires timestamp prediction or grounding for optimal performance."
+  ],
+  "future_work": [
+    "Relaxing requirement for temporally distributed corpora; further analysis of temporal grounding to enhance interpretability; time vector extrapolation for generalization beyond training period; applying TPOUR to other retrieval paradigms."
+  ],
+  "code_availability": "[\"https://github.com/agwaBom/TPOUR\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.6,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "TPOUR focuses on improving temporal alignment in unsupervised dense retrievers via preference optimization and time embeddings for general retrieval tasks, while our idea proposes a retrieval-agnostic temporal relevance component that adjusts passage ranks based on version timestamp proximity for open-domain QA over versioned regulatory texts.",
+    "basis": "Based on abstract and full text analysis."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T10:53:06.204153Z"
+}

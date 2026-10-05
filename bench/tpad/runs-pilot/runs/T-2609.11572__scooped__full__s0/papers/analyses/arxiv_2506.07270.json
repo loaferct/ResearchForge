@@ -1,0 +1,44 @@
+{
+  "paper_id": "arxiv:2506.07270",
+  "relevance_tier": "medium",
+  "problem": "Large language models (LLMs) exhibit remarkable capabilities in question answering and reasoning thanks to their extensive parametric memory. However, their knowledge is inherently limited by the scope of their pre-training data, while real-world information evolves continuously. Updating this knowledge typically requires costly and brittle re-training, or in-context learning (ICL), which becomes impractical at scale given the volume and volatility of modern information.",
+  "method": "We propose a lightweight, agentic framework that incrementally builds a structured, external memory from source documents without requiring re-training. This knowledge organization strategy enables models to retrieve and reason over temporally filtered, relevant information at inference time.",
+  "key_assumptions": [
+    "Incrementally building a structured external memory from source documents can capture evolving knowledge without retraining.",
+    "Temporally filtering relevant information from this external memory improves question answering performance."
+  ],
+  "main_contribution": "(1) Two new benchmarks: Temporal Wiki (factual drift across historical Wikipedia snapshots) and Unified Clark (timestamped news articles simulating real-world information accumulation). (2) A lightweight agentic knowledge organization framework that incrementally builds structured external memory for LLMs.",
+  "datasets": [
+    "Temporal Wiki",
+    "Unified Clark"
+  ],
+  "benchmarks": [
+    "Temporal Wiki",
+    "Unified Clark"
+  ],
+  "baselines": [
+    "Zero-shot",
+    "In-context learning (ICL)",
+    "Retrieval-augmented generation (RAG)"
+  ],
+  "metrics": [
+    "Accuracy (implied from reported scores such as 0.83, 0.92, etc.)"
+  ],
+  "results": "\"Our method outperforms ICL and RAG baselines across both benchmarks, especially on questions requiring more complex reasoning or integration of conflicting facts.\"",
+  "limitations": [
+    "Not explicitly stated in abstract; may include dependence on quality of source documents and the incremental updating process."
+  ],
+  "future_work": [
+    "Not explicitly stated in abstract."
+  ],
+  "code_availability": "\"Not stated in abstract\"",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.25,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "The paper focuses on building an external memory for LLMs to handle temporal knowledge, whereas the proposed idea focuses on adjusting retrieval rank with a temporal relevance component for any retriever in a RAG pipeline.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T09:16:55.061493Z"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "C003",
+  "statement": "TempRALM already handles not-yet-valid (future-dated) passages by masking their retrieval score to negative infinity when their timestamp exceeds the query timestamp.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "we mask the retrieval score for retrieved passages that have time stamps that are larger than the query timestamp",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "critique",
+  "tags": [
+    "temporal-retrieval",
+    "hard-constraint"
+  ],
+  "recorded_at": "2026-09-30T05:14:28.056897Z"
+}

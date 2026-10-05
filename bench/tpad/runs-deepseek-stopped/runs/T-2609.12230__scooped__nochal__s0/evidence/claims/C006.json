@@ -1,0 +1,25 @@
+{
+  "id": "C006",
+  "statement": "RL-based multi-hop KG reasoning is known to suffer low-quality rewards corrupted by false negatives in incomplete KGs, which harms test-time generalization, and spurious search trajectories can incidentally reach the correct answer.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "doi:10.18653/v1/d18-1362",
+      "experiment_run_id": null,
+      "location": "p. 1 (abstract)",
+      "quote": "the agent receives low-quality rewards corrupted by false negatives in the training data, which harms generalization at test time",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "high",
+  "phase": "critique",
+  "tags": [
+    "reinforcement-learning",
+    "reward-noise",
+    "spurious-paths",
+    "technical-risk"
+  ],
+  "recorded_at": "2026-09-30T05:13:38.927570Z"
+}

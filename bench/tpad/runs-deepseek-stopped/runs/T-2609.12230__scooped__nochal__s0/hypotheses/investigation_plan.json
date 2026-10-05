@@ -1,0 +1,27 @@
+{
+  "questions": [
+    "Is there prior work that already trains language models with passage-context-enriched KG triples/subgraphs for multi-hop QA, and how close is it to the proposed method and evaluation?",
+    "Are reported gains from subgraph/context augmentation attributable to added context structure or merely to additional tokens/compute (the matched-budget confounder)?",
+    "Does a training-time repair loop over detected one-hop failures measurably improve multi-hop accuracy over no repair, and over a simpler data-cleaning baseline?",
+    "Does RL optimization on lower-hop QA instances transfer to higher-hop queries, or does it overfit the low-hop distribution?",
+    "What benchmarks, metrics and hop-depth splits are standard for measuring deeper-hop transfer in KGQA?"
+  ],
+  "search_topics": [
+    "subgraph retrieval / subgraph-augmented multi-hop KBQA",
+    "knowledge-graph-to-text and KG-grounded language model training",
+    "knowledge injection into pretrained language models (triples as text)",
+    "multi-hop QA benchmarks with explicit hop depth and gold evidence (2WikiMultiHopQA, MoreHopQA, HotpotQA, MetaQA)",
+    "reinforcement learning over knowledge graph paths for multi-hop QA (weak supervision, reward shaping)",
+    "noisy knowledge graph / fact error detection and iterative self-repair / self-training",
+    "computation- and token-matched comparisons in retrieval-augmented and KG-augmented training"
+  ],
+  "comparison_targets": [
+    "Isolated-triple/path fine-tuning (token-matched control)",
+    "Subgraph retrieval enhanced KBQA (arxiv:2202.13296)",
+    "GraftNet / scalable multi-hop relational reasoning (doi:10.18653/v1/2020.emnlp-main.99)",
+    "Intermediate supervision signals for multi-hop KBQA (arxiv:2101.03737)",
+    "RL path-walking methods (DeepPath doi:10.18653/v1/d17-1060; reward shaping doi:10.18653/v1/d18-1362)",
+    "Intermediate/stepwise weak-supervision reasoning (doi:10.1145/3336191.3371812)"
+  ],
+  "recorded_at": "2026-09-30T05:05:09.157155Z"
+}

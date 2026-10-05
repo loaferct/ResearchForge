@@ -1,0 +1,34 @@
+{
+  "id": "C010",
+  "statement": "A major experimental confounder is that observed improvements in answer accuracy could stem from the framework's tendency to favor more recent documents (recency bias) rather than genuinely selecting the correct version for a time-specific query, especially in regulatory texts where older versions may still be legally valid for certain time points.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score)",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2509.01306",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "This task is shaped by two challenges: Relevance, ensuring alignment with the query's explicit temporal requirements, and Recency, selecting the freshest document among multiple versions.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "experimental confounder",
+    "recency bias",
+    "temporal relevance",
+    "temporal score"
+  ],
+  "recorded_at": "2026-09-30T10:07:43.245491Z"
+}

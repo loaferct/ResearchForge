@@ -1,0 +1,26 @@
+{
+  "id": "G002",
+  "gap": "No retrieved study measures accuracy transfer across reasoning hop depth when training or RL-optimizing only on lower-hop instances. The only RL transfer evidence is cross-formalism (SQL/Cypher) with a +1.7% downstream KGQA gain and no per-hop breakdown, so the shallow-to-deep hop transfer hypothesis (H2) has no direct precedent or measurement convention.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2506.21575",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "The model also demonstrates strong zero-shot generalization, improving performance on downstream tabular QA (TableBench: 8.5%) and knowledge graph QA (CR-LT-KGQA: 1.7%) without any QA-specific supervision.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2506.21575",
+    "doi:10.20944/preprints202505.1992.v1",
+    "doi:10.18653/v1/2020.acl-main.412"
+  ],
+  "why_unaddressed": "The retrieved multi-hop KGQA systems report aggregate accuracy or a single-depth headline (CLAUSE emphasizes MetaQA-2-hop; EmbedKGQA reports overall Hits@1), and the RL work found transfers across query formalisms rather than reasoning depth. No retrieved paper reports a hop-depth transfer gap or controls for benchmark composition.",
+  "research_question": "Does optimization restricted to 1-2 hop instances improve accuracy on 3+ hop queries, and is any measured transfer attributable to shared relations/entities rather than a reusable reasoning policy?",
+  "potential_experiment": "Pre-register hop-depth splits on MetaQA (1/2/3-hop) and ComplexWebQuestions, train or RL-optimize only on 1-2 hop instances, and report Hits@1 per hop depth plus a transfer gap (deep minus shallow); include a construction analysis showing whether 3-hop test items reuse lower-hop relations/entities, and a mixed-hop control.",
+  "confidence": "medium",
+  "verification_required": "Search for curriculum-learning and compositional-generalization work on multi-hop KGQA (including negative results where shallow training fails to transfer), and inspect benchmark construction papers for MetaQA/CWQ hop-depth composition; also verify whether any RL-for-KGQA work reports per-hop metrics.",
+  "recorded_at": "2026-09-30T05:25:47.735866Z"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "arxiv:2512.09487",
+  "title": "RouteRAG: Efficient Retrieval-Augmented Generation from Text and Graph via Reinforcement Learning",
+  "authors": [
+    "Yucan Guo",
+    "Miao Su",
+    "Saiping Guan",
+    "Zihao Sun",
+    "Xiaolong Jin",
+    "Jiafeng Guo",
+    "Xueqi Cheng"
+  ],
+  "year": 2025,
+  "published": "2025-12-10",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2512.09487",
+  "pdf_url": "https://arxiv.org/pdf/2512.09487v1",
+  "abstract": "Retrieval-Augmented Generation (RAG) integrates non-parametric knowledge into Large Language Models (LLMs), typically from unstructured texts and structured graphs. While recent progress has advanced text-based RAG to multi-turn reasoning through Reinforcement Learning (RL), extending these advances to hybrid retrieval introduces additional challenges. Existing graph-based or hybrid systems typically depend on fixed or handcrafted retrieval pipelines, lacking the ability to integrate supplementary evidence as reasoning unfolds. Besides, while graph evidence provides relational structures crucial for multi-hop reasoning, it is substantially more expensive to retrieve. To address these limitations, we introduce \\model{}, an RL-based framework that enables LLMs to perform multi-turn and adaptive graph-text hybrid RAG. \\model{} jointly optimizes the entire generation process via RL, allowing the model to learn when to reason, what to retrieve from either texts or graphs, and when to produce final answers, all within a unified generation policy. To guide this learning process, we design a two-stage training framework that accounts for both task outcome and retrieval efficiency, enabling the model to exploit hybrid evidence while avoiding unnecessary retrieval overhead. Experimental results across five question answering benchmarks demonstrate that \\model{} significantly outperforms existing RAG baselines, highlighting the benefits of end-to-end RL in supporting adaptive and efficient retrieval for complex reasoning.",
+  "doi": null,
+  "arxiv_id": "2512.09487",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T07:31:30.156611Z",
+  "relevance": 0.7143,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "reinforcement learning multi-hop question answering knowledge graph"
+  ],
+  "code_urls": [],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": [
+    "abstract (from arxiv) never mentions 'RouteRAG'; it may belong to another work"
+  ]
+}

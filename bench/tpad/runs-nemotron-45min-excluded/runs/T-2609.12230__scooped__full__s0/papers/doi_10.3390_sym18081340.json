@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.3390/sym18081340",
+  "title": "Exploiting Verification Asymmetry for Failure-Aware Graph Reasoning in Knowledge Graph Question Answering with LLMs",
+  "authors": [
+    "Yimo Zhao",
+    "Tianyuan Hu",
+    "Shuai Jiang"
+  ],
+  "year": 2026,
+  "published": "2026-08-08",
+  "venue": "Symmetry",
+  "url": "https://www.semanticscholar.org/paper/f11e3be5357db98636628b5210c2dd49b9c9ff42",
+  "pdf_url": "https://doi.org/10.3390/sym18081340",
+  "abstract": "A standard verification-based knowledge graph question answering (KGQA) pipeline retains a reasoning path only when retrieved evidence supports it. Requiring evidence makes large language model (LLM) output easier to audit and reduces unsupported answers. The verifier’s two outcomes are not equally informative: acceptance provides strong evidence, whereas rejection on an incomplete graph may indicate either an incorrect path or a missing proof. A one-pass pipeline discards both cases and loses the information contained in the failure. We introduce GRACE (Graph Reasoning with Adaptive Controller and Evidence), which feeds rejection back into retrieval and restores accept–reject symmetry in the search. GRACE assigns a failure type to each rejected path. Its reflective feedback loop (RFL) revises subsequent retrieval, whereas hypothetical bridging (HB) admits budgeted and penalized virtual edges for plausible missing links. A virtual edge remains marked as a hypothesis rather than a verified triple; the bridge budget bounds answer-level hallucination exposure, and the marking makes that exposure observable. With a fixed open-source LLM backbone, GRACE improves KG-grounded reasoning on WebQSP and ComplexWebQuestions. Diagnostic results indicate that RFL and HB recover different types of failure.",
+  "doi": "10.3390/sym18081340",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "f11e3be5357db98636628b5210c2dd49b9c9ff42",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:40:48.177668Z",
+  "relevance": 0.7143,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "adaptive repair loop knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

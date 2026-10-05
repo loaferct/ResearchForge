@@ -1,0 +1,77 @@
+{
+  "id": "E008",
+  "title": "Proxy validation for legal query mix: prevalence of date-constrained questions across sources",
+  "research_question": "Do web-QA situated questions and curated exam-style legal question sets yield prevalence estimates for date-constrained questions that agree with a real legal information-seeking source, or do they differ enough that neither can serve as a validated proxy?",
+  "hypothesis": "Web-QA situated questions and curated exam-style legal question sets are not interchangeable proxies for the prevalence of date-constrained questions in real legal information-seeking traffic: the curated sets understate it because authority is supplied, the web-QA figure overstates it because it counts geographical as well as temporal dependence, and prevalence differs enough across sources that no single constant is defensible.",
+  "proposed_method": "Sample questions from several candidate sources under fixed sampling frames: a curated legal MCQA set, situated web-QA questions, and a real information-seeking legal source such as a public legal question-and-answer archive, optionally supplemented by statutory-interpretation questions drawn from published judgments. Two annotators independently label each question using a written codebook distinguishing current-state, past-state and explicitly dated questions, plus whether the answer depends on a version that has since been superseded; disagreements are adjudicated and agreement reported. Estimate prevalence per source with confidence intervals, test pairwise differences, and compute a calibration factor between each proxy and the real-traffic estimate. Feed the resulting range into the prevalence weighting plan as a labelled assumption rather than a validated constant.",
+  "baselines": [
+    "The web-QA prevalence figure (roughly 16.5% context-dependent) as the working prior being tested",
+    "Curated exam-style legal QA and MCQA sets as the second candidate proxy",
+    "The real-traffic source's own prevalence estimate as the reference standard",
+    "A null model in which prevalence is treated as heterogeneous by construction, so no single proxy can be validated"
+  ],
+  "datasets": [
+    "Candidate real-traffic sources: public legal question-and-answer archives with enough volume for stable estimation, and statutory-interpretation reasoning in published judgments as a second, non-asker-generated source",
+    "Candidate proxy sources already in hand: situated web QA questions and curated legal MCQA question sets",
+    "A hand-labelled sample per source with two independent annotations and adjudicated labels",
+    "Not used as prevalence sources: ESG disclosure questions and financial filing QA"
+  ],
+  "workloads": [
+    "Sampling under fixed frames from a public legal question-and-answer archive",
+    "Sampling from curated legal MCQA and exam-style sets",
+    "Sampling from situated web-QA questions with temporal or geographical dependence",
+    "Two-annotator labelling with adjudication across all sources",
+    "Statistical comparison and calibration against the real-traffic estimate"
+  ],
+  "hardware": "CPU-only: sampling and annotation of question text plus statistical estimation. No models are required beyond optional embedding-based near-duplicate detection during sampling; annotation is human.",
+  "software_environment": "",
+  "metrics": [
+    "Prevalence of date-constrained questions per source, with confidence intervals and raw counts",
+    "Three-way breakdown into current-state, past-state and explicitly dated questions per source",
+    "Inter-annotator agreement (for example Krippendorff's alpha) on the classification, and adjudication rate",
+    "Pairwise prevalence differences between sources with tests and intervals",
+    "Calibration factor between each proxy and the real-traffic estimate, with interval",
+    "Proportion of questions whose correct answer depends on a superseded version, as the quantity the benchmark actually conditions on"
+  ],
+  "ablations": [
+    "Source used as the real-traffic anchor: public legal Q&A, statutory-interpretation passages in judgments, practitioner-authored compliance questions, or a query log if one can be obtained",
+    "Annotation granularity: binary date-constrained vs not, versus a three-way split of current-state, past-state and explicitly dated questions",
+    "Whether dependence on a superseded version is judged by the annotator or derived from the legal text's amendment history",
+    "Sampling frame within a source: recent vs historical questions, jurisdiction, subject area",
+    "Single-annotator provisional labels vs two-annotator adjudicated labels, to quantify the cost of reduced annotation"
+  ],
+  "controls": [
+    "Identical codebook and annotation instructions across all sources",
+    "The same annotator pair applied across sources to prevent annotator-source confounding",
+    "Fixed sample size per source with the sampling rule recorded",
+    "Prevalence reported with confidence intervals and raw counts, never as a bare percentage",
+    "Annotation performed blind to the research hypothesis about oversampling",
+    "Every source's sampling frame, collection date and inclusion rule documented"
+  ],
+  "confounders_addressed": [
+    "Annotation subjectivity on what counts as date-constrained - addressed by two independent annotators, a written codebook, adjudication and a reported agreement statistic",
+    "Source composition effects such as question length, formality or whether the asker is a professional - addressed by sampling within a fixed frame and reporting source-level descriptive statistics",
+    "Selection bias in public Q&A toward unusual or contested questions - addressed by reporting the sampling frame explicitly and treating the estimate as bounding rather than exact, with the direction of likely bias argued",
+    "Low base rates producing unstable estimates - addressed by pre-registering a sample size targeting a confidence interval width around the estimate",
+    "Transfer from written questions to real spoken client queries being untestable from public data - acknowledged as a residual limitation rather than assumed away"
+  ],
+  "expected_outcomes": "Proxy prevalence figures do not transfer directly: the curated exam-style sets are expected to show little or no date-constrained prevalence because authority is supplied by construction, the web-QA figure is expected to overstate the legal rate because it counts geographical dependence, and the real-traffic source is expected to sit somewhere in between with a wide interval. The result is a calibration table and, at minimum, an argument for reporting prevalence as a swept variable rather than a constant. If the sources surprisingly agree, the proxy is validated and the weighted estimate can be quoted with more confidence.",
+  "failure_conditions": [
+    "No real-traffic source can be sampled at a size that yields a usable confidence interval - the question remains open and only the sensitivity sweep can be reported",
+    "Proxy and real-traffic prevalences differ so much that no single calibration factor is defensible - then the weighted deployment figure must be dropped in favour of stratum-separated reporting",
+    "Inter-annotator agreement on what counts as date-constrained is too low to support any prevalence estimate",
+    "Date-constrained prevalence turns out to be near zero in the real-traffic source, which would undercut the practical significance of the whole line of work while leaving the mechanism interesting",
+    "Sampling frames differ on unmeasured dimensions that plausibly drive the difference, making any comparison uninterpretable"
+  ],
+  "reproducibility_notes": "No execution spec is attached: the study requires human annotation and sampling from sources that must be collected under their own terms of use, and no public implementation exists to run. To make it reproducible: pre-register the sampling frames, inclusion rules, target sample sizes and the annotation codebook; record collection dates and the exact query used to obtain each sample; publish the codebook and the adjudicated labels with de-identified question text where redistribution permits; report raw counts alongside estimates and state the direction of likely sampling bias; and make the resulting prevalence range the input to the weighting plan so downstream numbers can be recomputed if the range changes.",
+  "related_modification_id": "M005",
+  "related_paper_ids": [
+    "arxiv:2505.20243",
+    "arxiv:2606.09724",
+    "arxiv:2109.06157",
+    "arxiv:2608.21409"
+  ],
+  "execution": null,
+  "status": "planned",
+  "recorded_at": "2026-09-30T04:43:21.665578Z"
+}

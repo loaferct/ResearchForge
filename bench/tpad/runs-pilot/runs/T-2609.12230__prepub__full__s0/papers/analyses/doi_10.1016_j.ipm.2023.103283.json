@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.1016/j.ipm.2023.103283",
+  "relevance_tier": "high",
+  "problem": "Answering multi-hop questions over incomplete knowledge graphs is challenging due to missing links and the difficulty of learning effective reasoning policies.",
+  "method": "Introduces a dynamic completion mechanism into the reinforcement learning framework to estimate missing knowledge and guide the agent toward more accurate answers in incomplete KGs.",
+  "key_assumptions": [
+    "Dynamic completion can effectively estimate missing triples in the KG during reasoning.",
+    "Incorporating completion reduces the impact of KG incompleteness on RL-based KGQA."
+  ],
+  "main_contribution": "A reinforcement learning approach with dynamic completion for multi-hop KGQA over incomplete knowledge graphs.",
+  "datasets": [
+    "not stated in abstract"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"not stated in abstract\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "The paper focuses on dynamic completion of missing KG information within RL, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:48:59.705186Z"
+}

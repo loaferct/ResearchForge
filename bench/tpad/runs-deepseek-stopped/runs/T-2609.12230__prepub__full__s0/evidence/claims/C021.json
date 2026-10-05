@@ -1,0 +1,33 @@
+{
+  "id": "C021",
+  "statement": "The assessment that distinction (3) 'may reduce to generic iterative self-training' holds and is now evidence-backed: KnowTrace's reflective process-supervision self-bootstrapping is nearly the same mechanism applied to multi-hop knowledge-triple context, and iterative self-refinement without training is standard (Self-Refine). No retrieved work defines a KGQA-specific one-hop failure detector, so the repair loop is not clearly novel.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2505.20245",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "naturally inspires a reflective mechanism of knowledge backtracing to identify contributive LLM generations as process supervision data for self-bootstrapping",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2303.17651",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Self-Refine does not require any supervised training data, additional training, or reinforcement learning, and instead uses a single LLM as the generator, refiner, and feedback provider.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "U013",
+    "distinction-3",
+    "repair-loop"
+  ],
+  "recorded_at": "2026-09-30T05:22:56.291821Z"
+}

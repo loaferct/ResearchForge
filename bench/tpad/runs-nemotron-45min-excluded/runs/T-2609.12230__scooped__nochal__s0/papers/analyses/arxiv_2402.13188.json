@@ -1,0 +1,41 @@
+{
+  "paper_id": "arxiv:2402.13188",
+  "relevance_tier": "high",
+  "problem": "Temporal KGQA models ignore entity transfer caused by temporal constraints and fail to learn specific temporal representations; they also neglect graph structure and explicit multi-hop relationship modeling.",
+  "method": "Proposes Question Calibration and Multi-Hop Modeling (QC-MHM): calibrate question representation by fusing question and time-constrained concepts in KG; construct GNN layer for multi-hop message passing; combine question representation with GNN embedding output for final prediction.",
+  "key_assumptions": [
+    "Fusing time-constrained concepts improves question representation for temporal KGQA.",
+    "GNN layers can effectively perform multi-hop message passing over KG."
+  ],
+  "main_contribution": "QC-MHM achieves better performance than SOTA on benchmark dataset, with Hits@1 and Hits@10 improvements of 5.1% and 1.2% on complex questions, and provides interpretable predictions.",
+  "datasets": [
+    "CronQuestions dataset (temporal KGQA benchmark)"
+  ],
+  "benchmarks": [
+    "CronQuestions dataset"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "Hits@1",
+    "Hits@10"
+  ],
+  "results": "[\"Hits@1 and Hits@10 improved by 5.1% and 1.2% compared to best-performing baseline on complex questions\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "QC-MHM focuses on temporal question calibration and GNN-based multi-hop modeling, whereas the idea enriches target triples with local context subgraphs from source passages, adds an adaptive repair loop for factual reliability, and applies RL transfer from lower-hop QA.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T06:25:36.222049Z"
+}

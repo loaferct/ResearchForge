@@ -1,0 +1,30 @@
+{
+  "id": "U007",
+  "question": "Could observed improvements in collaborative inference be attributed to confounding factors such as using held-out validation data for both calibration and threshold tuning, rather than the calibration step itself?",
+  "description": "The validation data is used to calibrate models and to set thresholds; improvements might come from the threshold tuning process regardless of calibration quality.",
+  "category": "confounder",
+  "importance": "medium",
+  "status": "open",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": 0.5,
+  "confidence_basis": "The retrieved paper mentions using validation data for both calibration and policy selection.",
+  "rationale": "If the validation data usage confounds the results, the isolation of calibration's effect is questionable.",
+  "resolution": "",
+  "paper_ids": [
+    "arxiv:2609.11446"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "PLAN",
+  "created_at": "2026-09-30T11:37:15.146918Z",
+  "updated_at": "2026-09-30T11:37:15.147071Z"
+}

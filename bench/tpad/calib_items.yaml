@@ -1,0 +1,51 @@
+name: calib
+items:
+- id: T-2609.11572
+  idea: 'The reliability of open‑domain question answering drops sharply when source texts are continuously amended, as in
+    statutes, policies, or regulations. In such settings each new amendment supersedes earlier clauses while retaining much
+    of the original wording, creating a dense semantic overlap across successive versions. Existing time‑aware retrieval techniques
+    treat each version as an isolated snapshot and therefore cannot distinguish which revision best matches a time‑specific
+    query. We propose to develop a retrieval‑agnostic framework that enriches any standard document retriever with a temporal
+    relevance component: the rank of a candidate passage will be adjusted according to the elapsed time between the query’s
+    target date and the passage’s version timestamp, while still leveraging its semantic similarity to the query. To evaluate
+    the approach, we will construct a benchmark comprising regulatory documents with overlapping revisions and time‑stamped
+    queries, measuring how well the combined temporal‑semantic ranking improves answer accuracy.'
+  realising:
+    title: 'TimelyRAG: Semantic-Temporal Hybrid Retrieval for Time-Critical Question Answering in Overlapping-Evolving Documents'
+    arxiv: '2609.11572'
+    published: '2026-09-10'
+  prior_work:
+  - title: 'QPaug: Question and Passage Augmentation for Open-Domain Question Answering of LLMs'
+    arxiv: '2406.14277'
+    doi: 10.18653/v1/2024.findings-emnlp.527
+    published: '2024-06-20'
+  - title: Time-Sensitve Retrieval-Augmented Generation for Question Answering
+    doi: 10.1145/3627673.3679800
+    published: '2024-10-21'
+  - title: Unsupervised Dense Information Retrieval with Contrastive Learning
+    arxiv: '2112.09118'
+    published: '2021-12-16'
+  domain: cs
+  verification: ''
+  _audit:
+    realising_abstract: Although large language models (LLMs) and retrieval-augmented generation (RAG) have advanced open-domain
+      question answering (QA), they remain unreliable when documents evolve through amendments. Existing time-sensitive retrieval
+      methods address only the disjoint-evolving environment, where each update is an independent snapshot. However, laws,
+      policies, and regulations often operate in overlapping-evolving environments, where amendments override earlier clauses
+      while preserving most content, creating strong semantic overlap across versions. We propose TimelyRAG, a retriever-agnostic
+      framework that incorporates temporal distance into ranking to align queries with version-appropriate documents. We also
+      introduce TimelyQABench, the first benchmark for regulation-heavy domains with overlapping-evolving challenges. Experiments
+      show consistent gains, up to +28.6% in nDCG@10, highlighting the importance of temporal reasoning for reliable QA over
+      evolving documents. All resources are available at https://github.com/kaist-dmlab/TimelyRAG.
+    references_total: 25
+    references_earlier_with_abstract: 16
+    prior_similarity:
+    - 0.126
+    - 0.113
+    - 0.11
+    idea_5gram_overlap_with_abstract: 0.0
+    method_name_leaks: []
+    paraphrase_model: gpt-oss:120b
+    probe_model: deepseek-v4.1-flash
+    probe_answer: ''
+    probe_names_realising_paper: false

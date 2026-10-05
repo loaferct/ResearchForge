@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.5753/sbbd.2025.247297",
+  "title": "Training-Free Hybrid Evidence Retrieval for Question Answering: Dynamic Fusion of Knowledge-Graph Triples and Dense Text Embeddings",
+  "authors": [
+    "Otávio Calaça Xavier",
+    "Anderson da Silva Soares"
+  ],
+  "year": 2025,
+  "published": "2025-09-29",
+  "venue": "Anais do XL Simpósio Brasileiro de Banco de Dados (SBBD 2025)",
+  "url": "https://doi.org/10.5753/sbbd.2025.247297",
+  "pdf_url": null,
+  "abstract": "This work presents a sub-50ms, training-free retrieval pipeline that leverages a Neo4j knowledge graph and a ChromaDB vector index. Questions and passages are embedded with Sentence-BERT, and the retrieved entities seed a one-hop Cypher expansion in the knowledge graph. A transparent fusion based on Dice-Sørensen overlap ranks both passages and triples. On the WebQSP and CQA-12k benchmarks, this hybrid method achieves superior Recall@10, MRR, and nDCG@10 compared to BM25, graph-only, and vectoronly baselines. Requiring no learned parameters and running on commodity hardware, it offers a practical alternative to heavyweight neural re-rankers and a robust evidence layer for retrieval-augmented generation (RAG).",
+  "doi": "10.5753/sbbd.2025.247297",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 2,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T06:48:08.476366Z",
+  "relevance": 0.2105,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "local context subgraph training triples knowledge graph question answering",
+    "contextual triples knowledge graph question answering training"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

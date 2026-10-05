@@ -1,0 +1,52 @@
+{
+  "id": "C029",
+  "statement": "In a regulatory-document QA benchmark, base-retriever choice materially changes results and no paradigm dominates: hybrid BM25+dense RRF achieves the highest overall performance, yet BM25 outperforms hybrid on multihop queries (ROUGE-L 0.304 vs. 0.239), suggesting reciprocal rank fusion may be less effective than sparse retrieval for multi-document reasoning on domain-specific regulatory corpora.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "doi:10.2139/ssrn.7087840",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "BM25 outperforms hybrid on multihop queries",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.2139/ssrn.7087840",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "suggesting that Reciprocal Rank Fusion may be less effective than sparse retrieval for multi-document reasoning on domain-specific regulatory corpora",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.2139/ssrn.7087840",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Hybrid retrieval achieves the highest overall performance",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.2139/ssrn.7087840",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "their behaviour on narrow financial corpora such as regulatory and procedural documents remains understudied",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "retriever heterogeneity",
+    "regulatory QA",
+    "baseline",
+    "retrieval-agnostic"
+  ],
+  "recorded_at": "2026-09-30T04:39:25.680717Z"
+}

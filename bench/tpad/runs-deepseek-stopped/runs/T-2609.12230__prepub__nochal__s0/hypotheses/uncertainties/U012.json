@@ -1,0 +1,33 @@
+{
+  "id": "U012",
+  "question": "Does the inference-time KG-context relevance study (KGSweetSpot) already cover the training-time relevance-selection modification, leaving only a stage difference, and does that stage difference produce a demonstrably different effect?",
+  "description": "The most promising modification (M002, relevance-selected context) may be substantially pre-empted: the IKG/KGSweetSpot study already compares triple-based vs. path-based KG knowledge representations, evaluates relevance filtering strategies, and shows that imprecise selection degrades below zero-shot, with public code; ToG-3 and GNN-RAG also perform adaptive/learned context selection. The remaining distinction is stage (training supervision vs. inference prompt) and task (multi-hop KGQA training vs. multiple-choice QA prompting), which has not been verified to matter.",
+  "category": "novelty",
+  "importance": "high",
+  "status": "open",
+  "next_action": "READ",
+  "possible_actions": [
+    "READ",
+    "COMPARE",
+    "CHALLENGE",
+    "SEARCH"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "If relevance filtering of KG context is already thoroughly studied, modification M002 cannot stand as a distinct contribution and the investigation must lean entirely on the matched-budget training-time causal test (M001).",
+  "resolution": "",
+  "paper_ids": [
+    "doi:10.1109/ickg66886.2025.00020",
+    "arxiv:2509.21710",
+    "doi:10.18653/v1/2025.findings-acl.856"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T05:28:47.709499Z",
+  "updated_at": "2026-09-30T05:28:47.709727Z"
+}

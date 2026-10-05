@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2603.07179",
+  "title": "Retrieving Minimal and Sufficient Reasoning Subgraphs with Graph Foundation Models for Path-aware GraphRAG",
+  "authors": [
+    "Haonan Yuan",
+    "Qingyun Sun",
+    "Junhua Shi",
+    "Mingjun Liu",
+    "Jiaqi Yuan",
+    "Ziwei Zhang",
+    "Xingcheng Fu",
+    "Jianxin Li"
+  ],
+  "year": 2026,
+  "published": "2026-03-07",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2603.07179",
+  "pdf_url": "https://arxiv.org/pdf/2603.07179v1",
+  "abstract": "Graph-based retrieval-augmented generation (GraphRAG) exploits structured knowledge to support knowledge-intensive reasoning. However, most existing methods treat graphs as intermediate artifacts, and the few subgraph-based retrieval methods depend on heuristic rules coupled with domain-specific distributions. They fail in typical cold-start scenarios where data in target domains is scarce, thus yielding reasoning contexts that are either informationally incomplete or structurally redundant. In this work, we revisit retrieval from a structural perspective, and propose GFM-Retriever that directly responds to user queries with a subgraph, where a pre-trained Graph Foundation Model acts as a cross-domain Retriever for multi-hop path-aware reasoning. Building on this perspective, we repurpose a pre-trained GFM from an entity ranking function into a generalized retriever to support cross-domain retrieval. On top of the retrieved graph, we further derive a label-free subgraph selector optimized by a principled Information Bottleneck objective to identify the query-conditioned subgraph, which contains informationally sufficient and structurally minimal golden evidence in a self-contained \"core set\". To connect structure with generation, we explicitly extract and reorganize relational paths as in-context prompts, enabling interpretable reasoning. Extensive experiments on multi-hop question answering benchmarks demonstrate that GFM-Retriever achieves state-of-the-art performance in both retrieval quality and answer generation, while maintaining efficiency.",
+  "doi": null,
+  "arxiv_id": "2603.07179",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T07:29:00.544430Z",
+  "relevance": 0.4375,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering knowledge graph context subgraph training"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

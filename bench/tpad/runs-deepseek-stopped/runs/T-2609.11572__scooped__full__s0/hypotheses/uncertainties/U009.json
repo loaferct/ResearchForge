@@ -1,0 +1,37 @@
+{
+  "id": "U009",
+  "question": "Does published work contradict the current assessment: Genuine distinctions are narrow: (a) the target setting is amended statutes with dense overlap across successive versions, whereas TempRALM targets web/Wikipedia versions and TIQ targets implicit-time multi-source snippets; (b) the framing is selecting the version in force at the query date, not the most recent version, and includes historically anchored queries that expose recency bias; (c) the claimed contribution includes a clause-level overlapping-revision benchmark and cross-retriever validation that the retrieved work does not provide. However, (b) is not realized by a monotone elapsed-time term (C008, C010), so the distinction is currently aspirational rather than realized by the proposed mechanism.?",
+  "description": "Assessment: substantial_overlap. The central mechanism is already published (TempRALM) and the target legal problem already has a benchmark and a hard-filter solution that the strongest retrieved evidence judges superior in kind. The idea's remaining novelty is domain transfer, a benchmark, and an evaluation comparison - not a new method. Because the headline hypothesis is at best unverified and at worst contradicted by the nearest legal evidence, and because a serious confounder (label leakage) could manufacture the expected gain, 'promising_needs_validation' would overstate the case. It is not 'weak_or_flawed' either: the problem is real, the evaluation gap is genuine, and a reframed contribution could still be valuable.",
+  "category": "contradiction",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "REFINE",
+  "possible_actions": [],
+  "confidence": 0.65,
+  "confidence_basis": "The negative literature finding is bounded by an exhausted paper budget and unavailable OpenAlex/Semantic Scholar lookups, so a rare prior benchmark cannot be fully excluded.",
+  "rationale": "The assessment was formed from work found around the initial idea; look for work that would invalidate it.",
+  "resolution": "Resolved for planning purposes. The challenge round found no published work that realises the claimed distinctions, and the gap and modification records now operationalise them: G001/G003 cover the missing clause-level versioned benchmark and untested retrieval-agnosticism, G002 covers the unrun soft-versus-hard comparison, and G004 covers the unexamined construct validity of synthetic legal QA. The assessment therefore stands unchanged - the distinctions remain aspirational as stated - but they are now converted from an objection into a concrete, testable plan (M001-M004) rather than left as a dead end. Residual uncertainty is confined to the boundedness of the literature search, which further searching could only reduce.",
+  "paper_ids": [
+    "doi:10.1007/s10506-017-9195-8",
+    "doi:10.1111/jels.12413",
+    "arxiv:2605.23497",
+    "arxiv:2401.13222",
+    "doi:10.1080/08839514.2026.2626097",
+    "doi:10.1145/3589335.3651895"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2401.13222",
+    "arxiv:2605.23497",
+    "doi:10.1080/08839514.2026.2626097",
+    "doi:10.1007/s10506-017-9195-8",
+    "doi:10.1111/jels.12413"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": "holds",
+  "target_ref": "critique",
+  "attempts": 2,
+  "source": "controller",
+  "created_at": "2026-09-30T05:17:20.815793Z",
+  "updated_at": "2026-09-30T05:25:35.432547Z"
+}

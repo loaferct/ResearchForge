@@ -1,0 +1,35 @@
+{
+  "id": "M002",
+  "title": "Cross-retriever factorial test of the retrieval-agnostic claim, with a retriever-adapted baseline",
+  "description": "Evaluate the temporal layer as a factor over base retrievers and signal forms on one held-out query set: base retriever in {BM25, dense, hybrid RRF} x temporal signal in {none, recency decay, valid-time gating, valid-time gating plus tie-break}, with matched retrieval depth, embedding model, reader and k. Fit and report the retriever x signal interaction, and define 'retrieval-agnostic' operationally as a consistent sign and non-trivial effect size of valid-time gating in every retriever cell rather than a positive pooled average. Include a representation-level baseline that adapts the retriever itself to temporal context (date-conditioned or fine-tuned dense retriever) and a recency-only ranker.",
+  "why_differs": "The closest published frameworks integrate temporal handling inside one fixed pipeline, and prior temporal QA adapts the retriever itself per temporal context (fine-tuned retriever and reader per context type). No retrieved work varies the base retriever while holding the temporal mechanism fixed, so this modification turns an architectural assertion into a measured interaction with an explicit consistency criterion.",
+  "technical_mechanism": "Hold the query set, target-date annotations, corpus snapshot, chunking, embedding model, k and reader fixed. For each cell of the base-retriever x temporal-signal grid, run retrieval and record clause-level point-in-time recovery, version contamination and answer accuracy on the answer-differential subset. Estimate the retriever x signal interaction (e.g., per-cell effect of valid-time gating vs semantic-only, with paired bootstrap confidence intervals over queries) and report per-retriever effects separately. Add a retriever-adapted arm trained with temporal context to compare representation-level adaptation against post-hoc gating.",
+  "expected_benefit": "Converts the architectural 'works with any retriever' assertion into a falsifiable interaction test, and tests the post-hoc layer against retriever-side adaptation. If the effect holds across all retrievers the agnostic claim is earned; if it is retriever-dependent the framing must be dropped, which is itself a useful negative finding.",
+  "potential_novelty": "Hedged: retrieval-agnostic temporal re-ranking is claimed but not shown in the reviewed work, and no reviewed study varies the base retriever while holding the temporal mechanism fixed; novelty rests on that measured interaction, not on the architecture alone.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "The gate itself is a small score adjustment over an existing retriever's candidate list; the added retriever-adapted arm is the main engineering cost.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Three retriever families times four signal forms multiply the runs; BM25 and hybrid are cheap, but a date-conditioned dense retriever needs training and the same reader must be held fixed everywhere.",
+  "main_risk": "Effects may be retriever-dependent, in which case the retrieval-agnostic contribution collapses to a benchmark contribution; pooling across retrievers could also hide a single-retriever effect if the interaction is not reported.",
+  "required_baselines": [
+    "Semantic-only retrieval per base retriever",
+    "Recency/elapsed-time decay re-ranking",
+    "Hard as-of filter alone",
+    "Published fixed three-signal hybrid (lexical+dense+decay)",
+    "Retriever adapted to temporal context (date-conditioned or fine-tuned dense retriever)",
+    "Recency-only ranker"
+  ],
+  "related_paper_ids": [
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.2139/ssrn.7174868",
+    "arxiv:2109.06157",
+    "doi:10.3390/sym18091498",
+    "doi:10.2139/ssrn.7087840",
+    "arxiv:2606.09724"
+  ],
+  "addresses_gap_ids": [
+    "G002"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T04:37:09.881357Z"
+}

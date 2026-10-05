@@ -1,0 +1,992 @@
+[[page 1]]
+arXiv:2506.21575v1  [cs.CL]  15 Jun 2025
+STRuCT-LLM: Unifying Tabular and Graph
+Reasoning with Reinforcement Learning for
+Semantic Parsing
+Josefa Lia Stoisser *, Marc Boubnovski Martell *, Lawrence
+Phillips, Casper Hansen, Julien Fauqueur
+Novo Nordisk
+OFSR@novonordisk.com, MBVK@novonordisk.com,
+LAWRENCE@novonordisk.com, CASPER@novonordisk.com,
+JLZF@novonordisk.com
+June 2025
+Abstract
+We propose STRuCT-LLM, a unified framework for training large lan-
+guage models (LLMs) to perform structured reasoning over both relational
+and graph-structured data. Our approach jointly optimizes Text-to-SQL
+and Text-to-Cypher tasks using reinforcement learning (RL) combined
+with Chain-of-Thought (CoT) supervision. To support fine-grained opti-
+mization in graph-based parsing, we introduce a topology-aware reward
+function based on graph edit distance. Unlike prior work that treats
+relational and graph formalisms in isolation, STRuCT-LLM leverages
+shared abstractions between SQL and Cypher to induce cross-formalism
+transfer, enabling SQL training to improve Cypher performance and vice
+versa—even without shared schemas. Our largest model (QwQ-32B)
+achieves substantial relative improvements across tasks: on semantic pars-
+ing, Spider improves by 13.5% and Text2Cypher by 73.1%. The model
+also demonstrates strong zero-shot generalization, improving performance
+on downstream tabular QA (TableBench: 8.5%) and knowledge graph
+QA (CR-LT-KGQA: 1.7%) without any QA-specific supervision. These
+results demonstrate both the effectiveness of executable queries as scaf-
+folds for structured reasoning and the synergistic benefits of jointly train-
+ing on SQL and Cypher (code available at https://github.com/bouv/
+STRuCT-LLM).
+* Equal contribution. Listing order is random.
+1
+
+[[page 2]]
+1 Introduction
+Large language models (LLMs) demonstrate impressive fluency in open-domain
+generation but often falter on structured reasoning tasks involving tables and
+graphs [12, 6]. Structured reasoning requires models to ground entities, com-
+pose symbolic constraints, and follow logical paths—skills crucial for interacting
+with real-world data systems such as relational databases and knowledge graphs
+(KGs) [16, 24]. We view executable semantic parsing—specifically, Text-to-SQL
+and Text-to-Cypher—as a gateway to this broader capability [32, 23]. While
+Text-to-SQL is well-studied, Text-to-Cypher remains underexplored, offering a
+valuable testbed for graph reasoning. These tasks provide a concrete, supervised
+setting in which models must map natural language to compositional, structured
+programs over relational (SQL) and graph (Cypher) formalisms. While typi-
+cally treated in isolation, both involve shared abstractions—schema grounding,
+filtering, joins, and path composition—making them fertile ground for studying
+cross-formalism transfer.
+Our hypothesis is that reinforcement learning (RL) over both Text-to-SQL
+and Text-to-Cypher tasks enables language models to acquire complementary
+reasoning skills—relational operations from SQL and graph traversal from Cypher.
+This synergy should enhance performance on semantic parsing and downstream
+knowledge graph QA. By training a unified model and leveraging structural
+transfer across query formats, the model develops structure-aware reasoning
+capabilities that generalize across both table and graph-structured data.
+To explore this hypothesis, we adopt a unified training setup combining
+Chain-of-Thought (CoT) supervision and RL, as seen in Figure 1. We prompt
+instruction-tuned LLMs (Qwen2.5-1.5B, 14B, QwQ-32B, Qwen3-14B) [40] with
+decomposed reasoning steps for both SQL and Cypher, and apply Group Rela-
+tive Policy Optimization (GRPO) [27] using execution, structural, and syntac-
+tical feedback as a reward. For Cypher, we introduce a topology-aware reward
+that measures correctness over nodes, edges, and relationships—enabling RL
+optimization in the graph domain for the first time. Our joint training regime
+interleaves Text-to-SQL and Text-to-Cypher data across both supervised and
+RL stages, encouraging structural transfer and mitigating task-specific overfit-
+ting.
+We find that jointly training on SQL and Cypher leads to mutual gains
+on both formats, leveraging the complementary inductive biases of relational
+and graph queries. Moreover, the resulting models exhibit promising zero-shot
+generalization to broader table and graph QA tasks (CRT-QA, Tablebench, CR-
+LT-KGQA), despite having never been trained on them directly. These results
+suggest that executable queries are not merely a target—they are a vehicle for
+teaching LLMs how to reason over structured data.
+Contributions
+• Joint Training: We interleave SQL and Cypher data during both su-
+pervised and RL stages, enabling cross-formalism structural transfer and
+2
+
+[[page 3]]
+Figure 1: Overview of our unified training and evaluation setup. Joint
+training on Text-to-SQL and Text-to-Cypher using Chain-of-Thought supervi-
+sion and RL (Task 1). Evaluation covers generalization to SQL/Cypher (Task
+2), zero-shot transfer to tabular (Task 3), and graph QA (Task 4), testing for
+transferable reasoning from executable semantic parsing.
+reducing task-specific overfitting.
+• Topology-Aware Reward: We propose a novel subgraph-based reward
+function for Cypher semantic parsing that captures correctness over nodes,
+edges, and connectivity—enabling fine-grained, execution-based optimiza-
+tion in the graph domain.
+• CoT + RL Synergy: We integrate CoT supervision with RL to promote
+compositional intermediate reasoning steps across both query formats.
+• Cross-formalism Generalization: Jointly trained models consistently
+outperform SQL-only and Cypher-only models on semantic parsing tasks,
+effectively leveraging complementary reasoning signals. Additionally, the
+models generalize to a completely unseen query formalism MQL, demon-
+strating strong cross-formalism adaptability.
+• Zero-Shot Transfer to QA:Without explicit QA supervision, our mod-
+els show promising improvement on zero-shot performance on table and
+KG QA benchmarks [36, 45, 7], suggesting the emergence of transferable
+structured reasoning capabilities.
+2 Related Work
+Semantic parsing for relational databases has evolved through benchmarks such
+as Spider [43] and Bird [16], alongside transformer-based models that incor-
+porate schema linking [17, 14] and execution-guided decoding [10]. RL has
+3
+
+[[page 4]]
+also been explored in this setting, optimizing for execution accuracy [41] or
+syntactic validity [19]. While most prior work treats Text-to-SQL in isolation,
+recent efforts explore structural transfer across formalisms such as graphs [37].
+SM3-Text-to-Query [29] introduced a synthetic dataset with 40k samples span-
+ning SQL, MQL, Cypher, and SPARQL, enabling evaluation across four distinct
+query languages.
+Parsing Cypher queries introduces unique challenges due to dynamic graph
+topologies and traversal semantics [21, 22]. Progress had been limited by scarce
+training data [48], but synthetic datasets like MedT2C [47] and SynthCypher
+[33] have expanded coverage. To generate SynthCypher, [33] modeled each rela-
+tional table as a node and each foreign key as an edge, demonstrating the struc-
+tural similarity between relational and graph schemas. Recently, a dataset of
+Text-to-Cypher mappings with over 44k examples was released, alongside a fine-
+tuned model for Cypher generation [23]. Our work contributes a topology-aware
+reward function aligned with subgraph connectivity, enabling RL for Cypher
+based on graph-structured feedback.
+Parallel efforts in SPARQL parsing and MongoDB Query Language (MQL)
+have emphasized topological structure in graph queries [39, 18]. Neural SPARQL
+parsers [42] encode graph patterns to generate triple-based queries over onto-
+logical KGs such as Freebase and DBpedia. While distinct in formalism, these
+approaches demonstrate the value of structure-aware modeling—a principle we
+extend to property graph parsing via connectivity-sensitive rewards.
+Recent advancements in table-based question answering Torr [1] and(TableQA)
+have been propelled by datasets such as WikiSQL, Spider, and OTTQA, which
+enable multi-hop reasoning [30, 45]. However, many existing benchmarks fo-
+cus on fact retrieval and overlook commonsense reasoning, which is essential
+for nuanced real-world applications [3]. LLMs excel in structured reasoning;
+they are prone to hallucinations, especially in long-tail knowledge settings [7].
+To mitigate this, KGs provide structured supervision for grounding LLMs and
+improving query precision [44].
+Although Knowledge graph QA (KGQA) research has advanced, it often
+neglects commonsense reasoning and long-tail entities. To address this gap, we
+introduce CR-LT KGQA [7], a novel dataset emphasizing commonsense reason-
+ing and rare-entity coverage, enhancing the applicability of KGQA in tandem
+with TableQA progress.
+Recent multi-task pretraining and adapter-based frameworks have shown
+the benefits of shared supervision across symbolic tasks. UnifiedSKG [37] and
+SmBoP [26] learn from heterogeneous sources including SQL, SPARQL, and
+KGQA. While architecturally distinct, these efforts echo our motivation: to
+induce generalizable structured reasoning. Our contribution lies in combining
+multi-formalism supervision with CoT prompting [35] and RL [5] tailored to
+execution and graph topology.
+4
+
+[[page 5]]
+3 Methodology
+3.1 Problem Formulation
+In structured query languages such as SQL and Cypher, the query space,Q, can
+be defined as a sequence of transformations applied to a predefined schema of
+data. Let D denote the initial dataset, consisting of tables T ={T1,T 2,...,T p}
+and the database schema S in SQL, or nodes N ={N1,N 2,...,N q} and re-
+lationships R ={R1,R 2,...,R s} in Cypher. The query space Q is generated
+through chains of operations O on the given data D, guided by schema S, and
+expressed as:
+Q ={Q|Q :D→D′, D′⊆R Result}
+where Q represents a composite function consisting of operations Oi:
+Q(D) =On(On−1(... O2(O1(D))... ))
+Each operationOi can be a selection, projection, join , pattern match, etc.,
+transforming D sequentially. The result space RResult represents valid query
+outcomes subject to language grammar and data model constraints. Semantic
+parsing is defined as the task of transforming a natural language input X into a
+target queryQ within the spaceQ, such thatQ accurately retrieves the specific
+information from D requested by X.
+To enhance semantic parsing across these paradigms, our approach jointly
+trains models on two semantic parsing tasks: Text-to-SQL, utilizing SQLite
+as the query language, and Text-to-Cypher. This methodology involves two
+key stages: (1) supervised fine-tuning on synthetically generated CoT traces,
+and (2) RL employing multiple reward components. By leveraging the shared
+formulation and the synergistic relationship between SQL and Cypher query
+generation tasks, our strategy aims to deepen the model’s understanding of
+structured data manipulation.
+3.2 Datasets
+Supervised Fine-tuning Training Datasets
+Building on the efficacy of CoT supervised fine-tuning for semantic pars-
+ing [19], we generate synthetic CoT traces for Text-to-SQL and Text-to-Cypher
+tasks, leveraging Large Language Models through a structured prompting pipeline
+as in (author?) [2]. This process incorporates a summarization step and in-
+volves prompting the o3-mini model to provide query answers with natural lan-
+guage reasoning, verified by a second model for answer and reasoning coherence
+(details in Appendix D). We apply this methodology across 24 Text-to-SQL
+datasets1 and the Neo4j Text-to-Cypher dataset [23], see Appendix A for de-
+tails. This diverse dataset foundation supports an effective cold start for GRPO
+1https://huggingface.co/datasets/Clinton/Text-to-sql-v1
+5
+
+[[page 6]]
+training. For experiments, we construct 3,500 data points per task and use only
+half of them for joint training.
+GRPO Training Datasets
+SQL Dataset: We leverage the BIRD benchmark [16] for its complex multi-
+step queries, ideal for GRPO’s nuanced reward optimization. We exclude BIRD’s
+evidence information to ensure generalization to other datasets without depen-
+dency on supplementary data.
+Cypher Dataset: Given the limited availability of non-synthetic Cypher datasets,
+we utilize a distinct split of the Neo4j Text-to-Cypher dataset [23], ensuring no
+overlap with data used for supervised fine-tuning.
+For both tasks, we compile 3,500 data points to facilitate fair comparisons
+between single-language and joint training scenarios. Single-task training in-
+cludes 7,000 SQL examples, while joint training allocates 3,500 examples to
+each SQL and Cypher, maintaining balanced representation across tasks.
+3.3 Training Framework
+3.3.1 Reinforcement Learning
+We employ GRPO, an RL method originally introduced in (author?) [27].
+This approach enhances traditional RL by comparing multiple outputs for the
+same input and assigning relative rewards, enabling more nuanced feedback for
+complex reasoning tasks.
+Formally, for a given natural language questionq and its associated database
+schema, the model generates a set of G candidate SQL or Cypher queries
+{o1,o 2,...,o G}. Each candidate is evaluated using a task-specific reward func-
+tion, and the relative advantageAi is computed for each output. The optimiza-
+tion objective is given by:
+JGRPO (Θ) =E
+"
+1
+G
+GX
+i=1
+min
+ πθ(oi|q)
+πθold(oi|q)Ai, clip
+ πθ(oi|q)
+πθold(oi|q), 1−ϵ, 1 +ϵ
+
+Ai
+#
+−βDKL(πθ||πref)
+Here, πθ represents the current policy, πθold denotes the policy before the
+update, and πref is a frozen reference policy used for regularization. The hy-
+perparameters ϵ and β control the clipping threshold and divergence penalty,
+respectively.
+3.3.2 Reward Design
+The primary objective in Text-to-SQL and Text-to-Cypher tasks is to gener-
+ate queries that execute to the correct results. Traditional binary execution
+rewards are ineffective for learning from nearly correct predictions due to their
+lack of gradient information. To address this limitation, we implement continu-
+ous rewards that guide the model towards generating accurate and structurally
+consistent queries, similarly to [30].
+6
+
+[[page 7]]
+1. LLM Judge Reward with Classes: For both SQL and Cypher query
+generation, this reward provides feedback on the overall quality of the
+response. Using OpenAI’s o3-mini model [11] as judge, we evaluate the
+generated query by classifying it into ordinal categories that capture query
+quality, inspired by (author?) [38]. The specific prompts and classifica-
+tion categories are detailed in Appendix D.
+2. String Matching Reward: Offering a continuous approach to measure
+query similarity, this reward computes the longest contiguous matching
+subsequence between predicted and gold query strings for both SQL and
+Cypher. By quantifying similarity, it encourages syntactical accuracy.
+3. Structural Consistency Rewards: Because queries inherently possess
+structure and multiple syntactically different queries may produce iden-
+tical results, structured rewards—adapted to each query language—are
+essential for ensuring semantic fidelity.
+For structural consistency in SQL queries, we compute Component-Level
+Matching Reward, which calculates the exact match between predicted and
+ground truth SQL components (e.g., SELECT, WHERE), as used in [30] and [20] -
+using the F1 score. This reward is particularly suited for SQL’s compositional
+nature, where queries often involve multiple nested operations and complex
+combinations of components. By evaluating each component separately, we
+can provide granular feedback on the model’s ability to correctly generate each
+operation.
+For Cypher queries, we design a novel Graph Edit Distance-based Reward.
+Cypher queries primarily focus on pattern matching within graph structures,
+and we design our reward to emphasize this topological understanding rather
+than operational correctness. We construct property graph representations of
+the subgraphs targeted by the gold and predicted Cypher queries, then compute
+the Graph Edit Distance (GED) between them, which quantifies the minimal
+set of edit operations required to transform a predicted subgraph into its gold-
+standard counterpart. The reward is computed as:
+RGED = 1− GED
+max(size1, size2), (1)
+where size 1 and size 2 are the total counts of nodes and edges in each graph,
+ensuring a normalized assessment of fidelity with respect to the target structure.
+3.3.3 Joint Training Approach
+We propose a joint training strategy combining Text-to-SQL and Text-to-Cypher
+objectives by leveraging shared principles in structured data manipulation and
+logical reasoning. This paradigm is motivated by several factors. First, it lever-
+ages shared structural priors to help the model generalize across data operations.
+Second, training on diverse examples induces a regularization effect, reducing
+7
+
+[[page 8]]
+overfitting. Finally, it improves sample efficiency through potential transfer
+learning from query similarities.
+We interleave Text-to-SQL and Text-to-Cypher examples for the training.
+For GRPO, we employ task-specific reward combinations for SQL ( w1Rjudge +
+w2Rstring+w3Rcomponent) and Cypher (w1Rjudge+w2Rstring+w3RGED) queries.
+Here, Rjudge and Rstring represent LLM judge and string matching rewards,
+while Rcomponent and RGED denote structural similarity rewards detailed in
+Section 3.3.2. We set all weights equally ( w1 = w2 = w3 = 1) without tuning;
+exploring adaptive weights remains future work.
+4 Experiments
+4.1 Dataset
+We evaluate our model based on two primary criteria: (1) its performance on
+semantic parsing tasks, specifically through its generalization to novel databases,
+is assessed using Spider [43], EHRSQL [15] and BIRD minidev 2 for Text-to-
+SQL and Text2Cypher [23] for Text-to-Cypher; and (2) its transfer capability to
+out-of-distribution tasks in the Table/KG Question Answering, which reflects
+its induced reasoning capabilities, is evaluated using CRT-QA [45] for tabular
+and CR-LT KGQA [7] for KG QA. Additionally, we leverage the SM3 dataset
+[29], which provides semantically equivalent queries across SQL, Cypher, and
+MQL, enabling direct comparison of model performance across different query
+languages. Further details can be found in Appendix A.
+4.2 Experimental Setup
+In our experiments, we use both non-reasoning models (Qwen2.5-1.5B, Qwen2.5-
+14B) and reasoning models (QwQ-32B, Qwen3-14B) as baselines. We utilize
+VERL3 for training the 14B and 32B models. To enhance efficiency, Unsloth 4
+is employed, limiting the training to QLora Adapters with a LoRA rank of 16
+for all 1.5B models. For Supervised Fine-Tuning, we adopt a learning rate of
+1e−6 for larger models (14B and 32B) and 1 e−4 for smaller models. The batch
+size is set to 512 for big models and 8 for small models. For GRPO, consistent
+with (author?) [25], a constant learning rate scheduler is applied. Training is
+conducted for one epoch with a learning rate of 1 e−6 for large models and 1e−5
+for small models. Additional hyperparameters for GRPO include a number
+of generations G = 6, with batch sizes of 1024 for large models and 32 for
+small models, using the PagedAdamW8bit optimizer. For robust evaluation, we
+sample 200 datapoints from each dataset five times and report mean scores and
+standard deviations. For training we use 32 H100 GPUs for 60 h for big models.
+Additional hyperparameters are available in our GitHub repository 5.
+2https://GitHub.com/bird-bench/mini_dev
+3https://GitHub.com/volcengine/verl
+4https://GitHub.com/unslothai/unsloth
+5https://github.com/bouv/STRuCT-LLM
+8
+
+[[page 9]]
+4.3 Ablation Studies
+We conducted comprehensive ablation studies to evaluate: (1) the impact of
+different training configurations (SQL-only, Cypher-only, and joint training),
+and (2) the contribution of each reward component in our GRPO framework.
+Our analysis employed Qwen2.5-1.5B with results presented in Table B1.
+Training Configuration Analysis The results reveal a positive transfer be-
+tween SQL and Cypher even with single-domain training—models trained solely
+on Cypher show gains of 0.4-0.8% on Spider, while SQL-trained variants demon-
+strate improvements of 0.9-2% on Text2Cypher. Notably, joint training exhibits
+clear synergy: Both-111 outperforms Cypher-111 by 0.4% on Text2Cypher tasks
+while surpassing SQL-111 by 1.7% on Spider, demonstrating effective bidirec-
+tional knowledge transfer across domains.
+Reward Component Analysis We evaluate the impact of different reward
+components (string matching, LLM-based, and structural) through systematic
+ablation, denoted by 1/0 in model names. The full reward configuration (111)
+consistently achieves optimal performance, highlighting the complementary na-
+ture of these components. Ablation experiments reveal the distinct role of each
+component: removing string matching rewards (011) causes notable perfor-
+mance drops, especially in semantic parsing tasks, while disabling LLM-based
+rewards (101) leads to moderate degradation. The structural reward proves par-
+ticularly crucial—its removal (110) significantly impacts performance, especially
+on QA tasks where structural comprehension is essential.
+Overall, these analyses demonstrate the synergistic benefits of our multi-
+component reward structure and joint training approach. Additional ablation
+details are provided in Appendix B1.
+4.4 In-Context Performance
+Table 1 presents the performance on semantic parsing tasks. Training on a
+single executable language (SQL or Cypher) induces slight positive transfer to
+the other: for instance, training Qwen3-14B on Cypher alone improves its SQL
+performance on Spider (EXE: 74.2 vs. 73.7), and vice versa for Text2Cypher.
+This cross-task improvement suggests structural similarities—such as schema
+grounding and compositional filtering—shared between the two tasks.
+Motivated by this, we train models on both SQL and Cypher jointly. The
+resulting models demonstrate strong synergy, consistently outperforming single-
+task variants across all base models. For example, Qwen2.5-14B-trained-Both
+outperforms both SQL-only and Cypher-only versions on all tasks.
+Notably, our QwQ-32B-trained-Both model approaches or exceeds the per-
+formance of proprietary instruction-tuned models such as o3 and o3 mini, partic-
+ularly on Text2Cypher. This suggests that dual-format supervision is a powerful
+training signal, enabling open models to compete with the best closed models
+on structural parsing tasks.
+9
+
+[[page 10]]
+Table 1: In-context learning performance on Text-to-SQL (Spi-
+der, EHRSQL, BIRD minidev with evidence) and Text-to-Cypher
+(Text2Cypher) tasks. Metrics include exact match (EM), execution accuracy
+(EXE), BLEU score and execution-based F1 score ( F 1exe, per [15] ). Models
+are labeled as ‘trained-SQL’, ‘trained-Cypher’, or ‘trained-Both’ based on fine-
+tuning. Top two results per dataset are bolded.
+Model T ext2Cypher BIRD Spider EHRSQL
+EM BLEU EXE EXE F 1exe
+o3 4.0 ±0.6 25.0 ±2.2 54.0 ±4.5 76.8 ±1.6 46.5 ±2.5
+o3-mini 4.5 ±1.1 25.4 ±2.2 50.0 ±2.1 74.5 ±3.2 35.5 ±1.5
+Qwen3-14B 3.0 ±1.0 21.3 ±1.2 51.0 ±2.8 73.7 ±2.2 38.5 ±2.9
+Qwen3-14B-trained-SQL 3.5 ±1.1 22.5 ±1.3 54.5 ±2.5 76.8 ±1.9 40.5 ±2.6
+Qwen3-14B-trained-Cypher 5.5 ±1.2 26.8 ±1.4 52.2 ±2.6 74.4 ±1.8 39.5 ±2.7
+Qwen3-14B-trained-Both 6.2 ±1.0 27.9 ±2.1 54.7 ±2.3 76.5 ±2.6 43.2 ±1.8
+Qwen2.5-14B-instruct 3.5 ±1.2 18.5 ±1.6 43.3 ±3.4 69.8 ±3.6 26.0 ±4.2
+Qwen2.5-14B-trained-SQL 4.5 ±1.1 21.0 ±1.7 50.3 ±3.5 72.8 ±2.9 32.3 ±3.6
+Qwen2.5-14B-trained-Cypher 6.8 ±1.4 25.0 ±1.9 46.8 ±3.7 71.7 ±3.1 30.1 ±3.5
+Qwen2.5-14B-trained-Both 7.3 ±1.3 25.2 ±2.0 50.4 ±3.2 74.5 ±2.6 33.6 ±3.8
+QwQ-32B 3.7 ±1.1 19.3 ±2.3 50.0 ±3.0 69.8 ±3.6 35.0 ±2.6
+QwQ-32B-trained-Both 12.0 ±1.5 33.4 ±3.6 55.3 ±3.0 79.2 ±4.0 43.0 ±1.6
+These results are on main benchmarks within their respective domains; how-
+ever, they are not comparable to each other directly. Hence, in Appendix C, we
+include additional results on the SM3-Text-to-Query Dataset [29], which pro-
+vides semantically equivalent queries across SQL, Cypher, and MongoDB Query
+Language (MQL). This dataset allows us to evaluate how well our training ap-
+proach generalizes to unseen query languages.
+We observe that base models perform better on SQL compared to Cypher
+and show significantly weaker performance on MQL, reflecting the data avail-
+ability during pretraining (SQL being the most abundant and MQL the scarcest).
+On the other hand, our models achieve superior performance in Cypher com-
+pared to SQL, potentially due to Cypher’s relative simplicity or the greater
+effectiveness of our structural reward mechanism in tackling graph-based tasks.
+4.5 Out-of-Context Performance
+Table 2 presents the performance metrics on structural understanding tasks.
+Training on executable semantic parsing improves LLMs’ ability to understand
+structured data more broadly, yielding better zero-shot performance on unseen
+question answering tasks. For example, both SQL- and Cypher-trained models
+outperform baselines on CRT-QA and CR-LT-KGQA, showing that execution-
+based reward helps models learn to reason over structured representations.
+Moreover, joint training again provides strong synergy: Qwen2.5-14B-trained-
+10
+
+[[page 11]]
+Table 2: Out-of-context performance on structural question answering.
+Results are reported on tabular (CRT-QA, TableBench) and knowledge graph
+QA (CR-LT-KGQA). Metrics include exact match (EM) and ROUGE. Models
+are labeled as ‘trained-SQL’, ‘trained-Cypher’, or ‘trained-Both’ based on fine-
+tuning. Top two results per dataset are bolded.
+Model CR T-QA T ableBench CR-L T KGQA
+EM EM Rouge EM
+o3 61.5 ±2.3 68.0 ±4.4 73.1 ±3.5 92.0 ±0.7
+o3-mini 45.2 ±4.0 64.8 ±4.4 68.6 ±3.8 91.7 ±2.3
+Qwen3-14B 53.3 ±3.6 66.3 ±3.5 72.1 ±2.7 82.8 ±2.0
+Qwen3-14B-trained-SQL 56.2 ±3.2 67.8 ±3.7 72.8 ±2.9 83.7 ±1.9
+Qwen3-14B-trained-Cypher 54.9 ±3.5 67.0 ±3.6 73.0 ±3.0 84.5 ±1.7
+Qwen3-14B-trained-Both 55.6 ±3.1 67.0 ±3.8 73.0 ±3.1 84.2 ±1.8
+Qwen2.5-14B-instruct 55.5 ±1.3 55.5 ±4.7 58.3 ±4.1 80.2 ±1.2
+Qwen2.5-14B-trained-SQL 59.9 ±1.6 62.9 ±3.9 62.0 ±3.5 82.5 ±1.3
+Qwen2.5-14B-trained-Cypher 56.7 ±1.9 59.5 ±4.3 61.0 ±3.9 85.7 ±1.2
+Qwen2.5-14B-trained-Both 62.5 ±1.7 63.8 ±3.5 65.5 ±3.9 86.3 ±1.4
+QwQ-32B 45.7 ±4.3 63.3 ±5.6 67.2 ±4.9 89.8 ±1.4
+QwQ-32B-trained-Both 57.0 ±2.8 68.7 ±3.6 73.4 ±2.7 91.3 ±1.7
+Both, for example, achieves the best performance across Qwen2.5-14B models,
+with 62.5 EM on CRT-QA and 86.3 accuracy on CR-LT-KGQA—gains of 2.6
+and 0.8 points over the best single-task variants. These results affirm that multi-
+format semantic supervision promotes generalization across structured modali-
+ties.
+Additionally, the results in Appendix C show that our models improve over
+baselines in few-shot settings and generalize effectively to the completely unseen
+structural language MQL. These findings reinforce the broad applicability of our
+approach to diverse structured reasoning tasks.
+5 Discussion
+Our findings reinforce the hypothesis that structured reasoning across distinct
+data modalities—relational tables and knowledge graphs—can be effectively
+unified through a shared training paradigm. By integrating Text-to-SQL and
+Text-to-Cypher supervision with RL, we demonstrate that large language mod-
+els (LLMs) can acquire transferable inductive biases that transcend individual
+formalisms. The resulting STRuCT-LLM system displays not only improved
+accuracy on benchmark semantic parsing datasets but also exhibits zero-shot
+generalization to downstream QA tasks, underscoring the utility of executable
+queries as a scaffold for abstract reasoning.
+A key insight from our study is the observed cross-formalism transfer. De-
+11
+
+[[page 12]]
+spite the non-overlapping schemas and data sources between SQL and Cypher
+corpora, training on SQL alone induced gains on Cypher parsing, and vice
+versa. This suggests that LLMs, when trained with CoT supervision and
+topologically grounded rewards, can internalize structural abstractions—such
+as joins, paths, and filters—that generalize across both relational and graph-
+structured data. This transferability highlights the model’s emerging capacity
+for schema-agnostic reasoning, an encouraging signal for future multi-format
+semantic parsers.
+Our topology-aware reward function for Cypher, built on graph edit distance
+and subgraph matching, proved crucial for enabling fine-grained optimization in
+the graph domain. Traditional execution-based rewards offer sparse or binary
+signals, whereas our design yields continuous, interpretable feedback, thereby
+addressing a longstanding bottleneck in Cypher-centric semantic parsing. More
+broadly, this reflects a growing shift in semantic parsing towards structurally
+sensitive learning objectives that move beyond mere execution correctness.
+Joint training also acted as an effective regularizer. Compared to single-
+task training, our unified model exhibited improved robustness, with reduced
+overfitting to domain-specific patterns. This supports the view that structured
+multitask supervision not only encourages the learning of generalizable abstrac-
+tions but also improves data efficiency, a desirable property when extending to
+lower-resource query languages or domains.
+The zero-shot generalization to QA tasks—particularly CR-LT KGQA and
+CRT-QA—further confirms the downstream benefits of our approach. Notably,
+these tasks require reasoning over previously unseen schemas and long-tail en-
+tities, yet STRuCT-LLM achieved non-trivial gains without direct QA super-
+vision. This finding aligns with recent observations that executable programs
+serve as a powerful proxy for latent logical structures, suggesting a promising av-
+enue for future work in aligning natural language and symbolic representations
+via intermediate supervision.
+In summary, our results demonstrate that blending relational and graph
+supervision with RL yields not only performance gains but also stronger gen-
+eralization and reasoning capabilities. Future work includes: (i) support for
+additional query languages (SPARQL, MQL), (ii) interactive and schema-free
+settings with user feedback in reward design, and (iii) probing compositional
+generalization through specialized benchmarks to assess reasoning depth.
+6 Limitations
+While STRuCT-LLM demonstrates strong performance, it faces several limita-
+tions. The reliance on synthetic datasets—especially for Cypher—may affect
+generalization to real-world, noisy queries [31]. Our supervised fine-tuning de-
+pends on LLM-generated CoT traces, which may introduce verification noise
+or bias. The reward functions, though structurally aware, do not account for
+query efficiency or execution cost. LLM-based judges used for reward compu-
+tation may not provide fully reliable metrics. Additionally, the model assumes
+12
+
+[[page 13]]
+schema-aware inputs and has not been tested in interactive or schema-free set-
+tings. Finally, the combination of CoT and GRPO introduces notable com-
+putational overhead, potentially limiting accessibility for low-resource users.
+To strengthen the model’s validity, additional evaluation across more diverse
+datasets and structural understanding tasks, such as table prediction, would be
+beneficial.
+While we carefully controlled for direct overlap in our evaluation setup,
+some indirect overlap exists. The Spider evaluation benchmark may share some
+Wikipedia tables with our training data, though this represents a small fraction
+of the evaluation set. Similarly, our QA evaluation tasks may share some ta-
+bles with the semantic parsing training data, although they test fundamentally
+different reasoning capabilities.
+7 Conclusion
+We introduced STRuCT-LLM, a unified semantic parsing framework that lever-
+ages RL and CoT supervision to jointly train on two fundamental query lan-
+guages: SQL for relational databases and Cypher for graph databases. Our
+method demonstrates that training on just two structurally distinct formalisms
+can induce broad reasoning capabilities.
+A key innovation enabling cross-formalism transfer is our topology-aware re-
+ward function for Cypher, which provides continuous, structure-sensitive feed-
+back critical for RL optimization in graph domains. This allows models trained
+on SQL to improve at Cypher parsing and vice versa, despite differences in
+schema and format.
+Future work includes: (i) support for additional query languages (SPARQL,
+MQL), (ii) interactive reasoning in agent systems with dynamic data sources,
+and (iii) probing compositional generalization under schema drift. Overall,
+STRuCT-LLM demonstrates that joint RL-based training on relational and
+graph query tasks yields models with enhanced structured reasoning capabili-
+ties, as evidenced by improved parsing and zero-shot QA generalization.
+References
+[1] Shir Ashury-Tahan, Yifan Mai, Ariel Gera, Yotam Perlitz, Asaf Yehu-
+dai, Elron Bandel, Leshem Choshen, Eyal Shnarch, Percy Liang, Michal
+Shmueli-Scheuer, et al. The mighty torr: A benchmark for table reasoning
+and robustness. arXiv preprint arXiv:2502.19412 , 2025.
+[2] Marc Boubnovski, Kaspar M¨ artens, Lawrence Phillips, Daniel Keitley,
+Maria Dermit, and Julien Fauqueur. A scalable llm framework for thera-
+peutic biomarker discovery: Grounding q/a generation in knowledge graphs
+and literature. In ICLR 2025 Workshop on Machine Learning for Genomics
+Explorations, 2025.
+13
+
+[[page 14]]
+[3] Xi Fang, Weijie Xu, Fiona Anting Tan, Jiani Zhang, Ziqing Hu, Yanjun
+Qi, Scott Nickleach, Diego Socolinsky, Srinivasan Sengamedu, and Chris-
+tos Faloutsos. Large language models (llms) on tabular data: Prediction,
+generation, and understanding–a survey. arXiv preprint arXiv:2402.17944,
+2024.
+[4] Yilu Fang, Betina Idnay, Yingcheng Sun, Hao Liu, Zhehuan Chen, Karen
+Marder, Hua Xu, Rebecca Schnall, and Chunhua Weng. Combining human
+and machine intelligence for clinical trial eligibility querying. Journal of
+the American Medical Informatics Association , 29(7):1161–1171, 2022.
+[5] Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, Ruoyu Zhang,
+Runxin Xu, Qihao Zhu, Shirong Ma, Peiyi Wang, Xiao Bi, et al. Deepseek-
+r1: Incentivizing reasoning capability in llms via reinforcement learning.
+arXiv preprint arXiv:2501.12948 , 2025.
+[6] Jiayan Guo, Lun Du, Hengyu Liu, Mengyu Zhou, Xinyi He, and Shi
+Han. Gpt4graph: Can large language models understand graph struc-
+tured data? an empirical evaluation and benchmarking. arXiv preprint
+arXiv:2305.15066, 2023.
+[7] Willis Guo, Armin Toroghi, and Scott Sanner. Cr-lt-kgqa: A knowledge
+graph question answering dataset requiring commonsense reasoning and
+long-tail knowledge. arXiv preprint arXiv:2403.01395 , 2024.
+[8] Moshe Hazoom, Vibhor Malik, and Ben Bogin. Text-to-sql in the wild: A
+naturally-occurring dataset based on stack exchange data. arXiv preprint
+arXiv:2106.05006, 2021.
+[9] Charles T Hemphill, John J Godfrey, and George R Doddington. The atis
+spoken language systems pilot corpus. In Speech and Natural Language:
+Proceedings of a Workshop Held at Hidden Valley, Pennsylvania, June 24-
+27, 1990, 1990.
+[10] Zezhou Huang, Shuo Zhang, Kechen Liu, and Eugene Wu. Data-centric
+text-to-SQL with large language models. In NeurIPS 2024 Third Table
+Representation Learning Workshop, 2024.
+[11] Aaron Jaech, Adam Kalai, Adam Lerer, Adam Richardson, Ahmed El-
+Kishky, Aiden Low, Alec Helyar, Aleksander Madry, Alex Beutel, Alex
+Carney, et al. Openai o1 system card. arXiv preprint arXiv:2412.16720 ,
+2024.
+[12] Jinhao Jiang, Kun Zhou, Zican Dong, Keming Ye, Wayne Xin Zhao, and
+Ji-Rong Wen. Structgpt: A general framework for large language model to
+reason over structured data. arXiv preprint arXiv:2305.09645 , 2023.
+[13] Alistair EW Johnson, Tom J Pollard, Lu Shen, Li-wei H Lehman, Mengling
+Feng, Mohammad Ghassemi, Benjamin Moody, Peter Szolovits, Leo An-
+thony Celi, and Roger G Mark. Mimic-iii, a freely accessible critical care
+database. Scientific data, 3(1):1–9, 2016.
+14
+
+[[page 15]]
+[14] George Katsogiannis-Meimarakis and Georgia Koutrika. A survey on deep
+learning approaches for text-to-sql. The VLDB Journal , 32(4):905–936,
+2023.
+[15] Gyubok Lee, Hyeonji Hwang, Seongsu Bae, Yeonsu Kwon, Woncheol Shin,
+Seongjun Yang, Minjoon Seo, Jong-Yeup Kim, and Edward Choi. Ehrsql:
+A practical text-to-sql benchmark for electronic health records. Advances
+in Neural Information Processing Systems , 35:15589–15601, 2022.
+[16] Jinyang Li, Binyuan Hui, Ge Qu, Jiaxi Yang, Binhua Li, Bowen Li, Bailin
+Wang, Bowen Qin, Ruiying Geng, Nan Huo, et al. Can llm already serve as
+a database interface? a big bench for large-scale database grounded text-to-
+sqls. Advances in Neural Information Processing Systems, 36:42330–42357,
+2023.
+[17] Geling Liu, Yunzhi Tan, Ruichao Zhong, Yuanzhen Xie, Lingchen Zhao,
+Qian Wang, Bo Hu, and Zang Li. Solid-sql: Enhanced schema-linking based
+in-context learning for robust text-to-sql. arXiv preprint arXiv:2412.12522,
+2024.
+[18] Jinwei Lu, Yuanfeng Song, Zhiqian Qin, Haodi Zhang, Chen Zhang, and
+Raymond Chi-Wing Wong. Bridging the gap: Enabling natural lan-
+guage queries for nosql databases through text-to-nosql translation. arXiv
+preprint arXiv:2502.11201, 2025.
+[19] Peixian Ma, Xialie Zhuang, Chengjin Xu, Xuhui Jiang, Ran Chen, and
+Jian Guo. Sql-r1: Training natural language to sql reasoning model by
+reinforcement learning. arXiv preprint arXiv:2504.08600 , 2025.
+[20] Xuan-Bang Nguyen, Xuan-Hieu Phan, and Massimo Piccardi. Fine-tuning
+text-to-sql models with reinforcement-learning training objectives. Natural
+Language Processing Journal, 10:100135, 2025.
+[21] Makbule Gulcin Ozsoy. Enhancing text2cypher with schema filtering. arXiv
+preprint arXiv:2505.05118, 2025.
+[22] Makbule Gulcin Ozsoy. Text2cypher: Data pruning using hard example
+selection. arXiv preprint arXiv:2505.05122 , 2025.
+[23] Makbule Gulcin Ozsoy, Leila Messallem, Jon Besga, and Gianandrea Min-
+neci. Text2cypher: Bridging natural language and graph databases. arXiv
+preprint arXiv:2412.10064, 2024.
+[24] Mohammadreza Pourreza and Davood Rafiei. Din-sql: Decomposed in-
+context learning of text-to-sql with self-correction. Advances in Neural
+Information Processing Systems, 36:36339–36348, 2023.
+[25] Mohammadreza Pourreza, Shayan Talaei, Ruoxi Sun, Xingchen Wan, Hai-
+long Li, Azalia Mirhoseini, Amin Saberi, Sercan Arik, et al. Reasoning-
+sql: Reinforcement learning with sql tailored partial rewards for reasoning-
+enhanced text-to-sql. arXiv preprint arXiv:2503.23157 , 2025.
+15
+
+[[page 16]]
+[26] Ohad Rubin and Jonathan Berant. SmBoP: Semi-autoregressive bottom-up
+semantic parsing. In Kristina Toutanova, Anna Rumshisky, Luke Zettle-
+moyer, Dilek Hakkani-Tur, Iz Beltagy, Steven Bethard, Ryan Cotterell,
+Tanmoy Chakraborty, and Yichao Zhou, editors, Proceedings of the 2021
+Conference of the North American Chapter of the Association for Computa-
+tional Linguistics: Human Language Technologies , pages 311–324, Online,
+June 2021. Association for Computational Linguistics.
+[27] Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao
+Bi, Haowei Zhang, Mingchuan Zhang, YK Li, Y Wu, et al. Deepseekmath:
+Pushing the limits of mathematical reasoning in open language models.
+arXiv preprint arXiv:2402.03300 , 2024.
+[28] Tianze Shi, Chen Zhao, Jordan Boyd-Graber, Hal Daum´ e III, and Lillian
+Lee. On the potential of lexico-logical alignments for semantic parsing to
+sql queries. arXiv preprint arXiv:2010.11246 , 2020.
+[29] Sithursan Sivasubramaniam, Cedric Osei-Akoto, Yi Zhang, Kurt
+Stockinger, and Jonathan Fuerst. SM3-text-to-query: Synthetic multi-
+model medical text-to-query benchmark. InThe Thirty-eight Conference on
+Neural Information Processing Systems Datasets and Benchmarks Track ,
+2024.
+[30] Josefa Lia Stoisser, Marc Boubnovski Martell, and Julien Fauqueur. Sparks
+of tabular reasoning via text2sql reinforcement learning. arXiv preprint
+arXiv:2505.00016, 2025.
+[31] Josefa Lia Stoisser, Marc Boubnovski Martell, Kaspar M¨ artens, Lawrence
+Phillips, Stephen Michael Town, Rory Donovan-Maiye, and Julien
+Fauqueur. Query, don’t train: Privacy-preserving tabular prediction from
+ehr data via sql queries. arXiv preprint arXiv:2505.21801 , 2025.
+[32] Yuan Sui, Jiaru Zou, Mengyu Zhou, Xinyi He, Lun Du, Shi Han, and
+Dongmei Zhang. TAP4LLM: Table provider on sampling, augmenting, and
+packing semi-structured data for large language model reasoning. In Yaser
+Al-Onaizan, Mohit Bansal, and Yun-Nung Chen, editors, Findings of the
+Association for Computational Linguistics: EMNLP 2024 , pages 10306–
+10323, Miami, Florida, USA, November 2024. Association for Computa-
+tional Linguistics.
+[33] Aman Tiwari, Shiva Krishna Reddy Malay, Vikas Yadav, Masoud Hashemi,
+and Sathwik Tejaswi Madhusudhan. Auto-cypher: Improving llms on
+cypher generation via llm-supervised generation-verification framework. In
+Proceedings of the 2025 Conference of the Nations of the Americas Chapter
+of the Association for Computational Linguistics: Human Language Tech-
+nologies (Volume 2: Short Papers) , pages 623–640, 2025.
+[34] Shuo Wang and Carlos Crespo-Quinones. Natural language models for data
+visualization utilizing nvbench dataset. arXiv preprint arXiv:2310.00832 ,
+2023.
+16
+
+[[page 17]]
+[35] Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Fei Xia,
+Ed Chi, Quoc V Le, Denny Zhou, et al. Chain-of-thought prompting elic-
+its reasoning in large language models. Advances in neural information
+processing systems, 35:24824–24837, 2022.
+[36] Xianjie Wu, Jian Yang, Linzheng Chai, Ge Zhang, Jiaheng Liu, Xeron Du,
+Di Liang, Daixin Shu, Xianfu Cheng, Tianzhen Sun, et al. Tablebench: A
+comprehensive and complex benchmark for table question answering. In
+Proceedings of the AAAI Conference on Artificial Intelligence , volume 39,
+pages 25497–25506, 2025.
+[37] Tianbao Xie, Chen Henry Wu, Peng Shi, Ruiqi Zhong, Torsten Scholak,
+Michihiro Yasunaga, Chien-Sheng Wu, Ming Zhong, Pengcheng Yin, Sida I.
+Wang, Victor Zhong, Bailin Wang, Chengzu Li, Connor Boyle, Ansong Ni,
+Ziyu Yao, Dragomir Radev, Caiming Xiong, Lingpeng Kong, Rui Zhang,
+Noah A. Smith, Luke Zettlemoyer, and Tao Yu. UnifiedSKG: Unifying and
+multi-tasking structured knowledge grounding with text-to-text language
+models. In Yoav Goldberg, Zornitsa Kozareva, and Yue Zhang, editors,Pro-
+ceedings of the 2022 Conference on Empirical Methods in Natural Language
+Processing, pages 602–631, Abu Dhabi, United Arab Emirates, December
+2022. Association for Computational Linguistics.
+[38] Huajian Xin, Daya Guo, Zhihong Shao, Zhizhou Ren, Qihao Zhu, Bo Liu,
+Chong Ruan, Wenda Li, and Xiaodan Liang. Deepseek-prover: Advancing
+theorem proving in llms through large-scale synthetic data. arXiv preprint
+arXiv:2405.14333, 2024.
+[39] Silei Xu, Shicheng Liu, Theo Culhane, Elizaveta Pertseva, Meng-Hsi Wu,
+Sina Semnani, and Monica Lam. Fine-tuned LLMs know more, hallucinate
+less with few-shot sequence-to-sequence semantic parsing over Wikidata.
+In Houda Bouamor, Juan Pino, and Kalika Bali, editors, Proceedings of the
+2023 Conference on Empirical Methods in Natural Language Processing ,
+pages 5778–5791, Singapore, December 2023. Association for Computa-
+tional Linguistics.
+[40] An Yang, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen
+Yu, Chengyuan Li, Dayiheng Liu, Fei Huang, Haoran Wei, et al. Qwen2. 5
+technical report. arXiv preprint arXiv:2412.15115 , 2024.
+[41] Jiaxi Yang, Binyuan Hui, Min Yang, Jian Yang, Junyang Lin, and Chang
+Zhou. Synthesizing text-to-SQL data from weak and strong LLMs. In
+Lun-Wei Ku, Andre Martins, and Vivek Srikumar, editors, Proceedings of
+the 62nd Annual Meeting of the Association for Computational Linguistics
+(Volume 1: Long Papers) , Bangkok, Thailand, August 2024. Association
+for Computational Linguistics.
+[42] Xiaoyu Yin, Dagmar Gromann, and Sebastian Rudolph. Neural machine
+translating from natural language to sparql. Future Generation Computer
+Systems, 117:510–519, 2021.
+17
+
+[[page 18]]
+[43] Tao Yu, Rui Zhang, Kai Yang, Michihiro Yasunaga, Dongxu Wang, Zifan
+Li, James Ma, Irene Li, Qingning Yao, Shanelle Roman, et al. Spider: A
+large-scale human-labeled dataset for complex and cross-domain semantic
+parsing and text-to-sql task. arXiv preprint arXiv:1809.08887 , 2018.
+[44] Qinggang Zhang, Junnan Dong, Hao Chen, Daochen Zha, Zailiang Yu,
+and Xiao Huang. Knowgpt: Knowledge graph based prompting for large
+language models. Advances in Neural Information Processing Systems ,
+37:6052–6080, 2024.
+[45] Zhehao Zhang, Xitao Li, Yan Gao, and Jian-Guang Lou. Crt-qa: A dataset
+of complex reasoning question answering over tabular data. In Proceedings
+of the 2023 Conference on Empirical Methods in Natural Language Pro-
+cessing, pages 2131–2153, 2023.
+[46] Victor Zhong, Caiming Xiong, and Richard Socher. Seq2sql: Generat-
+ing structured queries from natural language using reinforcement learning.
+arXiv preprint arXiv:1709.00103 , 2017.
+[47] Zijie Zhong, Linqing Zhong, Zhaoze Sun, Qingyun Jin, Zengchang Qin,
+and Xiaofan Zhang. SyntheT2C: Generating synthetic data for fine-tuning
+large language models on the Text2Cypher task. In Owen Rambow, Leo
+Wanner, Marianna Apidianaki, Hend Al-Khalifa, Barbara Di Eugenio, and
+Steven Schockaert, editors, Proceedings of the 31st International Confer-
+ence on Computational Linguistics , pages 672–692, Abu Dhabi, UAE, Jan-
+uary 2025. Association for Computational Linguistics.
+[48] Yunqi Zou, Yongli Wang, and Dongmei Liu. Q2cypher: Converting natural
+language questions to cypher with fine-tuned large language models. In
+2024 5th International Conference on Artificial Intelligence and Computer
+Engineering (ICAICE), pages 783–788. IEEE, 2024.
+A Datasets
+As detailed in Table A1, we utilize a variety of datasets for SQL and Cypher.
+A.1 SFT Training
+SQL Dataset: We utilize a collection of 24 publicly available Text-to-SQL
+datasets, selected for their moderate complexity to facilitate reliable chain-of-
+thought (CoT) trace generation. This collection is part of a dataset available on
+Hugging Face6, which is a large-scale compilation of natural language to SQL
+examples spanning various domains. This benchmark includes 26 individual
+datasets that cover academic records, medical databases, entertainment meta-
+data, government statistics, and more. Notable examples include WikiSQL [46],
+6https://huggingface.co/datasets/Clinton/Text-to-sql-v1
+18
+
+[[page 19]]
+ATIS [9], Criteria2SQL [4], SEDE [8], SQuALL [28], and NVBench [34], along
+with public domain table corpora such as IMDb, Yelp, and datasets on historical
+sports or wildfires. We exclude Spider [43] and EHRSQL [15] from our training
+process, as they are designated for evaluation purposes, thus resulting in a total
+of 24 datasets used for training.
+Cypher Dataset: The Text-to-Cypher dataset is derived from [23], encom-
+passing 16 standardized public datasets that represent a broad array of graph
+query scenarios.
+This strategic selection ensures comprehensive foundational development in
+both SQL and Cypher querying languages, facilitating an effective cold start for
+subsequent GRPO training.
+A.2 Evaluation
+We evaluate the model on two main criteria. First, semantic parsing ability and
+generalization to novel databases through evaluation on various semantic pars-
+ing datasets. Second, we test transfer transfer capability to out-of-distribution
+Table/KG Question Answering tasks to demonstrate induced reasoning capa-
+bilities.
+Text-to-SQL Task: For the Text-to-SQL Task, we use BIRD minidev 7, Spi-
+der [43], EHRSQL [15] and SM3 sivasubramaniam2024smtexttoquery bench-
+marks. EHRSQL is specifically chosen to assess generalization to entirely unseen
+databases; this is ensured by excluding all MIMIC [13] database-related ques-
+tions from our training set since EHRSQL is based on MIMIC. Spider serves as
+a comprehensive benchmark for text-to-SQL capabilities.
+Text-to-Cypher Task: Evaluation is conducted on the held-out test split of
+our training data [23] and on SM3 sivasubramaniam2024smtexttoquery.
+Tabular QA: To assess transfer to table understanding, we evaluate on CRT
+QA [45] and Tablebench [36], which focus on direct reasoning over table data.
+KG QA: We assess knowledge graph reasoning capabilities through evaluation
+on CR-LT KGQA [7], which requires direct reasoning over graph structures.
+B Ablation Details
+The full ablation results from training Qwen2.5-1.5B instruct are presented in
+table B1. For their discussion we refer to Section 4.3.
+C SM3: Direct Comparison of SQL, Cypher,
+and MQL
+We evaluate models trained on our Text-to-SQL and Text-to-Cypher datasets
+using the SM3-Text-to-Query Dataset [29], which provides semantically equiva-
+lent queries across SQL, Cypher, and MongoDB Query Language (MQL). This
+7https://GitHub.com/bird-bench/mini_dev
+19
+
+[[page 20]]
+Table A1: Overview of Datasets used for Training and Evaluation .
+The table shows the datasets used for different stages: Supervised Fine-Tuning
+(SFT), GRPO Training, and two types of evaluations.
+Stage Type T able T ask Graph T ask
+Training Semantic Text-to-SQL Collection ∗ Neo4j Text-to-Cypher
+Parsing (SFT) [23]
+Semantic BIRD [16] Neo4j Text-to-Cypher
+Parsing (GRPO) [23]
+Evaluation Semantic BIRD minidev †, Neo4j Text-to-Cypher
+Parsing EHRSQL [15], [23]
+Spider [43] SM3 [29]
+SM3 [29]
+Structural CRT-QA [45], CR-LT-KGQA
+QA TableBench [36] [7]
+∗https://huggingface.co/datasets/Clinton/Text-to-sql-v1
+†https://GitHub.com/bird-bench/mini_dev
+allows us to assess how well our training approach generalizes to unseen query
+languages. We use the schema information and the few-shot examples from the
+paper, and use o4 mini as an LLM judge.
+Base models demonstrate better performance on SQL compared to Cypher
+and significantly weaker performance on MQL, suggesting that their behavior
+reflects the data availability during pretraining (SQL being the most abundant
+and MQL the scarcest). However, our models outperform in Cypher over SQL,
+likely due to Cypher’s relative simplicity or the greater effectiveness of our struc-
+tural reward mechanism for graph-based tasks.
+Our results in Table C1 demonstrate strong transfer learning capabilities.
+Models trained jointly on SQL and Cypher (e.g., Qwen2.5-14B-trained-Both
+achieving 42.5% on Cypher and 40.0% on SQL) outperform their single-task
+counterparts (Qwen2.5-14B-trained-Cypher achieving 41.8% on Cypher, Qwen2.5-
+14B-trained-SQL achieving 39.5% on SQL). More importantly, this joint train-
+ing enables better generalization to the completely unseen MQL, with QwQ-
+32B-trained-Both reaching 20.8% accuracy compared to base model’s 19.4%.
+Adding few-shot examples further boosts performance across all settings, with
+QwQ-32B-trained-Both-fewshot achieving our best results (57.7% Cypher, 48.8%
+SQL, 24.0% MQL), suggesting effective combination of learned structural un-
+derstanding and exemplar-based reasoning.
+20
+
+[[page 21]]
+Table B1: Ablation Results . Performance comparison of the Qwen2.5-
+1.5B-instruct model trained on Text-to-SQL collection, Neo4j Text-to-Cypher
+dataset, or both datasets jointly. The three digits in model names indicate the
+use of different rewards during training∗. We report execution accuracy for SQL
+tasks (BIRD minidev + evidence, Spider), Exact Match for QA tasks (CRT-
+QA, CR-LT-KGQA, TableBench), BLEU score for Text2Cypher, andf1exec for
+EHRSQL.
+T ext-to-SQL T abular QA T ext-to-Cypher KG QA
+Model BIRD minidev Spider EHRSQL CRT-QA TableBench Text2Cypher CR-LT-KGQA
+SQL-111 11.3 ±1.4 49.5 ±3.1 9.5±2.5 11.2 ±2.1 24.0 ±2.8 9.2 ±1.5 52.3 ±4.6
+SQL-011 9.5 ±1.5 46.2 ±3.3 8.0 ±2.6 9.7 ±2.3 20.4 ±3.0 7.9 ±1.4 50.2 ±4.9
+SQL-101 10.7 ±1.4 47.5 ±3.2 8.7 ±2.8 10.0 ±2.2 22.2 ±2.9 8.7 ±1.4 51.1 ±4.8
+SQL-110 10.5 ±1.6 46.7 ±3.1 8.2 ±2.4 9.0 ±2.1 19.3 ±2.7 8.3 ±1.5 49.5 ±4.5
+Cypher-111 8.2 ±2.3 45.2 ±4.2 7.8 ±2.5 10.2 ±2.5 22.5 ±3.1 15.4 ±1.2 58.3 ±3.9
+Cypher-011 7.5 ±2.4 45.1 ±4.0 7.5 ±2.6 9.8 ±2.3 20.1 ±3.4 13.2 ±1.4 54.7 ±3.8
+Cypher-101 7.7 ±2.5 45.5 ±4.5 7.7 ±2.7 9.6 ±2.4 20.6 ±3.0 14.5 ±1.9 56.3 ±4.2
+Cypher-110 7.6 ±2.3 45.3 ±4.4 7.6 ±2.8 9.3 ±2.4 19.7 ±3.2 13.8 ±1.2 54.2 ±3.7
+Both-111 12.0±1.2 51.2±3.3 9.4 ±2.4 14.2±2.8 30.0±3.1 15.8 ±2.2 60.8±4.0
+Both-011 9.8 ±1.7 48.1 ±3.4 9.0 ±2.6 12.0 ±2.3 26.5 ±3.2 12.5 ±1.3 57.0 ±4.3
+Both-101 9.5 ±2.3 49.3 ±3.5 9.4 ±2.3 13.0 ±2.3 27.3 ±3.0 13.8 ±1.4 58.5 ±4.1
+Both-110 9.3 ±2.2 48.9 ±3.6 9.1 ±2.5 11.5 ±2.4 25.8 ±3.5 13.2 ±1.4 56.4 ±4.2
+Qwen2.5-1.5B-instruct 9.0 ±1.6 44.7 ±3.6 7.4 ±3.2 8.3 ±2.3 18.0 ±2.4 7.2 ±1.3 48.7 ±5.5
+∗Model names (e.g., SQL-111) use a three-digit format where each digit (1/0) indicates whether the corresponding
+reward was used during training: string matching (1st digit), LLM reward (2nd digit), and structural reward (3rd digit).
+D Prompts
+This section details the prompts used in our pipeline, closely aligned with (au-
+thor?) [30]. For Cypher queries, we simply replace the word ”SQL” with
+”Cypher” in all prompts.
+D.1 Instruction Summarization
+As part of the synthetic data generation pipeline, we employ a specialized
+prompt to distill complex natural language SQL task descriptions into concise,
+structured summaries that capture essential query requirements.
+You are a SQL assistant tasked with summarizing instructions for SQL query gen-
+eration. Below are original natural language task descriptions that outline a specific
+request. Create a concise summary that highlights the core requirements for the SQL
+query to be constructed.
+ORIGINAL INSTRUCTIONS: original natural language task description
+When creating the summary, focus on clarity and precision, ensuring that the essential
+elements necessary for generating the SQL query are retained. You may follow this
+template:
+SUMMAR Y:Write the summarized instructions here, clearly stating the goals and
+key aspects required for the SQL query.
+21
+
+[[page 22]]
+Table C1: SM3 - Direct Comparison of SQL, Cypher, and MQL. Per-
+formance on semantically equivalent queries across three query languages using
+the SM3 benchmark. Each query expresses the same intent in SQL, Cypher,
+and MongoDB Query Language (MQL), enabling direct comparison of language
+complexity. LLM execution accuracy is reported. Models fine-tuned on Text-
+to-SQL are labeled as ‘trained-SQL’, those fine-tuned on Text-to-Cypher as
+‘trained-Cypher’, and those trained on both tasks as ‘trained-Both’. Few-shot
+results indicate performance when correct Text-to-Query examples are provided
+in the prompt.
+Text-to-Cypher Text-to-SQL Text-to-MQL
+Model Zero-shot Few-shot Zero-shot Few-shot Zero-shot Few-shot
+o3 40.5 ±3.9 59.3±3.8 46.3 ±3.2 57.7±3.6 25.7±4.1 30.3±3.5
+o3-mini 40.0 ±5.6 53.7 ±3.3 41.3 ±4.2 50.8 ±3.7 15.5 ±2.5 20.0 ±2.1
+Qwen2.5-14B-instruct 32.5 ±3.2 36.7 ±4.2 35.5 ±3.7 41.7 ±3.8 9.0 ±3.9 15.2 ±2.2
+Qwen2.5-14B-trained-SQL 35.5 ±2.8 38.5 ±3.8 39.5 ±4.0 43.7 ±3.3 9.6 ±2.2 18.2 ±1.8
+Qwen2.5-14B-trained-Cypher 41.8 ±3.3 49.8 ±3.9 36.7 ±5.3 40.5 ±4.0 10.3 ±1.2 18.5 ±1.6
+Qwen2.5-14B-trained-Both 42.5 ±3.2 49.9 ±4.3 40.0 ±4.2 44.3 ±4.3 13.8 ±1.1 19.7 ±2.4
+Qwen3-14B 40.5 ±5.6 53.0 ±4.0 38.3 ±4.8 50.7 ±4.1 19.7 ±2.0 19.0 ±3.5
+Qwen3-14B-trained-SQL 40.7 ±4.2 53.5 ±3.9 41.8 ±4.0 51.8±3.3 20.0 ±2.1 20.7 ±1.7
+Qwen3-14B-trained-Cypher 45.2 ±3.8 54.0 ±4.1 40.5 ±4.7 47.5 ±3.5 20.5 ±2.0 20.5 ±1.9
+Qwen3-14B-trained-Both 45.7±5.6 54.0±4.1 42.0 ±2.2 48.0 ±3.8 20.5 ±2.8 20.6 ±0.4
+QwQ-32B 35.8 ±5.2 55.3 ±4.3 41.0 ±4.2 42.4 ±4.0 19.4 ±2.4 20.8 ±2.7
+QwQ-32B-trained-Both 43.7 ±5.5 57.7±4.3 42.5±4.7 48.8 ±3.8 20.8±1.2 24.0±2.3
+D.2 Creating Synthetic CoT
+Our synthetic Chain-of-Thought generation prompt combines schema informa-
+tion, original instructions, and summarized requirements to guide the creation
+of well-reasoned SQL queries.
+You are a SQL expert. Below are SQL table schemas paired with both original and
+summarized instructions that describe a specific task. Using valid SQLite syntax,
+write a response that appropriately completes the request for the provided tables.
+SCHEMA: schema
+ORIGINAL INSTRUCTIONS: original natural language task description
+SUMMARIZED INSTRUCTIONS: summarized task instructions
+When answering, provide reasoning for the SQL query you create using the following
+template:
+¡sql¿ Write the SQL query here, ensuring it adheres to SQLite syntax and effectively
+accomplishes the task described in the instructions. ¡/sql¿
+22
+
+[[page 23]]
+D.3 Evaluation of Synthetic CoT
+The evaluation prompt for the synthetic CoT generation pipeline provides a
+binary assessment framework for comparing generated SQL queries against ref-
+erence solutions while considering schema constraints.
+You are an SQL expert, and your task is to evaluate whether the SQL query below is
+correct based on the provided schema and the correct SQL reference.
+SQL Query: ans.sql
+Schema: schema
+Correct SQL: correct sql
+Return ONLY ”Correct” or ”Wrong”.
+D.4 Training Prompts
+Following (author?) [5], we use this system prompt that encourages explicit
+reasoning through Chain-of-Thought.
+A conversation between User and Assistant. The user asks a question, and the As-
+sistant solves it, The assistant first thinks about the reasoning process in the mind
+and then provides the user with the answer. The reasoning process is enclosed within
+¡think¿ ¡/think¿ tags, respectively, i.e., ¡think¿ reasoning process here ¡/think¿ answer
+here. User:
+The user prompt provides specific instructions for query generation:
+Below is an instruction that describes a task, paired with an input that provides further
+context. Write a response that appropriately completes the request.
+Instruction: You are a SQLite expert. Given an input question, create a syntactically
+correct SQLite query to run. Enclose the final sql query within ”“‘sql” and ”“‘” tags.
+Input: Here is the relevant table info: {table info}.
+Write a SQLite query for the following task: {task}.
+Response:
+D.5 LLM Evaluation Metric Prompt
+For binary evaluation of query correctness, we employ a prompt that focuses on
+semantic equivalence while allowing for minor syntactic variations:
+You are SQL expert and your task is to evaluate if the predicted SQL query is correct
+based on the Schema and the correct SQL query. If no SQL query was found then
+the answer is Wrong. The query is considered correct even if the only mistakes are in
+letter casing (uppercase vs lowercase).
+Schema: {example[’context’]}
+Predicted query: {pred query}
+Correct SQL query: {correct query}
+Return ONLY ”Correct” or ”Wrong”
+23
+
+[[page 24]]
+D.6 LLM Judge Reward Classification Prompt
+To provide fine-grained feedback during training, we use a five-class classification
+prompt that assesses query quality across multiple dimensions:
+Compare these SQL queries to the correct query and grade each one as: ’Very bad’,
+’Bad’, ’Above average’, ’Good’, or ’Excellent’.
+Use the following grading system, with the correct query as reference:
+Correct Query: {true query}
+1. Excellent: Perfect match with {true query}
+2. Good: Contains only grammar mistakes
+3. Above average: Mostly correct but contains one logical error
+4. Bad: Contains multiple mistakes
+5. V ery bad: No query produced or significantly different from correct query
+Queries to grade: {queries to rank}
+{format instructions}
+24

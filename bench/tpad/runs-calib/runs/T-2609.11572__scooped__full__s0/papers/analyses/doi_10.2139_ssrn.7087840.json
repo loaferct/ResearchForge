@@ -1,0 +1,49 @@
+{
+  "paper_id": "doi:10.2139/ssrn.7087840",
+  "relevance_tier": "medium",
+  "problem": "RAG behaviour on narrow financial corpora such as regulatory and procedural documents is understudied; no existing systematic comparison of retrieval paradigms for such corpora (statement limited to this corpus).",
+  "method": "A 100-question, manually verified domain benchmark over 33 central-bank payment system reports; structure-aware chunking; comparison of four conditions (zero-context, BM25, dense bge-small-en-v1.5, hybrid BM25+dense RRF) with generation by llama-3.3-70b-instruct.",
+  "key_assumptions": [
+    "The corpus is static (no document versioning or amendment relations)",
+    "ROUGE/BERTScore/faithfulness proxy answer quality adequately"
+  ],
+  "main_contribution": "First systematic sparse/dense/hybrid retrieval comparison for regulatory financial documents on an RMA (Bhutan) corpora benchmark, with open benchmark and evaluation code.",
+  "datasets": [
+    "33 Royal Monetary Authority of Bhutan payment system reports (2018-2026), 1,033 pages, 1,456 tables, 2,869 structure-aware chunks",
+    "100 domain questions across factual, numerical, trend and multihop categories"
+  ],
+  "benchmarks": [
+    "RMA RAG benchmark (introduced)"
+  ],
+  "baselines": [
+    "Zero-context",
+    "BM25",
+    "Dense (BAAI/bge-small-en-v1.5)",
+    "Hybrid BM25+dense with Reciprocal Rank Fusion"
+  ],
+  "metrics": [
+    "ROUGE-1/2/L",
+    "BERTScore F1",
+    "Faithfulness",
+    "No-answer rate"
+  ],
+  "results": "Hybrid achieves the best overall performance (ROUGE-L 0.513, BERTScore F1 0.697, faithfulness 90.0%, no-answer rate 16%), beating BM25-only (+17.4% ROUGE-L) and dense-only (+19.3% ROUGE-L); BM25 beats hybrid on multihop queries (ROUGE-L 0.304 vs 0.239).",
+  "limitations": [
+    "Single institution corpus (Bhutan central bank), limited generalization",
+    "Questions have no target date, so document time or version is not modelled",
+    "Hybrid RRF underperforms BM25 on multihop queries"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "Public: https://github.com/PravaatChhetri/rma-rag-benchmark (verified via inspect_repository: Jupyter notebook pipeline, pinned requirements.txt, ROUGE/BERTScore computed live, benchmark CSV with example rows)",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "A static regulatory-document QA benchmark with no temporal dimension, no version timestamps, and no query target dates; it supplies baseline retrieval configurations and an evaluation harness rather than a temporal relevance component, and it does not address supersession or overlapping revisions.",
+    "basis": "Abstract describes a sparse/dense/hybrid comparison on a static report corpus with answer-quality metrics; timestamps and versioning are absent."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T04:29:04.224639Z"
+}

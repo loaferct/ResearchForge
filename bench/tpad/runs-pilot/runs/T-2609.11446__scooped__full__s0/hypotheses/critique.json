@@ -1,0 +1,78 @@
+{
+  "strongest_for": "The idea improves accuracy-efficiency tradeoff via calibrated confidence and common thresholds, as evidenced by UCCI's 31% inference cost reduction at same accuracy (C001) and temperature scaling's calibration improvement (C002).",
+  "strongest_against": "The idea relies on assumptions that may not hold: calibration may not be effective for all model types (U001), common thresholds may not be meaningful across diverse models (U002), and theoretical links may fail under distribution shift (C005).",
+  "most_important_unresolved_question": "Whether a single threshold can be set meaningfully across models of different capacities after calibration (U002).",
+  "most_dangerous_confounder": "Distribution shift breaking the invariance assumption of large-model accuracy to routing, confounding expected benefits (C005).",
+  "closest_paper_ids": [
+    "arxiv:2605.18796",
+    "doi:10.2139/ssrn.7304331"
+  ],
+  "closest_work_explanation": "UCCI proposes a calibration-first router for LLM cascades using isotonic regression to map token-margin uncertainty to error probability and selects escalation threshold via constrained cost minimization. The skin lesion work uses temperature scaling and confidence/entropy-based accept-defer rules for selective prediction. Both combine calibration and thresholding but focus on single model types/tasks, whereas the idea targets heterogeneous model ensembles with a unified reliability metric.",
+  "potential_contribution": "A unified reliability metric for diverse models via post-hoc calibration, common thresholds for routing decisions independent of model specifics, theoretical analysis linking calibration to selective risk, and empirical validation on language and vision benchmarks.",
+  "overlap_summary": "Overlaps with existing work on calibration (temperature scaling, isotonic regression) and threshold-based routing (accept-defer rules, cascaded inference). The idea combines these elements across heterogeneous models.",
+  "distinction_summary": "Unlike prior work focusing on single model type or single task, the idea targets a set of diverse models (e.g., LLMs, decision trees) and aims for a unified reliability metric and common thresholds independent of model specifics.",
+  "novelty": [
+    {
+      "question": "Has essentially the same idea been proposed?",
+      "finding": "No directly matching work was found that combines model-specific post-hoc calibration of diverse models with a unified reliability metric and common thresholds for routing across language and vision benchmarks.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C003"
+      ],
+      "paper_ids": [
+        "arxiv:2605.18796",
+        "doi:10.2139/ssrn.7304331",
+        "doi:10.3390/info17020114"
+      ]
+    }
+  ],
+  "technical_validity": [
+    {
+      "question": "Are the technical assumptions sound?",
+      "finding": "Assumptions about calibration effectiveness for all model types and invariance of large-model accuracy to routing may not hold (see uncertainties U001, U003, claim C005).",
+      "severity": "high",
+      "claim_ids": [
+        "C001",
+        "C002",
+        "C005"
+      ],
+      "paper_ids": [
+        "arxiv:2605.18796",
+        "doi:10.2139/ssrn.7304331"
+      ]
+    }
+  ],
+  "experimental_validity": [
+    {
+      "question": "Is the experimental methodology sound?",
+      "finding": "Proposed evaluation on language and vision benchmarks is appropriate, but need to ensure baselines are strong and budgets matched; no direct evidence yet.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C001",
+        "C002"
+      ],
+      "paper_ids": [
+        "arxiv:2605.18796",
+        "doi:10.2139/ssrn.7304331"
+      ]
+    }
+  ],
+  "practicality": [
+    {
+      "question": "Is it feasible to implement?",
+      "finding": "Requires held-out validation data for each model and calibration overhead; feasibility uncertain (uncertainty U005).",
+      "severity": "moderate",
+      "claim_ids": [
+        "C001",
+        "C002"
+      ],
+      "paper_ids": [
+        "arxiv:2605.18796",
+        "doi:10.2139/ssrn.7304331"
+      ]
+    }
+  ],
+  "overall_status": "promising_needs_validation",
+  "status_rationale": "While existing work shows benefits of calibration and threshold routing in specific contexts, the generalization to diverse models and the effectiveness of common thresholds across them remain untested, leaving key uncertainties.",
+  "recorded_at": "2026-09-30T11:38:26.234061Z"
+}

@@ -1,0 +1,49 @@
+{
+  "paper_id": "arxiv:2506.00491",
+  "relevance_tier": "high",
+  "problem": "Conventional retrieve-and-read RAG methods suffer from semantic mismatching (retrieving semantically similar but unhelpful passages) and high computational cost when handling interdependent sub-questions in multi-hop question answering.",
+  "method": "Q-DREAM: a three-module pipeline comprising (1) Question Decomposition Module (QDM) that splits multi-hop questions into fine-grained subquestions; (2) Subquestion Dependency Optimizer Module (SDOM) that models interdependent relations among subquestions; (3) Dynamic Passage Retrieval Module (DPRM) that aligns subquestions with relevant passages by optimizing semantic embeddings.",
+  "key_assumptions": [
+    "Not explicitly stated in the paper."
+  ],
+  "main_contribution": "Q-DREAM significantly outperforms existing RAG methods on HotpotQA, 2WikiMQA, and IIRC, achieving state-of-the-art exact match (EM) and F1 scores while improving retrieval efficiency; e.g., EM 48.6/F1 62.1 on 2WikiMQA (in-domain), EM 48.4/F1 60.9 on HotpotQA, EM 28.2/F1 31.9 on IIRC, with average EM 41.7/F1 51.6.",
+  "datasets": [
+    "HotpotQA",
+    "2WikiMultiHopQA (2WikiMQA)",
+    "IIRC"
+  ],
+  "benchmarks": [
+    "HotpotQA",
+    "2WikiMultiHopQA",
+    "IIRC"
+  ],
+  "baselines": [
+    "InstructRAG",
+    "ChatQA2",
+    "Llama InstructRAG (Llama3-8B)",
+    "SURE",
+    "IRCoT",
+    "ChatGPT (no retrieval)"
+  ],
+  "metrics": [
+    "Exact Match (EM)",
+    "F1 score"
+  ],
+  "results": "Q-DREAM achieves EM 48.6/F1 62.1 on 2WikiMQA, EM 48.4/F1 60.9 on HotpotQA, EM 28.2/F1 31.9 on IIRC, average EM 41.7/F1 51.6; absolute improvements of 25.0 EM and 32.9 F1 over ChatGPT without retrieval on 2WikiMQA.",
+  "limitations": [
+    "Performance remains to be studied with other complex reasoning tasks; long-tail knowledge retrieval for RAG remains to be studied."
+  ],
+  "future_work": [
+    "Extend to multilingual or multimodal settings; investigate effectiveness on more out-of-domain datasets."
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "Both target multi-hop QA improvement: Q-DREAM optimizes question semantic space via decomposition, dependency modeling, and dynamic passage retrieval at inference time, while the idea enriches training triples with local context subgraphs from the same passage and uses an adaptive repair loop to generate corrective examples from one‑hop failures followed by RL lower‑hop transfer. Overlap in using semantic embeddings to bridge question‑passage gaps; differences in stage (inference vs training), mechanism (question‑level optimization vs training data enrichment + failure‑driven RL), and additional components (adaptive repair loop, RL transfer) in the idea.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T09:34:23.880711Z"
+}

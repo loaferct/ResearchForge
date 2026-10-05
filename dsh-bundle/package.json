@@ -1,0 +1,14 @@
+{
+  "name": "researchforge-dsh",
+  "version": "0.1.0",
+  "description": "ResearchForge research tools for DeepSeek Harness: literature search, evidence-verified claims, and research records via MCP",
+  "license": "MIT",
+  "type": "module",
+  "keywords": ["dsh-plugin", "deepseek-harness", "research", "mcp"],
+  "files": ["cordis.patch.yml", "README.md"],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

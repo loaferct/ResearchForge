@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2601.03014",
+  "title": "SentGraph: Hierarchical Sentence Graph for Multi-hop Retrieval-Augmented Question Answering",
+  "authors": [
+    "Junli Liang",
+    "Pengfei Zhou",
+    "Wangqiu Zhou",
+    "Wenjie Qing",
+    "Qi Zhao",
+    "Ziwen Wang",
+    "Qi Song",
+    "Xiangyang Li"
+  ],
+  "year": 2026,
+  "published": "2026-01-06",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2601.03014",
+  "pdf_url": "https://arxiv.org/pdf/2601.03014v3",
+  "abstract": "Traditional Retrieval-Augmented Generation (RAG) effectively supports single-hop question answering with large language models but faces significant limitations in multi-hop question answering tasks, which require combining evidence from multiple documents. Existing chunk-based retrieval often provides irrelevant and logically incoherent context, leading to incomplete evidence chains and incorrect reasoning during answer generation. To address these challenges, we propose SentGraph, a sentence-level graph-based RAG framework that explicitly models fine-grained logical relationships between sentences for multi-hop question answering. Specifically, we construct a hierarchical sentence graph offline by first adapting Rhetorical Structure Theory to distinguish nucleus and satellite sentences, and then organizing them into topic-level subgraphs with cross-document entity bridges. During online retrieval, SentGraph performs graph-guided evidence selection and path expansion to retrieve fine-grained sentence-level evidence. Extensive experiments on four multi-hop question answering benchmarks demonstrate the effectiveness of SentGraph, validating the importance of explicitly modeling sentence-level logical dependencies for multi-hop reasoning.",
+  "doi": null,
+  "arxiv_id": "2601.03014",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T06:56:15.938675Z",
+  "relevance": 0.3438,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "subgraph retrieval multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.3390/app15126722",
+  "relevance_tier": "high",
+  "problem": "Multi-hop KGQA suffers from lack of interpretability due to implicit reasoning mechanisms and semantic gap between natural language queries and structured knowledge representations.",
+  "method": "Proposes DRKG (Decomposed Reasoning over Knowledge Graph), an LLM-based constrained multi-hop reasoning framework that generates hop-constrained reasoning plans via semantic parsing (explicitly defining traversal path length and entity-retrieval logic) and performs selective retrieval during KG traversal based on these plans to ensure faithfulness to structured knowledge.",
+  "key_assumptions": [
+    "Explicit reasoning plans can improve interpretability and constrain path divergence.",
+    "LLM-based semantic parsing can generate accurate hop-constrained reasoning plans for KG traversal."
+  ],
+  "main_contribution": "DRKG framework that introduces explicit reasoning plans as logical boundary controllers, achieving 1%-5% accuracy improvements over best baselines on four datasets and enhancing interpretability via ablation and reliability analyses.",
+  "datasets": [
+    "not stated in abstract"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract (referenced as 'best baseline models')"
+  ],
+  "metrics": [
+    "accuracy"
+  ],
+  "results": "[\"Achieves 1%–5% accuracy improvements over the best baseline models on four datasets.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "The paper uses LLM-generated reasoning plans to guide retrieval and ensure faithfulness, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:02:39.144764Z"
+}

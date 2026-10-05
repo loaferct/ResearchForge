@@ -1,0 +1,34 @@
+{
+  "id": "arxiv:2512.00360",
+  "title": "CourseTimeQA: A Lecture-Video Benchmark and a Latency-Constrained Cross-Modal Fusion Method for Timestamped QA",
+  "authors": [
+    "Vsevolod Kovalev",
+    "Parteek Kumar"
+  ],
+  "year": 2025,
+  "published": "2025-11-29",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2512.00360",
+  "pdf_url": "https://arxiv.org/pdf/2512.00360v2",
+  "abstract": "We study timestamped question answering over educational lecture videos under a single-GPU latency/memory budget. Given a natural-language query, the system retrieves relevant timestamped segments and synthesizes a grounded answer. We present CourseTimeQA (52.3 h, 902 queries across six courses) and a lightweight, latency-constrained cross-modal retriever (CrossFusion-RAG) that combines frozen encoders, a learned 512->768 vision projection, shallow query-agnostic cross-attention over ASR and frames with a temporal-consistency regularizer, and a small cross-attentive reranker. On CourseTimeQA, CrossFusion-RAG improves nDCG@10 by 0.10 and MRR by 0.08 over a strong BLIP-2 retriever while achieving approximately 1.55 s median end-to-end latency on a single A100. Closest comparators (zero-shot CLIP multi-frame pooling; CLIP + cross-encoder reranker + MMR; learned late-fusion gating; text-only hybrid with cross-encoder reranking and its MMR variant; caption-augmented text retrieval; non-learned temporal smoothing) are evaluated under matched hardware and indexing. We report robustness across ASR noise (WER quartiles), diagnostics for temporal localization, and full training/tuning details to support reproducible comparison.",
+  "doi": null,
+  "arxiv_id": "2512.00360",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T09:54:36.332260Z",
+  "relevance": 0.1923,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "retrieval agnostic temporal relevance question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

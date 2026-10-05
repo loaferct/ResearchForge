@@ -1,0 +1,36 @@
+{
+  "id": "doi:10.21203/rs.3.rs-10090330/v1",
+  "title": "AgriMemSynth: a synthetic benchmark for memory and multi-hop reasoning in agricultural question answering",
+  "authors": [
+    "Nur Arifin Akbar",
+    "Rahool Dembani",
+    "Biagio Lenzitti",
+    "Domenico Tegolo"
+  ],
+  "year": 2026,
+  "published": "2026-07-03",
+  "venue": null,
+  "url": "https://doi.org/10.21203/rs.3.rs-10090330/v1",
+  "pdf_url": null,
+  "abstract": "Abstract Agricultural advisory systems often need to combine current observations, earlier visits, and crop-disease knowledge, but existing agricultural benchmarks mainly evaluate image classification or short-form question answering. We present AgriMemSynth, a synthetic benchmark framework for evaluating agricultural question answering under two complementary requirements: multi-session conversational memory and structured multi-hop reasoning. AgriMemSynth provides AgriConvMem, a set of 500 generated advisory conversations, and AgriMultiHop, a set of 2,000 generated reasoning questions. Using held-out test splits with 146 conversational-memory questions and 200 multi-hop questions, we compare five retrieval organizations under a shared answer-generation pipeline: retrieval-augmented generation, a neuroscientific memory system, a hybrid retriever, BM25 with semantic reranking, and a graph-based memory system. Semantic evaluation reveals three stable benchmark patterns. First, lexical metrics substantially underestimate answer correctness. Second, conversational memory is harder than generated multi-hop reasoning. Third, retrieval organization is task-dependent: RAG has the highest conversational-memory score (85.6 %, 95 % CI: 79.0-90.4), whereas MemoryGraph has the highest multi-hop score (97.0 %, 95 % CI: 93.6-98.6). Temporal questions remain the weakest conversational category. These results support AgriMemSynth as a controlled benchmark for studying how agricultural AI systems organize, retrieve, and apply knowledge across longitudinal and relational tasks.",
+  "doi": "10.21203/rs.3.rs-10090330/v1",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T05:40:11.228559Z",
+  "relevance": 0.8,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering benchmark dataset"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

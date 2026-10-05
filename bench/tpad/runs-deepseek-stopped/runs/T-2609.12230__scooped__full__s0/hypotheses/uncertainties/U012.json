@@ -1,0 +1,38 @@
+{
+  "id": "U012",
+  "question": "Does the broader family of KG-context injection into LMs (structure-aware injection, GNN retrieval, graph-as-memory cross-attention) already contain prior art that attaches context triples to a target triple as a training signal, narrowing the idea's mechanism novelty further?",
+  "description": "The challenge search surfaced a wider family that injects knowledge-graph structure into language models rather than LLMs trained on KG Q&A items: structure-aware injection with contrastive training for KG completion (arxiv:2509.06531), GNN-based graph retrieval feeding LLM reasoning (doi:10.18653/v1/2025.findings-acl.856), generic KG injection into LLMs (arxiv:2505.07554), and graph-as-memory cross-attention for KG completion (arxiv:2510.08966). If any of these already attaches passage-local neighbouring triples to a target triple during training, the idea's mechanism would be covered by prior art beyond arxiv:2609.12230 and the mechanism-level novelty would be even narrower than assessed; this has not been read.",
+  "category": "overlap",
+  "importance": "medium",
+  "status": "partially_resolved",
+  "next_action": "COMPARE",
+  "possible_actions": [
+    "READ",
+    "SEARCH",
+    "COMPARE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "These papers were retrieved but not read; if one implements supervision-time context attachment, the overlap assessment shifts from 'one closest paper' to 'a family of prior art', which would further reduce any residual contribution and change which experiments are worth planning.",
+  "resolution": "Partially answered for the family question: SLiNT (arxiv:2509.06531) injects KG-derived structural context into a frozen LLM with LoRA for link prediction, retrieving pseudo-neighbors to enrich sparse entities and using contrastive supervision, evaluated on WN18RR and FB15k-237. This is context-enrichment for knowledge graph completion with structural neighbourhoods, not passage-local triples attached to a QA supervision target, so it does not add prior art on the idea's specific mechanism; it does show the mechanism family (inject graph context into an LM) is well populated. CDTP (arxiv:2510.06039) is a KG-text alignment resource with supervised fine-tuning results, again for KGC/QA/T2T rather than the two-regime comparison. No retrieved family member implements the KG-grounded vs CG-grounded supervision comparison.",
+  "paper_ids": [
+    "arxiv:2509.06531",
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "arxiv:2505.07554",
+    "arxiv:2510.08966",
+    "arxiv:2510.06039",
+    "arxiv:2609.12230"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2509.06531",
+    "arxiv:2510.06039"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "CHALLENGE",
+  "created_at": "2026-09-30T05:18:22.465525Z",
+  "updated_at": "2026-09-30T05:19:56.176428Z"
+}

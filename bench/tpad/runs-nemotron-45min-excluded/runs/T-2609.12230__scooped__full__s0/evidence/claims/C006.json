@@ -1,0 +1,20 @@
+{
+  "id": "C006",
+  "statement": "The closed-loop medical KGQA framework uses backward consistency verification to decide whether a branch should be accepted, locally revised, or rolled back, by recording explored branches, unresolved conditions, conflicts, and explanation evidence in a unified memory and applying backward checking.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "doi:10.1117/12.3120384",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "We propose a closed-loop framework for medical KGQA that combines subgoal decomposition, adaptive graph planning, unified memory, and backward consistency verification. A question is decomposed into disease, symptom, examination, treatment, and contraindication subgoals. During search, candidate expansions are ranked by relation relevance, newly covered subgoals, historical usefulness, conflict risk, and path length. The system records explored branches, unresolved conditions, conflicts, and explanation evidence in a unified memory, and uses backward checking to decide whether a branch should be accepted, locally revised, or rolled back.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [],
+  "recorded_at": "2026-09-30T06:16:23.669573Z"
+}

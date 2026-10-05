@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2504.20752",
+  "title": "Grokking in the Wild: Data Augmentation for Real-World Multi-Hop Reasoning with Transformers",
+  "authors": [
+    "R. Abramov",
+    "Felix Steinbauer",
+    "Gjergji Kasneci"
+  ],
+  "year": 2025,
+  "published": "2025-04-29",
+  "venue": "International Conference on Machine Learning",
+  "url": "https://www.semanticscholar.org/paper/5b3f18492bd171e9eb69249b5a0a13d6f1717852",
+  "pdf_url": null,
+  "abstract": "Transformers have achieved great success in numerous NLP tasks but continue to exhibit notable gaps in multi-step factual reasoning, especially when real-world knowledge is sparse. Recent advances in grokking have demonstrated that neural networks can transition from memorizing to perfectly generalizing once they detect underlying logical patterns - yet these studies have primarily used small, synthetic tasks. In this paper, for the first time, we extend grokking to real-world factual data and address the challenge of dataset sparsity by augmenting existing knowledge graphs with carefully designed synthetic data to raise the ratio $\\phi_r$ of inferred facts to atomic facts above the threshold required for grokking. Surprisingly, we find that even factually incorrect synthetic data can strengthen emergent reasoning circuits rather than degrade accuracy, as it forces the model to rely on relational structure rather than memorization. When evaluated on multi-hop reasoning benchmarks, our approach achieves up to 95-100% accuracy on 2WikiMultiHopQA - substantially improving over strong baselines and matching or exceeding current state-of-the-art results. We further provide an in-depth analysis of how increasing $\\phi_r$ drives the formation of generalizing circuits inside Transformers. Our findings suggest that grokking-based data augmentation can unlock implicit multi-hop reasoning capabilities, opening the door to more robust and interpretable factual reasoning in large-scale language models.",
+  "doi": "10.48550/arxiv.2504.20752",
+  "arxiv_id": "2504.20752",
+  "openalex_id": null,
+  "s2_id": "5b3f18492bd171e9eb69249b5a0a13d6f1717852",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 13,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:03:08.778343Z",
+  "relevance": 0.3571,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "HotpotQA 2WikiMultiHopQA MetaQA benchmark multi-hop reasoning evaluation"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

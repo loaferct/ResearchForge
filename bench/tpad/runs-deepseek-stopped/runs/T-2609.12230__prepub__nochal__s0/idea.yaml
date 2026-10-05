@@ -1,0 +1,157 @@
+raw_idea: 'Multi‑hop question answering often relies on reasoning over a chain of
+  facts in a knowledge graph, yet current language‑model training typically uses isolated
+  head‑relation‑tail triples, depriving the model of the surrounding context that
+  supports multi‑step inference. We propose to enrich each target triple (or path)
+  with additional triples drawn from the same source passage, forming a local context
+  subgraph that is presented together with the primary supervision signal. The model
+  will be fine‑tuned under two regimes: one using only the target triple/path and
+  another that also incorporates the supporting context. To improve the reliability
+  of the base facts, we will introduce an adaptive repair loop that detects one‑hop
+  failures, generates corrective examples, and iteratively refines the model. After
+  this cleaning stage, we will apply reinforcement‑learning‑based optimization on
+  lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.'
+analysis:
+  raw_idea: 'Multi‑hop question answering often relies on reasoning over a chain of
+    facts in a knowledge graph, yet current language‑model training typically uses
+    isolated head‑relation‑tail triples, depriving the model of the surrounding context
+    that supports multi‑step inference. We propose to enrich each target triple (or
+    path) with additional triples drawn from the same source passage, forming a local
+    context subgraph that is presented together with the primary supervision signal.
+    The model will be fine‑tuned under two regimes: one using only the target triple/path
+    and another that also incorporates the supporting context. To improve the reliability
+    of the base facts, we will introduce an adaptive repair loop that detects one‑hop
+    failures, generates corrective examples, and iteratively refines the model. After
+    this cleaning stage, we will apply reinforcement‑learning‑based optimization on
+    lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.'
+  problem: Language-model and KGQA training typically supervises individual head-relation-tail
+    triples (or a single reasoning path) in isolation. This strips away the surrounding
+    passage context — the co-occurring triples that constrain and disambiguate each
+    fact — which multi-step inference appears to need, and it propagates noisy/incorrect
+    base facts into every downstream hop of a reasoning chain.
+  target_domain: Knowledge-graph question answering (multi-hop reasoning over a knowledge
+    graph), with language models as the reader/reasoner.
+  proposed_method: For each target triple or gold reasoning path, retrieve the additional
+    triples co-occurring in the same source passage to form a local context subgraph,
+    and present that subgraph together with the primary supervision signal. Fine-tune
+    under two matched regimes (isolated triple/path vs. triple/path + local context
+    subgraph). Add an adaptive repair loop that detects one-hop failures, generates
+    corrective training examples, and iteratively refines the model. Then apply RL-based
+    optimization on lower-hop QA instances and measure transfer to deeper multi-hop
+    queries.
+  hypothesis: Augmenting isolated triple/path supervision with a co-passage local
+    context subgraph improves multi-hop QA accuracy and, specifically, generalization
+    to deeper-hop queries compared with the isolated-supervision baseline; an adaptive
+    one-hop-failure repair loop over noisy base facts yields further, measurable gains
+    in answer reliability.
+  research_question: Does augmenting isolated triple/path supervision with a co-passage
+    local context subgraph improve multi-hop KG question answering and generalization
+    to deeper-hop queries relative to isolated-triple supervision, and does an adaptive
+    one-hop-failure repair loop add reliable gains on top of it?
+  expected_contribution: (1) A controlled empirical comparison isolating the effect
+    of passage-derived context triples vs. isolated triples under matched data and
+    compute. (2) Evidence on whether context-enriched supervision transfers from shallow
+    to deeper-hop queries. (3) A reusable adaptive repair procedure for one-hop failures
+    and evidence on whether it improves or merely shifts errors. (4) A documented
+    negative result if any component fails under controlled conditions.
+  assumptions:
+  - Triples used as supervision can be linked to a source passage, so that 'co-passage
+    triples' are well defined (this does NOT hold for pure Freebase/Wikidata-only
+    KGQA without provenance).
+  - Triples co-occurring in the same passage are relevant, largely non-misleading
+    context for the target triple.
+  - One-hop failures on the training/validation distribution are diagnostic of base-fact
+    errors that corrective examples can reduce.
+  - Transfer from lower-hop to higher-hop queries is measureable on a fixed KG with
+    a fixed question vocabulary.
+  variables:
+    independent:
+    - supervision regime (isolated triple/path vs. triple/path + local context subgraph)
+    - repair loop enabled/disabled and number of repair iterations
+    - RL stage enabled/disabled and training hop depth (e.g. 1-2 hop)
+    dependent:
+    - multi-hop answer accuracy (Hits@1 for KGQA; exact match / F1 for text-form answers)
+    - accuracy on held-out deeper-hop queries (hop-depth transfer)
+    - one-hop failure/error rate
+    - fact-level correctness rate of base facts
+    controls:
+    - identical base model and tokenizer
+    - identical KG and question set (same train/dev/test split)
+    - matched number of training examples and total supervision tokens across regimes
+    - identical prompt/serialization template for triples
+    - matched number of optimization steps and random seeds
+  target_system: An instruction-tuned / fine-tuned language model that answers natural-language
+    questions over a knowledge graph whose triples retain provenance to a source passage
+    (and, for comparison, a graph-neural KGQA model such as those evaluated on WebQSP/CWQ).
+  expected_benefits: []
+  potential_risks:
+  - Passage provenance may not exist for standard Freebase/Wikidata KGQA, making the
+    mechanism inapplicable to the strongest baselines' setting.
+  - The context regime may be confounded with simply seeing more tokens/more triples;
+    matched-token controls are essential and hard to satisfy.
+  - Co-passage triples may be topical noise rather than reasoning-relevant context,
+    so enrichment could hurt.
+  - The adaptive repair loop may chase label noise / reward hacking and amplify rather
+    than fix one-hop failures.
+  - RL on lower-hop instances may overfit shallow patterns and fail to transfer, yielding
+    a null or negative result.
+  - Many recent LLM+RAG-over-KG systems already retrieve subgraphs per query, so the
+    novelty of context enrichment may be limited to the training-supervision framing.
+  ambiguities:
+  - question: 'Which metric defines success: Hits@1 for KGQA-style evaluation, or
+      EM/F1 for text answers?'
+    resolution: Use Hits@1 for KG answer grounding and EM/F1 if answers are generated
+      text; report both where possible. KGQA benchmarks (WebQSP/CWQ, MetaQA) commonly
+      use Hits@1, so this is resolvable from the literature.
+    resolved_by: literature
+  - question: Which datasets and knowledge graphs define the evaluation setting?
+    resolution: MetaQA (1/2/3-hop), WebQSP and CWQ are the standard multi-hop KGQA
+      benchmarks used by embedding-, path- and LLM-based methods (Saxena et al. 2020;
+      He et al. 2021; Jiang et al. 2022; Mavromatis & Karypis 2025).
+    resolved_by: literature
+  - question: Which model is being fine-tuned — a small KGQA-specific encoder/GNN
+      or a large decoder-only LLM?
+    resolution: Assume an instruction-tuned decoder-only LLM as the primary target
+      system (to match the 'language-model training' framing), with a GNN/path-based
+      KGQA model as a secondary baseline; this remains partially unresolved.
+    resolved_by: assumption
+  - question: What exactly is a 'source passage' when the supervision is drawn from
+      a structured KG rather than text?
+    resolution: Assume provenance-bearing KGs (e.g. text-derived graphs, HotpotQA-style
+      supporting paragraphs, or KGs with sentence/paragraph provenance); if no provenance
+      exists the mechanism is undefined and the scope must be narrowed to text-grounded
+      KGs.
+    resolved_by: assumption
+  - question: How deep is 'lower-hop' training vs. 'deeper' test (1-hop to 3-hop?
+      2-hop to 3-hop?)
+    resolution: Assume training on 1-2 hop instances and testing on 2-3 hop instances
+      with a held-out hop split; exact split to be fixed during experiment planning.
+    resolved_by: assumption
+  - question: What RL algorithm and reward are used in the lower-hop optimization
+      stage?
+    resolution: Unresolved; assume a policy-gradient/GRPO-style objective with a task-accuracy
+      (Hits@1 or EM) reward on lower-hop instances, optionally with a path-validity
+      shaping term (cf. Lin et al. 2018).
+    resolved_by: assumption
+  keywords:
+  - multi-hop question answering
+  - knowledge graph
+  - knowledge graph QA
+  - context subgraph
+  - isolated triples
+  - path supervision
+  - adaptive repair
+  - iterative refinement
+  - reinforcement learning
+  - hop-depth transfer
+  - MetaQA
+  - WebQSP
+  - CWQ
+  search_queries:
+  - knowledge graph augmented language model pretraining multi-hop question answering
+    context triples
+  - multi-hop question answering knowledge graph reasoning path reinforcement learning
+  - subgraph context enhanced knowledge graph embedding training beyond isolated triples
+  - iterative self-repair error correction training examples knowledge graph question
+    answering
+  - MetaQA WebQSP CWQ benchmark multi-hop knowledge graph question answering evaluation
+  recorded_at: '2026-09-30T05:09:01.528626Z'

@@ -1,0 +1,47 @@
+{
+  "paper_id": "doi:10.2139/ssrn.7304331",
+  "relevance_tier": "medium",
+  "problem": "Automated skin-lesion classifiers achieve high aggregate performance but lack reliability for individual predictions, making it unsafe for clinical use without knowing when to trust a prediction.",
+  "method": "Reliability-aware selective prediction framework: train transparent tree-ensemble classifiers with a lightweight, retraining-free reliability layer combining maximum class confidence, predictive entropy, post-hoc temperature scaling, and confidence/entropy-based accept–defer rules; evaluate on HAM10000 and ISIC 2018 datasets; assess calibration, error detection, selective prediction, and class-aware referral.",
+  "key_assumptions": [
+    "Combining maximum class confidence, predictive entropy, and temperature scaling yields reliable uncertainty estimates for selective prediction."
+  ],
+  "main_contribution": "A reliability-aware selective prediction framework that improves calibration (temperature scaling reduces ECE from 0.120 to 0.028), enables accurate error detection (AUROC 0.811), and supports deferral to experts; a malignancy-aware referral rule reduces melanoma miss rate from 26.9% to 7.6% at matched coverage.",
+  "datasets": [
+    "HAM10000 (10,015 images)",
+    "Skin Cancer (ISIC 2018): Malignant vs. Benign dataset (3,297 images)"
+  ],
+  "benchmarks": [
+    "not explicitly stated; comparison with raw classifier performance"
+  ],
+  "baselines": [
+    "raw classifier without reliability layer",
+    "global confidence deferral (majority-class driven)"
+  ],
+  "metrics": [
+    "accuracy",
+    "balanced accuracy",
+    "AUROC for error detection",
+    "expected calibration error (ECE)",
+    "accepted-case accuracy",
+    "error routing rate",
+    "melanoma miss rate"
+  ],
+  "results": "\"On HAM10000, temperature scaling reduces expected calibration error from 0.120 to 0.028 (76.5% reduction). Accepting only the most reliable half of cases raises accepted-case accuracy to 0.905 while routing 83.7% of all errors to expert review. A malignancy-aware referral rule reduces the melanoma miss rate from 26.9% to 7.6% at matched coverage and below 1% at higher deferral. Similar trends observed on ISIC 2018 dataset.\"",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "The paper focuses on reliability-aware selective prediction for skin lesion classification using temperature scaling and confidence/entropy rules; the idea generalizes to calibrating any diverse set of models and using common thresholds for routing decisions in collaborative inference across language and vision tasks.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T11:31:46.586604Z"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "G002",
+  "gap": "Lack of temporal relevance functions that model complex temporal logic, causal relations, and multi-event dependencies (e.g., retroactive amendments, temporal constraints).",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.11572",
+      "experiment_run_id": null,
+      "location": "p. 10",
+      "quote": "interpretable temporal distance function",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.11572"
+  ],
+  "why_unaddressed": "Current approaches use simple temporal distance functions.",
+  "research_question": "How does incorporating complex temporal logic (e.g., interval algebra) into temporal relevance scoring affect retrieval and QA performance on overlapping-evolving documents with retroactive amendments?",
+  "potential_experiment": "Implement a temporal relevance function based on Allen's interval algebra or temporal logic, integrate into retriever-agnostic framework, evaluate on a dataset with synthetic retroactive amendments.",
+  "confidence": "medium",
+  "verification_required": "Need to search for existing temporal logic modeling in QA.",
+  "recorded_at": "2026-09-30T10:04:11.133838Z"
+}

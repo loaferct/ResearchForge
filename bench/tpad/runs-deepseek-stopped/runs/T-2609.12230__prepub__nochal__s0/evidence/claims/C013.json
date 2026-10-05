@@ -1,0 +1,33 @@
+{
+  "id": "C013",
+  "statement": "Main technical risk: the mechanism requires passage provenance linking triples to a shared source passage, but the standard multi-hop KGQA benchmarks (WebQSP, CWQ, MetaQA) are built on structured KGs (Freebase / synthetic movie graph) with no source passages. Either the evaluation must move to a provenance-bearing or text-derived KG, or 'context' must be redefined as graph neighbourhood, which is already covered by subgraph retrieval work.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2101.03737",
+      "experiment_run_id": null,
+      "location": "p. 6, Section 5.1 Datasets",
+      "quote": "WebQuestionsSP (webqsp)[36] contains 4737 natural language questions that are answerable using Freebase as the knowledge base.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "doi:10.18653/v1/2025.findings-acl.856",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "confidence": "high",
+  "phase": "critique",
+  "tags": [
+    "feasibility",
+    "provenance",
+    "technical risk"
+  ],
+  "recorded_at": "2026-09-30T05:20:35.826206Z"
+}

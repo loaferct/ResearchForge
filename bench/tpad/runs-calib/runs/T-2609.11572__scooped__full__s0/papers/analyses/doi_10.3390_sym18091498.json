@@ -1,0 +1,46 @@
+{
+  "paper_id": "doi:10.3390/sym18091498",
+  "relevance_tier": "high",
+  "problem": "Financial question answering is treated as ordinary document QA although evidence is multimodal and time-dependent: a disclosure may support a query only after it becomes public, so point-in-time validity must be enforced.",
+  "method": "TempFinRAG: a multimodal temporal RAG framework that enforces the information boundary defined by SEC filing availability given a question, company and as-of date; aligns page layout, text, table structure and XBRL facts; retrieves time-valid evidence; executes auditable calculations; generates a cited answer; and verifies temporal validity, claim support, numerical consistency and abstention need.",
+  "key_assumptions": [
+    "An as-of date is available per query",
+    "Evidence validity is determined by public availability (a hard temporal boundary), not graded recency",
+    "Crossmodal evidence should answer consistently (crossmodal evidence symmetry)"
+  ],
+  "main_contribution": "TempFinRAG plus the TempFinQA point-in-time evaluation protocol and a formalization of crossmodal evidence symmetry under a causal temporal boundary.",
+  "datasets": [
+    "Public U.S. SEC filings and XBRL facts"
+  ],
+  "benchmarks": [
+    "TempFinQA",
+    "Complementary evidence-grounded, numerical, conversational and multi-table benchmarks"
+  ],
+  "baselines": [
+    "Hybrid RAG"
+  ],
+  "metrics": [
+    "Answer accuracy",
+    "Temporal evidence leakage",
+    "Hallucination rate"
+  ],
+  "results": "On TempFinQA, answer accuracy improves from 66.7% to 78.9% over hybrid RAG, temporal evidence leakage falls from 10.8% to 1.7%, and hallucination falls from 17.3% to 7.9%.",
+  "limitations": [
+    "Full text not open access; details beyond the abstract unknown",
+    "Financial filings rather than statutes/regulations; no near-duplicate amendment versions",
+    "Validity is modelled as a hard as-of availability boundary rather than a graded temporal relevance term"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.85,
+    "method_overlap": 0.6,
+    "evaluation_overlap": 0.85,
+    "conceptual_difference": "Enforces a hard 'as-of' information boundary derived from filing availability and adds a verifier, rather than adjusting a retriever's rank by elapsed time between query date and passage version; the corpus is multimodal financial filings, not overlapping amended legal versions, and it explicitly requires 'deliberately asymmetric access across time' instead of a symmetric graded decay.",
+    "basis": "Abstract describes point-in-time retrieval with as-of date, temporal validity checking, and answer-accuracy/leakage metrics; it shares the problem framing and evaluation style but not the elapsed-time re-ranking mechanism or the amended-statute setting."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T04:29:04.179952Z"
+}

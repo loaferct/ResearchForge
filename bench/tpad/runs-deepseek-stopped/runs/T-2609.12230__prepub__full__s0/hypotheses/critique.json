@@ -1,0 +1,189 @@
+{
+  "strongest_for": "One genuinely unoccupied cell remains: no retrieved work changes the fine-tuning supervision signal with context for multi-hop KGQA, and the U013 challenge actually clarified that distinction (2) is well-defined rather than vague - passage triples form a recognized construct with known alignment procedures (C016, C017). The direction can be reframed as a sharp, testable prediction rather than a vague 'context helps' claim: at multi-hop the treatment supplies the reasoning chain and should help, while at 1-hop it supplies only peripheral context and should not (U016). The experiment is inexpensive to state, uses standard accessible resources (MetaQA/WebQSP/CWQ, Hits@1, LoRA), and even a clean negative result would settle a question the field currently answers only at inference time.",
+  "strongest_against": "The idea now has almost no mechanism-level novelty: the effective supervision content is the reasoning chain, which is established path supervision (MHGRN, Variational Reasoning) (C015); the same-passage provenance it treats as distinctive is established text-graph construction / OIE-KB alignment, and those extractions may not even map to the evaluation KG (C016, C017, C023); and the repair loop closely matches KnowTrace's reflective process-supervision self-bootstrapping and generic self-refinement (C018, C019, C021). What remains novel - using peripheral same-passage context as fine-tuning supervision - is precisely what controlled evidence finds nearly inert (+0.003 F1 for non-chain triples, with inflated context adding accuracy-depressing distractors) (C002, C003). Add that the hop-transfer hypothesis has only cross-formalism evidence with a +1.7% downstream gain (C005), that one-hop failure detection is undefined, that a training-free system is already competitive with trained ones (C006), and that budget/chain/format co-vary with the treatment (C007, C013), and the current design cannot cleanly support its claims.",
+  "most_important_unresolved_question": "Does anything remain of the contribution once the chain (established path supervision) and the repair loop (established self-bootstrapping) are set aside - i.e., is there a measurable training-time benefit from same-passage peripheral context, and does it survive alignment to the evaluation KG (U015, U017)?",
+  "most_dangerous_confounder": "Token budget, answer-chain presence, and response format still co-vary with the treatment, so a gain could be produced by chain/budget/format rather than peripheral context (C002, C003, C007, C013). A new confounding risk follows from the U013 challenge: if the added same-passage triples are text-derived rather than KG-aligned (C023), then the two regimes differ in the knowledge source itself, not only in context relevance or volume, and any comparison against KG-based baselines (EmbedKGQA, MHGRN) becomes non-like-for-like. Matched-budget shuffled-context control, identical templates, a format-controlled scorer, and an explicit alignment audit are required.",
+  "closest_paper_ids": [
+    "arxiv:2609.10237",
+    "doi:10.20944/preprints202505.1992.v1",
+    "arxiv:2509.21035",
+    "arxiv:2505.20245",
+    "doi:10.24963/kr.2020/77",
+    "doi:10.18653/v1/2020.emnlp-main.99",
+    "doi:10.1609/aaai.v32i1.12057"
+  ],
+  "closest_work_explanation": "The answer-path study (arxiv:2609.10237) remains closest to the core variable: it isolates which triples matter and finds non-chain triples nearly inert (+0.003 F1) while the chain is decisive. For the two mechanisms the idea treats as distinctive, the U013 challenge changed the picture: same-passage triples are a recognized 'text graph' construct distinct from KGs (doi:10.24963/kr.2020/77) and aligning them to a KB is its own established, imperfect task (doi:10.18653/v1/2020.eval4nlp-1.14), while the repair loop closely matches KnowTrace's reflective process-supervision self-bootstrapping over knowledge-triple context (arxiv:2505.20245). SG-RAG MOT (doi:10.20944/preprints202505.1992.v1) and CLAUSE (arxiv:2509.21035) still own the inference-time subgraph-context space, and MHGRN (doi:10.18653/v1/2020.emnlp-main.99) plus Variational Reasoning (doi:10.1609/aaai.v32i1.12057) own chain/path supervision.",
+  "potential_contribution": "The realistic contribution is a narrow, well-controlled empirical clarification plus a reusable protocol: does training-time exposure to the full reasoning chain (and, separately, peripheral same-passage context) change multi-hop accuracy under matched budget and format, and does low-hop-only RL transfer to deeper hops. After the U013 challenge, the honest framing is that this is an application-and-measurement study of established mechanisms (text-graph context, self-bootstrapping, path supervision), not a new mechanism. A carefully controlled null or boundary result - for example, showing that only chain content matters and that peripheral provenance adds nothing - would still be a useful negative contribution if it is properly powered and clearly scoped.",
+  "overlap_summary": "Substantially higher overlap than round 1. The problem and vocabulary overlap inference-time context-subgraph works (SG-RAG MOT, CLAUSE, Co-E, answer-path study); the effective signal overlaps path-based supervision (MHGRN, Variational Reasoning); the provenance mechanism overlaps text-graph construction and OIE-KB alignment (Seq2KG, OIE-KB case study); and the repair loop overlaps KnowTrace's process-supervision self-bootstrapping and generic self-refinement. Only the training-time use of these mechanisms as multi-hop KGQA supervision, plus hop-depth transfer, was not found in the retrieved literature. The search was limited to the recorded query set and the retrieved corpus, so this is a bounded result.",
+  "distinction_summary": "Only distinction (1) - training-time vs inference-time manipulation of context - survives as unoccupied in the retrieved literature. Distinction (2) same-passage provenance is well-defined but is established prior art in the text-graph/KG-construction-from-text family, and its triples may not even align to the evaluation KG (C020, C023). Distinction (3) the repair loop substantially overlaps KnowTrace's process-supervision self-bootstrapping and generic iterative refinement (C018, C019, C021). Distinction (4) the hop-depth transfer protocol is untested and unsupported. So the remaining distinction is not a mechanism but the application of established mechanisms as fine-tuning supervision for multi-hop KGQA.",
+  "novelty": [
+    {
+      "question": "Has essentially the same idea been proposed before?",
+      "finding": "No directly matching prior work was found for same-passage context as a training-time supervision signal; the analyzed context-construction works are inference-time or architecture-level. This is a search result over the retrieved corpus, not proof of novelty.",
+      "severity": "low",
+      "claim_ids": [
+        "C008"
+      ],
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1",
+        "arxiv:2509.21035",
+        "arxiv:2609.10237",
+        "arxiv:2607.23278"
+      ]
+    },
+    {
+      "question": "Does the idea reduce to existing mechanisms?",
+      "finding": "Component-level overlap is now substantial: the reasoning chain is established path supervision (C015), the repair loop is established process-supervision self-bootstrapping (C018/C019), and same-passage provenance is established text-graph construction (C017). The unoccupied residue is only their use as fine-tuning supervision (C022).",
+      "severity": "high",
+      "claim_ids": [
+        "C022",
+        "C015"
+      ],
+      "paper_ids": [
+        "doi:10.18653/v1/2020.emnlp-main.99",
+        "arxiv:2505.20245",
+        "doi:10.24963/kr.2020/77"
+      ]
+    },
+    {
+      "question": "Is the difference only implementation-level?",
+      "finding": "The training-vs-inference distinction is conceptual, not implementation-level, but if an inference-time context baseline at matched budget matches the context-enriched model, it collapses into an empirical comparison (C009).",
+      "severity": "moderate",
+      "claim_ids": [
+        "C008",
+        "C009"
+      ],
+      "paper_ids": [
+        "arxiv:2509.21035",
+        "arxiv:2607.23278"
+      ]
+    }
+  ],
+  "technical_validity": [
+    {
+      "question": "Does surrounding context carry learnable signal?",
+      "finding": "The novel component (peripheral same-passage context) is at high risk of a null or negative effect, since non-answer-path triples change multi-hop accuracy by +0.003 F1 and over-retrieval adds distractors.",
+      "severity": "high",
+      "claim_ids": [
+        "C002",
+        "C003"
+      ],
+      "paper_ids": [
+        "arxiv:2609.10237",
+        "arxiv:2509.21035"
+      ]
+    },
+    {
+      "question": "Can the mechanism be defined over the evaluation KG?",
+      "finding": "The mechanism may not be expressible as KG-triple supervision at all: text extractions are often more specific than KB facts and cannot always be mapped to a single KB fact, so the 'context subgraph' may become a text graph and the method's object changes.",
+      "severity": "high",
+      "claim_ids": [
+        "C023",
+        "C016"
+      ],
+      "paper_ids": [
+        "doi:10.18653/v1/2020.eval4nlp-1.14",
+        "doi:10.24963/kr.2020/77"
+      ]
+    },
+    {
+      "question": "Are H2 and H3 technically defined?",
+      "finding": "H2 and H3 remain technically under-specified: no retrieved work defines automated one-hop failure detection, corrective example generation for KGQA, or a hop-depth transfer measurement.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C011",
+        "C014"
+      ],
+      "paper_ids": [
+        "arxiv:2303.17651",
+        "arxiv:2505.20245",
+        "arxiv:2506.21575"
+      ]
+    }
+  ],
+  "experimental_validity": [
+    {
+      "question": "What confounders could produce the claimed result?",
+      "finding": "Budget, chain presence, and format co-vary with the treatment; a gain could be produced without any effect of peripheral context. The comparison is not identifiable without a matched-budget shuffled/random-context arm, identical templates, and a format-controlled scorer.",
+      "severity": "high",
+      "claim_ids": [
+        "C002",
+        "C003",
+        "C007",
+        "C013"
+      ],
+      "paper_ids": [
+        "arxiv:2609.10237",
+        "arxiv:2509.21035"
+      ]
+    },
+    {
+      "question": "Are baselines strong and budgets matched?",
+      "finding": "The planned baselines still omit the actual competitor - a training-free or inference-time context method at matched budget (Co-E-style, GraphRAG/CLAUSE-style prompting) - and, if the context becomes a text graph, also omit text-graph baselines.",
+      "severity": "high",
+      "claim_ids": [
+        "C006",
+        "C009"
+      ],
+      "paper_ids": [
+        "arxiv:2607.23278",
+        "arxiv:2509.21035",
+        "doi:10.24963/kr.2020/77"
+      ]
+    },
+    {
+      "question": "Does the evaluation actually test transfer?",
+      "finding": "H2's hop-transfer protocol has no precedent in the retrieved set; without pre-registered hop-depth splits and a benchmark-construction analysis, transfer may be an artifact of how MetaQA 3-hop is constructed.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C014",
+        "C005"
+      ],
+      "paper_ids": [
+        "arxiv:2506.21575",
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    }
+  ],
+  "practicality": [
+    {
+      "question": "Is the same-passage mechanism implementable against the evaluation KG?",
+      "finding": "Same-passage triples may not align to the evaluation KG because text extractions are often more specific than KB facts and mappings are not always possible (C016, C023); the mechanism may have to become a text-graph method, changing its object and its comparability to KG-based baselines.",
+      "severity": "high",
+      "claim_ids": [
+        "C023",
+        "C016"
+      ],
+      "paper_ids": [
+        "doi:10.18653/v1/2020.eval4nlp-1.14",
+        "doi:10.24963/kr.2020/77"
+      ]
+    },
+    {
+      "question": "Is the pipeline feasible at reasonable compute?",
+      "finding": "The full pipeline (LoRA tuning + iterative repair + RL) is heavy; comparable RL work used a 32B model, so the RL stage may be the binding constraint rather than the science.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C005"
+      ],
+      "paper_ids": [
+        "arxiv:2506.21575"
+      ]
+    },
+    {
+      "question": "Is the evaluation sensitive enough and free of construction artifacts?",
+      "finding": "No evidence that MetaQA/WebQSP/CWQ Hits@1 is sensitive enough to attribute differences to the supervision regime rather than benchmark construction; a power and split-construction check is needed.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C014"
+      ],
+      "paper_ids": [
+        "arxiv:2506.21575",
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    }
+  ],
+  "overall_status": "weak_or_flawed",
+  "status_rationale": "Round 3 revision after the U013 challenge. The challenge did not rescue the idea: it showed that one of the two 'under-specified' distinctions (same-passage provenance) is in fact well-defined but is prior art in a different family than the assessment assumed (C020, C016, C017), while the other (the repair loop) is confirmed non-novel via KnowTrace's process-supervision self-bootstrapping and generic self-refinement (C018, C019, C021). Combined with round 2's finding that the effective ingredient is the established chain/path signal (C015), the idea is now a bundle of individually established mechanisms with one unoccupied application (training-time supervision) whose novel component - peripheral same-passage context - is the one the closest controlled evidence reports as nearly inert (+0.003 F1). H2 is unsupported, H3's detector is undefined, alignment to the evaluation KG is uncertain, and the treatment remains entangled with budget, chain presence, and format. The direction deserves at most one drastically narrowed, hop-depth-split, matched-budget experiment; as stated it remains weak.",
+  "recorded_at": "2026-09-30T05:24:41.849930Z"
+}

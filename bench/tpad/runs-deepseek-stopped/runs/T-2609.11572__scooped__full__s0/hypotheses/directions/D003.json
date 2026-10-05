@@ -1,0 +1,22 @@
+{
+  "id": "D003",
+  "direction": "Keep the refined scope of D002 but drop the query-regime-conditioned variant entirely. The temporal component becomes exactly one retrieval-agnostic term: a graded membership score over the candidate version's in-force interval, evaluated at the query's target date, with no regime-specific parameters, no elapsed-time decay and no separate handling for current versus historical questions. The contribution is robustness of this single term relative to a hard in-force filter as validity metadata degrades, measured by a noise crossover point.",
+  "hypothesis": "A single graded interval-membership temporal re-ranking term, with no query-regime-specific parameters, matches hard in-force filtering under clean metadata and retains higher version-selection accuracy under incomplete, unofficial or noisy validity metadata, for both current and historically anchored queries.",
+  "rationale": "U010 is resolved: the current-versus-historical tension is created by monotone elapsed-time decay, not by the retrieval problem. TempRALM's score is monotone in the time difference and therefore always rewards recency (C008), which is why it must be counteracted on historical queries; an interval-membership term evaluated at the query's own date has no such bias. Prior et al. demonstrate the empirical counterpart, since one as-of-date rule with no regime-specific parameters solved retrieval and achieved perfect retrieval even on historical multi-provision questions (C020, C023). Adding regime conditioning would therefore be redundant and would weaken the work by implying the task needs regime-specific tuning, so it is downgraded to an ablation. This refinement is worth recording rather than silently ignoring because it simplifies the method to a single untuned temporal term, which strengthens both the retrieval-agnosticism claim and the cleanliness of the planned leakage-controlled comparison; the open feasibility risk that target dates may be implicit rather than explicit is recorded as U018.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": "D002",
+  "research_question": "Under incomplete, unofficial or noisy per-clause validity metadata and as-of dates that must be inferred, does a single graded interval-membership temporal re-ranking component - with no query-regime-specific parameters - preserve version-selection accuracy and answer accuracy better than a hard in-force filter, and at what level of metadata noise do the two cross over?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "arxiv:2605.23497",
+    "arxiv:2401.13222"
+  ],
+  "uncertainty_ids": [
+    "U010",
+    "U011",
+    "U017",
+    "U018"
+  ],
+  "recorded_at": "2026-09-30T05:29:17.290657Z"
+}

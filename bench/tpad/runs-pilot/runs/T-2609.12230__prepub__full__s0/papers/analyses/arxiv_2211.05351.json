@@ -1,0 +1,41 @@
+{
+  "paper_id": "arxiv:2211.05351",
+  "relevance_tier": "high",
+  "problem": "Biomedical multi-hop question answering over knowledge graphs suffers from missing links in the KG, which hinders accurate reasoning over relational paths.",
+  "method": "Combines language models (RoBERTa/BioBERT) for question contextual understanding with knowledge graph embeddings (KGEs) to encode nodes and edges, thereby mitigating missing link issues and integrating semantic and structural information for answer scoring.",
+  "key_assumptions": [
+    "Knowledge graph embeddings can effectively capture missing link information.",
+    "Language models can accurately capture the contextual meaning of biomedical questions."
+  ],
+  "main_contribution": "An integrated biomedical multi-hop KGQA system that fuses language model representations with knowledge graph embeddings, accompanied by a newly created biomedical multi-hop QA dataset based on Hetionet.",
+  "datasets": [
+    "Hetionet knowledge graph",
+    "biomedical multi-hop question-answering dataset derived from Hetionet"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "accuracy"
+  ],
+  "results": "[\"Train accuracy: 1.00; Test accuracy: 0.99 on the constructed dataset.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "The paper focuses on combining LM and KG embeddings for biomedical KGQA, while our idea proposes enriching triple supervision with local context subgraphs from source passages, adding an adaptive repair loop, and applying RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T07:37:48.754906Z"
+}

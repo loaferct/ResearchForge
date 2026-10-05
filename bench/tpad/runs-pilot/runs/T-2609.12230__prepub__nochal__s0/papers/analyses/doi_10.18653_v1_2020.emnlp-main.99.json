@@ -1,0 +1,41 @@
+{
+  "paper_id": "doi:10.18653/v1/2020.emnlp-main.99",
+  "relevance_tier": "high",
+  "problem": "Existing knowledge-aware QA models either struggle to model multi-hop relations efficiently over external knowledge graphs or lack transparency into the model’s prediction rationale.",
+  "method": "MHGRN (Multi-hop Graph Relation Network) equips pretrained language models with a multi-hop relational reasoning module that performs multi-hop, multi-relational reasoning over subgraphs extracted from external KGs, unifying path-based reasoning and GNNs via structured relational attention, and supports path decoding for interpretability.",
+  "key_assumptions": [
+    "Not explicitly stated in the paper."
+  ],
+  "main_contribution": "MHGRN brings significant improvements over knowledge-agnostic PTLMs and outperforms other graph encoding methods by a large margin on CommonsenseQA and OpenbookQA; e.g., achieves 75.4 accuracy on official CommonsenseQA test, 68.10 dev / 66.85 test on OpenbookQA with RoBERTa-large, and scales well with number of hops while providing interpretable reasoning paths.",
+  "datasets": [
+    "CommonsenseQA",
+    "OpenbookQA"
+  ],
+  "benchmarks": [
+    "CommonsenseQA",
+    "OpenbookQA"
+  ],
+  "baselines": [
+    "Knowledge-agnostic PTLMs (RoBERTa, XLNet, ALBERT), KG-augmented models (RoBERTa+KEDGN, RoBERTa+KE, RoBERTa+HyKAS 2.0, RoBERTa+FreeLB, XLNet+DREAM, XLNet+GR, ALBERT), leaderboard UniﬁedQA (T5-11B)"
+  ],
+  "metrics": [
+    "Accuracy (since multiple-choice)"
+  ],
+  "results": "MHGRN (K=2) achieves 75.4 accuracy on official CommonsenseQA test, 76.5 on in-house test; MHGRN (K=3) achieves 68.10 dev / 66.85 test on OpenbookQA with RoBERTa-large; with AristoRoBERTaV7 + MHGRN (K=3): 78.6 dev / 80.6 test on OpenbookQA.",
+  "limitations": [
+    "Not explicitly stated; potential overhead of subgraph extraction per question."
+  ],
+  "future_work": [
+    "Not explicitly stated; possible directions include scaling to larger KHs, applying to other KGs, or integrating with newer PTLMs."
+  ],
+  "code_availability": "https://github.com/INK-USC/MHGRN",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "Both target knowledge-aware QA: MHGRN performs multi-hop relational reasoning over KG subgraphs at inference time via a specialized GNN with path decoding, while the idea enriches training triples with local context subgraphs from the same passage and uses an adaptive repair loop to generate corrective examples from one‑hop failures followed by RL lower‑hop transfer. Overlap in using KG and reasoning; differences in stage (inference vs training), mechanism (relational attention + path decoding vs training data enrichment + failure‑driven RL), and additional components (adaptive repair loop, RL transfer) in the idea.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T09:41:13.191114Z"
+}

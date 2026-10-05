@@ -1,0 +1,35 @@
+{
+  "id": "C022",
+  "statement": "The appendices of arxiv:2609.12230 do NOT contain the control that gap G001 requires: there is no arm in which context slots are filled with random or unrelated triples at a matched token budget during training, and the only context-volume manipulation is an inference-time threshold sweep on 1-hop QA with the frozen base model. The sweep's accuracy is non-monotone in the mean number of context triples (accuracy peaks at intermediate thresholds and falls at the loosest and strictest settings), which is inconsistent with a naive 'more context tokens is better' story but is not a substitute for a matched-token irrelevant-context training arm, because the threshold changes relevance and volume simultaneously and acts at inference rather than during fine-tuning.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "arxiv:2609.10237",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "attribution",
+    "control-missing",
+    "non-monotone",
+    "G001",
+    "U015"
+  ],
+  "recorded_at": "2026-09-30T05:30:47.396975Z"
+}

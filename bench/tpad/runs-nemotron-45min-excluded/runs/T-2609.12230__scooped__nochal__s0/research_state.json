@@ -1,0 +1,998 @@
+{
+  "project": "T-2609.12230__scooped__nochal__s0",
+  "idea": "Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model training typically uses isolated head‑relation‑tail triples, depriving the model of the surrounding context that supports multi‑step inference. We propose to enrich each target triple (or path) with additional triples drawn from the same source passage, forming a local context subgraph that is presented together with the primary supervision signal. The model will be fine‑tuned under two regimes: one using only the target triple/path and another that also incorporates the supporting context. To improve the reliability of the base facts, we will introduce an adaptive repair loop that detects one‑hop failures, generates corrective examples, and iteratively refines the model. After this cleaning stage, we will apply reinforcement‑learning‑based optimization on lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.",
+  "created_at": "2026-09-30T05:39:08.704454Z",
+  "updated_at": "2026-09-30T06:22:08.273366Z",
+  "status": "running",
+  "dsh_session_id": "session-c9a4ef15-bb22-4cb2-92a5-4171618b4abc",
+  "provider": "ollama-cloud",
+  "model": "nemotron-3-super",
+  "phases": [
+    {
+      "name": "formalize",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T05:39:08.708748Z",
+      "finished_at": "2026-09-30T05:43:42.694609Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 14,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "literature",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": null,
+      "finished_at": "2026-09-30T05:43:42.695595Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 19,
+      "failed_tool_calls": 3
+    },
+    {
+      "name": "analysis",
+      "status": "complete",
+      "attempts": 4,
+      "started_at": "2026-09-30T05:44:46.236538Z",
+      "finished_at": "2026-09-30T05:54:29.179550Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 78,
+      "failed_tool_calls": 2
+    },
+    {
+      "name": "landscape",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T05:54:29.190764Z",
+      "finished_at": "2026-09-30T05:56:12.648204Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 3,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "critique",
+      "status": "complete",
+      "attempts": 3,
+      "started_at": "2026-09-30T05:56:12.661657Z",
+      "finished_at": "2026-09-30T06:01:02.748043Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 34,
+      "failed_tool_calls": 9
+    },
+    {
+      "name": "gaps",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least one evidence-linked gap (record_gap), or record_no_gap if the evidence supports none"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "modifications",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least 2 modifications (have 0); call record_modification"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "experiments",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T06:09:00.157978Z",
+      "finished_at": "2026-09-30T06:10:07.305489Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 2,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "report",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    }
+  ],
+  "error": null,
+  "loop_phase": "UNCERTAINTY",
+  "current_action": "READ",
+  "current_focus": "U002: How similar is the proposed adaptive repair loop to existing error correction or data augmentation methods in knowledge graph question answering?",
+  "budget": {
+    "iterations": 12,
+    "tool_calls": 150,
+    "failed_tool_calls": 16,
+    "runtime_failures": 0,
+    "seconds": 2578.79,
+    "tokens": 17557472
+  },
+  "decisions": [
+    {
+      "iteration": 0,
+      "phase": "INTAKE",
+      "action": "INTAKE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Research idea received.",
+      "evidence": "idea: Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model training typically uses isolated head‑relation‑tail triples, depriving the",
+      "expected_outcome": "",
+      "outcome": "idea stored in the workspace",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:39:08.706249Z"
+    },
+    {
+      "iteration": 1,
+      "phase": "FORMALIZE",
+      "action": "FORMALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been formalized into a testable research question.",
+      "evidence": "0 papers from 0 searches, 0 analyzed, 0 claims (0 verified), 0 open uncertainties",
+      "expected_outcome": "Problem, hypothesis, variables, assumptions and search queries recorded.",
+      "outcome": "+39 papers; +4 searches; idea formalized",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_paper",
+        "record_idea_analysis",
+        "search_paper_text",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 39,
+        "relevant_papers": 38,
+        "searches": 4,
+        "idea_formalized": 1
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:39:08.707959Z"
+    },
+    {
+      "iteration": 2,
+      "phase": "PLAN",
+      "action": "PLAN",
+      "focus": null,
+      "focus_id": null,
+      "reason": "No investigation plan exists yet, so it is unclear what must be determined.",
+      "evidence": "39 papers from 4 searches, 0 analyzed, 0 claims (0 verified), 0 open uncertainties",
+      "expected_outcome": "Questions to answer, search topics and initial uncertainties recorded.",
+      "outcome": "+5 uncertainties; investigation plan recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_investigation_plan",
+        "record_uncertainty"
+      ],
+      "state_changes": {
+        "uncertainties_created": 5,
+        "plan_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:43:42.701452Z"
+    },
+    {
+      "iteration": 3,
+      "phase": "INVESTIGATE",
+      "action": "READ",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Retrieved papers have not been analyzed enough to judge overlap.",
+      "evidence": "39 papers from 4 searches, 0 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Structured analyses of the most relevant papers.",
+      "outcome": "+8 analyses",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "inspect_repository",
+        "list_papers",
+        "record_paper_analysis",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "analyses": 8
+      },
+      "info_gain": 4.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:44:46.231755Z"
+    },
+    {
+      "iteration": 4,
+      "phase": "SYNTHESIZE",
+      "action": "SYNTHESIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Analyses exist but the field has not been mapped.",
+      "evidence": "39 papers from 4 searches, 8 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "A landscape placing the idea among approaches.",
+      "outcome": "landscape recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_records",
+        "record_landscape"
+      ],
+      "state_changes": {
+        "landscape_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:54:29.186163Z"
+    },
+    {
+      "iteration": 5,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been challenged yet.",
+      "evidence": "39 papers from 4 searches, 8 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Strongest objections recorded as critique and uncertainties.",
+      "outcome": "+3 claims; +3 verified claims; +3 uncertainties; critique recorded; uncertainties updated: U001",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_paper",
+        "record_claim",
+        "record_critique",
+        "record_uncertainty",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 3,
+        "verified_claims": 3,
+        "uncertainties_created": 3,
+        "critique_recorded": 1
+      },
+      "info_gain": 4.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:56:12.656674Z"
+    },
+    {
+      "iteration": 6,
+      "phase": "UNCERTAINTY",
+      "action": "SEARCH",
+      "focus": "U007: Can the adaptive repair loop generate corrective examples for one-hop failures without human supervision, and does this process converge?",
+      "focus_id": "U007",
+      "reason": "Most valuable next step for high-importance validity question U007: score 1.62 = importance 3 x expected gain 0.6 x relevance 0.9 x evidence deficiency 1 / cost 1. Next best: SEARCH on U008 (1.44).",
+      "evidence": "39 papers from 4 searches, 8 analyzed, 3 claims (3 verified), 8 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U007.",
+      "outcome": "+22 papers; +2 searches; +2 claims; +2 verified claims; uncertainties updated: U007",
+      "candidates": [
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U007",
+          "target": "Can the adaptive repair loop generate corrective examples for one-hop failures without human supervision, and does this process converge?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.62
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U008",
+          "target": "Does reinforcement learning optimization on lower-hop QA instances transfer effectively to higher-hop multi-hop queries, and what policy gradients or reward structures are most suitable?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.8,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.44
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U006",
+          "target": "Do source passages contain sufficient surrounding triples to form meaningful local context subgraphs for enrichment?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.26
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U007",
+          "target": "Can the adaptive repair loop generate corrective examples for one-hop failures without human supervision, and does this process converge?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.08
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U007",
+          "target": "Can the adaptive repair loop generate corrective examples for one-hop failures without human supervision, and does this process converge?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.012
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U003",
+          "target": "Does providing local context subgraph alongside target triples improve multi-hop reasoning performance over training on isolated triples alone?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.972
+        }
+      ],
+      "expected_gain": 0.6,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "expand_citations",
+        "get_paper",
+        "record_claim",
+        "search_paper_text",
+        "search_papers",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "papers": 22,
+        "relevant_papers": 10,
+        "searches": 2,
+        "claims": 2,
+        "verified_claims": 2
+      },
+      "info_gain": 4.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:01:02.756699Z"
+    },
+    {
+      "iteration": 7,
+      "phase": "UNCERTAINTY",
+      "action": "SEARCH",
+      "focus": "U008: Does reinforcement learning optimization on lower-hop QA instances transfer effectively to higher-hop multi-hop queries, and what policy gradients or reward structures are most suitable?",
+      "focus_id": "U008",
+      "reason": "Most valuable next step for high-importance evaluation question U008: score 1.92 = importance 3 x expected gain 0.8 x relevance 0.8 x evidence deficiency 1 / cost 1. Next best: SEARCH on U006 (1.68).",
+      "evidence": "61 papers from 6 searches, 8 analyzed, 5 claims (5 verified), 8 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U008.",
+      "outcome": "+34 papers; +3 searches; +1 claims; +1 verified claims; uncertainties updated: U008",
+      "candidates": [
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U008",
+          "target": "Does reinforcement learning optimization on lower-hop QA instances transfer effectively to higher-hop multi-hop queries, and what policy gradients or reward structures are most suitable?",
+          "importance": 3.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier SEARCH steps",
+          "relevance": 0.8,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.92
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U006",
+          "target": "Do source passages contain sufficient surrounding triples to form meaningful local context subgraphs for enrichment?",
+          "importance": 3.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier SEARCH steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.68
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U003",
+          "target": "Does providing local context subgraph alongside target triples improve multi-hop reasoning performance over training on isolated triples alone?",
+          "importance": 3.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier SEARCH steps",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 1.296
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U001",
+          "target": "Has prior work already enriched triples with local context subgraphs for knowledge graph multi-hop question answering?",
+          "importance": 3.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier SEARCH steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 1.008
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U008",
+          "target": "Does reinforcement learning optimization on lower-hop QA instances transfer effectively to higher-hop multi-hop queries, and what policy gradients or reward structures are most suitable?",
+          "importance": 3.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.4",
+          "relevance": 0.8,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 0.96
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U002",
+          "target": "How similar is the proposed adaptive repair loop to existing error correction or data augmentation methods in knowledge graph question answering?",
+          "importance": 2.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier SEARCH steps",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.96
+        }
+      ],
+      "expected_gain": 0.8,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "get_paper",
+        "record_claim",
+        "search_papers",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "papers": 34,
+        "relevant_papers": 18,
+        "searches": 3,
+        "claims": 1,
+        "verified_claims": 1
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:03:17.278332Z"
+    },
+    {
+      "iteration": 8,
+      "phase": "UNCERTAINTY",
+      "action": "COMPARE",
+      "focus": "U006: Do source passages contain sufficient surrounding triples to form meaningful local context subgraphs for enrichment?",
+      "focus_id": "U006",
+      "reason": "Most valuable next step for high-importance feasibility question U006: score 0.84 = importance 3 x expected gain 0.6 x relevance 0.7 x evidence deficiency 1 / cost 1.5. Next best: READ on U006 (0.787).",
+      "evidence": "95 papers from 9 searches, 8 analyzed, 6 claims (6 verified), 8 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U006.",
+      "outcome": "+1 claims; +1 verified claims; uncertainties updated: U006",
+      "candidates": [
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U006",
+          "target": "Do source passages contain sufficient surrounding triples to form meaningful local context subgraphs for enrichment?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.84
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U006",
+          "target": "Do source passages contain sufficient surrounding triples to form meaningful local context subgraphs for enrichment?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.787
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U003",
+          "target": "Does providing local context subgraph alongside target triples improve multi-hop reasoning performance over training on isolated triples alone?",
+          "importance": 3.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.4",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.648
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Does providing local context subgraph alongside target triples improve multi-hop reasoning performance over training on isolated triples alone?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 2.0,
+          "score": 0.607
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U001",
+          "target": "Has prior work already enriched triples with local context subgraphs for knowledge graph multi-hop question answering?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.504
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U002",
+          "target": "How similar is the proposed adaptive repair loop to existing error correction or data augmentation methods in knowledge graph question answering?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.5,
+          "score": 0.48
+        }
+      ],
+      "expected_gain": 0.6,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "get_paper",
+        "record_claim",
+        "search_paper_text",
+        "search_papers",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 1,
+        "verified_claims": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:06:26.115055Z"
+    },
+    {
+      "iteration": 9,
+      "phase": "UNCERTAINTY",
+      "action": "PLAN_EXPERIMENT",
+      "focus": "U003: Does providing local context subgraph alongside target triples improve multi-hop reasoning performance over training on isolated triples alone?",
+      "focus_id": "U003",
+      "reason": "Most valuable next step for high-importance validity question U003: score 0.648 = importance 3 x expected gain 0.4 x relevance 0.9 x evidence deficiency 0.6 / cost 1. Next best: READ on U003 (0.607).",
+      "evidence": "95 papers from 9 searches, 8 analyzed, 7 claims (7 verified), 8 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U003.",
+      "outcome": "+1 experiment plans",
+      "candidates": [
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U003",
+          "target": "Does providing local context subgraph alongside target triples improve multi-hop reasoning performance over training on isolated triples alone?",
+          "importance": 3.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.4",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.648
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Does providing local context subgraph alongside target triples improve multi-hop reasoning performance over training on isolated triples alone?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 2.0,
+          "score": 0.607
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U001",
+          "target": "Has prior work already enriched triples with local context subgraphs for knowledge graph multi-hop question answering?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.472
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U007",
+          "target": "Can the adaptive repair loop generate corrective examples for one-hop failures without human supervision, and does this process converge?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.454
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U002",
+          "target": "How similar is the proposed adaptive repair loop to existing error correction or data augmentation methods in knowledge graph question answering?",
+          "importance": 2.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 2.0,
+          "score": 0.45
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U007",
+          "target": "Can the adaptive repair loop generate corrective examples for one-hop failures without human supervision, and does this process converge?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.425
+        }
+      ],
+      "expected_gain": 0.4,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "record_experiment_plan"
+      ],
+      "state_changes": {
+        "plans": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:09:00.149887Z"
+    },
+    {
+      "iteration": 10,
+      "phase": "UNCERTAINTY",
+      "action": "READ",
+      "focus": "U003: Does providing local context subgraph alongside target triples improve multi-hop reasoning performance over training on isolated triples alone?",
+      "focus_id": "U003",
+      "reason": "Most valuable next step for high-importance validity question U003: score 0.607 = importance 3 x expected gain 0.75 x relevance 0.9 x evidence deficiency 0.6 / cost 2. Next best: READ on U001 (0.472).",
+      "evidence": "95 papers from 9 searches, 8 analyzed, 7 claims (7 verified), 8 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U003.",
+      "outcome": "+3 analyses",
+      "candidates": [
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Does providing local context subgraph alongside target triples improve multi-hop reasoning performance over training on isolated triples alone?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 2.0,
+          "score": 0.607
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U001",
+          "target": "Has prior work already enriched triples with local context subgraphs for knowledge graph multi-hop question answering?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.472
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U007",
+          "target": "Can the adaptive repair loop generate corrective examples for one-hop failures without human supervision, and does this process converge?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.454
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U002",
+          "target": "How similar is the proposed adaptive repair loop to existing error correction or data augmentation methods in knowledge graph question answering?",
+          "importance": 2.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 2.0,
+          "score": 0.45
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U007",
+          "target": "Can the adaptive repair loop generate corrective examples for one-hop failures without human supervision, and does this process converge?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.425
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U001",
+          "target": "Has prior work already enriched triples with local context subgraphs for knowledge graph multi-hop question answering?",
+          "importance": 3.0,
+          "expected_gain": 0.467,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.392
+        }
+      ],
+      "expected_gain": 0.75,
+      "estimated_cost": 2.0,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "record_paper_analysis",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "analyses": 3
+      },
+      "info_gain": 1.5,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:10:07.320919Z"
+    },
+    {
+      "iteration": 11,
+      "phase": "UNCERTAINTY",
+      "action": "VERIFY",
+      "focus": "U007: Can the adaptive repair loop generate corrective examples for one-hop failures without human supervision, and does this process converge?",
+      "focus_id": "U007",
+      "reason": "Most valuable next step for high-importance validity question U007: score 0.454 = importance 3 x expected gain 0.6 x relevance 0.9 x evidence deficiency 0.42 / cost 1.5. Next best: READ on U001 (0.42).",
+      "evidence": "95 papers from 9 searches, 11 analyzed, 7 claims (7 verified), 7 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U007.",
+      "outcome": "no recorded change",
+      "candidates": [
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U007",
+          "target": "Can the adaptive repair loop generate corrective examples for one-hop failures without human supervision, and does this process converge?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.454
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U001",
+          "target": "Has prior work already enriched triples with local context subgraphs for knowledge graph multi-hop question answering?",
+          "importance": 3.0,
+          "expected_gain": 0.667,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.42
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U002",
+          "target": "How similar is the proposed adaptive repair loop to existing error correction or data augmentation methods in knowledge graph question answering?",
+          "importance": 2.0,
+          "expected_gain": 0.667,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 2.0,
+          "score": 0.4
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U001",
+          "target": "Has prior work already enriched triples with local context subgraphs for knowledge graph multi-hop question answering?",
+          "importance": 3.0,
+          "expected_gain": 0.467,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.392
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U007",
+          "target": "Can the adaptive repair loop generate corrective examples for one-hop failures without human supervision, and does this process converge?",
+          "importance": 3.0,
+          "expected_gain": 0.667,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.378
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U002",
+          "target": "How similar is the proposed adaptive repair loop to existing error correction or data augmentation methods in knowledge graph question answering?",
+          "importance": 2.0,
+          "expected_gain": 0.467,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.5,
+          "score": 0.374
+        }
+      ],
+      "expected_gain": 0.6,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {},
+      "info_gain": 0.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:13:56.843048Z"
+    },
+    {
+      "iteration": 12,
+      "phase": "UNCERTAINTY",
+      "action": "READ",
+      "focus": "U001: Has prior work already enriched triples with local context subgraphs for knowledge graph multi-hop question answering?",
+      "focus_id": "U001",
+      "reason": "Most valuable next step for high-importance novelty question U001: score 0.42 = importance 3 x expected gain 0.667 x relevance 1 x evidence deficiency 0.42 / cost 2. Next best: READ on U002 (0.4).",
+      "evidence": "95 papers from 9 searches, 11 analyzed, 7 claims (7 verified), 6 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U001.",
+      "outcome": "+8 analyses",
+      "candidates": [
+        {
+          "action": "READ",
+          "uncertainty_id": "U001",
+          "target": "Has prior work already enriched triples with local context subgraphs for knowledge graph multi-hop question answering?",
+          "importance": 3.0,
+          "expected_gain": 0.667,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.42
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U002",
+          "target": "How similar is the proposed adaptive repair loop to existing error correction or data augmentation methods in knowledge graph question answering?",
+          "importance": 2.0,
+          "expected_gain": 0.667,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 2.0,
+          "score": 0.4
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U001",
+          "target": "Has prior work already enriched triples with local context subgraphs for knowledge graph multi-hop question answering?",
+          "importance": 3.0,
+          "expected_gain": 0.467,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.392
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U002",
+          "target": "How similar is the proposed adaptive repair loop to existing error correction or data augmentation methods in knowledge graph question answering?",
+          "importance": 2.0,
+          "expected_gain": 0.467,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.5,
+          "score": 0.374
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U008",
+          "target": "Does reinforcement learning optimization on lower-hop QA instances transfer effectively to higher-hop multi-hop queries, and what policy gradients or reward structures are most suitable?",
+          "importance": 3.0,
+          "expected_gain": 0.367,
+          "gain_basis": "prior 0.4, observed mean over 1 earlier PLAN_EXPERIMENT steps",
+          "relevance": 0.8,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.37
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U005",
+          "target": "Which benchmarks and metrics best measure transfer from lower-hop reinforcement learning optimization to higher-hop multi-hop queries?",
+          "importance": 2.0,
+          "expected_gain": 0.367,
+          "gain_basis": "prior 0.4, observed mean over 1 earlier PLAN_EXPERIMENT steps",
+          "relevance": 0.8,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.352
+        }
+      ],
+      "expected_gain": 0.667,
+      "estimated_cost": 2.0,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "list_papers",
+        "record_paper_analysis"
+      ],
+      "state_changes": {
+        "analyses": 8
+      },
+      "info_gain": 4.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:16:17.266279Z"
+    }
+  ],
+  "no_progress": {
+    "VERIFY:U007": 1
+  },
+  "blocked_actions": [],
+  "critiques": 1,
+  "papers_at_last_critique": 39,
+  "finalize_reason": null,
+  "awaiting_approval": [],
+  "investigation_closed": null,
+  "investigation_closed_at": null,
+  "challenged_refs": [],
+  "research_decision": null,
+  "research_decision_basis": ""
+}

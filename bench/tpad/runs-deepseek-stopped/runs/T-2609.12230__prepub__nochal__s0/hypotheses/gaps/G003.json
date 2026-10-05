@@ -1,0 +1,35 @@
+{
+  "id": "G003",
+  "gap": "No retrieved work defines or reports an explicit held-out-hop transfer protocol (train on shallow-hop questions, evaluate on deeper-hop questions never seen at that depth) as a primary result, despite benchmarks being hop-stratified (MetaQA has 1/2/3-hop splits; CWQ requires up to 4-hop reasoning). The idea's central 'transfer to deeper multi-hop queries' claim therefore has no comparable published baseline or pre-registered protocol.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2101.03737",
+      "experiment_run_id": null,
+      "location": "p. 6, Section 5.1 Datasets",
+      "quote": "MetaQA [38] contains more than 400k single and multi-hop (up to 3-hop) questions in the domain of movie, containing three datasets, namely MetaQA-1hop, MetaQA-2hop and MetaQA-3hop.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2101.03737",
+      "experiment_run_id": null,
+      "location": "p. 6, Section 5.1 Datasets",
+      "quote": "Complex WebQuestions 1.1 (CWQ) [32] is generated from WebQuestionsSP by extending the question entities or adding constraints to answers.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2101.03737",
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "arxiv:2603.21440"
+  ],
+  "why_unaddressed": "Papers report per-benchmark or per-hop-level results but train and test within the same hop distribution; none holds out a depth as a transfer target. Multi-hop QA generalization work (e.g. length-generalization studies) was not surfaced by the searched queries, so this remains an unverified gap requiring a targeted search.",
+  "research_question": "Does context-enriched supervision improve accuracy on deeper-hop questions that were never trained at that depth, under a pre-registered held-out-hop split, relative to isolated-triple supervision and to training on all depths?",
+  "potential_experiment": "Construct a strict hop-controlled split on MetaQA (train on 1-hop and 2-hop, test on 3-hop) and a cross-depth split for CWQ by depth annotation; report transfer accuracy alongside in-depth accuracy, and compare against the same model trained on all depths. Pre-register the split and report the context-vs-isolated contrast on it, plus a random-label and hop-lexical-cue control to rule out shortcut learning.",
+  "confidence": "medium",
+  "verification_required": "Search for hop-length generalization / compositional generalization protocols in KGQA and multi-hop reasoning; verify whether a standard hop-transfer split already exists before creating a new one.",
+  "recorded_at": "2026-09-30T05:27:29.127950Z"
+}

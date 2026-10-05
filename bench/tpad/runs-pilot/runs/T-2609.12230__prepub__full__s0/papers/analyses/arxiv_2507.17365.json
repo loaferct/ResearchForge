@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2507.17365",
+  "relevance_tier": "high",
+  "problem": "Multi-step agentic retrieval systems based on LLMs suffer from factually inconsistent intermediate queries and inefficient search trajectories, leading to reasoning deviations or redundant computations.",
+  "method": "Proposes DynaSearcher: leverages dynamic knowledge graphs as external structured knowledge to guide the search process by explicitly modeling entity relationships (ensuring factual consistency in intermediate queries) and employs a multi-reward reinforcement learning framework for fine-grained control over training objectives such as retrieval accuracy, efficiency, and response quality.",
+  "key_assumptions": [
+    "Dynamic knowledge graphs can effectively guide search to ensure factual consistency.",
+    "Multi-reward RL can balance competing objectives such as accuracy, efficiency, and response quality."
+  ],
+  "main_contribution": "DynaSearcher achieves state-of-the-art answer accuracy on six multi-hop QA datasets, matches frontier LLMs using only small-scale models and limited computational resources, and demonstrates strong generalization and robustness across diverse retrieval environments and larger-scale models.",
+  "datasets": [
+    "six multi-hop question answering datasets (not named)"
+  ],
+  "benchmarks": [
+    "those six datasets"
+  ],
+  "baselines": [
+    "not stated in abstract (referenced as matching frontier LLMs)"
+  ],
+  "metrics": [
+    "answer accuracy"
+  ],
+  "results": "[\"Achieves state-of-the-art answer accuracy on six multi-hop QA datasets; matches frontier LLMs while using small-scale models and limited computational resources; demonstrates strong generalization and robustness.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "The paper uses dynamic KGs to guide search and multi-reward RL for training objectives, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T08:06:35.053400Z"
+}

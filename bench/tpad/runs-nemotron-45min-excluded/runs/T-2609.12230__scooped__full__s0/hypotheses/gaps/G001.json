@@ -1,0 +1,34 @@
+{
+  "id": "G001",
+  "gap": "Determining the optimal size of the local context subgraph to balance contextual benefits against noise and computational overhead.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2407.13101",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "arxiv:2202.13296",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2407.13101",
+    "arxiv:2202.13296"
+  ],
+  "why_unaddressed": "Existing subgraph retrieval methods focus on retrieving relevant subgraphs at inference time but do not systematically study the impact of varying context sizes on training effectiveness for multi-hop QA, particularly in the context of enriching supervision signals with local context.",
+  "research_question": "What is the optimal number of additional triples to include in the local context subgraph for each target triple/path that maximizes multi-hop QA performance while minimizing noise and computational overhead?",
+  "potential_experiment": "Ablation study varying the number of additional triples (e.g., 0, 1, 2, 3, 5, 10) in the local context subgraph while keeping other factors constant, measuring Exact Match and F1 on HotpotQA and 2WikiMultiHopQA datasets.",
+  "confidence": "medium",
+  "verification_required": "Controlled experiments to isolate context size effects from other variables such as training data size and model architecture.",
+  "recorded_at": "2026-09-30T06:19:19.719173Z"
+}

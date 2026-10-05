@@ -1,0 +1,52 @@
+{
+  "id": "C031",
+  "statement": "Final positioning verdict: a post-hoc temporal re-ranking component cannot be positioned as a distinct contribution. Temporal scoring with decay is implemented (learnable decay inside graph retrieval), validity-aware filtering is prescribed and partially implemented (ontology-driven pre-retrieval filtering by temporal validity), the legal-retrieval review states the bitemporal/point-in-time requirement and even its detection criterion ('can the system return the text that was in force at T') but reports no benchmarked empirical comparison, and a leading legal benchmark documents that retrieval-oriented legal benchmarks do not assess whether retrieved provisions remain in force. The defensible remaining delta is therefore the implemented measurement: version-level point-in-time recovery and contamination on near-duplicate amended clauses with recency-decoupled strata, plus the comparative result on whether the published recency-decay hybrid suffices. Note that even the metric is conceptually prescribed by prior work, so novelty is implementation and evidence rather than formulation.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 3",
+      "quote": "The paper does not report a benchmarked empirical comparison of existing systems; its contribution is formal and diagnostic",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 10",
+      "quote": "can the system return the text that was in force at T",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2608.21409",
+      "experiment_run_id": null,
+      "location": "p. 3",
+      "quote": "Still, it assumes the underlying corpus is normatively stable and does not assess whether retrieved provisions remain in force or have been superseded, amended, or repealed.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "doi:10.1109/iri69576.2026.00090",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Layer 2 integrates learnable exponential decay functions into graph-based retrieval",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "positioning",
+    "contribution",
+    "overlap",
+    "measurement"
+  ],
+  "recorded_at": "2026-09-30T04:39:42.235336Z"
+}

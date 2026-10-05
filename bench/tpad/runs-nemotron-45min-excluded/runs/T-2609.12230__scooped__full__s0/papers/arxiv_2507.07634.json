@@ -1,0 +1,36 @@
+{
+  "id": "arxiv:2507.07634",
+  "title": "FrugalRAG: Less is More in RL Finetuning for Multi-Hop Question Answering",
+  "authors": [
+    "Abhinav Java",
+    "Srivathsan Koundinyan",
+    "Nagarajan Natarajan",
+    "Amit Sharma"
+  ],
+  "year": 2025,
+  "published": "2025-07-10",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2507.07634",
+  "pdf_url": "https://arxiv.org/pdf/2507.07634v3",
+  "abstract": "Reinforcement learning (RL) based on the final answer's reward has driven recent progress in small language models (SLMs) on reasoning-heavy tasks such as math and code. However, applying the same techniques to retrieval-augmented generation (RAG) benchmarks like multi-hop QA has yielded limited gains, often trailing supervised or prompting-only baselines. Instead, we argue that a viable path for RL in multi-hop QA is to use test-time scaling judiciously to optimize both final answer accuracy and efficiency in reaching that answer. We propose FrugalRAG, a two-stage finetuning framework that adaptively reduces the number of retrieval steps based on a question's difficulty. First, we train an SLM with supervised finetuning on a full-exploration policy that generates broad sub-queries. Then, we apply RL to adaptively prune search depth based on question difficulty, directly rewarding policies that balance correctness with frugality. Unlike prior approaches requiring 10x more data, our method achieves competitive performance with only approximately 1,000 examples. On HotPotQA and other multi-hop QA benchmarks, FrugalRAG attains state-of-the-art efficiency-accuracy tradeoffs, cutting retrieval cost nearly in half. Moreover, on the challenging BrowseCompPlus benchmark, it generalizes zero-shot and surpasses SLM-based and other baselines. These results demonstrate the use of RL not to increase reasoning steps, but to reduce them, as an effective solution for scalable and efficient RAG.",
+  "doi": null,
+  "arxiv_id": "2507.07634",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T06:11:41.009718Z",
+  "relevance": 0.2647,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "data augmentation multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

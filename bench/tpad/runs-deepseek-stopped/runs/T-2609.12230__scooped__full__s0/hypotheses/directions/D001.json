@@ -1,0 +1,30 @@
+{
+  "id": "D001",
+  "direction": "Continue the line, but narrow it from 'propose context-augmented supervision plus repair plus lower-hop RL' to a controlled mechanism audit of that already-published recipe: isolate passage locality from supervision volume, evaluate repair on a split the loop cannot edit, and test whether the context effect follows a dose-response with context size and precision, on a text-attributed corpus with open-ended metrics rather than only synthetic domain MCQs.",
+  "hypothesis": "H1' (volume-controlled context): at matched supervision tokens, examples, and gradient steps, same-passage context triples yield higher 3-5-hop accuracy than isolated triples and than volume-matched distractor triples, with any remaining advantage attributable to passage locality rather than added signal. H2' (repair out-of-sample): on a frozen test split never touched by the repair loop, the repair gains shrink to a smaller but measurable amount, bounding the evaluation-set-cleaning artifact. H4' (dose-response): the context benefit is non-monotonic in context size, peaking at an intermediate number of triples, and this peak shifts with hop depth.",
+  "rationale": "KEEP_ORIGINAL is untenable because arxiv:2609.12230 implements the idea's full mechanism - same-passage context-triple supervision, KG- vs CG-grounded SFT, LLM-judged adaptive one-hop repair, lower-hop RL and 3-5-hop evaluation - with method overlap judged 1.0 (C002, C003, C004; U001 resolved). REJECT_DIRECTION is also unsupported: the challenge search found no work that contradicts the assessment that only protocol-level distinctions survive (U011 resolved), and those distinctions are demonstrably unrun rather than settled - the closest work size-matches the two disease KGs but not the two supervision arms, edits the validation set it reports 100% on, allocates unequal repair examples by error type, reports no seed-level variance, and evaluates only synthetic domain MCQ (C006, C007, C009). Adjacent evidence that larger subgraphs add noise and that fixed larger triple supplies underperform question-fitted ones (C005) makes the mechanism's monotonic-context assumption genuinely uncertain rather than merely untested, and text-attributed resources such as CDTP show the mechanism can be ported to an open-ended setting even though standard Freebase-based benchmarks lack passage provenance (U010, G002). A scope refinement therefore leaves a falsifiable, evidence-motivated contribution - a controlled decomposition that could also return a null result - without pretending the original combined contribution is new. It deserves investigation next because it is the smallest change that makes the claims testable and because its controls (matched volume, frozen test split, dose-response) are precisely the ones the retrieved literature has not run.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": null,
+  "research_question": "At matched supervision token budget and on a frozen, repair-blind held-out test split, does passage-local context-triple supervision improve deeper-hop (3-5 hop) KGQA over isolated-triple and volume-matched distractor supervision, and does the effect follow a non-monotonic dose-response in the amount and precision of attached context?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2202.13296",
+    "arxiv:2406.09994",
+    "arxiv:2101.03737",
+    "arxiv:2510.06039",
+    "doi:10.2139/ssrn.6794971"
+  ],
+  "uncertainty_ids": [
+    "U001",
+    "U002",
+    "U004",
+    "U006",
+    "U009",
+    "U010",
+    "U011",
+    "U012"
+  ],
+  "recorded_at": "2026-09-30T05:22:19.861777Z"
+}

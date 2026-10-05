@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.1109/icbase59196.2023.10303211",
+  "relevance_tier": "high",
+  "problem": "Existing multi-hop knowledge reasoning methods heavily rely on data, lack interpretability, and suffer from vast exploration spaces leading to irrelevant and redundant exploration due to numerous entities and relations in large KGs.",
+  "method": "Proposes ALMARL (Attention-based LSTM and Multi-Agent Reinforcement Learning for Knowledge Graph Reasoning): uses clustering to group entities, establishes multi-agents at different levels to selectively explore clusters, integrates Attention-based LSTM for agents to explore paths and mine deep semantic information in entity relationships, and produces inference results with interpretable paths.",
+  "key_assumptions": [
+    "Clustering entities and deploying multi-agents reduces irrelevant and redundant exploration.",
+    "Attention-based LSTM can effectively capture deep semantic information in entity relationships for path-based reasoning."
+  ],
+  "main_contribution": "ALMARL method that integrates Attention-based LSTM with multi-agent reinforcement learning, demonstrating significant performance improvements on link prediction and fact prediction tasks compared to competitive baselines.",
+  "datasets": [
+    "not stated in abstract"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "several competitive baselines (not specified)"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"Experimental results demonstrate significant performance improvements compared to several competitive baselines.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.75,
+    "method_overlap": 0.25,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "ALMARL uses multi-agent RL with attention-based LSTM for interpretable path reasoning, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:10:09.077061Z"
+}

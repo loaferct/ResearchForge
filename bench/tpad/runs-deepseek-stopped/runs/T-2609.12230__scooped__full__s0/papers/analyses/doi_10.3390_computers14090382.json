@@ -1,0 +1,42 @@
+{
+  "paper_id": "doi:10.3390/computers14090382",
+  "relevance_tier": "medium",
+  "problem": "Complex multi-hop queries over domain-specific KGs need retrieval that aligns semantic reasoning with structured traversal; plain RAG and GraphRAG retrieval are weaker on mid-complexity multi-hop queries.",
+  "method": "GraphTrace: a modular retrieval framework over a domain-specific KG (COVID-19 economic data) with entity extraction, path finding, query decomposition, semantic path ranking, and context aggregation, followed by LLM-based answer generation.",
+  "key_assumptions": [
+    "Decomposing queries and ranking semantic paths yields better context than flat RAG/graph RAG.",
+    "A domain-specific KG (COVID-19 economic data) is a representative testbed. [abstract]"
+  ],
+  "main_contribution": "A modular KG+LLM retrieval framework whose components (path finding, query decomposition, semantic path ranking, context aggregation) improve retrieval and generation over RAG and GraphRAG baselines, with particular gains on 5-6-hop queries.",
+  "datasets": [
+    "Structured economic data related to the COVID-19 pandemic (domain-specific KG) [abstract]"
+  ],
+  "benchmarks": [
+    "In-domain COVID-19 economic multi-hop query set (specific benchmark names not stated in the abstract)"
+  ],
+  "baselines": [
+    "Standard retrieval-augmented generation (RAG)",
+    "Graph-based RAG (GraphRAG)"
+  ],
+  "metrics": [
+    "Retrieval metrics (unspecified in abstract) and generation metrics including 'directness'"
+  ],
+  "results": "GraphTrace consistently outperforms RAG and GraphRAG baselines, especially on mid-complexity (5-6-hop) queries, and achieves top 'directness' scores in the generation evaluation.",
+  "limitations": [
+    "Inference-time retrieval only; no model training, no supervision-design comparison, no repair or RL.",
+    "Domain-specific (COVID-19 economic) evaluation; exact metrics, dataset size, and error analysis not stated in the abstract."
+  ],
+  "future_work": [
+    "Not stated in the abstract."
+  ],
+  "code_availability": "Not stated in the abstract.",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.35,
+    "conceptual_difference": "GraphTrace is an inference-time retrieval pipeline (query decomposition, path ranking, context aggregation) over a domain KG; it neither fine-tunes the LLM on triple/path supervision nor attaches same-passage context to a training target, and has no repair or RL. Its relevance is as a context-aggregation baseline for multi-hop retrieval rather than an overlapping supervision method.",
+    "basis": "Problem overlap 0.5 because both concern multi-hop QA over KGs with context aggregation and hop-depth effects (GraphTrace reports gains at 5-6 hops, related to the idea's H4); method overlap 0.3 because retrieval/path ranking is shared in spirit but there is no training-signal design, no context-graph supervision, no repair, and no RL; evaluation overlap 0.35 because both use multi-hop accuracy-like measures but on different, unspecified benchmarks and metrics."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:08:14.302760Z"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "arxiv:2104.09286",
+  "title": "Learning to Cascade: Confidence Calibration for Improving the Accuracy and Computational Cost of Cascade Inference Systems",
+  "authors": [
+    "Shohei Enomoto",
+    "Takeharu Eda"
+  ],
+  "year": 2021,
+  "published": "2021-04-15",
+  "venue": "Proceedings of the AAAI Conference on Artificial Intelligence",
+  "url": "https://arxiv.org/abs/2104.09286",
+  "pdf_url": "https://arxiv.org/pdf/2104.09286v1",
+  "abstract": "Recently, deep neural networks have become to be used in a variety of applications. While the accuracy of deep neural networks is increasing, the confidence score, which indicates the reliability of the prediction results, is becoming more important. Deep neural networks are seen as highly accurate but known to be overconfident, making it important to calibrate the confidence score. Many studies have been conducted on confidence calibration. They calibrate the confidence score of the model to match its accuracy, but it is not clear whether these confidence scores can improve the performance of systems that use confidence scores. This paper focuses on cascade inference systems, one kind of systems using confidence scores, and discusses the desired confidence score to improve system performance in terms of inference accuracy and computational cost. Based on the discussion, we propose a new confidence calibration method, Learning to Cascade. Learning to Cascade is a simple but novel method that optimizes the loss term for confidence calibration simultaneously with the original loss term. Experiments are conducted using two datasets, CIFAR-100 and ImageNet, in two system settings, and show that naive application of existing calibration methods to cascade inference systems sometimes performs worse. However, Learning to Cascade always achieves a better trade-off between inference accuracy and computational cost. The simplicity of Learning to Cascade allows it to be easily applied to improve the performance of existing systems.",
+  "doi": "10.1609/aaai.v35i8.16900",
+  "arxiv_id": "2104.09286",
+  "openalex_id": "W3175772341",
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv",
+    "crossref",
+    "openalex"
+  ],
+  "citation_count": 14,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T11:34:11.144987Z",
+  "relevance": 1.0,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "confidence cascade calibration"
+  ],
+  "code_urls": [],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

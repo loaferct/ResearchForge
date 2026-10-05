@@ -1,0 +1,43 @@
+{
+  "id": "C024",
+  "statement": "U010 is answered: regime-conditioned temporal weighting is unnecessary once the temporal term is conditioned on validity intervals. The opposite-direction tension between current and historical queries is a property of monotone elapsed-time decay (which always rewards recency) rather than of the task itself; a single interval-membership term targets the version in force at the query date for any query date, and the evidence shows one regime-independent as-of-date rule retrieves correctly for both current and historical questions. Query-regime conditioning is therefore subsumed by interval-aware scoring and should not be pursued as a separate mechanism.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 8",
+      "quote": "While RAG solved the retrieval problem",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 8",
+      "quote": "Even with perfect retrieval, performance dropped slightly",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "smaller differences in time result in a larger score",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "regime",
+    "interval-aware",
+    "U010",
+    "simplification"
+  ],
+  "recorded_at": "2026-09-30T05:29:17.229174Z"
+}

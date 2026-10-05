@@ -1,0 +1,18 @@
+# TPAD pilot (docs/paper/research_plan.md §5). All systems share these caps; only the switches in
+# researchforge.evaluation.bench.SYSTEMS differ between them.
+dataset: calib_items.yaml
+out: runs-calib
+systems: [full]
+conditions: [scooped]
+seeds: 1
+settings:
+  literature:
+    cache_dir: cache                  # relative to this file; shared, so every system sees the same API responses
+  investigation:
+    max_iterations: 30
+    max_tool_calls: 300
+    max_searches: 14
+    max_papers: 90
+    time_limit_s: 3600
+  dsh:
+    phase_timeout_s: 900

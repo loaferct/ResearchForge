@@ -1,0 +1,25 @@
+{
+  "id": "C015",
+  "statement": "Whether KG context helps is governed by relevance, not quantity: imprecise selection of KG knowledge can degrade LLM performance below the no-context zero-shot baseline, so simply supplying more context triples is not sufficient and can be harmful.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "doi:10.1109/ickg66886.2025.00020",
+      "experiment_run_id": null,
+      "location": "Abstract",
+      "quote": "While KG-based knowledge can enhance LLM reasoning, imprecise selection of relevant knowledge can degrade performance below the zero-shot baseline (where no additional context is provided), highlighting the challenge of integrating KG knowledge without task-specific selection strategies.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "high",
+  "phase": "gaps",
+  "tags": [
+    "context",
+    "relevance",
+    "noise",
+    "confounder"
+  ],
+  "recorded_at": "2026-09-30T05:27:29.045508Z"
+}

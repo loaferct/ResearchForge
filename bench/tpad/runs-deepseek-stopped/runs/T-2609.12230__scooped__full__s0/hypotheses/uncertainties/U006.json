@@ -1,0 +1,35 @@
+{
+  "id": "U006",
+  "question": "Do the repair-loop gains reflect genuine knowledge repair, or are they inflated by cleaning/selecting the validation set that the loop itself operates on?",
+  "description": "The closest work reports that repair 'enables the models to reach 100% accuracy on the cleaned retained one-hop validation sets' and that it 'removes or quarantines problematic noisy triples' while updating the validation set with regenerated questions. Because the evaluation set is modified by the same loop that is being evaluated, observed one-hop and downstream gains may partly reflect evaluation-set cleaning/selection rather than genuinely repaired knowledge. An untouched, held-out one-hop and multi-hop test set that the repair loop never edits is needed to separate these.",
+  "category": "validity",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "READ",
+    "CHALLENGE",
+    "VERIFY",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": 0.7,
+  "confidence_basis": "Based on verified quotes from the closest work's method description showing both validation-set editing and unequal repair-example allocation; the magnitude of the resulting bias is unmeasured.",
+  "rationale": "If gains are selection artifacts, hypothesis H2 and the motivation for the repair stage are substantially weakened; resolving this requires reading how the retained and refreshed validation sets were constructed (Section 3.6/3.8) and how quarantine interacts with evaluation.",
+  "resolution": "Partially resolved as a documented concern, not yet as a measured effect: the closest work explicitly removes invalid triples from the validation set and regenerates validation questions for unlearned triples (p. 16), and deliberately uses different numbers of repair examples per error category (p. 15), while reporting 100% accuracy on the cleaned retained one-hop set. This confirms that post-repair accuracy is entangled with evaluation-set selection and uneven training allocation; what remains unmeasured is how much of the gain would survive an untouched held-out split — an experiment the closest work does not report.",
+  "paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C006"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "PLAN",
+  "created_at": "2026-09-30T05:05:55.908832Z",
+  "updated_at": "2026-09-30T05:14:12.080330Z"
+}

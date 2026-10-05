@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "researchforge"
+version = "0.1.0"
+description = "Autonomous research-idea investigation agent built on DeepSeek Harness"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "ResearchForge contributors" }]
+dependencies = [
+  "pydantic>=2.7,<3",
+  "httpx>=0.27,<1",
+  "mcp>=2.0,<3",
+  "fastapi>=0.110",
+  "uvicorn>=0.29",
+  "pyyaml>=6",
+  "markdown>=3.5",
+  "tomli>=2.0; python_version < '3.11'",
+]
+
+[project.optional-dependencies]
+pdf = ["pypdf>=4"]
+dev = ["pytest>=8", "pytest-asyncio>=0.23", "pypdf>=4"]
+
+[project.scripts]
+researchforge = "researchforge.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/researchforge"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+  "e2e: runs the real dsh binary against a scripted OpenAI-compatible model server (needs Node.js and network on first run)",
+  "live: calls real literature APIs",
+]
+addopts = "-q -m 'not e2e and not live'"
+
+[tool.pyrefly]
+search-path = ["src", "tests"]
+
+[tool.pyright]
+extraPaths = ["src", "tests"]

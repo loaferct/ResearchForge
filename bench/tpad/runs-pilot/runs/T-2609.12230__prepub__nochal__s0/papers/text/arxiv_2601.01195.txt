@@ -1,0 +1,1215 @@
+[[page 1]]
+Reinforcement Learning Enhanced Multi-hop Reasoning for Temporal Knowledge
+Question Answering
+Wuzhenghong Wen1*, Chao Xue2*, Su Pan1†, Yuwei Sun1, Minlong Peng3
+1School of Internet of Things, Nanjing University of Posts and Telecommunications
+2School of Software, Beihang University
+3Fudan University
+{2022070804, supan, 2021070706}@njupt.edu.cn, xuechao@buaa.edu.cn, mlpeng16@fudan.edu.cn
+Abstract
+Temporal knowledge graph question answering (TKGQA)
+involves multi-hop reasoning over temporally constrained
+entity relationships in the knowledge graph to answer a
+given question. However, at each hop, large language models
+(LLMs) retrieve subgraphs with numerous temporally sim-
+ilar and semantically complex relations, increasing the risk
+of suboptimal decisions and error propagation. To address
+these challenges, we propose the multi-hop reasoning en-
+hanced (MRE) framework, which enhances both forward and
+backward reasoning to improve the identification of glob-
+ally optimal reasoning trajectories. Specifically, MRE be-
+gins with prompt engineering to guide LLM in generating
+diverse reasoning trajectories for the given question. Valid
+reasoning trajectories are then selected for supervised fine-
+tuning, serving as a cold-start strategy. Finally, we introduce
+Tree-Group Relative Policy Optimization (T-GRPO)—a re-
+cursive, tree-structured learning-by-exploration approach. At
+each hop, exploration establishes strong causal dependen-
+cies on the previous hop, while evaluation is informed by
+multi-path exploration feedback from subsequent hops. Ex-
+perimental results on two TKGQA benchmarks indicate that
+the proposed MRE-based model consistently surpasses state-
+of-the-art (SOTA) approaches in handling complex multi-hop
+queries. Further analysis highlights improved interpretability
+and robustness to noisy temporal annotations.
+Introduction
+Temporal Knowledge Graph Question Answering
+(TKGQA) aims to answer temporally-aware questions by
+constructing a time-sensitive subgraph centered on a target
+entity, performing multi-hop reasoning over relevant entities
+and temporal relations, and ultimately inferring the correct
+answer. Traditional TKGQA approaches mainly rely on
+embedding-based methods, which align temporal relational
+graphs with natural language queries through latent rep-
+resentations (Chen et al. 2022; Xue et al. 2024a; Chen,
+Liao, and Zhao 2023). Although effective for in-distribution
+queries, these methods often exhibit poor generalization to
+out-of-distribution or temporally complex scenarios. Lever-
+*These authors contributed equally.
+†Corresponding author.
+Copyright © 2026, Association for the Advancement of Artificial
+Intelligence (www.aaai.org). All rights reserved.
+(c-2) self-learning (c-3) refine  recognition
+Q1Who won the FIFA Golden Ball in 2022?
+Q2Who won the FIFA Golden Ball in 2023?
+(a) Temporal Questions (b) TKG
+(c-1) exploration
+(c) MRE Framework
+Messi
+Messi
+ Benzema
+rethinking
+Figure 1: Retrieval errors under complex temporal facts (b)
+and the resolution by the MRE framework (c).
+aging the extensive pre-trained knowledge of large language
+models (LLMs) and recent advances in long-context mod-
+eling (Su et al. 2024; Chen et al. 2023), there is growing
+momentum toward applying both commercial (Achiam et al.
+2023) and open-source (Touvron et al. 2023; Yang et al.
+2024) LLMs to TKGQA. LLMs show particular strength in
+multi-hop temporal reasoning, where answering a question
+requires traversing a sequence of temporally grounded
+facts (Chen et al. 2024a; Hu et al. 2025). This paradigm
+shift from embedding-based to LLM-based TKGQA opens
+new avenues for integrating pretrained linguistic knowledge
+with temporal graph structures, leading to improvements in
+both reasoning accuracy and robustness.
+However, in LLM-based TKGQA approaches, the com-
+plexity of event retrieval (Dziri et al. 2021; Shi et al. 2024)
+and ambiguous temporal relations (Qian et al. 2024; Zha
+et al. 2024) can mislead the language models(LMs), result-
+ing in suboptimal decisions during intermediate reasoning
+steps. As illustrated in Figure 1(a), when querying Golden
+Ball recipients in 2023, the absence of competing candi-
+dates enables the LLM to identify the correct answers di-
+rectly from the subgraphs. In contrast, the year 2022 presents
+a more challenging case: FIFA issues two distinct Golden
+Ball awards, and Messi’s World Cup triumph received un-
+arXiv:2601.01195v1  [cs.AI]  3 Jan 2026
+
+[[page 2]]
+precedented media attention. This prominence misleads the
+LLM, causing confusion in identifying the correct award re-
+cipient (Ballon d’Or). Although selecting Messi as the final
+answer is incorrect, including him as an intermediate reason-
+ing node reflects a suboptimal but plausible inference. These
+cases highlight the inherent difficulty in guiding LLMs to-
+ward globally optimal trajectories in multi-hop reasoning.
+Reinforcement Learning from Human Feedback
+(RLHF) (Rafailov et al. 2023; Schulman et al. 2017)
+is a fine-tuning paradigm that steers models toward globally
+optimal solutions through preference optimization. As
+an advanced extension of RLHF, group relative policy
+optimization (GRPO) (DeepSeek-AI et al. 2025), improves
+reasoning by comparing multiple candidate outputs and
+leveraging contrastive learning and enhanced exploration.
+Compared to traditional methods such as PPO (Schulman
+et al. 2017), GRPO offers greater robustness and a stronger
+capacity for global optimality in reasoning tasks.
+Unlike single-turn question answering (QA) tasks, where
+immediate feedback is available from the final answer,
+TKGQA involves multi-hop reasoning to retrieve interme-
+diate information before arriving at the final answer. This
+inherently introduces the problem of reward sparsity (Guo
+et al. 2020; Devidze, Kamalaruban, and Singla 2022; Zhang
+et al. 2023). As a result, it becomes challenging to guide
+LLMs to escape local optima during intermediate steps and
+achieve global optimality throughout the reasoning trajec-
+tory, while simultaneously mitigating the effects of sparse
+rewards in the RLHF optimization process.
+To extend GRPO’s global optimization capability from
+single-turn QA to multi-hop trajectory reasoning, we pro-
+pose theMulti-hop Reasoning Enhanced (MRE)frame-
+work, which comprises three key components:(1) Multi-
+Trajectory Sampling.Leveraging GPT-4 with prompt engi-
+neering, we sample diverse multi-hop reasoning trajectories
+from a few-shot dataset under varying temperature settings.
+Trajectories that produce the correct final answers are iden-
+tified as positive examples. From these, we construct a fine-
+grained dataset by extracting each intermediate reasoning
+step as an independent training instance.(2) Cold Start Su-
+pervised Fine-Tuning. Building on the dataset constructed
+in (1), we apply supervised fine-tuning to the target model,
+guiding it to imitate the multi-hop reasoning process and
+improving its adherence to instructions.(3) Tree-Group
+Relative Policy Optimization.To address the challenge of
+sparse rewards during exploration, T-GRPO adopts a tree-
+based search strategy, leveraging the exploration results of
+constructed subtrees for evaluation and learning. Specifi-
+cally, a search tree is constructed to performgrounds of rea-
+soning on the given subgraph, guided by the input question.
+At each hop, the subgraph expands along different branch-
+ing directions of subsequent subtrees, and the exploration
+process continues until the final answer is derived. Upon
+receiving evaluation signals from thegreasoning trajecto-
+ries returned by their respective subtrees, group reward is
+applied to compute their contributions. Finally, the GRPO
+algorithm is employed to model relative preferences among
+the explored trajectories within each tree, enabling itera-
+tive updates of decision policies back to the root. Our con-
+tributions are summarized as follows: 1) We propose the
+MRE framework, a LLM-based multi-hop reasoning en-
+hancement framework for TKGQA. 2)We propose T-GRPO,
+a reinforcement learning method for training LLMs in multi-
+hop reasoning for TKGQA. 3) Experiments with several
+TKGQA datasets demonstrate the effectiveness of MRE.
+Related Work
+LLM-based TKGQAWith the development of commercial
+and open-source LLMs, their application to reasoning tasks
+in TKGQA is garnering increased attention. (Chen et al.
+2024a; Hu et al. 2025; Wu et al. 2025b; Fei et al. 2022)
+propose multi-round interactive prompts for multi-hop rea-
+soning, while(Lee et al. 2023) leveraged in-context learn-
+ing to enhance open-source model performance. (Xia et al.
+2024; Liang et al. 2019b; Liu et al. 2023a) introduce a hybrid
+method that combined GNN with LLM voting for multi-hop
+QA. Despite their strong reasoning capabilities, commer-
+cial LLMs struggle to effectively integrate TKG knowledge,
+limiting their applicability to complex TKGQA tasks. As a
+result, open-source efforts emphasize specialized TKGQA
+models. (Yuan et al. 2024; Xiong et al. 2024; Chen et al.
+2024b; Wang et al. 2022; Liu et al. 2023c) focus on gener-
+ating high-quality temporal chain-of-thought(CoT) data for
+fine-tuning, with(Yuan et al. 2024; Xiong et al. 2024; Liang
+et al. 2019a) emphasizing multi-path reasoning and(Chen
+et al. 2024b) adopting in-context learning. Separately, (Qian
+et al. 2024) fine-tuned a rewriter to transform complex tem-
+poral constraints into explicit time points, while (Yang et al.
+2023; Zheng et al. 2022), while (Yang et al. 2023; Gui et al.
+2018; Dai et al. 2025) constructs a temporally sensitive pre-
+training model. However, these approaches mainly aim to
+optimize single-hop reasoning accuracy, neglecting global
+optimality across the entire multi-hop reasoning trajectory.
+RL for ReasoningWith CoT based methods (Wei et al.
+2022; Yao et al. 2023; Jin et al. 2024; Ma et al. 2022; Song
+et al. 2022) that enhance LLM reasoning via static supervi-
+sion, their effectiveness remains constrained by pre-trained
+knowledge of the model. GRPO (DeepSeek-AI et al. 2025;
+Liu et al. 2025b) addresses this limitation by autonomously
+discovering CoT trajectories and leveraging high-quality
+reasoning for self-improvement. To improve training stabil-
+ity and reasoning precision, recent efforts (Yu et al. 2025;
+Zheng et al. 2025; Xue et al. 2024b; Wang, Liang, and Peng
+2025) focus on enhancing token-level differentiation, allow-
+ing the model to assign more informative and fine-grained
+credit signals across sequences. In parallel, other studies
+explore rule-guided reasoning by injecting symbolic con-
+straints through RL (Fang, Ma, and Wang 2025; Jiang et al.
+2025; Liu et al. 2024; Ma et al. 2025; Wu et al. 2025a). Be-
+yond core reasoning, GRPO is also adapted for downstream
+tasks (Chen et al. 2025; Wu et al. 2025c; Liu et al. 2025d),
+finance (Liu et al. 2025c; Zhu et al. 2025; Xue et al. 2023;
+Li, Liang, and Zhang 2024), and (Lai et al. 2025; Li et al.
+2024; Liu et al. 2025a). MRE not only harnesses reinforce-
+ment learning to enhance the capability of LLMs in achiev-
+ing global optimality across at each hop, but also introduces
+a tree-structured exploration and learning strategy, T-GRPO,
+
+[[page 3]]
+Relationship Pruning Questions Correct Answer History Records Chain of Thought Standby Sample Activate Sample Updating
+round 2 round n
+...
+Temporal Knowledge Graph Step 3: Tree-Group Relative Policy OptimizationStep 1: Multi-Sampling
+Supervised Fine-Tuning
+ Step 2: Cold Start
+init Policy ref  Policy
+Search Tree
+G2 Gk
+seq-logs
+loss backward 
+KL divergence
+policy ratio
+loss T-GRPO
+...
+...
+trajectory advantage
+...
+updating  policy 
+Single-hop Sample Sets 
+...
+Tr.k
+round 1
+exploration evaluation
+reward 
+model
+old policy
+...
+...
+...
+round1 
+Tr.3 ...
+Tr.2
+Tr.k ...
+...
+...
+...
+/ /
+/ /
+Tr.1
+exploration information
+...
+G1-1
+GN-1
+ GN-2
+GN-n
+...
+round 1
+state
+output:
++
++
+replay 
+buffer
+G1-1
+G1-2
+G1-n
+GN-1
+GN-2
+GN-n
+ G1-1
+G1-2
+G1-n
+GN-1
+GN-2
+GN-n
+GN-2
+GN-2
+GN-1
+GN-2
+GN-n
+......
+G1-1
+G1-2
+G1-n
+...
+Q
+Q
+round 2
+state
++
++
+output:
++
++
++
+round 2 round 3 round n 
+1 0 0 0
+G1-2 G1-3
+GN
+ref  policy
+Gk’
+Tr.2
+G1
+positive sample selection 
+G1-4
+Q
+Figure 2: Overall architecture of the MRE framework. First, prompt engineering is used to guide the LLM in generating
+diverse multi-hop reasoning trajectories. Second, valid trajectories are selected for SFT, providing a cold-start policy. Finally,
+tree-structured exploration with T-GRPO recursively optimizes reasoning paths by leveraging forward decisions and backward
+feedback across each hops.
+which effectively mitigates the challenge of sparse reward.
+MRE Framework
+In this section, we present a comprehensive description of
+our proposed MRE framework, which comprises three core
+components: (1) Multi-trajectory sampling, (2) Cold start
+supervised fine-tuning and (3) T-GRPO based reinforcement
+learning. The following subsections will provide detailed ex-
+planations of each component’s implementation.
+Task Definition
+Let the temporal knowledge graph (TKG) be denoted as
+K:= (E,R,T,F), and its 1-hop subgraph centered on an
+entityerepresented asK e := (Ee,Re,Te,Fe). A fact inKe
+can be formalized as(e,r,o,τ)⊂F e or(s,r,e,τ)⊂F e,
+wheres,e, ando∈E e denote the subject entity, the central
+entity and the object entity, respectively. The relationr∈Re
+denotes the relationship between entities, whereRe⊂R QA
+is constrained by the QA task, andτ∈Tdenotes the asso-
+ciated temporal information. LLM-based TKGQA tasks can
+be formulated as follows. Given a questionQand an initial
+entitye h, the LLM first constructs a 1-hop subgraphK eh
+centered on the current entityeh. It then performs multi-hop
+reasoning by selecting a next-hop entitye ′ from the facts
+Feh or directly producing the answer based on the retrieved
+information, where the answer can be an entity or a times-
+tampτ. The optimization objective for multi-hop reasoning
+in TKGQA is defined as follows:
+max
+π
+E
+" KX
+i=0
+γRi(Fei
+h
+)
+#
+s.t.R i = 0∀i<K (1)
+Multi-Trajectory Sampling
+To provide high-quality cold start samples for supervised
+fine-tuning, we employ GPT-4 to sample multiple reasoning
+trajectories for each QA under varying reasoning tempera-
+ture settings . These trajectories are then used to construct a
+supervised fine-tuning dataset.
+We construct multi-hop reasoning trajectories in TKGs by
+recursively applying 1-hop inference, where each predicted
+entity becomes one of a new central entity for the next hop.
+This iterative process proceeds until the final answer is de-
+rived. The 1-hop inference and its transition to subsequent
+hops can be formalized as follows:
+ak←LLM
+ 
+Q,Hk,Sk,Ek
+
+(2)
+Spruning = Top-P(Q,F E)(3)
+LetLLMdenote the sampling model, and letQdenote
+the input question, andE k be the central entity . Further-
+more, we defineF Ek as the set of textual facts centered on
+Ek. The actiona k denotes the next-hop decision made by
+theLLMbased on the current subgraph, which consists of
+the generated CoT and the selection of the next-hop entity
+Ek′. At each round, the retrieved subgraph is constructed by
+selectingPrelevant facts fromF Ek using the relevance re-
+trieval function in Function (3), where relevance scores are
+computed based on the similarity between the questionQ
+and each candidate fact(s,r,o,τ)∈ F Ek. The historical
+contextH k accumulates the facts traversed in hops and is
+used to guide the decision-making ofLLM. Following the
+definition of 1-hop reasoning in TKGQA, we extend it to the
+
+[[page 4]]
+multi-hop setting.
+Trt
+j ={Tr k
+j∼LLM t(Q,Hk,Sk,Ek)}N
+k=1 (4)
+Here,Tr t
+j denotes a reasoning trajectory generated by the
+LLMwith temperaturet, whereNis the final step index
+of thej-th trajectory. The setTr Qi containsMcompleted
+trajectories sampled under different temperature settings for
+the questionQ i, anda ′
+j denotes the final answer produced
+byTr t
+j.We then construct a positive trajectory set forQi by
+selecting each trajectory, whose output answer matches the
+ground-trutha∗ as a positive sample.
+TrQi ={(a′
+j,Tr t
+j)}M
+j=1,t∈T (5)
+Tr +
+Qi ={Tr t
+j∈Tr Qi|a′
+j =a∗} (6)
+Finally, we build a subsetdfrom the full datasetDto con-
+struct a positive trajectory setTr +
+d∼D, whereTr +
+d∼D =
+{(TrQi,Qi,a∗)}|d|
+i=1.
+Cold start supervised fine-tuning
+To enhance the instruction-following ability of the target
+LLM in multi-hop TKGQA reasoning and to cultivate core
+reasoning patterns, we apply supervised fine-tuning based
+on step-wise decisions extracted fromTr +
+d∼D. The fine-
+tuning objective is defined as follows:
+minimize
+θ
+VX
+i=1
+MX
+j=1
+NX
+k=1
+Loss(yijk,π(Qi,Sijk,Hijk,Eijk ;θ))
+(7)
+In the above objective,πdenotes the LLM to be opti-
+mized, parameterized by trainable parametersθ, andy ijk =
+(CoTijk,aijk )represents the reasoning process and action
+at stepkof thej-th trajectory for thei-th question. Here,
+Vrepresents the total number of questions inTr +
+d∼D,M
+denotes the number of trajectories associated with a given
+questionQ, andNcorresponds to the length of the current
+trajectoryTr t
+j. Based on this formulation, we develop a ba-
+sic multi-hop reasoning modelπ SFT
+θ for TKGQA.
+T-GRPO
+Asπ SFT
+θ tends to converge to locally optimal solutions
+during trajectory reasoning, we introduce T-GRPO to en-
+hance exploration and incorporate the contrastive learning
+paradigm of GRPO, thereby guiding the model toward glob-
+ally optimal reasoning paths.
+Exploration.GRPO performs group-wise policy optimiza-
+tion by sampling multiple candidates under the same ques-
+tion and leveraging their relative performance within the
+group. The sampling process is defined as:G← {a i ∼
+πθ}g
+i=1, whereGrepresents a group ofgsamples generated
+by the policyπθ for a given input.
+Multi-hop reasoning in TKGQA exhibits strong causal
+dependencies, where each decision is conditioned on the in-
+ference of the previous hop. Building on this, we define the
+search tree centered onE, denoted as:
+Treek′ ={E,Searching(E,S,H,Q),R E}, k ′ >0 (8)
+Algorithm 1: Tree-group Searching
+Input:π Old
+θ ,g,max depth,buffer,E init,Sinit,Q
+Output:Sampled bufferbuffer ∗
+1:functionSearching(E,S,H,Q)
+2:ifthe search depth reachesmax depththen
+3:return0
+4:end if
+5:Group,Reward←∅
+6:fori←1togdo
+7:a i←π Old
+θ (Q,E,H,S)
+8:ifa i is answerthen
+9:computeScore i based on (10)
+10:go to line (17)
+11:end if
+12:ExtractE next fromai
+13:F Enext←K Enext
+14:S next←PruningF Enext using (3)
+15:H next←H∪S
+16:Score i←Searching(E next,S next,H next,Q)
+17:Group←Group∪{(a i,Q,H,S,E)}
+18:Reward←Reward∪{Score i}
+19:end for
+20:ComputeE Scoreusing (11)
+21:Push{Group,Reward}tobuffer ▷asynchronous
+22:returnE Score
+23:End function
+24:Searching(E init,Sinit,∅,Q)
+whereSearchingfunction refers to the multi-hop search
+algorithm 1,R E is evaluation of the central entityEaf-
+ter searching andTree k′ is thek ′-th tree generated during
+the search process. The core of GRPO is to construct the
+sampling setGand perform preference optimization itera-
+tively. Therefore, we construct the sampling expression for
+Gk′ based on the search treeTree k′:
+Gk′ ={a (j′)
+k′ ∼π θ(Q,H,(S,E)←a (j)
+k )}g
+j′=1, k ′ >0 (9)
+whereG k′ denotes the group constructed by the policy net-
+workπθ in thek′-th tree using the subgraphS, which is de-
+termined byE. Moreover, bothSandEare influenced by
+the information on thej-th output in thek-th tree, denoted
+a(j)
+k , wherea (j)
+k = (CoT (j)
+k ,Ek,j
+next). Consequently, the next-
+hop subgraphSk,j
+next is constructed accordingly (line 11–13 in
+Algorithm 1).
+Evaluation.The sparsity of trajectory-level rewards in
+multi-hop reasoning poses significant challenges to the con-
+vergence of learning algorithms (Devidze, Kamalaruban,
+and Singla 2022; Zhang et al. 2023). To address this, T-
+GRPO builds on the search strategy defined in the previous
+hop and adopts a tree-structured multi-hop search process.
+It assigns backward credit by evaluating each node based
+on the aggregated scores of its downstream search paths. By
+propagating reward signals along the tree, this approach ef-
+fectively mitigates the impact of sparse supervision and fa-
+cilitates more stable and efficient learning.
+For a next-hop entityE k,j
+next , if actiona (j)
+k selected inj-th
+inference of thek-th group corresponds to the final answer,
+
+[[page 5]]
+the associated central entity is denotedE k,j
+leaf. Otherwise, if
+a(j)
+k is the entity chosen for the next hop, we denote it as
+Ek,j
+root. The evaluation of the leaf entityE k,j
+leaf is conducted by
+directly comparing it with the ground-truth answera ∗, as
+formalized in function (10):
+REk,j
+leaf
+=
+(
+1, a (j)
+k =a∗
+0,otherwise (10)
+The evaluation of non-terminalE k,j
+root is based on the re-
+ward computed over the groupG k,j
+next, which is determined
+by performing a search on the subgraphS k,j
+next.
+REk,j
+root
+= 1
+g
+gX
+j′=1
+R(a(j′)
+k′ ) (11)
+In Function (11),a (j′)
+k′ denotes an inference result generated
+inG k,j
+next, which produces a total ofgresponses. The quality
+of eacha (j′)
+k′ is assessed according to its corresponding next-
+hop information.
+Storage.After evaluating a group of sampled trajec-
+tories, we store the resulting group-level sampling data
+into an asynchronous buffer, decoupling trajectory evalu-
+ation from the GRPO training process. Specifically, the
+storage structure for thek-th tree is defined as:G k =
+{(aj,Q,H j,Sj,Ej,REj )}g
+j=1 (line 20 in Algorithm 1).
+Once a storage structure is fully sampled, it is forwarded
+to the GRPO algorithm for parameter updates.
+Training.In the GRPO training framework, three model
+variants are maintained throughout the optimization process:
+the update modelπθ, the reference modelπ Ref
+θ , and the sam-
+pling modelπ Old
+θ . After everyµpolicy updates on a batch
+of sampled graphsG, the sampling modelπ Old
+θ is synchro-
+nized with the latest parameters ofπθ to ensure stable explo-
+ration. In contrast, T-GRPO adopts a subtree-level optimiza-
+tion paradigm. Rather than updating the policy at fixed inter-
+vals, it postpones gradient updates until a complete traversal
+and evaluation of a sampled subtree is performed. By com-
+puting gradients based on coherent and trajectory-consistent
+feedback, this design produces richer learning signals with
+enhanced contextual awareness. Onceπ θ completes learn-
+ing from the sampling results across all subtrees, we set
+πOld
+θ ←π θ. The complete training procedure is presented
+formally in Algorithm 2.
+Experimental Settings
+Datasets.We evaluate our proposed MRE framework on
+two challenging and complementary TKGQA benchmarks.
+The first, CRONQUESTIONS (Saxena, Chakrabarti, and
+Talukdar 2021), is a large-scale dataset constructed from
+Wikidata, featuring 410K questions that involve 1- to 3-hop
+temporal reasoning. With rich annotations of fine-grained
+timestamps and a diverse mix of entity- and time-centric
+queries, it has become a standard benchmark for temporal
+QA.The second, TIMEQUESTIONS(Sharma et al. 2023),
+unifies 13.5K questions from five existing datasets into a
+Algorithm 2: Single sample in Tree-Group Relative Policy
+Optimization
+Input:π SFT
+θ ,buffer,I,µ,E init,Sinit,Q
+Output:π ∗
+θ
+1:policy modelπ θ←π SFT
+θ
+2:reference modelπ Ref
+θ ←π SFT
+θ
+3:forstep =1,...,Ido
+4:Update the old policy modelπ Old
+θ ←π θ
+5:buffer←Searching (E init,Sinit,∅,Q)
+6:for{Group,Reward}inbufferdo
+7:Compute token-level group relative advantage
+estimation based onGroupandReward
+8:forGRPO iteration= 1,...,µdo
+9:Updateπ θ by maximizing GRPO objective
+10:end for
+11:end for
+12:end for
+comprehensive benchmark that emphasizes multi-hop tem-
+poral reasoning. By covering explicit, implicit, compara-
+tive, and ordinal question types, thereby offering a rigorous
+testbed for evaluating models’ temporal commonsense and
+ordinal reasoning capabilities.
+Evaluation Metrics.We adopt the commonly used evalu-
+ation metricsHits@1andHits@10, which are defined as
+follows forK∈{1,10}:
+Hits@K= 1
+|T|
+X
+q∈T
+1(rank(q)≤K),(12)
+WhereTdenotes the test set. For a given questionq,rank(q)
+is the rank assigned by the model to the correct answer
+within the list of candidates. The indicator function1(·)re-
+turns 1 if the condition inside holds, and 0 otherwise.
+Baseline Methods.For theCRONQUESTIONSdataset,
+we compare MRE with several baselines, including EaE
+(Feng et al. 2020), EmbedKGQA (Saxena, Tripathi, and
+Talukdar 2020), CronKGQA (Saxena, Chakrabarti, and
+Talukdar 2021), EntityQR (Mavromatis et al. 2022), TMA
+(Liu et al. 2023b), TSQA (Shang et al. 2022), CTRN(Jiao
+et al. 2022), TempoQR (Mavromatis et al. 2022) as well
+as language models BERT (Devlin et al. 2019), RoBERTa
+(Liu et al. 2019), and ChatGPT. For theTimeQuestions
+dataset, the baselines comprise CronKGQA, TempoQR and
+TwiRGCN (Sharma et al. 2023) .
+Experimental Results and Analysis
+Overall Performance
+Results on CRONQUESTIONS.As shown in Table 1,
+our MRE framework sets a new SOTA with 98.2% Hits@1
+and 99.6% Hits@10 on the overall test set—outperforming
+the previous best (TempoQR) by +6.4% and +1.8%, respec-
+tively. This substantial gain highlights the effectiveness of
+our trajectory-level temporal reasoning. MRE generalizes
+well across both simple and complex questions. It achieves
+near-perfect accuracy on Simple questions 99.9% (Hits@1),
+and consistently strong performance across Entity (98.2%)
+
+[[page 6]]
+Model
+Hits@1 Hits@10
+Overall Question Type Answer Type Overall Question Type Answer Type
+Complex Simple Entity Time Complex Simple Entity Time
+EmbedKGQA 0.288 0.286 0.290 0.411 0.057 0.672 0.632 0.725 0.850 0.341
+EaE 0.288 0.257 0.329 0.318 0.231 0.678 0.623 0.753 0.668 0.698
+CronKGQA 0.647 0.392 0.987 0.699 0.549 0.884 0.802 0.990 0.898 0.857
+EntityQR 0.745 0.562 0.990 0.831 0.585 0.944 0.906 0.993 0.962 0.910
+TMA 0.784 0.632 0.987 0.792 0.743 0.943 0.904 0.995 0.947 0.936
+TSQA 0.831 0.713 0.987 0.829 0.836 0.980 0.968 0.997 0.981 0.978
+TempoQR 0.918 0.864 0.990 0.926 0.903 0.978 0.967 0.993 0.980 0.974
+BERTw/o tkg 0.071 0.086 0.052 0.077 0.06 0.213 0.205 0.225 0.192 0.253
+RoBERTaw/o tkg 0.07 0.086 0.05 0.082 0.048 0.202 0.192 0.215 0.186 0.231
+ChatGPTw/o tkg 0.151 0.144 0.160 0.134 0.182 0.308 0.308 0.307 0.257 0.402
+BERTw/ tkg 0.243 0.239 0.249 0.277 0.179 0.620 0.598 0.649 0.628 0.604
+RoBERTaw/ tkg 0.225 0.217 0.237 0.251 0.177 0.585 0.542 0.644 0.583 0.591
+ChatGPTw/ tkg 0.754 0.579 0.987 0.689 0.873 0.852 0.746 0.992 0.808 0.933
+MRE(Ours) 0.982 0.970 0.999 0.982 0.994 0.996 0.994 0.998 0.996 0.998
+Table 1: Performance comparison of different models on CRONQUESTIONS. The best and second best results are marked in
+boldand underlined , respectively.w/o tkgindicates that LMs answer the questions directly without using TKG information,
+andw/ tkgindicates that LMs answer the questions with TKG background knowledge.
+Model Overall Explicit Implicit Temporal Ordinal
+CronKGQA 0.462 0.466 0.445 0.511 0.369
+TempoQR 0.416 0.465 0.360 0.400 0.349
+TwiRGCN(average) 0.605 0.6020.586 0.641 0.518
+TwiRGCN(interval) 0.603 0.599 0.6030.6460.494
+MRE(Ours) 0.594 0.598 0.631 0.576 0.578
+Table 2: Hits@1 for different models on TimeQuestions.
+and Time (99.4%) answer types—demonstrating robust fac-
+tual and temporal grounding. On more challenging complex
+multi-hop questions, MRE surpasses TempoQR by +10.6%
+in Hits@1, validating the advantage of global trajectory
+optimization over local reasoning. Table 3 further breaks
+down performance by reasoning types. Our MRE framework
+exhibits substantial improvements on challenging temporal
+categories such asbefore/after,first/last, andtemporal joins,
+where conventional models often struggle due to temporal
+ambiguity, sparse supervision, and multi-hop error propa-
+gation. These gains highlight the ability of MRE to model
+complex temporal dependencies and reason across distant
+events. At the same time, it maintains near-perfect accuracy
+in factoid-style subsets—achieving 99.6% Hits@1 in both
+Simple-EntityandSimple-Time—demonstrating its robust-
+ness in handling both shallow retrieval and deep temporal
+inference within a unified reasoning framework.
+Clearly, embedding-based methods (e.g. EmbedKGQA,
+EaE) perform poorly on time-centric questions (≤23.1%
+Hits@1), and language models without explicit temporal in-
+put (e.g. BERT, RoBERTa, ChatGPTw/o tkg) score even
+lower (7.0%–15.1%). Even in temporal context, ChatGPTw/
+tkgreaches only 75.4%, falling 22.8% short of MRE. These
+results underscore the necessity of structured, trajectory-
+aware temporal reasoning for the TKGQA task.
+Results on TIMEQUESTIONS.As shown in Table 2,
+MRE delivers strong overall performance on the TIME-
+Complex Question Simple Question
+Category Before/ First/ Time Simple Simple All
+After Last Join Entity Time
+EmbedKGQA 0.199 0.324 0.223 0.421 0.087 0.288
+T-EaE-add 0.256 0.285 0.175 0.296 0.321 0.278
+T-EaE-replace 0.256 0.288 0.168 0.318 0.346 0.288
+CronKGQA 0.288 0.371 0.511 0.988 0.985 0.647
+TMA 0.581 0.627 0.675 0.988 0.987 0.784
+TSQA 0.504 0.721 0.799 0.988 0.987 0.831
+TempoQR 0.714 0.853 0.978 0.988 0.987 0.918
+CTRN 0.747 0.880 0.897 0.991 0.987 0.920
+MRE(Ours) 0.926 0.948 0.994 0.992 0.996 0.982
+Table 3: Hits@1 for different question types.
+QUESTIONSbenchmark, achieving 59.4% Hits@1—closely
+matching the best result reported by TwiRGCN while clearly
+outperforming all prior methods in key reasoning categories.
+In particular, MRE establishes SOTA results onimplicit
+(63.1%, +4.5%) andordinal(57.8%, +6.0%) questions-two
+of the most demanding types that require abstract temporal
+inference beyond surface-level timestamp matching. These
+improvements demonstrate MRE’s ability to handle event
+salience, temporal abstraction, and relative ordering more
+effectively than existing models. These findings reinforce
+the superior generalization of MRE in complex temporal QA
+scenarios.
+Conclusion.Notably, these results highlight the effective-
+ness of the MRE framework in improving LLM with struc-
+tured subgraph retrieval and trajectory-aware temporal rea-
+soning. MRE enables robust, interpretable multi-hop in-
+ference, setting a new performance standard for TKGQA
+across both synthetic and real-world benchmarks.
+Ablation Study
+To evaluate the contribution of each component within the
+MRE framework, we perform a series of ablation stud-
+
+[[page 7]]
+Model Hits@1 Hits@10
+Variant Overall Complex Overall Complex
+Full MRE 0.982 0.970 0.996 0.994
+w/oT-GRPO 0.921 0.892 0.978 0.965
+w/oCold Start 0.904 0.871 0.962 0.948
+w/oMulti-Sampling 0.876 0.842 0.945 0.931
+Single-Hop 0.812 0.774 0.910 0.892
+Table 4: Ablation results on CRONQUESTIONS.w/oin-
+dicates removal of the corresponding module from the full
+MRE pipeline.
+ies systematically by removing or altering key modules, as
+summarized in Table 4. The single-hop Experiment yields
+only 81.2% Hits@1 on overall questions and 77.4% on
+complex ones, indicating that shallow reasoning over lim-
+ited evidence chains is insufficient to handle the relational
+and temporal complexity inherent in TKGQA. When the T-
+GRPO module is removed, performance significantly drops
+to 92.1% (Overall) and 89.2% (Complex), despite the model
+still being trained on positive trajectories. This suggests that
+without structured trajectory exploration, the model tends
+to overfit local patterns and struggles to make globally co-
+herent decisions. The tree-structured exploration enabled by
+T-GRPO, coupled with backward credit assignment, proves
+crucial for contrastive optimization and effective reasoning
+across multiple hops. Similarly, removing cold-start fine-
+tuning leads to a further decline in performance, underscor-
+ing the importance of supervised initialization in providing
+inductive bias and stabilizing early policy learning. Finally,
+disabling multi-trajectory sampling leads to the most signif-
+icant performance drop, indicating that exposing the model
+to diverse and consistent reasoning paths is crucial for effec-
+tive multi-hop temporal reasoning. Rather than relying on
+a single trajectory, multi-trajectory sampling improves gen-
+eralization, reduces overfitting, and enhances robustness to
+temporal ambiguity. In general, the ablation results validate
+the complementary roles of each module and highlight their
+necessity to achieve strong performance in deep temporal
+reasoning tasks.
+Multi-hop Temporal Reasoning Depth Analysis
+Model Hits@1@1-hop Hits@1@2-hop Hits@1@3-hop
+CronKGQA 0.991 0.873 0.512
+TempoQR 0.992 0.952 0.754
+MRE (Ours) 0.999 0.981 0.943
+Table 5: Performance comparison of different models at var-
+ious reasoning depths.
+To rigorously validate the superiority of our MRE frame-
+work in multi-hop temporal reasoning, we analyze its per-
+formance across different reasoning depths on the CRON-
+QUESTIONS benchmark: As shown in Table 5, MRE con-
+sistently outperforms strong baselines across all reasoning
+depths. It achieves near-perfect accuracy on 1-hop questions
+(99.9%), and maintains robust performance on 3-hop ques-
+tions (94.3%), reducing the 3-hop error rate by over 75%
+compared to TempoQR. In particular, as the depth of rea-
+soning increases, the performance gap between MRE and
+existing methods widens significantly, highlighting MRE’s
+superior capability in handling deep and complex multi-hop
+temporal queries. This advantage stems from two key design
+choices: (1) the tree-structured sampling strategy, which fa-
+cilitates more effective exploration during training, and (2)
+the GRPO module, which propagates reward signals back-
+ward and optimizes each intermediate decision step to en-
+sure global trajectory optimality.
+RLHF Training Analysis
+Method Hits@1@10k Hits@1@50k Peak
+PPO 0.827 0.901 0.922
+GRPO (Flat) 0.845 0.932 0.951
+MRE (Ours) 0.902 0.968 0.982
+Table 6: Training results compared with different RLHF ap-
+proaches.
+To quantitatively assess the advantages of tree-structured
+reward propagation in multi-hop temporal reasoning, we
+compare the performances of PPO, GRPO, and T-GRPO. As
+reported in Table 6, T-GRPO achieves a Hits@1 of 90.2%
+with only 10k samples, surpassing PPO and GRPO (Flat) by
+7.5% and 5.7%, respectively. This highlights a key limitation
+of GRPO (Flat). Although GRPO (Flat) replaces PPO’s ad-
+vantage estimate with group-relative optimization to enable
+deeper exploration of the trajectory under the same training
+budget, it still relies on sparse reward supervision that is as-
+signed only in the final step. In contrast, T-GRPO leverages
+a tree-structured optimization framework that propagates su-
+pervised signals along the entire reasoning path, facilitat-
+ing fine-grained intermediate rewards and thereby enabling
+more informed policy updates. With extended training, T-
+GRPO further attains a peak Hits@1 of 98.2%, demonstrat-
+ing both superior sample efficiency and stronger conver-
+gence. These results confirm the effectiveness of tree-based
+credit assignment in guiding global policy optimization for
+complex multi-hop reasoning.
+Conclusion
+We propose MRE, a unified framework for enhanc-
+ing multi-hop reasoning in TKGQA, which integrates tra-
+jectory sampling, supervised fine-tuning, and a novel T-
+GRPO algorithm. By jointly modeling forward exploration
+and backward evaluation, MRE substantially strengthens
+the step-wise reasoning capability of large language mod-
+els, enabling the identification of globally optimal reason-
+ing trajectories over temporal knowledge graphs. Exten-
+sive experiments across multiple benchmarks demonstrate
+that MRE consistently outperforms previous SOTA meth-
+ods. Overall, this work highlights the effectiveness of com-
+bining preference-based optimization with structured multi-
+
+[[page 8]]
+hop reasoning, and points toward a promising direction for
+building more accurate and explainable TKGQA systems.
+References
+Achiam, J.; Adler, S.; Agarwal, S.; Ahmad, L.; Akkaya, I.;
+Aleman, F. L.; Almeida, D.; Altenschmidt, J.; Altman, S.;
+Anadkat, S.; et al. 2023. Gpt-4 technical report.arXiv
+preprint arXiv:2303.08774.
+Chen, S.; Wong, S.; Chen, L.; and Tian, Y . 2023. Extending
+Context Window of Large Language Models via Positional
+Interpolation. arXiv:2306.15595.
+Chen, X.; Li, G.; Wang, Z.; Jin, B.; Qian, C.; Wang, Y .;
+Wang, H.; Zhang, Y .; Zhang, D.; Zhang, T.; et al. 2025.
+Rm-r1: Reward modeling as reasoning.arXiv preprint
+arXiv:2505.02387.
+Chen, Z.; Li, D.; Zhao, X.; Hu, B.; and Zhang, M. 2024a.
+Temporal Knowledge Question Answering via Abstract
+Reasoning Induction. In Ku, L.-W.; Martins, A.; and Sriku-
+mar, V ., eds.,Proceedings of the 62nd Annual Meeting of
+the Association for Computational Linguistics (Volume 1:
+Long Papers), 4872–4889. Bangkok, Thailand: Association
+for Computational Linguistics.
+Chen, Z.; Liao, J.; and Zhao, X. 2023. Multi-granularity
+Temporal Question Answering over Knowledge Graphs. In
+In Proceedings of the Annual Meeting of the Association for
+Computational Linguistics (Vol. 1, pp. 11378–11392). As-
+sociation for Computational Linguistics (ACL). Bangkok,
+Thailand: Association for Computational Linguistics.
+Chen, Z.; Zhang, Z.; Li, Z.; Wang, F.; Zeng, Y .; Jin, X.; and
+Xu, Y . 2024b. Self-Improvement Programming for Tempo-
+ral Knowledge Graph Question Answering. In Calzolari, N.;
+Kan, M.-Y .; Hoste, V .; Lenci, A.; Sakti, S.; and Xue, N., eds.,
+Proceedings of the 2024 Joint International Conference on
+Computational Linguistics, Language Resources and Evalu-
+ation (LREC-COLING 2024), 14579–14594. Torino, Italia:
+ELRA and ICCL.
+Chen, Z.; Zhao, X.; Liao, J.; Li, X.; and Kanoulas, E. 2022.
+Temporal knowledge graph question answering via sub-
+graph reasoning.Knowledge-Based Systems, 251: 109134.
+Dai, C.; Shan, H.; Song, M.; and Liang, D. 2025. HoPE: Hy-
+perbolic Rotary Positional Encoding for Stable Long-Range
+Dependency Modeling in Large Language Models.arXiv
+preprint arXiv:2509.05218.
+DeepSeek-AI; Guo, D.; Yang, D.; Zhang, H.; Song, J.;
+Zhang, R.; Xu, R.; Zhu, Q.; Ma, S.; Wang, P.; Bi, X.; Zhang,
+X.; Yu, X.; Wu, Y .; Wu, Z. F.; Gou, Z.; Shao, Z.; Li, Z.; Gao,
+Z.; Liu, A.; Xue, B.; Wang, B.; Wu, B.; Feng, B.; Lu, C.;
+Zhao, C.; Deng, C.; Zhang, C.; Ruan, C.; Dai, D.; Chen, D.;
+Ji, D.; Li, E.; Lin, F.; Dai, F.; Luo, F.; Hao, G.; Chen, G.; Li,
+G.; Zhang, H.; Bao, H.; Xu, H.; Wang, H.; Ding, H.; Xin, H.;
+Gao, H.; Qu, H.; Li, H.; Zeng, W.; Zhao, W.; Liu, W.; Liang,
+W.; Gao, W.; Yu, W.; Zhang, W.; Xiao, W. L.; An, W.; Liu,
+X.; Wang, X.; Chen, X.; Nie, X.; Cheng, X.; Liu, X.; Xie,
+X.; Liu, X.; Yang, X.; Li, X.; Su, X.; Lin, X.; Li, X. Q.; Jin,
+X.; Shen, X.; Chen, X.; Sun, X.; Wang, X.; Song, X.; Zhou,
+X.; Wang, X.; Shan, X.; Li, Y . K.; Wang, Y . Q.; Wei, Y . X.;
+Zhang, Y .; Xu, Y .; Li, Y .; Zhao, Y .; Sun, Y .; Wang, Y .; Yu,
+Y .; Zhang, Y .; Shi, Y .; Xiong, Y .; He, Y .; Piao, Y .; Wang, Y .;
+Tan, Y .; Ma, Y .; Liu, Y .; Guo, Y .; Ou, Y .; Wang, Y .; Gong, Y .;
+Zou, Y .; He, Y .; Xiong, Y .; Luo, Y .; You, Y .; Liu, Y .; Zhou,
+Y .; Zhu, Y . X.; Xu, Y .; Huang, Y .; Li, Y .; Zheng, Y .; Zhu, Y .;
+Ma, Y .; Tang, Y .; Zha, Y .; Yan, Y .; Ren, Z. Z.; Ren, Z.; Sha,
+Z.; Fu, Z.; Xu, Z.; Xie, Z.; Zhang, Z.; Hao, Z.; Ma, Z.; Yan,
+Z.; Wu, Z.; Gu, Z.; Zhu, Z.; Liu, Z.; Li, Z.; Xie, Z.; Song, Z.;
+Pan, Z.; Huang, Z.; Xu, Z.; Zhang, Z.; and Zhang, Z. 2025.
+DeepSeek-R1: Incentivizing Reasoning Capability in LLMs
+via Reinforcement Learning. arXiv:2501.12948.
+Devidze, R.; Kamalaruban, P.; and Singla, A. 2022.
+Exploration-Guided Reward Shaping for Reinforcement
+Learning under Sparse Rewards. In Koyejo, S.; Mohamed,
+S.; Agarwal, A.; Belgrave, D.; Cho, K.; and Oh, A., eds.,
+Advances in Neural Information Processing Systems, vol-
+ume 35, 5829–5842. Curran Associates, Inc.
+Devlin, J.; Chang, M.; Lee, K.; and Toutanova, K. 2019.
+BERT: Pre-training of Deep Bidirectional Transformers for
+Language Understanding. In Burstein, J.; Doran, C.; and
+Solorio, T., eds.,NAACL, 4171–4186.
+Dziri, N.; Madotto, A.; Za ¨ıane, O.; and Bose, A. J. 2021.
+Neural Path Hunter: Reducing Hallucination in Dialogue
+Systems via Path Grounding. In Moens, M.-F.; Huang,
+X.; Specia, L.; and Yih, S. W.-t., eds.,Proceedings of the
+2021 Conference on Empirical Methods in Natural Lan-
+guage Processing, 2197–2214. Online and Punta Cana, Do-
+minican Republic: Association for Computational Linguis-
+tics.
+Fang, G.; Ma, X.; and Wang, X. 2025. Thinkless: LLM
+Learns When to Think.arXiv preprint arXiv:2505.13379.
+Fei, Z.; Zhang, Q.; Gui, T.; Liang, D.; Wang, S.; Wu, W.;
+and Huang, X.-J. 2022. CQG: A simple and effective con-
+trolled generation framework for multi-hop question gener-
+ation. InProceedings of the 60th Annual Meeting of the
+Association for Computational Linguistics (Volume 1: Long
+Papers), 6896–6906.
+Feng, Y .; Chen, X.; Lin, B. Y .; Wang, P.; Yan, J.; and Ren,
+X. 2020. Scalable Multi-Hop Relational Reasoning for
+Knowledge-Aware Question Answering. InEMNLP, 1295–
+1309.
+Gui, T.; Zhang, Q.; Gong, J.; Peng, M.; Liang, D.; Ding, K.;
+and Huang, X.-J. 2018. Transferring from formal newswire
+domain with hypernet for twitter pos tagging. InProceed-
+ings of the 2018 conference on empirical methods in natural
+language processing, 2540–2549.
+Guo, Y .; Choi, J.; Moczulski, M.; Feng, S.; Bengio, S.;
+Norouzi, M.; and Lee, H. 2020. Memory Based Trajectory-
+conditioned Policies for Learning from Sparse Rewards. In
+Larochelle, H.; Ranzato, M.; Hadsell, R.; Balcan, M.; and
+Lin, H., eds.,Advances in Neural Information Processing
+Systems, volume 33, 4333–4345. Curran Associates, Inc.
+Hu, Q.; Tu, X.; Guo, C.; and Zhang, S. 2025. Time-
+aware ReAct Agent for Temporal Knowledge Graph Ques-
+tion Answering. In Chiruzzo, L.; Ritter, A.; and Wang, L.,
+eds.,Findings of the Association for Computational Linguis-
+tics: NAACL 2025, 6013–6024. Albuquerque, New Mexico:
+
+[[page 9]]
+Association for Computational Linguistics. ISBN 979-8-
+89176-195-7.
+Jiang, L.; Wu, X.; Huang, S.; Dong, Q.; Chi, Z.; Dong, L.;
+Zhang, X.; Lv, T.; Cui, L.; and Wei, F. 2025. Think only
+when you need with large hybrid-reasoning models.arXiv
+preprint arXiv:2505.14631.
+Jiao, S.; Zhu, Z.; Wu, W.; Zuo, Z.; Qi, J.; Wang, W.; Zhang,
+G.; and Liu, P. 2022. An improving reasoning network
+for complex question answering over temporal knowledge
+graphs.Applied Intelligence, 53(7): 8195–8208.
+Jin, B.; Xie, C.; Zhang, J.; Roy, K. K.; Zhang, Y .; Li, Z.; Li,
+R.; Tang, X.; Wang, S.; Meng, Y .; and Han, J. 2024. Graph
+Chain-of-Thought: Augmenting Large Language Models by
+Reasoning on Graphs. In Ku, L.-W.; Martins, A.; and Sriku-
+mar, V ., eds.,Findings of the Association for Computational
+Linguistics: ACL 2024, 163–184. Bangkok, Thailand: Asso-
+ciation for Computational Linguistics.
+Lai, Y .; Zhong, J.; Li, M.; Zhao, S.; and Yang, X. 2025.
+Med-r1: Reinforcement learning for generalizable medi-
+cal reasoning in vision-language models.arXiv preprint
+arXiv:2503.13939.
+Lee, D.-H.; Ahrabian, K.; Jin, W.; Morstatter, F.; and Pujara,
+J. 2023. Temporal Knowledge Graph Forecasting Without
+Knowledge Using In-Context Learning. In Bouamor, H.;
+Pino, J.; and Bali, K., eds.,Proceedings of the 2023 Confer-
+ence on Empirical Methods in Natural Language Process-
+ing, 544–557. Singapore: Association for Computational
+Linguistics.
+Li, B.; Liang, D.; and Zhang, Z. 2024. Comateformer: Com-
+bined attention transformer for semantic sentence matching.
+arXiv preprint arXiv:2412.07220.
+Li, L.; Liao, Q.; Lai, M.; Liang, D.; and Liang, S. 2024. Lo-
+cal and global: Text matching via syntax graph calibration.
+InICASSP 2024-2024 IEEE International Conference on
+Acoustics, Speech and Signal Processing (ICASSP), 11571–
+11575. IEEE.
+Liang, D.; Zhang, F.; Zhang, Q.; and Huang, X.-J. 2019a.
+Asynchronous deep interaction network for natural language
+inference. InProceedings of the 2019 Conference on Empir-
+ical Methods in Natural Language Processing and the 9th
+International Joint Conference on Natural Language Pro-
+cessing (EMNLP-IJCNLP), 2692–2700.
+Liang, D.; Zhang, F.; Zhang, W.; Zhang, Q.; Fu, J.; Peng, M.;
+Gui, T.; and Huang, X. 2019b. Adaptive multi-attention net-
+work incorporating answer information for duplicate ques-
+tion detection. InProceedings of the 42nd international
+ACM SIGIR conference on research and development in in-
+formation retrieval, 95–104.
+Liu, P.; Cui, Z.; Liang, D.; and Ye, W. 2025a. Who Stole
+Your Data? A Method for Detecting Unauthorized RAG
+Theft.arXiv preprint arXiv:2510.07728.
+Liu, X.; Liang, D.; Shan, H.; Liu, P.; Liu, Y .; Wu, M.; Li, Y .;
+Wu, X.; Miao, L.; Shen, J.; et al. 2025b. Structural Reward
+Model: Enhancing Interpretability, Efficiency, and Scalabil-
+ity in Reward Modeling. InProceedings of the 2025 Confer-
+ence on Empirical Methods in Natural Language Process-
+ing: Industry Track, 672–685.
+Liu, Y .; Li, M.; Liang, D.; Li, X.; Giunchiglia, F.; Huang,
+L.; Feng, X.; and Guan, R. 2024. Resolving word vagueness
+with scenario-guided adapter for natural language inference.
+arXiv preprint arXiv:2405.12434.
+Liu, Y .; Liang, D.; Fang, F.; Wang, S.; Wu, W.; and Jiang, R.
+2023a. Time-aware multiway adaptive fusion network for
+temporal knowledge graph question answering. InICASSP
+2023-2023 IEEE International Conference on Acoustics,
+Speech and Signal Processing (ICASSP), 1–5. IEEE.
+Liu, Y .; Liang, D.; Fang, F.; Wang, S.; Wu, W.; and Jiang,
+R. 2023b. Time-Aware Multiway Adaptive Fusion Network
+for Temporal Knowledge Graph Question Answering. In
+ICASSP, 1–5.
+Liu, Y .; Liang, D.; Li, M.; Giunchiglia, F.; Li, X.; Wang, S.;
+Wu, W.; Huang, L.; Feng, X.; and Guan, R. 2023c. Local
+and Global: Temporal Question Answering via Information
+Fusion. InIJCAI, 5141–5149.
+Liu, Y .; Ott, M.; Goyal, N.; Du, J.; Joshi, M.; Chen, D.;
+Levy, O.; Lewis, M.; Zettlemoyer, L.; and Stoyanov, V .
+2019. RoBERTa: A Robustly Optimized BERT Pretraining
+Approach.CoRR, abs/1907.11692.
+Liu, Z.; Guo, X.; Lou, F.; Zeng, L.; Niu, J.; Wang, Z.; Xu, J.;
+Cai, W.; Yang, Z.; Zhao, X.; et al. 2025c. Fin-r1: A large lan-
+guage model for financial reasoning through reinforcement
+learning.arXiv preprint arXiv:2503.16252.
+Liu, Z.; Wang, P.; Xu, R.; Ma, S.; Ruan, C.; Li, P.; Liu, Y .;
+and Wu, Y . 2025d. Inference-time scaling for generalist re-
+ward modeling.arXiv preprint arXiv:2504.02495.
+Ma, R.; Tan, Y .; Zhou, X.; Chen, X.; Liang, D.; Wang, S.;
+Wu, W.; Gui, T.; and Zhang, Q. 2022. Searching for optimal
+subword tokenization in cross-domain ner.arXiv preprint
+arXiv:2206.03352.
+Ma, W.; He, J.; Snell, C.; Griggs, T.; Min, S.; and Zaharia,
+M. 2025. Reasoning models can be effective without think-
+ing.arXiv preprint arXiv:2504.09858.
+Mavromatis, C.; Subramanyam, P. L.; Ioannidis, V . N.;
+Adeshina, A.; Howard, P. R.; Grinberg, T.; Hakim, N.; and
+Karypis, G. 2022. TempoQR: Temporal Question Reasoning
+over Knowledge Graphs. InAAAI, 5825–5833.
+Qian, X.; Zhang, Y .; Zhao, Y .; Zhou, B.; Sui, X.; Zhang,
+L.; and Song, K. 2024. TimeR 4 : Time-aware Retrieval-
+Augmented Large Language Models for Temporal Knowl-
+edge Graph Question Answering. In Al-Onaizan, Y .; Bansal,
+M.; and Chen, Y .-N., eds.,Proceedings of the 2024 Con-
+ference on Empirical Methods in Natural Language Pro-
+cessing, 6942–6952. Miami, Florida, USA: Association for
+Computational Linguistics.
+Rafailov, R.; Sharma, A.; Mitchell, E.; Manning, C. D.; Er-
+mon, S.; and Finn, C. 2023. Direct preference optimization:
+Your language model is secretly a reward model.Advances
+in neural information processing systems, 36: 53728–53741.
+Saxena, A.; Chakrabarti, S.; and Talukdar, P. P. 2021. Ques-
+tion Answering Over Temporal Knowledge Graphs. In
+Zong, C.; Xia, F.; Li, W.; and Navigli, R., eds.,ACL-
+IJCNLP, 6663–6676.
+
+[[page 10]]
+Saxena, A.; Tripathi, A.; and Talukdar, P. P. 2020. Improv-
+ing Multi-hop Question Answering over Knowledge Graphs
+using Knowledge Base Embeddings. InACL, 4498–4507.
+Schulman, J.; Wolski, F.; Dhariwal, P.; Radford, A.; and
+Klimov, O. 2017. Proximal policy optimization algorithms.
+arXiv preprint arXiv:1707.06347.
+Shang, C.; Wang, G.; Qi, P.; and Huang, J. 2022. Improv-
+ing Time Sensitivity for Question Answering over Temporal
+Knowledge Graphs. InACL, 8017–8026.
+Sharma, A.; Saxena, A.; Gupta, C.; Kazemi, S. M.; Taluk-
+dar, P. P.; and Chakrabarti, S. 2023. TwiRGCN: Temporally
+Weighted Graph Convolution for Question Answering over
+Temporal Knowledge Graphs. InEACL, 2041–2052.
+Shi, Y .; Tan, Q.; Wu, X.; Zhong, S.; Zhou, K.; and Liu, N.
+2024. Retrieval-enhanced Knowledge Editing in Language
+Models for Multi-Hop Question Answering. CIKM ’24,
+2056–2066. New York, NY , USA: Association for Comput-
+ing Machinery. ISBN 9798400704369.
+Song, J.; Liang, D.; Li, R.; Li, Y .; Wang, S.; Peng, M.; Wu,
+W.; and Yu, Y . 2022. Improving semantic matching through
+dependency-enhanced pre-trained model with adaptive fu-
+sion.arXiv preprint arXiv:2210.08471.
+Su, J.; Ahmed, M.; Lu, Y .; Pan, S.; Bo, W.; and Liu, Y . 2024.
+RoFormer: Enhanced transformer with Rotary Position Em-
+bedding.Neurocomputing, 568: 127063.
+Touvron, H.; Martin, L.; Stone, K.; Albert, P.; Almahairi, A.;
+Babaei, Y .; Bashlykov, N.; Batra, S.; Bhargava, P.; Bhosale,
+S.; et al. 2023. Llama 2: Open foundation and fine-tuned
+chat models.arXiv preprint arXiv:2307.09288.
+Wang, S.; Liang, D.; Song, J.; Li, Y .; and Wu, W. 2022.
+Dabert: Dual attention enhanced bert for semantic matching.
+arXiv preprint arXiv:2210.03454.
+Wang, Y .; Liang, D.; and Peng, M. 2025. Not all parameters
+are created equal: Smart isolation boosts fine-tuning perfor-
+mance.arXiv preprint arXiv:2508.21741.
+Wei, J.; Wang, X.; Schuurmans, D.; Bosma, M.; Xia, F.;
+Chi, E.; Le, Q. V .; Zhou, D.; et al. 2022. Chain-of-
+thought prompting elicits reasoning in large language mod-
+els.Advances in neural information processing systems, 35:
+24824–24837.
+Wu, M.; Qian, Q.; Liu, W.; Wang, X.; Huang, Z.; Liang,
+D.; Miao, L.; Dou, S.; Lv, C.; Wang, Z.; et al. 2025a. Pro-
+gressive Mastery: Customized Curriculum Learning with
+Guided Prompting for Mathematical Reasoning.arXiv
+preprint arXiv:2506.04065.
+Wu, X.; Yang, J.; Chai, L.; Zhang, G.; Liu, J.; Du, X.; Liang,
+D.; Shu, D.; Cheng, X.; Sun, T.; et al. 2025b. Tablebench:
+A comprehensive and complex benchmark for table ques-
+tion answering. InProceedings of the AAAI Conference on
+Artificial Intelligence, volume 39, 25497–25506.
+Wu, X.; Yang, J.; Li, T.; Zhang, S.; Du, Y .; Chai, L.; Liang,
+D.; and Li, Z. 2025c. Unleashing potential of evidence in
+knowledge-intensive dialogue generation. InICASSP 2025-
+2025 IEEE International Conference on Acoustics, Speech
+and Signal Processing (ICASSP), 1–5. IEEE.
+Xia, Y .; Wang, D.; Liu, Q.; Wang, L.; Wu, S.; and Zhang, X.-
+Y . 2024. Chain-of-History Reasoning for Temporal Knowl-
+edge Graph Forecasting. In Ku, L.-W.; Martins, A.; and
+Srikumar, V ., eds.,Findings of the Association for Com-
+putational Linguistics: ACL 2024, 16144–16159. Bangkok,
+Thailand: Association for Computational Linguistics.
+Xiong, S.; Payani, A.; Kompella, R.; and Fekri, F. 2024.
+Large Language Models Can Learn Temporal Reasoning. In
+Ku, L.-W.; Martins, A.; and Srikumar, V ., eds.,Proceedings
+of the 62nd Annual Meeting of the Association for Compu-
+tational Linguistics (Volume 1: Long Papers), 10452–10470.
+Bangkok, Thailand: Association for Computational Linguis-
+tics.
+Xue, C.; Liang, D.; Wang, P.; and Zhang, J. 2024a. Ques-
+tion calibration and multi-hop modeling for temporal ques-
+tion answering. AAAI’24/IAAI’24/EAAI’24. AAAI Press.
+ISBN 978-1-57735-887-9.
+Xue, C.; Liang, D.; Wang, P.; and Zhang, J. 2024b. Ques-
+tion calibration and multi-hop modeling for temporal ques-
+tion answering. InProceedings of the AAAI Conference on
+Artificial Intelligence, volume 38, 19332–19340.
+Xue, C.; Liang, D.; Wang, S.; Zhang, J.; and Wu, W. 2023.
+Dual path modeling for semantic matching by perceiving
+subtle conflicts. InICASSP 2023-2023 IEEE International
+Conference on Acoustics, Speech and Signal Processing
+(ICASSP), 1–5. IEEE.
+Yang, A.; Yang, B.; Zhang, B.; Hui, B.; Zheng, B.; Yu, B.;
+Li, C.; Liu, D.; Huang, F.; Wei, H.; et al. 2024. Qwen2. 5
+technical report.arXiv preprint arXiv:2412.15115.
+Yang, S.; Li, X.; Bing, L.; and Lam, W. 2023. Once Upon
+a Time in Graph: Relative-Time Pretraining for Complex
+Temporal Reasoning. InEMNLP, 11879–11895.
+Yao, S.; Yu, D.; Zhao, J.; Shafran, I.; Griffiths, T.; Cao,
+Y .; and Narasimhan, K. 2023. Tree of thoughts: Deliber-
+ate problem solving with large language models.Advances
+in neural information processing systems, 36: 11809–11822.
+Yu, Q.; Zhang, Z.; Zhu, R.; Yuan, Y .; Zuo, X.; Yue, Y .; Fan,
+T.; Liu, G.; Liu, L.; Liu, X.; et al. 2025. Dapo: An open-
+source llm reinforcement learning system at scale.arXiv
+preprint arXiv:2503.14476.
+Yuan, C.; Xie, Q.; Huang, J.; and Ananiadou, S. 2024. Back
+to the Future: Towards Explainable Temporal Reasoning
+with Large Language Models. New York, NY , USA: Asso-
+ciation for Computing Machinery. ISBN 9798400701719.
+Zha, Z.; Qi, P.; Bao, X.; Tian, M.; and Qin, B. 2024. M
+3 TQA: Multi-View, Multi-Hop and Multi-Stage Reasoning
+for Temporal Question Answering. InICASSP 2024-2024
+IEEE International Conference on Acoustics, Speech and
+Signal Processing (ICASSP), 10086–10090. IEEE.
+Zhang, Y .; Du, Y .; Huang, B.; Wang, Z.; Wang, J.; Fang, M.;
+and Pechenizkiy, M. 2023. Interpretable Reward Redistribu-
+tion in Reinforcement Learning: A Causal Approach. In Oh,
+A.; Naumann, T.; Globerson, A.; Saenko, K.; Hardt, M.; and
+Levine, S., eds.,Advances in Neural Information Processing
+Systems, volume 36, 20208–20229. Curran Associates, Inc.
+Zheng, C.; Liu, S.; Li, M.; Chen, X.-H.; Yu, B.; Gao,
+C.; Dang, K.; Liu, Y .; Men, R.; Yang, A.; et al. 2025.
+
+[[page 11]]
+Group Sequence Policy Optimization.arXiv preprint
+arXiv:2507.18071.
+Zheng, R.; Bao, R.; Zhou, Y .; Liang, D.; Wang, S.; Wu,
+W.; Gui, T.; Zhang, Q.; and Huang, X. 2022. Robust lot-
+tery tickets for pre-trained language models.arXiv preprint
+arXiv:2211.03013.
+Zhu, J.; Chen, Q.; Dou, H.; Li, J.; Guo, L.; Chen, F.; and
+Zhang, C. 2025. Dianjin-r1: Evaluating and enhancing fi-
+nancial reasoning in large language models.arXiv preprint
+arXiv:2504.15716.

@@ -1,0 +1,37 @@
+{
+  "id": "arxiv:2308.05421",
+  "title": "Progressive Spatio-temporal Perception for Audio-Visual Question Answering",
+  "authors": [
+    "Guangyao Li",
+    "Wenxuan Hou",
+    "Di Hu"
+  ],
+  "year": 2023,
+  "published": "2023-08-10",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2308.05421",
+  "pdf_url": "https://arxiv.org/pdf/2308.05421v1",
+  "abstract": "Audio-Visual Question Answering (AVQA) task aims to answer questions about different visual objects, sounds, and their associations in videos. Such naturally multi-modal videos are composed of rich and complex dynamic audio-visual components, where most of which could be unrelated to the given questions, or even play as interference in answering the content of interest. Oppositely, only focusing on the question-aware audio-visual content could get rid of influence, meanwhile enabling the model to answer more efficiently. In this paper, we propose a Progressive Spatio-Temporal Perception Network (PSTP-Net), which contains three modules that progressively identify key spatio-temporal regions w.r.t. questions. Specifically, a temporal segment selection module is first introduced to select the most relevant audio-visual segments related to the given question. Then, a spatial region selection module is utilized to choose the most relevant regions associated with the question from the selected temporal segments. To further refine the selection of features, an audio-guided visual attention module is employed to perceive the association between auido and selected spatial regions. Finally, the spatio-temporal features from these modules are integrated for answering the question. Extensive experimental results on the public MUSIC-AVQA and AVQA datasets provide compelling evidence of the effectiveness and efficiency of PSTP-Net. Code is available at: \\href{https://github.com/GeWu-Lab/PSTP-Net}{https://github.com/GeWu-Lab/PSTP-Net}",
+  "doi": null,
+  "arxiv_id": "2308.05421",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T09:46:17.043254Z",
+  "relevance": 0.2273,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal relevance question answering"
+  ],
+  "code_urls": [
+    "https://github.com/GeWu-Lab/PSTP-Net"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

@@ -1,0 +1,43 @@
+{
+  "paper_id": "doi:10.18653/v1/2020.acl-main.412",
+  "relevance_tier": "medium",
+  "problem": "Multi-hop question answering over knowledge graphs requires reasoning over multiple edges, but KGs are often incomplete with many missing links, which especially hurts multi-hop KGQA; prior methods either require external text or restrict answers to a prespecified neighborhood.",
+  "method": "EmbedKGQA performs missing-link prediction with KG embeddings and combines the resulting entity/relation representations with the question to score answers, enabling multi-hop KGQA over sparse KGs and removing the requirement that the answer lie in a prespecified neighborhood.",
+  "key_assumptions": [
+    "Knowledge graphs are incomplete; missing links are a primary obstacle for multi-hop KGQA.",
+    "KG embedding methods can reduce sparsity by predicting missing links and supply useful signals to KGQA.",
+    "Answer selection need not be restricted to a prespecified neighborhood."
+  ],
+  "main_contribution": "EmbedKGQA shows that KG embedding methods - previously unexplored for multi-hop KGQA - can be combined with question representations to perform multi-hop KGQA over sparse KGs, relaxing the prespecified-neighborhood answer-selection constraint of prior methods.",
+  "datasets": [
+    "multiple benchmark datasets (commonly MetaQA, WebQuestionsSP, ComplexWebQuestions; names not enumerated in abstract)"
+  ],
+  "benchmarks": [
+    "multi-hop KGQA benchmarks"
+  ],
+  "baselines": [
+    "prior multi-hop KGQA state-of-the-art methods"
+  ],
+  "metrics": [
+    "Hits@1 (standard multi-hop KGQA metric)"
+  ],
+  "results": "EmbedKGQA demonstrates effectiveness over other state-of-the-art baselines on multiple benchmark datasets and is particularly effective for sparse KGs; exact numbers not stated in abstract.",
+  "limitations": [
+    "Relies on KG embeddings rather than explicit reasoning chains, so outputs may be less interpretable.",
+    "Sparsity is addressed by link prediction, which can introduce errors that are not repaired.",
+    "No hop-depth transfer or context-supervision comparison."
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.75,
+    "method_overlap": 0.25,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "EmbedKGQA addresses KG incompleteness through embedding-based link prediction rather than through context-enriched supervision or a repair loop; it does not train an LLM, does not compare supervision regimes, and does not study transfer from shallow to deep hops. It is the canonical baseline whose reported numbers the idea must beat or match.",
+    "basis": "Problem overlap high: both are multi-hop KGQA over incomplete KGs. Method overlap low: EmbedKGQA uses KG embeddings for link prediction, not LLM fine-tuning. Evaluation overlap moderate-high: standard multi-hop KGQA benchmarks and Hits@1 are shared, but EmbedKGQA uses no context-subgraph supervision and no hop-transfer training."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:10:57.276775Z"
+}

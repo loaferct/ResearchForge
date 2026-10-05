@@ -1,0 +1,42 @@
+{
+  "id": "C012",
+  "statement": "The standard multi-hop KBQA evaluation regime measures answer-entity ranking (Hits@1, and F1 in the retrieval work) on WebQSP and CWQ over Freebase-like KGs, while the intermediate-supervision work uses MetaQA (1/2/3-hop), WebQSP and CWQ; these benchmarks carry naturally occurring questions and no source-passage provenance, and their deepest standard multi-hop tier is 3 hops.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2202.13296",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "We also present the QA performance (Hits@1) of NSM (He et al., 2021), a state-of-the-art embedding-based model, under the same sizes of the subgraphs in Figure 1(b).",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2202.13296",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "the QA performance drops dramatically when the subgraph includes more than 5,000 nodes",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2101.03737",
+      "experiment_run_id": null,
+      "location": "p. 6",
+      "quote": "We adopt three benchmark datasets for the multi-hop KBQA task: MetaQA [38] contains more than 400k single and multi-hop (up to 3-hop) questions in the domain of movie, containing three datasets, namely MetaQA-1hop, MetaQA-2hop and MetaQA-3hop.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "evaluation",
+    "benchmarks",
+    "compare"
+  ],
+  "recorded_at": "2026-09-30T05:25:33.484792Z"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "doi:10.1109/tim.2023.3260283",
+  "title": "A Calibration-Based Hybrid Transfer Learning Framework for RUL Prediction of Rolling Bearing Across Different Machines",
+  "authors": [
+    "Yafei Deng",
+    "Shichang Du",
+    "Dong Wang",
+    "Yiping Shao",
+    "Delin Huang"
+  ],
+  "year": 2023,
+  "published": "2023-01-01",
+  "venue": "IEEE Transactions on Instrumentation and Measurement",
+  "url": "https://doi.org/10.1109/tim.2023.3260283",
+  "pdf_url": null,
+  "abstract": "The effective remaining useful life (RUL) prediction of rolling bearings could guarantee mechanical equipment reliability and stability. The hybrid physical and data-driven prognosis model (HPDM) is recently receiving increasing attention. However, HPDM approaches suffer from two significant challenges that limit their applicability to complex prognosis scenarios: (1) the reality gap between the simulation and measurement data and (2) the limited model generality to accommodate different working conditions and machines. From the perspective of leveraging physical model inference as ’teachers’ for the data-driven model, this article proposes a calibrated-based hybrid transfer learning framework to improve the data fidelity and model generality. Firstly, a 5-DOF dynamic model of rolling bearing is constructed. Comprehensively considering the crack and spall behaviors of degradation evolution, the physical model could provide various failure trajectories. Secondly, the particle filter-based calibration is proposed to retain the high fidelity of the physical simulation. Finally, a Physics-informed Bayes Deep Dual Network (PI-BDDN) is designed. The designed network fuses the physical calibrated simulation as augmented input space to learn representative prognosis features and makes the transfer learning process interpretable by combining the physical model parameters into adversarial learning to selectively identify the most informative knowledge for RUL prediction. The effectiveness of the proposed method is verified on two representative bearing datasets, and comparative results show the superiority of the proposed method on prediction accuracy and uncertainty quantification.",
+  "doi": "10.1109/tim.2023.3260283",
+  "arxiv_id": null,
+  "openalex_id": "W4360596056",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 180,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T11:25:08.421595Z",
+  "relevance": 0.3182,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "selective prediction calibration"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

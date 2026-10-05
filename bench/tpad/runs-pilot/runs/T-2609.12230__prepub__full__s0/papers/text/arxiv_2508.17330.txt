@@ -1,0 +1,1098 @@
+[[page 1]]
+Omne-R1: Learning to Reason with Memory for
+Multi-hop Question Answering
+Boyuan Liu, Feng Ji∗, Jiayan Nan, Han Zhao, Weiling Chen, Shihao Xu, Xing Zhou
+Tanka AI team, Tanka Inc.
+Figure 1: Multi-Stage Training Workflow
+∗Corresponding author: jifeng@tanka.ai
+Preprint. Under review.
+arXiv:2508.17330v1  [cs.CL]  24 Aug 2025
+
+[[page 2]]
+Abstract
+This paper introduces Omne-R1, a novel approach designed to enhance multi-
+hop question answering capabilities on schema-free knowledge graphs by inte-
+grating advanced reasoning models. Our method employs a multi-stage training
+workflow, including two reinforcement learning phases and one supervised fine-
+tuning phase. We address the challenge of limited suitable knowledge graphs
+and QA data by constructing domain-independent knowledge graphs and auto-
+generating QA pairs. Experimental results show significant improvements in an-
+swering multi-hop questions, with notable performance gains on more complex
+3+ hop questions. Our proposed training framework demonstrates strong general-
+ization abilities across diverse knowledge domains.
+1 Introduction
+Recently, research on large reasoning models [2] [30] [35] has advanced significantly, and subse-
+quently, various reproduction efforts and reports [3] [24] [41] [32] [34] [9] have emerged over the
+past few months. Most focus on enhancing the reasoning capabilities in the field of mathematics
+or coding, since rule-based rewards can accurately measure results and enable considerable perfor-
+mance improvements via reinforcement learning. However, many natural language tasks, such as
+multi-hop question answering, also require strong reasoning abilities and need further exploration.
+In this paper, we aim to solve multi-hop question answering on schema-free knowledge graphs by
+integrating the reasoning abilities of large reasoning models. Over the past decade, research in this
+field has predominantly followed two main approaches. The first approach focuses on developing
+semantic parsers that can translate natural language into structured query languages [4] [21] [19],
+such as Cypher [23] or SPARQL [18], to query knowledge graphs. The second approach [36] [25]
+involves performing random walks on knowledge graphs based on entities and relationships iden-
+tified in user queries. Our proposed approach in this paper belongs to the latter by simulating the
+traversal process from the question entity to the answer entity. Specifically, we harness the pow-
+erful reasoning capabilities of large language models to perform step-by-step multi-turn reasoning
+in a chain-of-thought format to complete the traversal and find the final answer, where each step
+sequentially performs a reasoning-query-acquire process.
+To achieve the capability of answering multi-hop questions by traversing knowledge graphs, we pro-
+pose a multi-stage training workflow, as shown in Figure 1. Initially, despite our extensive survey of
+various public knowledge graphs and question-answering datasets, the first problem that hindered
+our progress was the lack of suitable knowledge graphs and QA data tailored to our research goal.
+To address this, we first adopt an open-source project which is LightRAG[5] to construct multiple
+knowledge graphs. These graphs, cost-effective and automatically constructible, are schema-free
+and serve knowledge indexing purposes. Based on these graphs, we then design a method for uti-
+lizing a large reasoning model to automatically generate several tens of thousands of multi-hop QA
+pairs. This lays the foundation for the subsequent multi-stage model training process.
+Our multi-stage model training workflow, shown in Figure 1, is composed of two reinforcement
+learning processes and one supervised fine-tuning process. In the first stage, we train the base model
+using a reinforcement learning algorithm with a rule-based reward. This stage enables the base
+model to understand and align with instructions and to answer some of the questions correctly. Only
+QA pairs are provided as training data in this stage. Subsequently, we employ the trained model to
+generate multi-turn reasoning QA data. Meanwhile, leveraging our prior knowledge of the original
+QA pair generation methodology, we also synthesize multi-turn reasoning QA data by constructing a
+trajectory template and then filling in the detailed reasoning content with the help of a large language
+model. Both datasets are utilized in the second stage of training. We adopt this hybrid dataset
+because relying solely on the latter data may lead to a bias toward a singular reasoning pattern, while
+the former data, with its diversity, benefits the generalization of reasoning capability. The hybrid
+data, along with the reasoning trajectories, is transformed into the multi-turn data format proposed by
+ShareGPT. After the second stage of supervised fine-tuning, we obtain a high-performance reasoning
+model capable of multi-hop question answering on knowledge graphs. To further enhance and
+explore the reasoning capability, we introduce the third stage: a post-SFT reinforcement learning
+process. As the fine-tuned reasoning model already has robust format-following capabilities, at this
+2
+
+[[page 3]]
+stage, we simplify the formatting reward function and redesign the rule-based reward method. At the
+end of the training workflow, we obtain the final model, named Omne-R1. We conduct experiments
+across all training stages and evaluate the resulting models and data. The analysis of the experimental
+results demonstrates the effectiveness of our proposed training workflow.
+The remaining part of the paper is organized as follows: Section 2 details the methods of synthesiz-
+ing multi-hop question-answer data based on knowledge graphs. Section 3.2 describes two essential
+tools designed to traverse knowledge graphs. Sections 3.3, 3.4, and 3.5 present the three differ-
+ent stages of the proposed training workflow. Section 4 shows the experiments compared to two
+baselines. Finally, we present related works in Section 5 and the conclusion in Section 6.
+2 Synthesizing Multi-hop QA Data from Knowledge Graphs
+In order to train an LLM on the task of reasoning over a knowledge graph, a dataset of task descrip-
+tions with ground truth answers is essential for the training process. We generated approximately
+70k multi-hop question-answer pairs using DeepSeek-R1 [2], all based on knowledge graphs con-
+structed using LightRAG [5] across the 20 domains in the Ultradomain dataset [27]. Compared with
+using only 4 domains as done in LightRAG, our use of 20 domains enhances the LLM’s generaliza-
+tion capability across diverse knowledge graph types.
+Multi-hop Question Generation
+To differentiate the difficulty levels of multi-hop questions, the generation process is divided into
+two categories: 1/2 hop questions and 3+ hop questions. To effectively train the LLM’s reasoning
+capability, the generated questions are required to meet the following criteria:
+Knowledge graph grounded : The question must be answerable by querying the corresponding
+knowledge graph; in other words, there must exist a connected path within the graph that corre-
+sponds to the question. Non-trivial: The question must require a non-trivial amount of KG querying
+and reasoning to obtain the answer. This implies that no node names, except for the starting node
+in the path, should be revealed, as this could leak a shortcut path to the answerer. In contrast to re-
+lated works such as Search-R1[12] and DeepResearcher[44]—where answer traceability through the
+search tool is not always guaranteed—our requirement for grounding the question in the knowledge
+graph helps reduce ambiguity and improves the training signal.
+For both 1/2 hop and 3+ hop questions, the generation procedure is as follows:
+Step 1: For a given knowledge graph, we sample a number of seed nodes based on the following
+criteria:
+• There exists a subgraph originating from the seed node with a depth of 3, discovered via
+breadth-first search.
+• The total number of nodes in this subgraph should be within a reasonable range, typically
+from 20 to 400.
+Step 2: For each seed node, we extract a subgraph of depth 3 and present it to an LLM to generate:
+(i) a selected path within the subgraph considered reasonable, (ii) a multi-hop question, and (iii) a
+node name as the golden answer. The LLM used in this step is DeepSeek-R1. For 1/2 hop ques-
+tion generation, we incorporate few-shot examples from HotpotQA [38] in the prompt to enhance
+question quality and diversity. Previous generated paths, questions, and answers may be included in
+the prompt to improve the result if the first attempt fails validation (explained below). The complete
+generation prompt is available in the Appendix C, with optional reused content shown in gray.
+Step 3: We evaluate both the selected path and the generated question to ensure quality. For path
+validation, we consider a path valid if it contains the answer node and is a connected path in the
+knowledge graph. For question validation, we provide both the question and the path to the LLM,
+which is prompted to assess validity based on defined criteria and explain its judgment. DeepSeek-
+R1 is also used for this step. The evaluation prompt is detailed in the Appendix C.
+Here is an example for the multi-hop question generation result.
+3
+
+[[page 4]]
+Multi-hop question example
+1/2 hop:
+path: Colony Collapse Disorder (CCD)→ Nosema→ Fumagilin-B
+question: What biochemical intervention is used to manage the pathogen that contributes to
+Colony Collapse Disorder through pesticide interactions?
+golden answer: Fumagilin-B
+3+ hop:
+path: Madame de Merret → La Grande Breteche → Vendome→ Monsieur Regnault→
+Comtesse de Merret
+question: Madame de Merret owned a property that was central to mysterious posthumous
+wishes regarding its preservation. This estate held geographical significance in a town con-
+nected to inheritance investigations. A legal professional relocated to this town through
+family connections and later handled legal enforcement of will stipulations for another aris-
+tocratic figure. Who inherited the property through these estate administration procedures?
+golden answer: Comtesse de Merret
+It should be noted that the correctness of each question-answer pair depends on the specific knowl-
+edge graph. In other words, an answer is considered correct only within the context of that particular
+graph.
+In total, we have generated around 20k 1/2 hop questions and 50k 3+ hop questions. We have de-
+duplicated the dataset by ensuring uniqueness over question-answer pairs. The statistics of multi-hop
+questions for each knowledge domain are summarized in Table 1. Due to the varying connectivity
+properties of the knowledge graphs, the number of questions per domain varies significantly.
+Graph Type 1/2 hop 3+ hop Total
+agriculture 286 2993 3279
+cs 888 1982 2870
+legal 357 929 1286
+mix 699 1753 2452
+biology 1552 4760 6312
+history 1240 5333 6573
+health 1287 4029 5316
+art 912 3731 4643
+cooking 806 1988 2794
+physics 1212 1679 2891
+fiction 1127 2759 3886
+literature 1416 3389 4805
+music 887 1350 2237
+psychology 1228 3097 4325
+biography 912 1856 2768
+fin 710 1490 2200
+mathematics 1461 3101 4562
+philosophy 1499 2345 3844
+politics 1034 2220 3254
+technology 2021 1309 3330
+Total 21534 52093 73627
+Table 1: Distribution of 1/2 hop and 3+ hop questions by domain
+3 Multi-Stage Training Workflow
+The proposed multi-stage training workflow is comprehensively described in this section. We start
+with the detailed descriptions of multi-turn reasoning loop in section 3.1, and two traversal tools
+on knowledge graphs in section 3.2. Then the whole training workflow is sequentially presented in
+section 3.3, 3.4 and 3.5.
+4
+
+[[page 5]]
+3.1 Multi-turn Reasoning Loop on Knowledge Graphs
+Our LLM is designed to interact with the knowledge graph in an iterative manner until the final
+answer is reached. Specifically, the output of the LLM falls into one of the following two categories:
+Category 1: Interact with the knowledge graph by triggering a tool call. The LLM should first
+output a reasoning process enclosed within <think> and </think> tags, followed by the tool call
+specification enclosed within<tool_call> and</tool_call> tags.
+Category 2: Provide the final answer. The LLM should first output a reasoning process enclosed
+within <think> and </think> tags, and then provide the answer enclosed within <answer> and
+</answer> tags.
+If the LLM’s output falls into Category 1, the tool call result will be wrapped within
+<tool_response> and </tool_response> tags and appended to the current prompt as a user mes-
+sage for the next generation round. If the output falls into Category 2, the final answer will be
+extracted from the content between the <answer> and </answer> tags, and the reasoning loop will
+terminate.
+In our setting, the maximum number of reasoning rounds (i.e., tool calls) is capped at 7. If this limit
+is exceeded, the generation loop is forcibly terminated. Each round of LLM generation is restricted
+to a maximum of 3000 tokens, including the reasoning content.
+3.2 Tool Descriptions
+To enable the LLM to effectively navigate and utilize the extensive knowledge graph, a set of essen-
+tial tools is provided. These tools are designed to support search and traversal operations, equipping
+the LLM with capabilities comparable to a human exploring a graph through querying and reason-
+ing. We provide two main tools for interacting with the knowledge graph:
+entity matcher: Given a search query and the graph type, this tool returns a list of matching node
+names along with their descriptions. The returned nodes are sorted by similarity to the query in
+descending order. This tool does not include edge or neighbor information and is primarily used to
+retrieve exact node names through semantic search.
+node info: Given a specific node name and graph type, this tool returns detailed information about
+the node, including the names of all neighboring nodes and the descriptions of their connecting
+edges. This tool is essential for understanding node relationships and enabling traversal from one
+node to its neighbors.
+The graph type is specified in the system prompt, and the LLM is expected to fill in the correct graph
+type in tool calls in order to produce valid answers. Refer to Appendix section B for detailed system
+prompt. For a complete tool usage examples and interaction traces, refer to the Appendix section A.
+3.2.1 Implementation Details
+During the training of LLM reasoning over knowledge graphs—particularly in the reinforcement
+learning stage where multiple rollouts are required—efficient and scalable handling of tool calls is
+critical for maintaining training throughput.
+We implement multiple web services using FastAPI [28] to expose convenient endpoints for tool
+function calls. For the entity matcher tool, considering the balance between semantic match-
+ing quality and response time, we use the embedding model bge-large-en-v1.5 [33] to embed
+both the query and entity names. Embeddings for all entities across the 20 knowledge graphs are
+precomputed and stored in NanoVectorDB [40], a vector database that supports fast approximate
+nearest-neighbor retrieval based on cosine similarity.
+For the node info tool, which returns neighbor node information and edge details, we use NetworkX
+[6] to manage and query the knowledge graphs. The raw outputs from both tools are post-processed
+and rendered with structured templates to improve readability for both the LLM and human.
+5
+
+[[page 6]]
+3.3 Stage 1: Rule-based RL
+In this study, we begin by training a model using rule-based reinforcement learning (RL) to generate
+reasoning steps as a foundation for subsequent supervised fine-tuning (SFT).
+3.3.1 Methodology
+The training process is based on the Proximal Policy Optimization (PPO) algorithm, which opti-
+mizes the policyπθ by maximizing the expected reward while constraining policy updates to remain
+close to the previous policyπθold. The PPO objective function is defined as:
+LPPO(θ) = Et
+h
+min
+
+rt(θ) ˆAt, clip(rt(θ), 1−ϵ, 1 +ϵ) ˆAt
+i
+wherert(θ) = πθ(at|st)
+πθold (at|st) is the ratio of the probabilities assigned by the new and old policies, and
+ˆAt is the estimated advantage at time step t. The clipping term helps to avoid overly aggressive
+updates, controlled by the hyperparameterϵ.
+The advantage ˆAt is computed using Generalized Advantage Estimation (GAE):
+ˆAt =δt + (γλ)δt+1 +··· + (γλ)T−t+1δT−1
+withδt =rt +γV (st+1)−V (st), whereV (st) is the value function estimating the expected return
+from state st, γ is the discount factor, and λ is the GAE parameter controlling the bias-variance
+trade-off.
+We adopt an actor-critic architecture composed of two neural networks: the actorπθ, which outputs
+a probability distribution over actions given a state, and the critic Vϕ, which estimates the value
+function. Both networks share an encoder that processes the input prompts and the model’s previ-
+ously generated outputs. During training, the actor is updated to maximize the PPO objective, while
+the critic minimizes the mean squared error between its predictions and the observed returns:
+Lvalue(ϕ) = Et
+h
+(Vϕ(st)−Rt)2
+i
+whereRt is the cumulative reward obtained from time stept onward.
+To ensure training stability and efficiency, we use a replay buffer and perform mini-batch updates.
+The model generates multiple trajectories, each consisting of a sequence of states, actions, rewards,
+and value estimates. These trajectories are used to compute both the PPO loss and the value loss,
+which are then optimized via stochastic gradient descent.
+3.3.2 Rule-based Reward
+Since the answers to multi-hop questions are entities that exist in the knowledge graphs, exact match
+evaluation is a suitable approach for judging the correctness of final answers. However, our initial
+experiments revealed that the model exhibited a strong tendency to directly invoke traversal tools
+without conducting proper reasoning first. A similar issue is discussed in [11]. Given the impor-
+tance of the reasoning process—not only for improving model capability but also for enhancing
+interpretability—we introduce a hierarchical reward structure that incorporates both formatting dis-
+cipline and outcome correctness.
+The total rewardRtotal is defined as:
+Rtotal =Rformat× (0.1 + 0.9×Rresult)
+Here,Rformat∈ [0, 1] measures the compliance of the model’s output with the predefined structured
+format (i.e., correct use of <think>, <tool_call>, and related tags). Higher values correspond to
+better format adherence. Rresult∈{ 0, 1} reflects whether the final answer matches the ground truth
+exactly—1 for correct, 0 for incorrect.
+6
+
+[[page 7]]
+This reward scheme ensures that while correctness of the final answer is prioritized, the structural
+integrity of the reasoning steps is also encouraged, helping the model develop clearer and more
+interpretable reasoning behavior.
+3.4 Stage 2: Multi-turn SFT
+Leveraging the data generated from the reinforcement learning phase as described previously, we
+constructed a multi-turn SFT dataset. Each interaction within this dataset is meticulously designed
+to encompass the complete Chain-of-Thought (CoT) process, the corresponding tool call, and the
+response from the Knowledge Graph (KG) query interface. This structure ensures that the model
+is trained on complete and correct reasoning trajectories. The multi-turn dialogues were formatted
+using a ShareGPT-style structure, adapted to incorporate tool calls effectively. Detailed examples
+and the specific construction methodology are provided in Appendix A.
+3.4.1 Training Methodology
+The SFT process was conducted using the LLaMA Factory framework[43]. We selected models
+from the recently proposed Qwen3 series as the base for our fine-tuning efforts. The Qwen3 family
+of models, as detailed in their technical report [37], demonstrates strong performance in complex
+reasoning and tool utilization tasks. A key feature of Qwen3 is its integrated operation with both
+a thinking mode and a non-thinking mode. This is achieved by training the model on a mixture
+of data that includes explicit reasoning steps and data that does not. During inference, if thinking
+mode is active, the model first generates its reasoning process encapsulated within <think> and
+</think> tags before producing the final output. Conversely, in non-thinking mode, an empty CoT
+(e.g.,<think>\n\n</think> ) is prepended to the input to encourage faster, more direct responses.
+This paradigm allows for a flexible balance between deliberative, slow thinking and rapid, reactive
+responses, adapting to the complexity of the input query.
+To maintain consistency with the Qwen3 architecture and optimize for its capabilities, we aligned
+our SFT data preparation with its specific prompting and tool use templates. Tool calls are within
+<tool_call> and </tool_call> tags.
+The subsequent responses from our KG query interface, representing the outcome of the tool exe-
+cution, are similarly enclosed in <tool_response> and </tool_response> tags. This alignment
+ensures that the model learns to process and generate tool interactions in the format it expects.
+3.4.2 Hyperparameter Configuration
+The fine-tuning was performed on the Qwen3-14B model with both full-parameter setting and Low-
+Rank Adaptation (LoRA) [8] setting. For LoRA fine-tuning, we employed a LoRA rank of 8 applied
+to all linear layers. The maximum sequence length was set to 6144 tokens. The model was trained
+for 3 epochs using a cosine learning rate scheduler, with a learning rate of1.0× 10−4 and a warmup
+ratio of 0.1. For Full SFT, the learning rate and warmup ratio was set to 1.0× 10−5 and 0.01. An
+effective batch size of 4 was used, achieved through a per-device batch size of 1 and 4 gradient
+accumulation steps. Training was conducted with bfloat16 precision, leveraging DeepSpeed ZeRO
+Stage 0 for efficient distributed training.
+3.4.3 Weighted Loss Masking for thinking and tool call tokens
+During our SFT phase, the model is trained on data where each assistant turn can contain both a
+CoT block (enclosed in <think> and </think> tags) and a subsequent tool call. A standard cross-
+entropy loss would treat all tokens within this turn equally. This can inadvertently lead the model
+to prioritize the generation of extensive CoT narratives, potentially at the expense of accurately
+formulating tool calls. For instance, the model might produce overly verbose reasoning steps or,
+more critically, make errors in the parameters of a tool call, such as using an incorrect node name.
+To mitigate this, we investigated the use of a weighted loss mask. The core idea is to selectively
+down-weight the contribution of tokens within the CoT blocks to the overall loss. By doing so,
+we aim to reduce the penalty associated with deviations in the CoT content, thereby relatively em-
+phasizing the importance of other parts of the generation, particularly the correctness of the tool
+calls.
+7
+
+[[page 8]]
+We implemented a custom loss computation within our training loop. The procedure involves iden-
+tifying the token spans corresponding to the CoT (i.e., tokens between<think> and</think> tags)
+and applying a significantly smaller weight to these tokens compared to others. The procedure for
+this modified loss calculation is outlined in Algorithm 1.
+Algorithm 1 Weighted Loss Computation for SFT with Thinking Mode
+Input: ModelM, Input dataI (containing labelsL)
+Output: Computed weighted loss valueLfinal
+1: (logits,... )←M (I)
+2: L←I["labels"]
+3: weight_mask← Tensor filled with 1s, shape ofL
+4: think_start_id← TokenID(<think>)
+5: think_end_id← TokenID(</think>)
+6: fori = 0→ batch_size− 1 do
+7: starts← FindIndices(L[i], think_start_id)
+8: for eachs∈ starts do
+9: ends_relative← FindIndices(L[i,s :], think_end_id)
+10: if ends_relative is not empty then
+11: e←s + ends_relative[0]
+12: weight_mask[i,s :e + 1]← 0.1 ▷ Apply small weight
+13: end if
+14: end for
+15: end for
+16:LCE← CrossEntropyLossFunction(reduction=’none’)
+17: shift_logits← logits[:, :−1, :]
+18: shift_labels←L[:, 1 :]
+19: shift_weights← weight_mask[:, 1 :]
+20: loss_per_token←L CE (shift_logits, shift_labels)
+21: weighted_loss← loss_per_token× shift_weights
+22: active_mask← (shift_labels̸= IGNORE_INDEX)
+23: masked_weighted_loss← weighted_loss× active_mask
+24: effective_sum←P(shift_weights× active_mask)
+25: if effective_sum> 1e− 8 then
+26: Lfinal← (P masked_weighted_loss)/effective_sum
+27: else
+28: Lfinal← 0
+29: end if
+30: returnLfinal
+By assigning a substantially smaller weight (e.g., 0.1, as indicated in Algorithm 1) to the tokens
+within the <think>...</think> blocks, their contribution to the overall loss value is significantly
+diminished. Consequently, during the backpropagation phase, the gradients originating from these
+CoT tokens are proportionally scaled down. This scaling occurs because the gradient of the loss
+with respect to any model parameter is a sum of terms, where each term related to a specific token’s
+prediction error is multiplied by that token’s loss weight. A smaller weight directly reduces the
+magnitude of these gradient components. This does not mean these tokens are completely ignored
+(unless the weight is zero), but rather that the model’s parameters are updated less aggressively
+based on errors within the CoT content. The effect is to de-emphasize rote memorization or overly
+precise replication of the thinking steps, while relatively increasing the learning signal from other,
+unweighted (or higher-weighted) parts of the output, such as the tool call formulation and the final
+answer. Finally, the sum of weights for all non-padded tokens is calculated to ensure the overall loss
+magnitude remains comparable across different examples or batches, preventing training instability
+that might arise if the denominator were simply the count of active tokens rather than their weighted
+sum.
+8
+
+[[page 9]]
+3.5 Stage 3: Post-SFT RL
+We apply reinforcement learning to further refine the model trained via SFT in Stage 2. Given that
+the SFT-trained model has already learned to imitate the tool-calling trace and reasoning structure to
+a reasonable extent, reinforcement learning provides an opportunity to optimize the model’s behav-
+ior by actively exploring improved reasoning trajectories that maximize a custom reward function.
+Specifically, we conducted PPO training on two models from Stage 2:
+1. The Qwen3-14B model trained via SFT with loss weighted mask factor equal to 0.001.
+2. The Qwen3-14B model trained via full-parameter SFT in no-think mode.
+To further boost the model’s multi-hop reasoning ability and discourage undesirable behaviors, we
+designed a modified reward function defined as:
+R = (rformat +ranswer)/2−nrepetition· 0.1
+where the format scorerformat and answer scoreranswer is defined as follows,
+rformat =
+1 if the format is correct
+0 otherwise
+ranswer =
+1 if the answer is correct
+0 otherwise
+In addition to these standard evaluation signals, we introduce a repetition penalty term to discourage
+the model from issuing redundant tool calls. The term nrepetition counts the number of duplicate tool
+calls—those that invoke the same function name with identical input parameters. Such repetitions
+contribute no new information, as their results are already available in the existing dialogue context.
+Repeated tool calls not only increase unnecessary context length but also waste tool-calling rounds,
+which are strictly limited in our setup.
+After applying reinforcement learning with the above reward, we observed accuracy improvements
+on both models originating from Stage 2, demonstrating the effectiveness of this post-SFT RL re-
+finement in further enhancing multi-hop reasoning performance.
+4 Experiments
+4.1 Evaluation
+To assess the capabilities of our trained language models on multi-hop question answering with
+knowledge graph, we conducted evaluations on subsets of the dataset describe in Appendix A:
+• 1/2 hop dataset: Consists of 1106 questions that require 1 or 2 hops of reasoning over the
+knowledge graph.
+• 3+ hop dataset: Contains 1453 questions involving deeper reasoning chains requiring 3 or
+more hops.
+4.1.1 Evaluation Setup
+We use a custom inference pipeline built on top of the vLLM engine to generate answers in batches
+of 32 questions. For each question, the model follows an iterative reasoning process guided by
+structured prompts.
+In particular, we employ athink mode prompting strategy. Under this setup, the model is instructed
+to explicitly think between reasoning steps using special <think> and </think> tags. At each
+round, the model produces a thought segment and can optionally trigger a tool call to query the
+knowledge graph or provide a final answer as described in section 3.1.
+The reasoning continues for a maximum of 7 rounds or until the model emits a final answer enclosed
+in<answer> and</answer> tags.
+9
+
+[[page 10]]
+4.1.2 Accuracy Computation
+The final predicted answer for each question is extracted from the last<answer> block in the gener-
+ated dialog. A prediction is considered correct if it matches the gold answer exactly (after whitespace
+stripping).
+Overall accuracy is computed as:
+Accuracy = # correct predictions
+# total questions
+4.2 Analysis
+4.2.1 Experiments on baseline models/agent
+We conducted evaluations on the base models to establish baseline accuracy. To assess the inherent
+capabilities of the base model both with and without access to knowledge graph (KG) tools, we
+included a setting where the model directly answers the questions without any external assistance,
+thereby testing its innate knowledge. The base model here is Qwen3-14B. The detailed results are
+in Table 2.
+We also evaluated a retrieval-augmented generation (RAG) framework—LightRAG [5]—on our
+multi-hop questions. For consistency, we replaced the original base model in LightRAG with
+Qwen3-14B and substituted the embedding model with bge-large-en-v1.5, to align it with the
+configuration used in our KG tool-based reasoning experiments. Since Qwen3-14B has both think
+and no think mode, both two modes are tested.
+Since neither the direct answering nor the LightRAG setting enforces a fixed answer format, we
+employed LLM-based evaluation using DeepSeek-R1. In this evaluation, the model is provided
+with the question, the golden answer, and the predicted answer, and is asked to judge whether the
+answer is correct, providing reasoning for its decision. This evaluation relies solely on the LLM’s
+internal judgment, without additional prompting or constraints.
+In contrast, for evaluating LLM reasoning with KG tool interactions, we use exact match (EM) as
+the evaluation metric as mentioned above, given that the answer format is explicitly defined and
+enforced in these settings. It is important to note that results from EM and LLM-based evaluation
+are not directly comparable. EM is stricter, and deviations in formatting—rather than semantic
+correctness—can lead to lower scores.
+Model/Agent 1/2 Hop (%) 3+ Hop (%) Evaluation method
+Direct answer(w think) 26.0 26.3 R1
+Direct answer(w/o think) 23.8 26.2 R1
+LightRAG(w think) 62.5 49.5 R1
+LightRAG(w/o think) 59.2 46.8 R1
+Base Model(w think) reasoning with KG tools 34.9 15.6 EM
+Table 2: Baseline evaluation results. The base model is Qwen3-14B.
+4.2.2 Experiments of Stage 1
+The experiments of stage 1 are conducted by utilizing a reinforcement learning framework along
+with a rule-based reward, which details can be found in Section 3.3. Since Qwen3 series models had
+not been released when we trained our model, we opted for the Qwen2.5-14B series as the initial
+model. It should be noted that we first conducted separate experiments on 1/2-hop data and 3+ hop
+data. Although we also tried with the mix data, the results showed difference.
+All experimental results in this stage are listed in Table 3. Although achieving the accuracy of 71.2%
+on 1/2 hop data, the accuracy drops significantly to 28.9% on 3+ hop data. We also attempted to
+enhance the model’s reasoning ability through curriculum learning, but it was not successful. It is
+evident that solely training with reinforcement learning from a base model proves insufficient to
+enable the model’s capability to traverse on knowledge graphs.
+10
+
+[[page 11]]
+Method Train Data 1/2 Hop (%) 3+ Hop (%)
+Rule-based RL 1/2 Hop 71.2 -
+Rule-based RL 3+ Hop - 28.9
+Rule-based RL mix 57.5 32.1
+Table 3: Accuracy of multi-hop QA on Qwen2.5-14B-Instruct in Stage 1
+4.2.3 Experiments of Stage 2
+Table 4 presents the performance of various SFT strategies on the Qwen3-14B model. Notably, both
+LoRA and Full SFT models show significant improvements over the original base model, confirming
+the effectiveness of supervised fine-tuning in enhancing reasoning performance.
+Overall, models fine-tuned with full-parameter supervised fine-tuning (Full SFT) consistently out-
+perform LoRA-based models, especially on the more complex 3+ hop questions, indicating that full
+fine-tuning offers stronger reasoning capabilities for multi-hop inference.
+Interestingly, enabling the think mode—designed to promote deeper reasoning—tends to degrade
+performance across both LoRA and Full SFT settings. This suggests a possible incompatibility
+between manually prompted reasoning modes and the reasoning strategies learned during SFT.
+To further investigate this observation, we designed a weight mask loss strategy to understand the
+contribution of reasoning and tool call part in the response of LLM in the next section.
+Method Deepthink 1/2 Hop (%) 3+ Hop (%)
+No SFT Yes 34.9 15.6
+Lora No 92.4 60.0
+Lora Yes 83.8 47.2
+Full No 94.1 68.4
+Full Yes 89.2 57.1
+Table 4: SFT Performance on Qwen3-14B
+Impact of Weighted Loss Mask on Multi-hop Accuracy
+To evaluate the influence of the thinking process on downstream task performance, we configured
+a series of experiments with varying loss mask weights and evaluated the model’s accuracy on 1/2
+hop and 3+ hop questions. The results are presented in Table 5.
+Weighted Loss Mask 1/2 Hop (%) 3+ Hop (%)
+1.00 87.9 52.8
+0.80 88.0 53.8
+0.20 88.4 54.2
+0.10 87.9 53.4
+0.05 88.6 54.4
+0.01 88.6 55.6
+0.001 89.2 60.5
+0.00 83.0 43.8
+Table 5: Accuracy on 1/2 hop and 3+ hop questions with different Loss Weight Mask settings.
+As illustrated in Figure 2, we can observe a clear trend in the training process. As we decrease
+the loss mask weight, the overall training loss also systematically decreases. This is the expected
+behavior because a smaller weight diminishes the loss contribution from the ‘think‘ part tokens and
+weakens their impact on gradient updates. When the final loss is computed as a weighted average,
+a lower weight on the think tokens naturally leads to a smaller overall training loss, confirming the
+effectiveness of our weighting mechanism.
+11
+
+[[page 12]]
+Figure 2: Training loss curves under different sft settings.
+A Weighted Loss Mask of 1.0 represents our baseline, equivalent SFT approach where the<think>
+and <tool_call> tokens contribute equally to the loss computation. As shown in Table 5, the
+weight setting significantly impacts the model’s accuracy. We observe a consistent improvement
+in performance as the weight is reduced from 1.0 down to 0.001. This trend suggests that by de-
+emphasizing the loss from the <think> portion, we allow the model to learn more generalizable
+reasoning patterns rather than overfitting to the specific verbiage of the thought process in our SFT
+dataset. The model achieves its peak performance at a weight of 0.001, with an accuracy of 89.2%
+on 1/2 hop and a remarkable 60.5% on 3+ hop questions.
+However, as the weight decreases further from 0.001 to 0.0, a notable decline in accuracy occurs.
+Upon closer inspection of the model’s behavior with a weight of 0.0, we found that its reasoning
+process reverted to a style closely resembling the native Qwen3-14B model. The model’s outputs
+often began with verbose, generic phrases such as "Okay, let’s try to figure this out step by step" or
+expressions of uncertainty like "Wait, but I’m not sure...". While this indicates a regression to its
+pretrained behavior, such a lengthy and sometimes hesitant thinking process can confuse the model
+and is not always optimal for the structured, multi-hop KG querying task.
+In conclusion, our experiments identify a loss weight of 0.001 as the optimal setting for our task.
+This value strikes a critical balance: it is low enough to weaken the influence of the <think> to-
+kens, preventing the model from merely mimicking patterns in the training data, yet it is non-zero,
+thus preserving the essential KG reasoning capabilities instilled during fine-tuning. This prevents
+the model from completely degrading to the original Qwen3’s reasoning style, thereby making it
+significantly more effective and suitable for our specific multi-hop QA task.
+4.2.4 Experiments of Stage 3
+We continued to perform RL training to the models after Stage 2, aiming to achieve a higher accuracy
+on the multi-hop question solving with knowledge graph. As mentioned above, the PPO training is
+12
+
+[[page 13]]
+Figure 3: Training loss curves under different loss mask weight settings.
+conducted on the two models from Stage 2: Qwen3-14B SFT(Lora) with loss weighted mask=0.001
+and Qwen3-14B SFT(full) in no think mode.
+During the post training of RL, the trend of accuracy increase has been spotted for both models. For
+evaluation, we adopt the same inference backend as SFT of which the batch size of vllm inference
+is 32. The detailed accuracy after Post-SFT RL is shown in Table 6. The plot of answer accuracy
+curve during RL training on the model after SFT(Lora) with loss weighted mask=0.001 is plotted in
+Figure4, where the dataset for evaluation is a random size 512 subset of the test dataset, which may
+differ from the full test dataset evaluation result.
+Model 1/2 Hop (%) 3+ Hop (%)
+SFT (LoRA) 89.2 60.5
++ RL (LoRA) 92.7 63.5
+SFT (Full) 94.1 68.4
++ RL (Full) 94.0 69.3
+Table 6: Accuracy of multi-hop QA in Stage 3. LoRA model uses a loss-weighted mask of 0.001.
+RL denotes PPO-based reinforcement learning applied post-SFT.
+Moreover, a difference in terms of tool call trajectory pattern has been spotted before and after Stage
+3 RL training. Before the Stage 3 RL training, trajectories of multiple entity_match exist, where
+the LLM is making use of semantic similarity based entity matching tool to jump over the knowledge
+graph. After the Stage 3 RL training, more standardized tool call trajectories have emerged, where
+the LLM usually use entity_match tool first to locate the starting node, then trigger a node_info
+to get its relations with its neighbors. The standardized tool call trajectories reflects an adaptation
+13
+
+[[page 14]]
+Figure 4: Accuracy curve during RL training on model after SFT(Lora) with loss weight
+mask=0.001, on a subset of size 512
+of the LLM to the actual multi-hop question answering scenario, where the start node is explicit but
+the inner relations are supposed to be found from the edges. The standardization of the tool call
+trajectory could attribute to the reason of accuracy increase.
+4.3 Experiment summarization
+We summarize the key results from various stages of our model development, including baseline
+models and those trained with supervised fine-tuning or reinforcement learning.
+Unless otherwise specified, all base models referred to are Qwen3-14B. By default, these models
+operate in think mode, where the output consists of a reasoning segment (enclosed in<think> tags)
+followed by either a tool call or a final answer.
+For the direct answering setting and the LightRAG (Qwen3-14B) baseline (reported in Table 7), no
+explicit answer format is enforced. Therefore, we adopt LLM-based evaluation using DeepSeek-R1
+to assess answer correctness based on reasoning and content.
+In contrast, for models that interact with knowledge graph tools (reported in Table 8), the answer for-
+mat is explicitly specified in the prompt. Consequently, we use exact match (EM) as the evaluation
+metric to assess the correctness of the final answer.
+Note that EM-based and LLM-based evaluations are not directly comparable, as EM is stricter and
+penalizes deviations in output format even when the semantic content is correct.
+Model/Agent 1/2 Hop (%) 3+ Hop (%) Evaluation method
+Direct answer 26.0 26.3 R1
+LightRAG 62.5 49.5 R1
+Table 7: Qwen3-14B direct answer and LightRAG(Qwen3-14B) answer accuracy without format
+requirement
+Model/Agent 1/2 Hop (%) 3+ Hop (%) Evaluation method
+Base model(before training) 34.9 15.6 EM
+Rule-based RL(Stage 1, mix data) 57.5 32.1 EM
+SFT(Stage 2, Lora,loss weight mask=0.001) 89.2 60.5 EM
+SFT(Stage 2, Full,no think) 94.1 68.4 EM
+Post-SFT RL(Stage 3) 94.0 69.3 EM
+Table 8: Qwen3-14B reasoning with KG tools accuracies before/after training, with exact match
+being the evaluation method.
+14
+
+[[page 15]]
+5 Related Works
+Retrieval-Augmented Generation (RAG) Classic “single-shot” RAG grabs one batch of passages
+(e.g., DPR + BART [17]) and never looks back, which limits multi-hop reasoning. Newer methods
+turn retrieval into a loop. ReAct [39] go further by letting the LLM decide when and what to trigger
+action, iterating until a stop signal, during which the tool call and result are preserved in the prompt
+context. Mindsearch[1] decomposes the complex question both in multi round and multi sub-query
+manner, leveraging a planning graph to trigger the web searcher for collecting extensive information
+then provides the final answer. These multi-round strategies cut hallucinations and boost complex
+question answering accuracy, marking the shift from fixed one-shot retrieval to flexible, LM-driven
+evidence gathering.
+RL training on LLM reasoning with search tool Several works have experimented on applying
+reinforcement leaning to LLM reasoning with search tool usage[12, 44, 26]. Most of them follows an
+interleaved pattern where the tool call triggered by LLM is followed by search results until the final
+answer is obtained. Search-R1[12] trained the LLM on 1/2 hop questions(NQ[16], TriviaQA[13],
+HotpotQA[38], 2WikiMultiHopQA[7] and etc.) with E5[31] as retriever on a local corpus which is
+2018 Wikipedia dump[14]. DeepSearcher[44] trained on the similar 1/2 hop question datasets with
+question filtered based on some criteria, with open web search as the retriever.
+Natural Language to KG query translation Some of the works approach the problem of knowl-
+edge graph querying by natural language to KG query translation. Text2cypher[23] constructs a
+dataset consisting of question and corresponding cypher query, performs fine tuning on an LLM
+with the dataset and observes the performance increase in cypher query generation due to fine tun-
+ing. Other Works like [42][22][15] emphasize on Sparql query generation using LLM.
+LLM reasoning on knowledge graph LLM reasoning on a knowledge graph can enable the LLM
+to trace on the knowledge graph and collect more information compared with one-go knowledge
+graph querying. RoG [20] adopts a plan → retrieve → reason loop: the LLM sketches a relation-
+path plan, grounds it to the KG, and then reasons only on the retrieved path, yielding traceable,
+low-hallucination answers. Think-on-Graph [29] treats the LLM as an autonomous beam-search
+agent that iteratively expands and prunes entity/relation branches, using the discovered triplets as an
+explicit scratch-pad—no extra training required. KG-Agent [10] frames multi-hop KG-QA as a tool-
+augmented decision process: an instruction-tuned LLM selects actions (entity-link, relation-fetch,
+set-op, stop) until a termination criterion is met, achieving competitive accuracy with an order-of-
+magnitude less compute.
+6 Conclusion
+This paper introduces a novel multi-stage training framework that mimics human behavior in han-
+dling multi-hop question answering on schema-free knowledge graphs. Our method shows substan-
+tial performance gains over baseline models, especially on complex questions involving 3+ hops.
+While we’ve validated our approach across various knowledge graphs, several areas remain to be
+explored. These include exploring scaling curves when applying the framework to larger models and
+integrating a progress reward model to ensure correct reasoning traces and prevent over-thinking.
+Acknowledgements
+This project was completed from late April to early July in 2025. Special thanks to the Tanka AI
+team for the generous support in both time and computational resources.
+References
+[1] Zehui Chen, Kuikun Liu, Qiuchen Wang, Jiangning Liu, Wenwei Zhang, Kai Chen, and Feng
+Zhao. Mindsearch: Mimicking human minds elicits deep ai searcher, 2024. URL https:
+//arxiv.org/abs/2407.20183.
+[2] DeepSeek-AI, Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, Ruoyu Zhang, Runxin
+Xu, Qihao Zhu, Shirong Ma, Peiyi Wang, Xiao Bi, Xiaokang Zhang, Xingkai Yu, Yu Wu,
+15
+
+[[page 16]]
+Z. F. Wu, Zhibin Gou, Zhihong Shao, Zhuoshu Li, Ziyi Gao, Aixin Liu, Bing Xue, Bingxuan
+Wang, Bochao Wu, Bei Feng, Chengda Lu, Chenggang Zhao, Chengqi Deng, Chenyu Zhang,
+Chong Ruan, Damai Dai, Deli Chen, Dongjie Ji, Erhang Li, Fangyun Lin, Fucong Dai, Fuli
+Luo, Guangbo Hao, Guanting Chen, Guowei Li, H. Zhang, Han Bao, Hanwei Xu, Haocheng
+Wang, Honghui Ding, Huajian Xin, Huazuo Gao, Hui Qu, Hui Li, Jianzhong Guo, Jiashi Li,
+Jiawei Wang, Jingchang Chen, Jingyang Yuan, Junjie Qiu, Junlong Li, J. L. Cai, Jiaqi Ni, Jian
+Liang, Jin Chen, Kai Dong, Kai Hu, Kaige Gao, Kang Guan, Kexin Huang, Kuai Yu, Lean
+Wang, Lecong Zhang, Liang Zhao, Litong Wang, Liyue Zhang, Lei Xu, Leyi Xia, Mingchuan
+Zhang, Minghua Zhang, Minghui Tang, Meng Li, Miaojun Wang, Mingming Li, Ning Tian,
+Panpan Huang, Peng Zhang, Qiancheng Wang, Qinyu Chen, Qiushi Du, Ruiqi Ge, Ruisong
+Zhang, Ruizhe Pan, Runji Wang, R. J. Chen, R. L. Jin, Ruyi Chen, Shanghao Lu, Shangyan
+Zhou, Shanhuang Chen, Shengfeng Ye, Shiyu Wang, Shuiping Yu, Shunfeng Zhou, Shuting
+Pan, S. S. Li, Shuang Zhou, Shaoqing Wu, Shengfeng Ye, Tao Yun, Tian Pei, Tianyu Sun,
+T. Wang, Wangding Zeng, Wanjia Zhao, Wen Liu, Wenfeng Liang, Wenjun Gao, Wenqin Yu,
+Wentao Zhang, W. L. Xiao, Wei An, Xiaodong Liu, Xiaohan Wang, Xiaokang Chen, Xiaotao
+Nie, Xin Cheng, Xin Liu, Xin Xie, Xingchao Liu, Xinyu Yang, Xinyuan Li, Xuecheng Su,
+Xuheng Lin, X. Q. Li, Xiangyue Jin, Xiaojin Shen, Xiaosha Chen, Xiaowen Sun, Xiaoxiang
+Wang, Xinnan Song, Xinyi Zhou, Xianzu Wang, Xinxia Shan, Y . K. Li, Y . Q. Wang, Y . X.
+Wei, Yang Zhang, Yanhong Xu, Yao Li, Yao Zhao, Yaofeng Sun, Yaohui Wang, Yi Yu, Yichao
+Zhang, Yifan Shi, Yiliang Xiong, Ying He, Yishi Piao, Yisong Wang, Yixuan Tan, Yiyang
+Ma, Yiyuan Liu, Yongqiang Guo, Yuan Ou, Yuduan Wang, Yue Gong, Yuheng Zou, Yujia He,
+Yunfan Xiong, Yuxiang Luo, Yuxiang You, Yuxuan Liu, Yuyang Zhou, Y . X. Zhu, Yanhong
+Xu, Yanping Huang, Yaohui Li, Yi Zheng, Yuchen Zhu, Yunxian Ma, Ying Tang, Yukun Zha,
+Yuting Yan, Z. Z. Ren, Zehui Ren, Zhangli Sha, Zhe Fu, Zhean Xu, Zhenda Xie, Zhengyan
+Zhang, Zhewen Hao, Zhicheng Ma, Zhigang Yan, Zhiyu Wu, Zihui Gu, Zijia Zhu, Zijun Liu,
+Zilin Li, Ziwei Xie, Ziyang Song, Zizheng Pan, Zhen Huang, Zhipeng Xu, Zhongyu Zhang,
+and Zhen Zhang. Deepseek-r1: Incentivizing reasoning capability in llms via reinforcement
+learning, 2025. URL https://arxiv.org/abs/2501.12948.
+[3] Hugging Face. Open r1: A fully open reproduction of deepseek-r1, January 2025. URL
+https://github.com/huggingface/open-r1.
+[4] Yujian Gan, Xinyun Chen, Jinxia Xie, Matthew Purver, John R. Woodward, John Drake, and
+Qiaofu Zhang. Natural sql: Making sql easier to infer from natural language specifications,
+2021. URL https://arxiv.org/abs/2109.05153.
+[5] Zirui Guo, Lianghao Xia, Yanhua Yu, Tu Ao, and Chao Huang. Lightrag: Simple and fast
+retrieval-augmented generation, 2025. URL https://arxiv.org/abs/2410.05779.
+[6] Aric A. Hagberg, Daniel A. Schult, and Pieter J. Swart. Exploring network structure, dynamics,
+and function using networkx. In Gaël Varoquaux, Travis Vaught, and Jarrod Millman, editors,
+Proceedings of the 7th Python in Science Conference (SciPy2008) , pages 11–15, Pasadena,
+CA, USA, 2008. URL http://conference.scipy.org/proceedings/SciPy2008/paper_
+2/.
+[7] Xanh Ho, Anh-Khoa Duong Nguyen, Saku Sugawara, and Akiko Aizawa. Constructing a
+multi-hop qa dataset for comprehensive evaluation of reasoning steps, 2020. URL https:
+//arxiv.org/abs/2011.01060.
+[8] Edward J Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang,
+Lu Wang, Weizhu Chen, et al. Lora: Low-rank adaptation of large language models. ICLR, 1
+(2):3, 2022.
+[9] Jingcheng Hu, Yinmin Zhang, Qi Han, Daxin Jiang, Xiangyu Zhang, and Heung-Yeung Shum.
+Open-reasoner-zero: An open source approach to scaling up reinforcement learning on the
+base model, 2025. URL https://arxiv.org/abs/2503.24290.
+[10] Jinhao Jiang, Kun Zhou, Wayne Xin Zhao, Yang Song, Chen Zhu, Hengshu Zhu, and Ji-
+Rong Wen. Kg-agent: An efficient autonomous agent framework for complex reasoning over
+knowledge graph, 2024. URL https://arxiv.org/abs/2402.11163.
+16
+
+[[page 17]]
+[11] Bowen Jin, Jinsung Yoon, Priyanka Kargupta, Sercan O. Arik, and Jiawei Han. An empiri-
+cal study on reinforcement learning for reasoning-search interleaved llm agents, 2025. URL
+https://arxiv.org/abs/2505.15117.
+[12] Bowen Jin, Hansi Zeng, Zhenrui Yue, Jinsung Yoon, Sercan Arik, Dong Wang, Hamed Za-
+mani, and Jiawei Han. Search-r1: Training llms to reason and leverage search engines with
+reinforcement learning, 2025. URL https://arxiv.org/abs/2503.09516.
+[13] Mandar Joshi, Eunsol Choi, Daniel Weld, and Luke Zettlemoyer. TriviaQA: A large scale
+distantly supervised challenge dataset for reading comprehension. In Regina Barzilay and
+Min-Yen Kan, editors, Proceedings of the 55th Annual Meeting of the Association for Com-
+putational Linguistics (V olume 1: Long Papers) , pages 1601–1611, Vancouver, Canada,
+July 2017. Association for Computational Linguistics. doi: 10.18653/v1/P17-1147. URL
+https://aclanthology.org/P17-1147/.
+[14] Vladimir Karpukhin, Barlas O ˘guz, Sewon Min, Patrick Lewis, Ledell Wu, Sergey Edunov,
+Danqi Chen, and Wen tau Yih. Dense passage retrieval for open-domain question answering,
+2020. URL https://arxiv.org/abs/2004.04906.
+[15] Liubov Kovriguina, Roman Teucher, Daniil Radyush, and Dmitry Mouromtsev. SPARQL-
+GEN: one-shot prompt-based approach for SPARQL query generation. In Neha Keshan, Se-
+bastian Neumaier, Anna Lisa Gentile, and Sahar Vahdati, editors, Proceedings of the Posters
+and Demo Track of the 19th International Conference on Semantic Systems co-located with
+19th International Conference on Semantic Systems (SEMANTiCS 2023), Leipzing, Germany,
+September 20 to 22, 2023 , volume 3526 of CEUR Workshop Proceedings . CEUR-WS.org,
+2023. URL https://ceur-ws.org/Vol-3526/paper-08.pdf .
+[16] Tom Kwiatkowski, Jennimaria Palomaki, Olivia Redfield, Michael Collins, Ankur Parikh,
+Chris Alberti, Danielle Epstein, Illia Polosukhin, Jacob Devlin, Kenton Lee, Kristina
+Toutanova, Llion Jones, Matthew Kelcey, Ming-Wei Chang, Andrew M. Dai, Jakob Uszko-
+reit, Quoc Le, and Slav Petrov. Natural questions: A benchmark for question answering re-
+search. Transactions of the Association for Computational Linguistics , 7:452–466, 2019. doi:
+10.1162/tacl_a_00276. URL https://aclanthology.org/Q19-1026/.
+[17] Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin, Naman
+Goyal, Heinrich Küttler, Mike Lewis, Wen tau Yih, Tim Rocktäschel, Sebastian Riedel, and
+Douwe Kiela. Retrieval-augmented generation for knowledge-intensive nlp tasks, 2021. URL
+https://arxiv.org/abs/2005.11401.
+[18] Mengyi Liu and Jianqiu Xu. Nli4db: A systematic review of natural language interfaces for
+databases, 2025. URL https://arxiv.org/abs/2503.02435.
+[19] Xinyu Liu, Shuyu Shen, Boyan Li, Peixian Ma, Runzhi Jiang, Yuxin Zhang, Ju Fan, Guoliang
+Li, Nan Tang, and Yuyu Luo. A survey of nl2sql with large language models: Where are we,
+and where are we going?, 2025. URL https://arxiv.org/abs/2408.05109.
+[20] Linhao Luo, Yuan-Fang Li, Gholamreza Haffari, and Shirui Pan. Reasoning on graphs: Faith-
+ful and interpretable large language model reasoning, 2024. URL https://arxiv.org/abs/
+2310.01061.
+[21] Peixian Ma, Xialie Zhuang, Chengjin Xu, Xuhui Jiang, Ran Chen, and Jian Guo. Sql-r1:
+Training natural language to sql reasoning model by reinforcement learning, 2025. URL
+https://arxiv.org/abs/2504.08600.
+[22] Michalis Mountantonakis and Yannis Tzitzikas. Generating sparql queries over cidoc-crm
+using a two-stage ontology path patterns method in llm prompts. J. Comput. Cult. Herit. , 18
+(1), February 2025. ISSN 1556-4673. doi: 10.1145/3708326. URL https://doi.org/10.
+1145/3708326.
+[23] Makbule Gulcin Ozsoy, Leila Messallem, Jon Besga, and Gianandrea Minneci. Text2cypher:
+Bridging natural language and graph databases, 2024. URL https://arxiv.org/abs/2412.
+10064.
+17
+
+[[page 18]]
+[24] Jiayi Pan, Junjie Zhang, Xingyao Wang, Lifan Yuan, Hao Peng, and Alane Suhr. Tinyzero.
+https://github.com/Jiayi-Pan/TinyZero, 2025. Accessed: 2025-01-24.
+[25] Bryan Perozzi, Rami Al-Rfou, and Steven Skiena. Deepwalk: online learning of social
+representations. In Proceedings of the 20th ACM SIGKDD international conference on
+Knowledge discovery and data mining , KDD ’14, page 701–710. ACM, August 2014. doi:
+10.1145/2623330.2623732. URL http://dx.doi.org/10.1145/2623330.2623732.
+[26] Cheng Qian, Emre Can Acikgoz, Qi He, Hongru Wang, Xiusi Chen, Dilek Hakkani-Tür,
+Gokhan Tur, and Heng Ji. Toolrl: Reward is all tool learning needs, 2025. URL https:
+//arxiv.org/abs/2504.13958.
+[27] Hongjin Qian, Zheng Liu, Peitian Zhang, Kelong Mao, Defu Lian, Zhicheng Dou, and Tiejun
+Huang. Memorag: Boosting long context processing with global memory-enhanced retrieval
+augmentation, 2025. URL https://arxiv.org/abs/2409.05591.
+[28] Sebastián Ramírez. Fastapi, 2025. URL https://github.com/fastapi/fastapi. Git tag
+0.115.12. Accessed 2025-06-10.
+[29] Jiashuo Sun, Chengjin Xu, Lumingyuan Tang, Saizhuo Wang, Chen Lin, Yeyun Gong, Li-
+onel M. Ni, Heung-Yeung Shum, and Jian Guo. Think-on-graph: Deep and responsible rea-
+soning of large language model on knowledge graph, 2024. URL https://arxiv.org/abs/
+2307.07697.
+[30] Kimi Team, Angang Du, Bofei Gao, Bowei Xing, Changjiu Jiang, Cheng Chen, Cheng Li,
+Chenjun Xiao, Chenzhuang Du, Chonghua Liao, Chuning Tang, Congcong Wang, Dehao
+Zhang, Enming Yuan, Enzhe Lu, Fengxiang Tang, Flood Sung, Guangda Wei, Guokun Lai,
+Haiqing Guo, Han Zhu, Hao Ding, Hao Hu, Hao Yang, Hao Zhang, Haotian Yao, Haotian
+Zhao, Haoyu Lu, Haoze Li, Haozhen Yu, Hongcheng Gao, Huabin Zheng, Huan Yuan, Jia
+Chen, Jianhang Guo, Jianlin Su, Jianzhou Wang, Jie Zhao, Jin Zhang, Jingyuan Liu, Junjie
+Yan, Junyan Wu, Lidong Shi, Ling Ye, Longhui Yu, Mengnan Dong, Neo Zhang, Ningchen
+Ma, Qiwei Pan, Qucheng Gong, Shaowei Liu, Shengling Ma, Shupeng Wei, Sihan Cao, Siy-
+ing Huang, Tao Jiang, Weihao Gao, Weimin Xiong, Weiran He, Weixiao Huang, Weixin Xu,
+Wenhao Wu, Wenyang He, Xianghui Wei, Xianqing Jia, Xingzhe Wu, Xinran Xu, Xinxing Zu,
+Xinyu Zhou, Xuehai Pan, Y . Charles, Yang Li, Yangyang Hu, Yangyang Liu, Yanru Chen, Yejie
+Wang, Yibo Liu, Yidao Qin, Yifeng Liu, Ying Yang, Yiping Bao, Yulun Du, Yuxin Wu, Yuzhi
+Wang, Zaida Zhou, Zhaoji Wang, Zhaowei Li, Zhen Zhu, Zheng Zhang, Zhexu Wang, Zhilin
+Yang, Zhiqi Huang, Zihao Huang, Ziyao Xu, Zonghan Yang, and Zongyu Lin. Kimi k1.5: Scal-
+ing reinforcement learning with llms, 2025. URL https://arxiv.org/abs/2501.12599.
+[31] Liang Wang, Nan Yang, Xiaolong Huang, Binxing Jiao, Linjun Yang, Daxin Jiang, Rangan
+Majumder, and Furu Wei. Text embeddings by weakly-supervised contrastive pre-training,
+2024. URL https://arxiv.org/abs/2212.03533.
+[32] Liang Wen, Yunke Cai, Fenrui Xiao, Xin He, Qi An, Zhenyu Duan, Yimin Du, Junchen Liu,
+Lifu Tang, Xiaowei Lv, Haosheng Zou, Yongchao Deng, Shousheng Jia, and Xiangzheng
+Zhang. Light-r1: Curriculum sft, dpo and rl for long cot from scratch and beyond. arXiv
+preprint arXiv:2503.10460, 2025.
+[33] Shitao Xiao, Zheng Liu, Peitian Zhang, and Niklas Muennighoff. C-pack: Packaged resources
+to advance general chinese embedding, 2023.
+[34] Tian Xie, Zitian Gao, Qingnan Ren, Haoming Luo, Yuqian Hong, Bryan Dai, Joey Zhou,
+Kai Qiu, Zhirong Wu, and Chong Luo. Logic-rl: Unleashing llm reasoning with rule-based
+reinforcement learning, 2025. URL https://arxiv.org/abs/2502.14768.
+[35] Fengli Xu, Qianyue Hao, Zefang Zong, Jingwei Wang, Yunke Zhang, Jingyi Wang, Xiao-
+chong Lan, Jiahui Gong, Tianjian Ouyang, Fanjin Meng, Chenyang Shao, Yuwei Yan, Qin-
+glong Yang, Yiwen Song, Sijian Ren, Xinyuan Hu, Yu Li, Jie Feng, Chen Gao, and Yong
+Li. Towards large reasoning models: A survey of reinforced reasoning with large language
+models, 2025. URL https://arxiv.org/abs/2501.09686.
+18
+
+[[page 19]]
+[36] Zhengrong Xue, Ziao Guo, and Yiwei Guo. Globalwalk: Learning global-aware node embed-
+dings via biased sampling, 2022. URL https://arxiv.org/abs/2201.09882.
+[37] An Yang, Anfeng Li, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu,
+Chang Gao, Chengen Huang, Chenxu Lv, et al. Qwen3 technical report. arXiv preprint
+arXiv:2505.09388, 2025.
+[38] Zhilin Yang, Peng Qi, Saizheng Zhang, Yoshua Bengio, William W. Cohen, Ruslan Salakhut-
+dinov, and Christopher D. Manning. Hotpotqa: A dataset for diverse, explainable multi-hop
+question answering, 2018. URL https://arxiv.org/abs/1809.09600.
+[39] Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan
+Cao. React: Synergizing reasoning and acting in language models, 2023. URL https://
+arxiv.org/abs/2210.03629.
+[40] Gustavo Ye. nano–vectordb, 2024. URL https://github.com/gusye1234/nano-vectordb.
+Git commit a20e63e. Accessed 2025-06-10.
+[41] Weihao Zeng, Yuzhen Huang, Qian Liu, Wei Liu, Keqing He, Zejun Ma, and Junxian He.
+Simplerl-zoo: Investigating and taming zero reinforcement learning for open base models in
+the wild, 2025. URL https://arxiv.org/abs/2503.18892.
+[42] Zihao Zhao, Xiaodong Ge, and Zhihong Shen. S2ctrans: Building a bridge from sparql to
+cypher, 2023. URL https://arxiv.org/abs/2304.00531.
+[43] Yaowei Zheng, Richong Zhang, Junhao Zhang, Yanhan Ye, Zheyan Luo, Zhangchi Feng, and
+Yongqiang Ma. Llamafactory: Unified efficient fine-tuning of 100+ language models, 2024.
+URL https://arxiv.org/abs/2403.13372.
+[44] Yuxiang Zheng, Dayuan Fu, Xiangkun Hu, Xiaojie Cai, Lyumanshan Ye, Pengrui Lu, and
+Pengfei Liu. Deepresearcher: Scaling deep research via reinforcement learning in real-world
+environments, 2025. URL https://arxiv.org/abs/2504.03160.
+Appendix
+A SFT Data Preperation
+Each data sample in the dataset is a JSON object with the following key fields:
+• id: A unique identifier for the sample.
+• graph_type: The domain of the knowledge graph (e.g., agriculture, cs). A full list of
+graph types is provided in Table 1.
+• question: A natural language query that requires multi-hop reasoning over the knowledge
+graph.
+• golden_answer: The golden answer to the question.
+• conversations: A list of multi-turn interactions capturing the full reasoning trace between
+the LLM and the environment, including tool calls and their observations. More details are
+provided below.
+• tools: The tool schema embedded in the system prompt, describing the available tools and
+their parameters. The decription of tools are provided in Section 3.2.
+• system: The instruction prompt provided to the model to guide its reasoning behavior and
+tool usage protocol.
+The following is a sample ofconversations field from our Supervised Fine-Tuning (SFT) dataset.
+It was constructed from multi-step reasoning outputs generated during reinforcement learning. Each
+step includes the CoT of the model, tool call, observations, and final answers.
+To align with supervised training requirements, we converted these multi-step outputs into a
+ShareGPT-style conversation format. Specifically, ShareGPT formatting requires that user messages
+19
+
+[[page 20]]
+such as prompts and tool observations appear at odd-numbered positions (e.g., “from”: “human”,
+“from”: “observation”), while assistant responses (model-generated content and tool calls) appear
+at even-numbered positions (e.g., “from”: “gpt”).
+To satisfy this alignment and preserve the logical progression of reasoning, we merged each internal
+reasoning cot with its corresponding tool call into a single assistant message. This unified message is
+attributed to “from”: “gpt”, representing the model’s full thought-action step in one coherent output.
+By following this structure, we are able to construct a clean, multi-turn training dataset where
+each round of reasoning and action is explicitly encoded. This format facilitates better instruction-
+following behavior and enables the model to learn tool-augmented reasoning in a controlled, con-
+sistent manner.
+Tool Calling Trace:
+Multi-turn Tool Calling Sample
+from: human
+Which traditional grazing method in regional agriculture is practiced in the same
+region where Rational Grazing is compared in terms of grazing methods and regional
+practices?
+from: gpt
+<think>
+To determine the traditional grazing method practiced in the same region as Rational
+Grazing, I need to identify the region where Rational Grazing is implemented and
+then find the traditional grazing method used there.
+</think>
+<tool_call>
+entity_matcher(node_name="Rational Grazing", graph_type="agriculture")
+</tool_call>
+from: observation
+Found 5 entities matching ’Rational Grazing’:
+1. Entity: Rational Grazing Description: Rational Grazing Rational Grazing is a
+systematic and strategic approach to pasture and livestock management developed by
+André Voisin...
+2. Entity: Rational Grazing Principles Description: Rational Grazing Principles
+Principles outlined to guide systematic and effective grazing management...
+3...
+4...
+5...
+from: gpt
+<think>
+Based on the information provided, Rational Grazing is a method that optimizes
+pasture and livestock management. To find the traditional grazing method practiced
+in the same region, I need to identify the region where Rational Grazing is applied
+and then look for traditional methods used in that area.
+<think>
+<tool_call>
+node_info(node_name="Rational Grazing", graph_type="agriculture")
+</tool_call>
+20
+
+[[page 21]]
+from: observation
+Entity: Rational Grazing... Related region: Pays de Caux
+from: gpt
+<think>
+From the node information, it is evident that Rational Grazing has been applied in
+various regions, including North-West Europe, Africa, and Britain. Specifically,
+the entity "Pays de Caux" is mentioned in relation to Rational Grazing. Pays de
+Caux is located in North-West France.
+</think>
+<tool_call>
+node_info(node_name="Pays de Caux", graph_type="agriculture")
+</tool_call>
+from: observation
+Entity: Pays de Caux...
+from: gpt
+<think>
+Based on the node information for "Pays de Caux", it is clear that Continuous
+Grazing is one of the traditional grazing methods practiced in this region. Since
+the question asks for the traditional grazing method practiced in the same region
+where Rational Grazing is compared, Continuous Grazing fits this description.
+</think>
+<answer>Continuous Grazing</answer>
+21
+
+[[page 22]]
+B System Prompt Format and Tool Description Example
+System Prompt:
+Answer the given question using knowledge graph tools. You should use an
+iterative process of reasoning and tool usage to solve the problem. For
+each step:
+1. First, think about what you know and what information you need by writing
+your thoughts inside <think> and </think> tags.
+2. You can only use one tool at a time
+3. After receiving tool results, think again about what you’ve learned and
+what to do next
+4. Repeat this process of thinking and searching until you have enough
+information to answer the question.
+5. When you have enough information to answer the question, represent your
+final answer between <answer> and </answer> tag.
+# Tools
+You can call only one function at one time to assist with the user query.
+You are provided with function signatures within <tools> and </tools> XML
+tags:
+<tools>
+{"type": "function", "function": {"name": "entity_matcher", "description":
+"A tool that Finds entities in the knowledge graph that match or are
+similar to your query", "parameters": {"type": "object", "properties":
+{"node_name": {"type": "string", "description": "The entity or concept
+you want to search for (e.g., ‘crop diseases‘, ‘legal precedent‘)"},
+"graph_type": {"type": "string", "description": "Type of knowledge graph
+to query, must be ‘{{ graph_type }}‘ for this question", "enum": ["{{
+graph_type }}"]}}, "required": ["node_name", "graph_type"]}}}
+{"type": "function", "function": {"name": "node_info", "description":
+"A tool that retrieves detailed information about a specific entity
+and its relationships", "parameters": {"type": "object", "properties":
+{"node_name": {"type": "string", "description": "The exact entity name
+(use names returned by entity_matcher)"}, "graph_type": {"type": "string",
+"description": "Type of knowledge graph to query, must be ‘{{ graph_type
+}}‘ for this question", "enum": ["{{ graph_type }}"]}}, "required":
+["node_name", "graph_type"]}}}}
+</tools>
+For each function call, return the call in Python function-call style within
+<tool_call></tool_call> tags, for example:
+<tool_call>node_info(node_name="Rastrigin Function", graph_type="cs")
+</tool_call>
+22
+
+[[page 23]]
+C Multi-hop question generation and evaluation prompt
+1/2 hop question generation prompt
+Relations(entity_1 - entity_2: the relation):
+```
+Urban Farms - Corboy: perception change, urban development
+...
+```
+The above is a knowledge graph where the relation between the entities are
+listed.
+Your need to determine a path in the knowledge graph first, and the path
+should be suitable for generating a one-hop or two-hop question.
+The suitable path should be:
+The language of the one/two hop question will be natural.
+The answer will be unique, only one node in the knowledge graph corresponds
+to the correct answer.
+The length of the path is 2 or 3, which corresponds to one-hop and two-hop
+questions.
+Then you need to generate a one/two hop question from the path. You should
+not reveal the answer node name but need to provide the starting node
+name(s) for the answerer to start with. Use natural language to describe
+the relation between the nodes.
+Here are some two-hop question types as hint:
+1. Inferring the bridge entity to complete the 2nd-hop question
+Which team does the player named 2015 Diamond Head Classic’s MVP play for?
+2. Locating the answer entity by checking multiple properties
+Which former member of the Pittsburgh Pirates was nicknamed ”The Cobra”?
+3. Inferring about the property of an entity in question through a bridge
+entity
+What city is the Marine Air Control Group 28 located in?
+These are the path and questions generated before but they are not good enough.
+previous path: [’Corboy’, ’Beehives’, ’Greensgrow’]
+previous question: Through his personal commitment to beekeeping with Beehives...?
+This is the feedback
+path validity: True
+question feedback: The question reveals the name of a middle node ’Beehives’ in
+the path, which should be hidden according to the requirements.
+You need to provide a better question and/or path and fix the previous issues.
+Output in English.
+Output in JSON format only, don’t add markdown code delimiter or anything
+else, only a valid json object:
+{"path": [node_name1, node_name2, ...], "question": "question", "answer":
+the answer node name}
+23
+
+[[page 24]]
+3+ hop question generation prompt:
+Relations(entity_1 - entity_2: the relation):
+```
+Farmyard Manure - Humus: soil nutrition, organic matter transformation
+Soil Respiration - Humus: soil process, nutrient cycling
+...
+```
+Given the knowledge graph above, identify one path that is suitable for
+generating a multi-hop question. A suitable path should meet the following
+criteria:
+The resulting question should be natural and fluent in language (not awkward
+or difficult to read).
+The answer should be unique and unambiguous.
+The path length should be at least 4.
+Once such a path is selected, generate a multi-hop question based on it.
+The question must follow these constraints:
+Only the name of the start node or end node in the path may be explicitly
+mentioned. The names of the intermediate nodes must not be revealed, as
+doing so would reduce the difficulty of the question.
+The relationships between each pair of connected nodes should be described
+using natural language.
+Formulate one comprehensive multi-hop question, rather than multiple
+smaller sub-questions.
+These are the path and questions generated before but they are not good enough.
+previous path: [’Sir Albert Howard’, ’Humus’, ’Soil Fertility’, ’Forest’, ’Soil
+Erosion’]
+previous question: Research associated with Sir Albert Howard emphasizes ...?
+This is the feedback
+path validity: False
+question feedback: The question explicitly mentions ’Sir Albert Howard’ as the
+starting node, ...
+You need to provide a better question and/or path and fix the previous issues.
+Output in English.
+Output in JSON format only, do not add markdown code delimiter or anything
+else, only a valid json object:
+{"path": [node_name1, node_name2, node_name3, node_name4, ...],
+"question": "question", "answer": the answer node name}
+24
+
+[[page 25]]
+Multihop question evaluation prompt:
+You will see a path from knowledge graph and a corresponding multi-hop
+question. Your task is to check if the question satisfies all the following
+requirements:
+The question contains the name of the node explicitly so that the answerer
+knows where to search from in the knowledge graph.
+The question only reveals the name of node to start from, but hide the name
+of the other nodes in the path.
+The question is a multi-hop question.
+If the question satisfies all the requirements, the question is valid,
+otherwise it is invalid.
+Here is the real data:
+Path: [’Miller’, ’North Dakota’, ’California’, ’Central Valley’, ’Almond
+Pollination’]
+Multi-hop question: What agricultural support process follows seasonal
+beekeeping migration to a northern state, involves competitive honey
+production in a western state, and occurs in a valley region providing
+crop pollination services?
+Output in JSON format only, don’t add markdown code delimiter or anything
+else, only a valid json object:
+{"valid": true or false, "reason": "your reason"}
+25

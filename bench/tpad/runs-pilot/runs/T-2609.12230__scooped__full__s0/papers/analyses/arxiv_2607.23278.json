@@ -1,0 +1,70 @@
+{
+  "paper_id": "arxiv:2607.23278",
+  "relevance_tier": "high",
+  "problem": "Multi-hop question answering requires coordinating relational and textual evidence across reasoning steps, a combination neither a text corpus nor a knowledge graph can supply alone. Prior work often emphasizes only part of this loop: graph-augmented RAG retrieves from a pre-built or query-updated graph, KGQA systems search within topic-centered subgraphs, and memory-augmented agents maintain evolving memories without continuously reconciling graph memory with textual context.",
+  "method": "We propose Co-E, a training-free system built around synchronized bidirectional graph-text working memory. A synchronization cycle consolidates textual memory, extracts relational triples into graph memory, and injects graph facts back into the generation context. Because both memories are maintained, they shape subsequent retrieval and generation.",
+  "key_assumptions": [
+    "Bidirectional coupling of textual and graph memories improves multi-hop reasoning.",
+    "Extracted relational triples from text are reliable enough to update graph memory.",
+    "Maintaining both memories allows them to shape retrieval and generation."
+  ],
+  "main_contribution": "Proposing Co-E, a training-free multi-hop QA system that synchronizes graph and text memory, achieving strong results on six benchmarks and improving over comparable training-free baselines while competing with larger or trained systems.",
+  "datasets": [
+    "WebQSP",
+    "CWQ",
+    "HotpotQA",
+    "2WikiMultiHopQA",
+    "MuSiQue",
+    "Bamboogle"
+  ],
+  "benchmarks": [
+    "WebQSP",
+    "CWQ",
+    "HotpotQA",
+    "2WikiMultiHopQA",
+    "MuSiQue",
+    "Bamboogle"
+  ],
+  "baselines": [
+    "IRCoT",
+    "HopRAG",
+    "ComposeRAG",
+    "RT-RAG",
+    "Search-o1",
+    "Search-R1",
+    "MR-Search",
+    "RoG",
+    "GNN-RAG",
+    "PoG",
+    "SubgraphRAG",
+    "iQUEST",
+    "ToG 2.0",
+    "Live-KG KGQA"
+  ],
+  "metrics": [
+    "Hits@1 for KGQA",
+    "Exact Match (EM) for text-QA",
+    "LLM-judged accuracy (Acc)"
+  ],
+  "results": "\"With a Qwen3-8B backbone and no training, Co-E reaches 72.6 EM on 2WikiMultiHopQA, 70.0 EM on Bamboogle and 74.9 Hits@1 on CWQ. For KGQA, Co-E (MCTS) achieves 85.5 Hits@1 on WebQSP and 85.3 Hits@1 (CoT), tying the strongest open 7B trained baselines (RoG, GNN-RAG at 85.7).\"",
+  "limitations": [
+    "Co-E is limited by the quality of the evidence it retrieves; bidirectional synchronization cannot reliably correct a wrong fact repeatedly supported by the retrieved corpus.",
+    "Co-E trades additional inference cost for stronger reasoning."
+  ],
+  "future_work": [
+    "Evaluate larger or more specialized models.",
+    "Extend the smaller-backbone study across all benchmarks.",
+    "Compare shared-memory MCTS with branch-local or reward-gated memory commits.",
+    "Investigate stronger early stopping, cached verification, or adaptive switching between CoT and MCTS to reduce inference cost."
+  ],
+  "code_availability": "Codebase available at https://github.com/hieum98/wemg",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.7,
+    "conceptual_difference": "Co-E focuses on inference-time synchronization of graph and text memory without training, whereas the proposed idea enriches training triples with local context subgraphs and introduces an adaptive repair loop and RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T06:38:52.004118Z"
+}

@@ -1,0 +1,1395 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ResearchForge report: T-2609.11572__prepub__full__s0</title>
+<style>
+:root{--surface:#f1f3f6;--card:#ffffff;--header:#e6e9ed;--ink:#0f1419;--soft:#5a626c;--rule:rgba(15,20,25,.08);--tint:rgba(15,20,25,.06)}
+@font-face{font-family:"Inter";src:url("/static/fonts/inter.woff2") format("woff2");font-weight:100 900}
+@font-face{font-family:"Inter";src:url("/static/fonts/inter-italic.woff2") format("woff2");font-weight:100 900;font-style:italic}
+@font-face{font-family:"IBM Plex Mono";src:url("/static/fonts/ibm-plex-mono-400.woff2") format("woff2");font-weight:400}
+body{font:16px/1.6 Inter,"Segoe UI",Arial,sans-serif;max-width:72ch;margin:2.5rem auto;padding:0 16px;color:var(--ink);background:var(--card)}
+h1,h2,h3{letter-spacing:-.018em;line-height:1.2;font-weight:600} h1{font-size:1.875rem;font-weight:700;letter-spacing:-.025em} h2{font-size:1.25rem;letter-spacing:-.012em;border-top:1px solid var(--rule);padding-top:1.2rem;margin-top:2.4rem}
+a{color:var(--ink);text-decoration-color:rgba(15,20,25,.3);text-underline-offset:.2em} a:hover{text-decoration-color:currentColor} strong{font-weight:600}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:14px;line-height:1.45;display:block;overflow-x:auto;border:1px solid var(--rule)}
+td,th{border-bottom:1px solid var(--rule);padding:.5rem .75rem;vertical-align:top;text-align:left} th{background:var(--header);color:var(--soft);font:500 11px/1.3 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase}
+code,pre{font-family:"IBM Plex Mono",ui-monospace,monospace;background:var(--tint);border-radius:3px;font-size:.85em} pre{padding:.8rem;overflow:auto;line-height:1.4;border-radius:5px}
+blockquote{border-left:3px solid rgba(15,20,25,.6);margin:1rem 0;padding:.5em 0 .5em 1.25em;color:var(--soft);font-style:italic}
+details{margin:1rem 0} summary{cursor:pointer;font-weight:600}
+</style></head><body>
+<h1>ResearchForge Investigation Report</h1>
+<p>Project <code>T-2609.11572__prepub__full__s0</code> · model <code>ollama-cloud/nemotron-3-super</code> · status <strong>incomplete</strong></p>
+<blockquote>
+<p>Labels: <strong>[Evidence]</strong> directly supported by a verified quote from a retrieved source; <strong>[Inference]</strong> reasoning derived from cited evidence; <strong>[Hypothesis]</strong> proposed, not validated; <strong>[Assumption]</strong> taken as given without evidence; <strong>[Experimental result]</strong> observed in an executed experiment.</p>
+</blockquote>
+<h2>1. Executive Summary</h2>
+<p><strong>Investigated:</strong> The reliability of open‑domain question answering drops sharply when source texts are continuously amended, as in statutes, policies, or regulations. In such settings each new amendment supersedes earlier clauses while retaining much of the original wording, creating a dense semantic overlap across successive versions. Existing time‑aware retrieval techniques treat each version as an isolated snapshot and therefore cannot distinguish which revision best matches a time‑specific query. We propose to develop a retrieval‑agnostic framework that enriches any standard document retriever with a temporal relevance component: the rank of a candidate passage will be adjusted according to the elapsed time between the query’s target date and the passage’s version timestamp, while still leveraging its semantic similarity to the query. To evaluate the approach, we will construct a benchmark comprising regulatory documents with overlapping revisions and time‑stamped queries, measuring how well the combined temporal‑semantic ranking improves answer accuracy.</p>
+<p><strong>Research question:</strong> Does adding a temporal relevance component to a standard document retriever improve answer accuracy in open-domain question answering over continuously amended regulatory texts compared to using semantic similarity alone?</p>
+<p><strong>Literature investigated:</strong> 101 papers retrieved from 5 searches (openalex: 44, crossref: 44, semantic_scholar: 10, arxiv: 3); 24 analyzed; 3 rated highly relevant.</p>
+<p><strong>Assessment:</strong> Promising but requires experimental validation. <strong>[Inference]</strong> While published work shows that key aspects of the idea exist in related forms (regulatory QA benchmarks with temporal reasoning, semantic-temporal balancing frameworks), the specific combination of a retrieval-agnostic temporal relevance component applied to any retriever for versioned regulatory document QA remains to be empirically validated. The idea addresses a real problem but requires demonstration that the proposed approach provides significant gains over existing methods when applied to this specific domain.</p>
+<p><strong>Closest existing work:</strong> IndiaFinBench: An Evaluation Benchmark for Large Language Model Performance on Indian Financial Regulatory Text (2026) [1]; Re3: Learning to Balance Relevance &amp; Recency for Temporal Information Retrieval (2025) [2]</p>
+<p><strong>Potential overlap:</strong> Both our idea and existing work (IndiaFinBench, Re3) address temporal aspects of regulatory documents: IndiaFinBench creates benchmarks with temporal reasoning tasks for regulatory QA, while Re3 provides a framework for balancing semantic and temporal signals in retrieval. Our idea combines these threads by proposing a retrieval-agnostic temporal component for versioned regulatory document QA.</p>
+<p><strong>Potential distinction:</strong> Our idea specifically proposes a retrieval-agnostic temporal component (designed to work with any base retriever) for open-domain QA over versioned regulatory texts, focusing on using version timestamps to adjust passage rankings. While IndiaFinBench shows regulatory QA benchmarks with temporal reasoning exist, and Re3 shows semantic-temporal balancing exists, the specific application of a learnable or adaptive temporal relevance component to any retriever for regulatory QA benchmarking may still offer novelty if shown to be effective.</p>
+<p><strong>Major risk:</strong> Published work shows significant overlap with the proposed idea: IndiaFinBench (2026) already provides an evaluation benchmark for regulatory text that includes temporal reasoning tasks requiring models to identify which version of a rule was in force at a given time and addresses references chains of superseding circulars. Re3 (2025) proposes a unified framework that dynamically balances semantic and temporal information through a query-aware gating mechanism. Applying such temporal-semantic balancing to versioned regulatory documents may represent a straightforward extension rather than fundamental novelty.</p>
+<p><strong>Research decision:</strong> Insufficient evidence. <strong>[Inference]</strong> Basis: high-importance questions remain unresolved (U001, U002, U005, U006, U008, U009, U010, U011, U012, U013, U014, U015, U016, U018, U019, U020). This describes the state of the evidence, not the absolute value of the idea.</p>
+<p><strong>Investigation:</strong> 13 steps chosen from the research state; 20 uncertainties raised, 3 resolved, 17 still open or unresolved (Section 13, Appendix C).</p>
+<p><strong>Stopped by a safety limit:</strong> Stopping: time budget reached (3600 s). Conclusions below cover only what was recorded before the limit.</p>
+<p><strong>Claim grounding:</strong> 10/18 evidence and inference claims have at least one verified source.</p>
+<p><strong>Incomplete phases:</strong> gaps, modifications, experiments. Sections that depend on them are marked as not recorded.</p>
+<p>This report does not declare the idea novel. Absence of a matching paper in these searches does not establish novelty; see Section 13.</p>
+<h2>2. Original Research Idea</h2>
+<blockquote>
+<p>The reliability of open‑domain question answering drops sharply when source texts are continuously amended, as in statutes, policies, or regulations. In such settings each new amendment supersedes earlier clauses while retaining much of the original wording, creating a dense semantic overlap across successive versions. Existing time‑aware retrieval techniques treat each version as an isolated snapshot and therefore cannot distinguish which revision best matches a time‑specific query. We propose to develop a retrieval‑agnostic framework that enriches any standard document retriever with a temporal relevance component: the rank of a candidate passage will be adjusted according to the elapsed time between the query’s target date and the passage’s version timestamp, while still leveraging its semantic similarity to the query. To evaluate the approach, we will construct a benchmark comprising regulatory documents with overlapping revisions and time‑stamped queries, measuring how well the combined temporal‑semantic ranking improves answer accuracy.</p>
+</blockquote>
+<h2>3. Formalized Research Question</h2>
+<p><strong>Research question:</strong> Does adding a temporal relevance component to a standard document retriever improve answer accuracy in open-domain question answering over continuously amended regulatory texts compared to using semantic similarity alone?</p>
+<p><strong>Hypothesis:</strong> <strong>[Hypothesis]</strong> Combining temporal relevance (based on time proximity) with semantic similarity will significantly improve answer accuracy (e.g., Exact Match or F1) in open-domain QA over continuously amended regulatory texts compared to using semantic similarity alone or existing time-aware retrieval techniques that treat versions independently.</p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Formalization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Problem</td>
+<td>The reliability of open-domain question answering drops when source texts are continuously amended (e.g., statutes, policies, regulations) because each new amendment supersedes earlier clauses while retaining much of the original wording, creating dense semantic overlap across versions. Existing time-aware retrieval techniques treat each version as an isolated snapshot and therefore cannot distinguish which revision best matches a time-specific query.</td>
+</tr>
+<tr>
+<td>Target domain</td>
+<td>Open-domain question answering over continuously amended regulatory texts (statutes, policies, regulations).</td>
+</tr>
+<tr>
+<td>Proposed method</td>
+<td>A retrieval-agnostic framework that enriches any standard document retriever with a temporal relevance component. The rank of a candidate passage is adjusted according to the elapsed time between the query's target date and the passage's version timestamp (e.g., via a decaying function), while still leveraging its semantic similarity to the query from the base retriever.</td>
+</tr>
+<tr>
+<td>Target system</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>Expected contribution</td>
+<td>(1) A general framework for incorporating temporal dynamics into any document retriever for versioned collections; (2) A benchmark of regulatory documents with overlapping revisions and time-stamped queries to evaluate temporal-semantic retrieval approaches.</td>
+</tr>
+<tr>
+<td>Independent variables</td>
+<td>Retrieval method (baseline: semantic similarity only; proposed: temporal-semantic combination; other baselines: temporal-only, existing time-aware methods)</td>
+</tr>
+<tr>
+<td>Dependent variables</td>
+<td>Answer accuracy (Exact Match, F1) on the benchmark</td>
+</tr>
+<tr>
+<td>Controls</td>
+<td>Base retriever (e.g., BM25, DPR) kept constant when comparing methods, Benchmark dataset (regulatory documents with versions and timestamps), Query set</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Assumptions</strong></p>
+<ul>
+<li>Each document version has a valid timestamp indicating when it was enacted or amended.</li>
+<li>Queries are associated with a target date (the time at which the question is asked).</li>
+<li>Semantic similarity (e.g., from a dense retriever) is a suitable baseline for relevance.</li>
+<li>The temporal relevance function can be modeled as a decaying function of time difference (e.g., exponential decay).</li>
+<li>The combination of temporal and semantic scores can be a simple weighted sum.</li>
+</ul>
+<p><strong>Expected benefits / potential risks</strong></p>
+<p><em>None recorded.</em></p>
+<p><strong>Ambiguities</strong></p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Resolution</th>
+<th>Resolved by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What is the appropriate temporal relevance function (e.g., linear, exponential, step) for adjusting passage ranks based on time difference?</td>
+<td>Literature suggests learned combinations (e.g., Re3: Learning to Balance Relevance &amp; Recency for Temporal Information Retrieval, 2025) may outperform fixed functions, so this remains unresolved; we will treat it as a design choice to be evaluated.</td>
+<td>literature</td>
+</tr>
+<tr>
+<td>How should temporal and semantic scores be combined (e.g., weighted sum, product, learned)?</td>
+<td>Recent work (e.g., Re3, 2025) learns to balance relevance and recency, indicating that a learned combination is promising; we will treat this as unresolved and plan to compare combination strategies.</td>
+<td>literature</td>
+</tr>
+<tr>
+<td>What baseline time-aware retrieval techniques exist for versioned documents to compare against?</td>
+<td>Found work on time-travel phrase queries on versioned documents (Practical Index Framework for Efficient Time-Travel Phrase Queries on Versioned Documents, 2016) and time-aware random walk models for web archives; we will use these as baselines.</td>
+<td>literature</td>
+</tr>
+<tr>
+<td>Which metrics should be used to measure answer accuracy in the QA benchmark?</td>
+<td>Standard QA metrics are Exact Match and F1; we will adopt these.</td>
+<td>assumption</td>
+</tr>
+<tr>
+<td>What regulatory documents should be used to construct the benchmark of overlapping revisions?</td>
+<td>We assume publicly available corpora such as the US Code, EU regulations, or corporate policy histories; this remains an assumption to be verified during benchmark construction.</td>
+<td>assumption</td>
+</tr>
+<tr>
+<td>How to handle conflicting information across versions where an amendment supersedes a clause?</td>
+<td>The idea assumes that the latest version's clause overrides earlier ones; we will treat this as a design principle for the temporal component (favoring newer versions for time-specific queries).</td>
+<td>assumption</td>
+</tr>
+</tbody>
+</table>
+<h2>4. Existing Research</h2>
+<p>Overlap values are heuristic signals assigned during analysis, not measurements of novelty.</p>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>Relevance</th>
+<th>Method</th>
+<th>Problem / method / evaluation overlap</th>
+<th>Read from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GRM: Generative Relevance Modeling Using Relevance-Aware Sample Estimation for Document Retrieval (2023) [3]</td>
+<td>high</td>
+<td>Generative Relevance Modeling (GRM) with Relevance-Aware Sample Estimation (RASE) that estimates relevance of generated documents via similarity to real documents in the collection, using a neural re-ranker to weight expansion terms.</td>
+<td>0.3 / 0.1 / 0.1</td>
+<td>full_text</td>
+</tr>
+<tr>
+<td>Re3: Learning to Balance Relevance &amp; Recency for Temporal Information Retrieval (2025) [2]</td>
+<td>high</td>
+<td>Re3 framework comprising Time Extraction, Time Encoding, and Time Enhancement modules, using a query-aware gating mechanism to dynamically balance semantic and temporal information during re-ranking.</td>
+<td>0.8 / 0.6 / 0.2</td>
+<td>full_text</td>
+</tr>
+<tr>
+<td>A Question Answering System on Regulatory Documents (2018) [4]</td>
+<td>high</td>
+<td>Proposes a QA system specifically designed for regulatory documents, likely using semantic retrieval and possibly rule-based or machine learning approaches tailored to legal text.</td>
+<td>0.9 / 0.2 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Temporal Preference Optimization for Unsupervised Retrieval (2026) [5]</td>
+<td>medium</td>
+<td>TPOUR (Temporal Preference Optimization for Unsupervised Retriever) uses a novel training method Temporal Retrieval Preference Optimization (TRPO) that reinterprets preference learning in the temporal dimension to guide the retriever to favor temporally aligned documents, and generalizes to unseen t</td>
+<td>0.7 / 0.6 / 0.4</td>
+<td>full_text</td>
+</tr>
+<tr>
+<td>Difficulty-Gated Fusion of Reasoning Views for Temporal Retrieval (2026) [6]</td>
+<td>medium</td>
+<td>Proposes difficulty-gated fusion of reasoning views for temporal retrieval, where query-specific weights are assigned to different query reformulations based on performance-prediction signatures.</td>
+<td>0.5 / 0.4 / 0.3</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Rank by Readability: Document Weighting for Information Retrieval (2010) [7]</td>
+<td>medium</td>
+<td>Proposes document weighting based on readability scores for information retrieval.</td>
+<td>0.1 / 0.1 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Extended structural relevance framework: a framework for evaluating structured document retrieval (2012) [8]</td>
+<td>medium</td>
+<td>Proposes an extended structural relevance framework for evaluating structured document retrieval.</td>
+<td>0.1 / 0.1 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Improving temporal question answering using temporal knowledge graph embedding (2023) [9]</td>
+<td>medium</td>
+<td>Uses temporal knowledge graph embeddings to improve temporal question answering.</td>
+<td>0.5 / 0.4 / 0.3</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Improved TFIDF weighting techniques in document Retrieval (2018) [10]</td>
+<td>medium</td>
+<td>Proposes improved TF-IDF weighting techniques for document retrieval.</td>
+<td>0.2 / 0.2 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Evaluating Temporal Information Understanding with Temporal Question Answering (2012) [11]</td>
+<td>medium</td>
+<td>Evaluates temporal information understanding using temporal question answering approaches.</td>
+<td>0.5 / 0.3 / 0.3</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Applying TF-IDF Weighting Method and BM-25 Algorithm in Myanmar News Retrieval (2025) [12]</td>
+<td>medium</td>
+<td>Applies TF-IDF weighting and BM-25 algorithm for Myanmar news retrieval.</td>
+<td>0.2 / 0.2 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Contextualized Offline Relevance Weighting for Efficient and Effective Neural Retrieval (2021) [13]</td>
+<td>medium</td>
+<td>Contextualized Offline Relevance Weighting (CORW) uses a powerful BERT ranker to weight neighbour documents collected by generated pseudo-queries for each document offline; online retrieval reduces to matching query to pseudo-query, making it efficient.</td>
+<td>0.2 / 0.1 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Phonetic confusion matrix based spoken document retrieval (2000) [14]</td>
+<td>medium</td>
+<td>Proposes a novel method for phonetic retrieval in the CueVideo system based on probabilistic term weighting using phone confusion data in a Bayesian framework to improve spoken document retrieval.</td>
+<td>0.1 / 0.1 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Temporal Question Answering in News Article Collections (2022) [15]</td>
+<td>medium</td>
+<td>Proposes temporal question answering approaches for news article collections.</td>
+<td>0.5 / 0.4 / 0.3</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>ColBERT-PRF: Semantic Pseudo-Relevance Feedback for Dense Passage and Document Retrieval (2022) [16]</td>
+<td>medium</td>
+<td>Proposes ColBERT-PRF, a pseudo-relevance feedback technique for dense retrieval that enhances effectiveness by extracting representative feedback embeddings from pseudo-relevant documents and adding them to query representation.</td>
+<td>0.3 / 0.3 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Mitigating Semantic Bias in Multilingual Visual Document Retrieval via Language-Vision-Aware Late Interaction (2026) [17]</td>
+<td>medium</td>
+<td>Proposes Language-Vision-Aware Late Interaction (LVALI) to mitigate semantic bias in multilingual visual document retrieval via token-level weighting and visual alignment correction.</td>
+<td>0.1 / 0.1 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Document Retrieval by Relevance Terminological Logics (1995) [18]</td>
+<td>medium</td>
+<td>not stated in abstract</td>
+<td>0.1 / 0.1 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Metaknowledge Enhanced Open Domain Question Answering with Wiki Documents (2021) [19]</td>
+<td>medium</td>
+<td>Proposes a novel metaknowledge enhanced approach for open domain question answering: automatically extract metaknowledge and build metaknowledge network from Wiki documents, design a graph encoder GE4MK to model the network, and propose a metaknowledge enhanced graph reasoning model MEGr-Net for que</td>
+<td>0.4 / 0.2 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Error-tolerant question answering for spoken documents (2007) [20]</td>
+<td>medium</td>
+<td>not stated in abstract</td>
+<td>0.2 / 0.1 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Leveraging relevance cues for improved spoken document retrieval (2011) [21]</td>
+<td>medium</td>
+<td>not stated in abstract</td>
+<td>0.2 / 0.1 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Identification of LSA Data Retrieval Method and Temporal Graph for Document Retrieval (2025) [22]</td>
+<td>medium</td>
+<td>Uses LSA for dimensionality reduction and constructs a temporal graph based on citation and author occurrence to model document relevance over time.</td>
+<td>0.4 / 0.2 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Retrieval Augmented Generation for Question Answering in Financial Documents (2025) [23]</td>
+<td>medium</td>
+<td>not stated in abstract</td>
+<td>0.5 / 0.2 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>On the Relevance of Query Expansion Using Parallel Corpora and Word Embeddings to Boost Text Document Retrieval Precision (2020) [24]</td>
+<td>medium</td>
+<td>Compares TF-IDF and BM25 weighting schemes, then expands queries using a comparable corpus (Wikipedia) and word embeddings to boost retrieval precision.</td>
+<td>0.1 / 0.1 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Question Answering over Linked Data with Vague Temporal Adverbials (2025) [25]</td>
+<td>medium</td>
+<td>not stated in abstract</td>
+<td>0.6 / 0.3 / 0.3</td>
+<td>abstract</td>
+</tr>
+</tbody>
+</table>
+<details><summary>Full paper analyses</summary>
+
+#### GRM: Generative Relevance Modeling Using Relevance-Aware Sample Estimation for Document Retrieval (2023) [3]
+
+- **Problem:** Query expansion using Large Language Models (LLMs) can generate irrelevant content (hallucinations) that harms retrieval effectiveness.
+- **Method:** Generative Relevance Modeling (GRM) with Relevance-Aware Sample Estimation (RASE) that estimates relevance of generated documents via similarity to real documents in the collection, using a neural re-ranker to weight expansion terms.
+- **Main contribution:** GRM framework that improves query expansion effectiveness by reducing hallucination impact through relevance-aware weighting.
+- **Key assumptions:** LLMs can generate documents covering subtopics of complex information needs.; Semantic similarity to real documents approximates the relevance of generated content.
+- **Datasets / benchmarks:** TREC Robust04, CODEC, TREC Robust04, CODEC
+- **Baselines:** BM25+RM3, GRF, GRF-News, SPLADE+RM3, CEQE, PCT+PRF
+- **Metrics:** MAP, nDCG, Recall@1k
+- **Results:** ["GRM improves MAP by 6-9% and Recall@1k by 2-4% over prior state-of-the-art expansion methods on TREC Robust04 and CODEC."]
+- **Limitations:** Effectiveness depends on the quality of generated documents; requires a neural re-ranker for RASE.; Performance varies significantly across queries.; Reliance on external re-ranker adds complexity.
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** GRM focuses on query expansion via LLM-generated documents; our idea addresses temporal dynamics in versioned documents for QA, not query expansion. _(basis: not stated)_
+
+#### Re3: Learning to Balance Relevance & Recency for Temporal Information Retrieval (2025) [2]
+
+- **Problem:** Temporal Information Retrieval (TIR) requires balancing relevance (alignment with query's temporal constraints) and recency (preferring freshest version) which existing methods address in isolation.
+- **Method:** Re3 framework comprising Time Extraction, Time Encoding, and Time Enhancement modules, using a query-aware gating mechanism to dynamically balance semantic and temporal information during re-ranking.
+- **Main contribution:** (1) Re3, a unified lightweight framework for temporal-aware retrieval; (2) Re2Bench benchmark to disentangle relevance, recency, and their combination.
+- **Key assumptions:** Explicit or reliably extractable timestamps are available for documents.; Semantic similarity and temporal signals can be combined via a learnable gate.
+- **Datasets / benchmarks:** Re2Bench (including Re2-Rel from TSQA-Human, Re2-Rec from HoH, Re2-Hyb from NOAA), Re2Bench
+- **Baselines:** BGE-M3 (semantic-only), tempRALM, TempRetriever, TSM
+- **Metrics:** Recall@K, MRR, TimeVar@K, MFG@K
+- **Results:** ["Re3 achieves state-of-the-art R@1 on all Re2Bench subsets: 0.920 on Re2-Rel, 0.649 on Re2-Rec, 0.742 on Re2-Hyb."]
+- **Limitations:** Assumes explicit or reliably extractable timestamps.; Evaluation limited to three subsets; generalization to other domains (e.g., scientific literature, social media) needed.; Latency may increase with large candidate pools.
+- **Future work:** Relax timestamp assumptions.; Optimize for low-latency retrieval.; Expand Re2Bench to broader domains and tasks.; Extend Re3 toward generative and multi-source datasets.; Add interpretability tools.
+- **Code availability:** ["Available online at https://anonymous.4open.science/r/Re3-0C5A"]
+- **Relation to idea:** Re3 focuses on general temporal IR benchmarks; our idea targets versioned regulatory documents for open-domain QA, proposing a retrieval-agnostic temporal relevance component adaptable to any retriever. _(basis: not stated)_
+
+#### A Question Answering System on Regulatory Documents (2018) [4]
+
+- **Problem:** Question answering over regulatory documents, which are often versioned and require up-to-date information.
+- **Method:** Proposes a QA system specifically designed for regulatory documents, likely using semantic retrieval and possibly rule-based or machine learning approaches tailored to legal text.
+- **Main contribution:** A question answering system tailored for regulatory documents, potentially incorporating document version handling.
+- **Key assumptions:** Regulatory documents have a structure that can be exploited for QA.; Temporal aspects (versions) are important for regulatory QA.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** The paper focuses on a QA system for regulatory documents but does not explicitly address versioned texts with temporal retrieval; our idea adds a temporal relevance component to any retriever for versioned documents. _(basis: not stated)_
+
+#### Temporal Preference Optimization for Unsupervised Retrieval (2026) [5]
+
+- **Problem:** Unsupervised dense retrievers struggle to capture temporal relevance, retrieving semantically related but temporally misaligned documents when the collection spans multiple time periods, causing temporal ambiguity in queries like "Who is the president in 2019?".
+- **Method:** TPOUR (Temporal Preference Optimization for Unsupervised Retriever) uses a novel training method Temporal Retrieval Preference Optimization (TRPO) that reinterprets preference learning in the temporal dimension to guide the retriever to favor temporally aligned documents, and generalizes to unseen time periods via interpolation in a learned time embedding.
+- **Main contribution:** (1) TPOUR, a preference-based training method that injects temporal information into unsupervised dense retrievers via TRPO; (2) Demonstrates improved temporal alignment and generalization to unseen/intermediate time periods via time vector interpolation.
+- **Key assumptions:** Temporal intent of queries can be detected (explicit or implicit).; Time vectors extracted from retrievers fine-tuned on specific periods can be interpolated for continuous temporal alignment.
+- **Datasets / benchmarks:** SituatedQA (yearly temporal QA dataset, 2018-2021 subset), RealTimeQA (monthly temporal QA dataset), BEIR (general retrieval benchmark), SituatedQA, RealTimeQA, BEIR
+- **Baselines:** Contriever, DPR, Nomic Embed v2 MoE, Qwen-Embedding-8B, Standard Retrievers, Temporal-Aware Retrievers, Mixture-of-TPOUR
+- **Metrics:** nDCG@5, N@5, N@10
+- **Results:** ["TPOUR Contriever improves average nDCG@5 by +4.04 (+12.15%) on explicit and +4.98 (+15.21%) on implicit queries compared to Qwen-Embedding-8B; outperforms both unsupervised and supervised baselines on temporal information retrieval; achieves better timestamp prediction and interpolation/extrapolation capabilities."]
+- **Limitations:** Relies on temporally distributed document collections (e.g., Wikipedia dumps) for training; discrete temporal models limited in modeling continuous time; requires timestamp prediction or grounding for optimal performance.
+- **Future work:** Relaxing requirement for temporally distributed corpora; further analysis of temporal grounding to enhance interpretability; time vector extrapolation for generalization beyond training period; applying TPOUR to other retrieval paradigms.
+- **Code availability:** ["https://github.com/agwaBom/TPOUR"]
+- **Relation to idea:** TPOUR focuses on improving temporal alignment in unsupervised dense retrievers via preference optimization and time embeddings for general retrieval tasks, while our idea proposes a retrieval-agnostic temporal relevance component that adjusts passage ranks based on version timestamp proximity for open-domain QA over versioned regulatory texts. _(basis: Based on abstract and full text analysis.)_
+
+#### Difficulty-Gated Fusion of Reasoning Views for Temporal Retrieval (2026) [6]
+
+- **Problem:** not stated in abstract
+- **Method:** Proposes difficulty-gated fusion of reasoning views for temporal retrieval, where query-specific weights are assigned to different query reformulations based on performance-prediction signatures.
+- **Main contribution:** Introduces difficulty-gated fusion that improves temporal retrieval performance across retrievers, with significant gains on weaker backbones.
+- **Key assumptions:** Query difficulty can be predicted from score distribution signatures.; Fusing multiple reasoning views with adaptive weights improves temporal retrieval.
+- **Datasets / benchmarks:** \textsc{Tempo} benchmark
+- **Baselines:** Not recorded
+- **Metrics:** nDCG@10
+- **Results:** ["Strongest retrievers reach 0.297 and 0.303 nDCG@10; per-query gain significant under paired bootstrap (p<0.001)."]
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on adaptive fusion of reasoning views for temporal retrieval, while our idea focuses on temporal relevance weighting based on version timestamps for regulatory document QA. _(basis: Abstract describes difficulty-gated fusion method.)_
+
+#### Rank by Readability: Document Weighting for Information Retrieval (2010) [7]
+
+- **Problem:** not stated in abstract
+- **Method:** Proposes document weighting based on readability scores for information retrieval.
+- **Main contribution:** Introduces a readability-based weighting scheme for document retrieval.
+- **Key assumptions:** Readability scores correlate with document usefulness or relevance.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on readability weighting for IR, unrelated to temporal dynamics or versioned documents. _(basis: Title suggests readability weighting.)_
+
+#### Extended structural relevance framework: a framework for evaluating structured document retrieval (2012) [8]
+
+- **Problem:** not stated in abstract
+- **Method:** Proposes an extended structural relevance framework for evaluating structured document retrieval.
+- **Main contribution:** Extends relevance evaluation frameworks to incorporate structural document features.
+- **Key assumptions:** Structural aspects of documents affect relevance.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on structural relevance evaluation for document retrieval, unrelated to temporal versioning or QA. _(basis: Title indicates structural relevance framework.)_
+
+#### Improving temporal question answering using temporal knowledge graph embedding (2023) [9]
+
+- **Problem:** not stated in abstract
+- **Method:** Uses temporal knowledge graph embeddings to improve temporal question answering.
+- **Main contribution:** Applies temporal knowledge graph embeddings to enhance temporal QA performance.
+- **Key assumptions:** Temporal knowledge graphs can capture temporal relations for QA.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on temporal knowledge graph embeddings for temporal QA, while our idea focuses on retrieval‑agnostic temporal relevance weighting for versioned regulatory documents in open‑domain QA. _(basis: Title suggests temporal KG embeddings for QA.)_
+
+#### Improved TFIDF weighting techniques in document Retrieval (2018) [10]
+
+- **Problem:** not stated in abstract
+- **Method:** Proposes improved TF-IDF weighting techniques for document retrieval.
+- **Main contribution:** Introduces improved TF-IDF weighting methods for better retrieval performance.
+- **Key assumptions:** TF-IDF can be enhanced via alternative weighting schemes.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on TF-IDF weighting improvements for IR, unrelated to temporal versioning or regulatory QA. _(basis: Title indicates improved TF-IDF weighting.)_
+
+#### Evaluating Temporal Information Understanding with Temporal Question Answering (2012) [11]
+
+- **Problem:** not stated in abstract
+- **Method:** Evaluates temporal information understanding using temporal question answering approaches.
+- **Main contribution:** Provides evaluation frameworks for temporal QA systems.
+- **Key assumptions:** Temporal QA can assess temporal information understanding.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on evaluation of temporal QA systems, while our idea proposes a temporal relevance component for retrieval in versioned regulatory document QA. _(basis: Title indicates evaluation of temporal information understanding with Temporal QA.)_
+
+#### Applying TF-IDF Weighting Method and BM-25 Algorithm in Myanmar News Retrieval (2025) [12]
+
+- **Problem:** not stated in abstract
+- **Method:** Applies TF-IDF weighting and BM-25 algorithm for Myanmar news retrieval.
+- **Main contribution:** Evaluates TF-IDF and BM-25 for improving relevance and precision in Myanmar news retrieval.
+- **Key assumptions:** TF-IDF and BM-25 are effective for information retrieval in specific linguistic contexts.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on TF-IDF and BM-25 for Myanmar news retrieval, unrelated to temporal versioning or regulatory QA. _(basis: Title indicates TF-IDF and BM-25 application.)_
+
+#### Contextualized Offline Relevance Weighting for Efficient and Effective Neural Retrieval (2021) [13]
+
+- **Problem:** Online search latency is a major bottleneck when deploying large pre-trained language models (e.g., BERT) in retrieval applications.
+- **Method:** Contextualized Offline Relevance Weighting (CORW) uses a powerful BERT ranker to weight neighbour documents collected by generated pseudo-queries for each document offline; online retrieval reduces to matching query to pseudo-query, making it efficient.
+- **Main contribution:** CORW method that trades offline relevance weighting for online retrieval efficiency while maintaining effectiveness.
+- **Key assumptions:** Generated pseudo-queries capture sufficient document context for relevance weighting.; Offline precomputation of neighbourhoods does not significantly degrade effectiveness.
+- **Datasets / benchmarks:** MS MARCO (passage and document ranking), MS MARCO
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** ["Extensive experiments on MS MARCO demonstrate promising results in both online efficiency and effectiveness."]
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** CORW focuses on improving retrieval efficiency via offline pseudo-query weighting; our idea adds a temporal relevance component to adapt rankings based on version timestamps for QA over versioned texts. _(basis: not stated)_
+
+#### Phonetic confusion matrix based spoken document retrieval (2000) [14]
+
+- **Problem:** not stated in abstract
+- **Method:** Proposes a novel method for phonetic retrieval in the CueVideo system based on probabilistic term weighting using phone confusion data in a Bayesian framework to improve spoken document retrieval.
+- **Main contribution:** Introduces phonetic retrieval method that improves recall for out-of-vocabulary words and balances recall/precision for in-vocabulary words.
+- **Key assumptions:** Phone confusion data can be used to improve term weighting for spoken document retrieval.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** ["Achieved average recall of 0.88 and average precision of 0.69 for out-of-vocabulary words; 17% improvement in recall over word-based retrieval for in-vocabulary words."]
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on phonetic retrieval for spoken documents, unrelated to temporal versioning or regulatory QA. _(basis: Abstract describes phonetic retrieval method.)_
+
+#### Temporal Question Answering in News Article Collections (2022) [15]
+
+- **Problem:** not stated in abstract
+- **Method:** Proposes temporal question answering approaches for news article collections.
+- **Main contribution:** Introduces methods for temporal QA over news collections.
+- **Key assumptions:** Temporal aspects of news articles can be modeled for QA.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on temporal QA for news articles, while our idea focuses on versioned regulatory documents for open-domain QA with temporal relevance weighting. _(basis: Title suggests temporal QA in news.)_
+
+#### ColBERT-PRF: Semantic Pseudo-Relevance Feedback for Dense Passage and Document Retrieval (2022) [16]
+
+- **Problem:** not stated in abstract
+- **Method:** Proposes ColBERT-PRF, a pseudo-relevance feedback technique for dense retrieval that enhances effectiveness by extracting representative feedback embeddings from pseudo-relevant documents and adding them to query representation.
+- **Main contribution:** ColBERT-PRF improves MAP significantly on MSMARCO and TREC datasets; can be made more efficient with approximate scoring.
+- **Key assumptions:** Pseudo-relevant documents contain useful feedback for query expansion.; Dense retrieval models like ColBERT can be improved with pseudo-relevance feedback.
+- **Datasets / benchmarks:** MSMARCO passage ranking, MSMARCO document ranking, TREC Robust04 document ranking
+- **Baselines:** ColBERT E2E model
+- **Metrics:** MAP
+- **Results:** ["MAP improved by up to 26% on TREC 2019 query set and 10% on TREC 2020 query set for passage ranking; up to 21% and 14% improvement for document ranking."]
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on pseudo-relevance feedback for dense retrieval, while our idea focuses on temporal relevance weighting based on version timestamps for regulatory document QA. _(basis: Abstract describes ColBERT-PRF method.)_
+
+#### Mitigating Semantic Bias in Multilingual Visual Document Retrieval via Language-Vision-Aware Late Interaction (2026) [17]
+
+- **Problem:** not stated in abstract
+- **Method:** Proposes Language-Vision-Aware Late Interaction (LVALI) to mitigate semantic bias in multilingual visual document retrieval via token-level weighting and visual alignment correction.
+- **Main contribution:** Introduces LVALI framework that improves robustness and cross-lingual consistency in multilingual visual document retrieval.
+- **Key assumptions:** Semantic bias in multilingual VDR arises from heterogeneous token representations.; Language-aware weighting and visual alignment stability can mitigate bias.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on multilingual visual document retrieval bias mitigation, unrelated to temporal versioning or regulatory QA. _(basis: Title and abstract describe LVALI for VDR.)_
+
+#### Document Retrieval by Relevance Terminological Logics (1995) [18]
+
+- **Problem:** not stated in abstract
+- **Method:** not stated in abstract
+- **Main contribution:** not stated in abstract
+- **Key assumptions:** Not recorded
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on terminological logics for document retrieval, unrelated to temporal versioning or regulatory QA. _(basis: Title suggests relevance terminological logics.)_
+
+#### Metaknowledge Enhanced Open Domain Question Answering with Wiki Documents (2021) [19]
+
+- **Problem:** The commonly-used large-scale knowledge bases have been facing challenges in open domain question answering tasks which are caused by the loose knowledge association and weak structural logic of triplet-based knowledge.
+- **Method:** Proposes a novel metaknowledge enhanced approach for open domain question answering: automatically extract metaknowledge and build metaknowledge network from Wiki documents, design a graph encoder GE4MK to model the network, and propose a metaknowledge enhanced graph reasoning model MEGr-Net for question answering that aggregates relational and neighboring interactions.
+- **Main contribution:** (1) Metaknowledge enhanced approach for open domain QA; (2) Automatic extraction of metaknowledge from Wiki documents; (3) Graph encoder GE4MK for metaknowledge network modeling; (4) Metaknowledge enhanced graph reasoning model MEGr-Net for QA.
+- **Key assumptions:** Metaknowledge extracted from Wiki documents can improve open domain question answering performance.; Graph reasoning models can effectively utilize metaknowledge for QA.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** "Experiments have proved the improvement of metaknowledge over main-stream triplet-based knowledge."
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on metaknowledge extraction from Wiki documents for general open-domain QA, while our idea focuses on temporal relevance weighting based on version timestamps for regulatory document QA. _(basis: Abstract describes metaknowledge enhanced QA approach.)_
+
+#### Error-tolerant question answering for spoken documents (2007) [20]
+
+- **Problem:** not stated in abstract
+- **Method:** not stated in abstract
+- **Main contribution:** not stated in abstract
+- **Key assumptions:** Not recorded
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on error-tolerant question answering for spoken documents, unrelated to temporal versioning or regulatory QA. _(basis: Title indicates error-tolerant QA for spoken documents.)_
+
+#### Leveraging relevance cues for improved spoken document retrieval (2011) [21]
+
+- **Problem:** not stated in abstract
+- **Method:** not stated in abstract
+- **Main contribution:** not stated in abstract
+- **Key assumptions:** Not recorded
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on leveraging relevance cues for spoken document retrieval, unrelated to temporal versioning or regulatory QA. _(basis: Title indicates relevance cues for spoken document retrieval.)_
+
+#### Identification of LSA Data Retrieval Method and Temporal Graph for Document Retrieval (2025) [22]
+
+- **Problem:** Identifying effective information retrieval methods for document retrieval using latent semantic analysis (LSA) and temporal graph approaches.
+- **Method:** Uses LSA for dimensionality reduction and constructs a temporal graph based on citation and author occurrence to model document relevance over time.
+- **Main contribution:** Demonstrates that LSA-based retrieval enhanced with temporal graph outperforms baseline keyword matching in expert finding tasks.
+- **Key assumptions:** Temporal relationships captured by citation/author occurrence reflect document relevance.; LSA effectively captures semantic similarity for retrieval.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** precision@5 (p@5), mean average precision (MAP), mean reciprocal rank (MRR)
+- **Results:** ["Achieves p@5 = 0.895, MAP = 0.839, MRR = 0.909, outperforming the baseline model."]
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** The paper uses temporal graph based on citation/author for expert finding; our idea focuses on versioned regulatory documents and uses temporal proximity between query date and version timestamp to adjust retrieval rankings. _(basis: not stated)_
+
+#### Retrieval Augmented Generation for Question Answering in Financial Documents (2025) [23]
+
+- **Problem:** not stated in abstract
+- **Method:** not stated in abstract
+- **Main contribution:** not stated in abstract
+- **Key assumptions:** Not recorded
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on retrieval-augmented generation for question answering in financial documents, while our idea focuses on temporal relevance weighting based on version timestamps for regulatory document QA. _(basis: Title indicates RAG for financial document QA.)_
+
+#### On the Relevance of Query Expansion Using Parallel Corpora and Word Embeddings to Boost Text Document Retrieval Precision (2020) [24]
+
+- **Problem:** Improving precision in text document retrieval via effective query expansion techniques.
+- **Method:** Compares TF-IDF and BM25 weighting schemes, then expands queries using a comparable corpus (Wikipedia) and word embeddings to boost retrieval precision.
+- **Main contribution:** Demonstrates that query expansion using word embeddings yields higher precision than TF-IDF and BM25 baselines.
+- **Key assumptions:** Word embeddings capture semantic similarity useful for query expansion.; A comparable corpus like Wikipedia provides relevant expansion terms.
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** TF-IDF, BM25
+- **Metrics:** precision
+- **Results:** ["Query expansion with word embeddings achieves higher precision rates and retrieves more accurate documents compared to TF-IDF and BM25 alone."]
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** The paper focuses on query expansion with embeddings for general IR; our idea introduces a temporal relevance component to adjust rankings based on document version timestamps for QA over versioned regulatory texts. _(basis: not stated)_
+
+#### Question Answering over Linked Data with Vague Temporal Adverbials (2025) [25]
+
+- **Problem:** not stated in abstract
+- **Method:** not stated in abstract
+- **Main contribution:** not stated in abstract
+- **Key assumptions:** Not recorded
+- **Datasets / benchmarks:** Not recorded
+- **Baselines:** Not recorded
+- **Metrics:** Not recorded
+- **Results:** []
+- **Limitations:** Not recorded
+- **Future work:** Not recorded
+- **Code availability:** []
+- **Relation to idea:** Focuses on question answering over linked data with vague temporal adverbials, which is related to temporal QA but not specifically on versioned regulatory documents or using temporal relevance weighting based on version timestamps. _(basis: Title indicates QA with vague temporal adverbials.)_
+
+</details>
+
+<h2>5. Research Landscape</h2>
+<pre><code class="language-text">Temporal Information Retrieval for Versioned Texts in Question Answering
+├── Query Expansion Techniques  [3] [24]
+├── Temporal Information Retrieval  [2]
+├── Efficient Retrieval  [13]
+├── Temporal Graph / Expert Finding  [22]
+└── Question Answering over Regulatory Documents  [4]
+</code></pre>
+<p><strong>Where the idea fits:</strong> <strong>[Inference]</strong> Temporal Information Retrieval (specifically applied to versioned regulatory documents for open-domain QA)</p>
+<p><strong>Dominant approaches</strong></p>
+<ul>
+<li>Learned gating mechanisms to dynamically balance semantic and temporal signals (e.g., Re3)</li>
+<li>Temporal graph modeling based on document relationships over time</li>
+<li>Offline precomputation of relevance weights for efficient retrieval</li>
+<li>Query expansion using embeddings or generated text</li>
+</ul>
+<p><strong>Common assumptions</strong></p>
+<ul>
+<li>Each document version has a valid timestamp indicating enactment or amendment time.</li>
+<li>Queries are associated with a target date (the time the question is asked).</li>
+<li>Semantic similarity (e.g., from dense retrievers) provides a useful baseline for relevance.</li>
+<li>Temporal relevance can be modeled as a function of time difference (e.g., decaying function).</li>
+<li>Combining temporal and semantic signals can improve retrieval for time-sensitive queries.</li>
+</ul>
+<p><strong>Common datasets</strong></p>
+<ul>
+<li>MS MARCO (passage and document ranking)</li>
+<li>TREC Robust04</li>
+<li>CODEC</li>
+<li>Re2Bench (Relevance &amp; Recency Benchmark)</li>
+</ul>
+<p><strong>Common benchmarks</strong></p>
+<ul>
+<li>MS MARCO</li>
+<li>TREC Robust04</li>
+<li>CODEC</li>
+<li>Re2Bench</li>
+</ul>
+<p><strong>Common metrics</strong></p>
+<ul>
+<li>Recall@K</li>
+<li>Mean Reciprocal Rank (MRR)</li>
+<li>Mean Average Precision (MAP)</li>
+<li>Normalized Discounted Cumulative Gain (nDCG)</li>
+<li>Precision@K</li>
+</ul>
+<p><strong>Underexplored combinations</strong></p>
+<ul>
+<li><strong>[Hypothesis]</strong> Applying learned temporal relevance gating (like Re3) to versioned regulatory documents for QA</li>
+<li><strong>[Hypothesis]</strong> Combining temporal graph methods with semantic retrieval for expert finding over regulatory versions</li>
+<li><strong>[Hypothesis]</strong> Integrating query expansion with temporal relevance for handling hallucinations in versioned text QA</li>
+<li><strong>[Hypothesis]</strong> Using offline precomputation (like CORW) to enable efficient temporal-semantic retrieval over large versioned corpora</li>
+</ul>
+<p><strong>Limitations repeated across papers</strong></p>
+<ul>
+<li>Assumes explicit or reliably extractable timestamps, which may not hold in all settings. [2]</li>
+<li>Evaluation limited to specific domains (e.g., web, news), lacking generalization to other areas like scientific literature or regulatory texts. [2], [3]</li>
+<li>Reliance on external components (e.g., neural re-rankers) adds complexity and latency. [3]</li>
+<li>Latency may increase with large candidate pools when using re-ranking or complex temporal modeling. [2]</li>
+</ul>
+<p><strong>Contradictions between papers</strong></p>
+<p><em>None recorded.</em></p>
+<h2>6. Closest Existing Work</h2>
+<p><strong>[Inference]</strong> IndiaFinBench (2026) demonstrates existing work creating benchmarks for regulatory documents with temporal reasoning tasks that require identifying which version of a rule is in force at a given time, directly addressing the supersession problem. Re3 (2025) provides a framework for dynamically balancing semantic and temporal information. Together, they show that key aspects of our idea (regulatory-focused QA with temporal reasoning and semantic-temporal balancing) already exist, though not combined in exactly the same way.</p>
+<ul>
+<li>IndiaFinBench: An Evaluation Benchmark for Large Language Model Performance on Indian Financial Regulatory Text (2026) [1] (not analyzed in detail)</li>
+<li>Re3: Learning to Balance Relevance &amp; Recency for Temporal Information Retrieval (2025) [2]: Re3 focuses on general temporal IR benchmarks; our idea targets versioned regulatory documents for open-domain QA, proposing a retrieval-agnostic temporal relevance component adaptable to any retriever.</li>
+</ul>
+<h2>7. Potential Overlap</h2>
+<p><strong>Overlap:</strong> <strong>[Inference]</strong> Both our idea and existing work (IndiaFinBench, Re3) address temporal aspects of regulatory documents: IndiaFinBench creates benchmarks with temporal reasoning tasks for regulatory QA, while Re3 provides a framework for balancing semantic and temporal signals in retrieval. Our idea combines these threads by proposing a retrieval-agnostic temporal component for versioned regulatory document QA.</p>
+<p><strong>Potential distinction:</strong> <strong>[Inference]</strong> Our idea specifically proposes a retrieval-agnostic temporal component (designed to work with any base retriever) for open-domain QA over versioned regulatory texts, focusing on using version timestamps to adjust passage rankings. While IndiaFinBench shows regulatory QA benchmarks with temporal reasoning exist, and Re3 shows semantic-temporal balancing exists, the specific application of a learnable or adaptive temporal relevance component to any retriever for regulatory QA benchmarking may still offer novelty if shown to be effective.</p>
+<p><strong>Novelty questions</strong></p>
+<ul>
+<li><strong>Has essentially the same idea been proposed under different terminology?</strong> (high severity): IndiaFinBench (2026) demonstrates existing work creating regulatory QA benchmarks with temporal reasoning tasks that require identifying which version of a rule is in force at a given time. Re3 (2025) shows existing frameworks for dynamically balancing semantic and temporal information through query-aware gating mechanisms. <em>([1], [2]; [Evidence] claim C012; [Evidence] claim C013)</em></li>
+</ul>
+<h2>8. Potential Research Gap</h2>
+<p><em>Not recorded: this phase did not produce the required records.</em></p>
+<h2>9. Critique</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Strongest argument FOR</td>
+<td>The idea addresses a significant problem: open-domain QA performance degrades when source texts are continuously amended (e.g., regulations), as existing time-aware retrieval treats versions as isolated snapshots and cannot determine which revision is valid for a time-specific query. Recent work like IndiaFinBench (2026) demonstrates that versioned regulatory QA benchmarks with temporal reasoning tasks are feasible and valuable, supporting the need for approaches that handle regulatory supersession.</td>
+</tr>
+<tr>
+<td>Strongest argument AGAINST</td>
+<td>Published work shows significant overlap with the proposed idea: IndiaFinBench (2026) already provides an evaluation benchmark for regulatory text that includes temporal reasoning tasks requiring models to identify which version of a rule was in force at a given time and addresses references chains of superseding circulars. Re3 (2025) proposes a unified framework that dynamically balances semantic and temporal information through a query-aware gating mechanism. Applying such temporal-semantic balancing to versioned regulatory documents may represent a straightforward extension rather than fundamental novelty.</td>
+</tr>
+<tr>
+<td>Most important unresolved question</td>
+<td>What specific novelty does our retrieval-agnostic temporal relevance component offer beyond existing approaches like Re3 when applied to versioned regulatory documents for open-domain QA, particularly regarding handling of supersession mechanisms, timestamp reliability in real regulatory corpora, and experimental isolation of temporal modeling effects from semantic matching improvements?</td>
+</tr>
+<tr>
+<td>Most dangerous experimental confounder</td>
+<td>Observed improvements in answer accuracy could be confounded by enhancements to semantic matching or query formulation rather than the temporal modeling itself, especially when using learned combination mechanisms that may absorb semantic improvements, making it difficult to isolate the true contribution of the temporal component.</td>
+</tr>
+<tr>
+<td>Closest existing work</td>
+<td>[1], [2]</td>
+</tr>
+<tr>
+<td>Potential contribution</td>
+<td><strong>[Hypothesis]</strong> (1) A retrieval-agnostic framework that incorporates temporal dynamics based on version timestamps into any document retriever for regulatory texts; (2) Empirical validation of whether such temporal-semantic combination provides significant gains over existing baselines for open-domain QA over versioned regulatory texts; (3) Potential insights into optimal combination strategies and handling of supersession in regulatory contexts.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Technical validity</strong></p>
+<ul>
+<li><strong>What are the main technical risks or limitations in the proposed approach?</strong> (high severity): Re3 assumes explicit or reliably extractable timestamps which may not hold in all settings, and its query-aware gating mechanism makes it challenging to isolate temporal modeling contributions from learned semantic weighting adjustments. <em>([2]; [Evidence] claim C003; [Inference] claim C006)</em></li>
+</ul>
+<p><strong>Experimental validity</strong></p>
+<ul>
+<li><strong>What confounders could produce the claimed result, and how are they addressed?</strong> (high severity): Improvements in temporal-aware retrieval could be confounded by enhancements to semantic matching rather than temporal modeling, especially when using learned combinations that may absorb semantic improvements, posing challenges for ablation studies. <em>([2]; [Inference] claim C004; [Inference] claim C006)</em></li>
+</ul>
+<p><strong>Practicality</strong></p>
+<ul>
+<li><strong>Is the approach feasible given typical resources and constraints?</strong> (moderate severity): The approach assumes document versions have valid timestamps, queries have target dates, semantic similarity is a suitable baseline, temporal relevance can be modeled as a decaying function, and scores can be combined via weighted sum - all of which may need empirical validation in the regulatory domain. <em>([Assumption] claim C007; [Assumption] claim C008; [Assumption] claim C009; [Assumption] claim C010; [Assumption] claim C011)</em></li>
+</ul>
+<h2>10. Proposed Modifications</h2>
+<p><em>Not recorded: this phase did not produce the required records.</em></p>
+<h2>11. Recommended Experimental Design</h2>
+<p><em>Not recorded: this phase did not produce the required records.</em></p>
+<h2>12. Experimental Results</h2>
+<p>Experiment not performed. The designs in Section 11 are untested.</p>
+<h2>13. Remaining Uncertainty</h2>
+<ul>
+<li>Literature coverage: searched 5 queries over arxiv, crossref, openalex, semantic_scholar. Work outside these queries and sources, very recent preprints, and non-English work may be missing; the absence of matching work here does not establish novelty.</li>
+<li>Some source requests failed and their results are missing: semantic_scholar (api.semanticscholar.org failed after 5 attempts (HTTP 429)).</li>
+<li>Metadata warning for Eukaryotic regulatory RNAs: an answer to the ‘genome complexity’ conundrum (2007) [26]: abstract (from openalex) never mentions 'Eukaryotic regulatory RNAs'; it may belong to another work. Its abstract was not accepted as direct evidence.</li>
+<li>Metadata warning for The COMET Handbook: version 1.0 (2017) [27]: abstract (from openalex) never mentions 'The COMET Handbook'; it may belong to another work. Its abstract was not accepted as direct evidence.</li>
+<li>21 of 24 analyses are based on abstracts only.</li>
+<li>Unresolved question: What specific novelty does our retrieval-agnostic temporal relevance component offer beyond existing approaches like Re3 when applied to versioned regulatory documents for open-domain QA, particularly regarding handling of supersession mechanisms, timestamp reliability in real regulatory corpora, and experimental isolation of temporal modeling effects from semantic matching improvements?</li>
+<li>Ambiguity (assumption): Which metrics should be used to measure answer accuracy in the QA benchmark?; assumed: Standard QA metrics are Exact Match and F1; we will adopt these.</li>
+<li>Ambiguity (assumption): What regulatory documents should be used to construct the benchmark of overlapping revisions?; assumed: We assume publicly available corpora such as the US Code, EU regulations, or corporate policy histories; this remains an assumption to be verified during benchmark construction.</li>
+<li>Ambiguity (assumption): How to handle conflicting information across versions where an amendment supersedes a clause?; assumed: The idea assumes that the latest version's clause overrides earlier ones; we will treat this as a design principle for the temporal component (favoring newer versions for time-specific queries).</li>
+<li>Claims without a verified source: C004, C016, C018, C019, C020, C021, C022, C023.</li>
+<li>Phases that did not complete: gaps, modifications, experiments.</li>
+<li>No hypothesis in this report has been tested experimentally.</li>
+</ul>
+<p><strong>Uncertainty ledger</strong></p>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>Question</th>
+<th>Category</th>
+<th>Importance</th>
+<th>Status</th>
+<th>Evidence for / against</th>
+<th>Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>U001</td>
+<td>What is the appropriate temporal relevance function (e.g., linear, exponential, step) for adjusting passage ranks based on time difference in the context of versioned regulatory texts?</td>
+<td>validity</td>
+<td>high</td>
+<td>partially resolved</td>
+<td>[2] / none</td>
+<td>Literature shows learned combinations (like Re3's query-aware gating) may outperform fixed functions, but optimal approach for versioned regulatory QA remains unclear.</td>
+</tr>
+<tr>
+<td>U002</td>
+<td>How should temporal and semantic scores be combined (e.g., weighted sum, product, learned) to optimize retrieval performance for time-specific queries over versioned documents?</td>
+<td>validity</td>
+<td>high</td>
+<td>partially resolved</td>
+<td>[2] / none</td>
+<td>Re3 demonstrates that a learned query-aware gating mechanism can effectively balance semantic and temporal information, but optimal combination strategy for versioned regulatory QA needs investigation.</td>
+</tr>
+<tr>
+<td>U005</td>
+<td>What regulatory documents should be used to construct the benchmark of overlapping revisions with time-stamped queries?</td>
+<td>feasibility</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U006</td>
+<td>How to handle conflicting information across versions where an amendment supersedes a clause, especially when the temporal component may still retrieve outdated versions?</td>
+<td>confounder</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>The idea assumes latest version's clause overrides earlier ones, but we need to verify how supersession works in different regulatory systems and whether temporal proximity alone correctly captures validity.</td>
+</tr>
+<tr>
+<td>U008</td>
+<td>Which existing time-aware retrieval techniques for versioned documents (e.g., time-travel phrase queries, temporal indexing) are the strongest baselines, and how does our proposed temporal-semantic combination differ in mechanism and assumptions?</td>
+<td>overlap</td>
+<td>high</td>
+<td>partially resolved</td>
+<td>[2], [22], [13] / none</td>
+<td>The strongest baselines for time-aware retrieval of versioned documents include Re3 (a retrieval-agnostic framework balancing semantic and temporal signals), time-travel phrase query frameworks (focused on efficient indexing), and temporal random walk models (for importance scoring). Our idea differs by specifically targeting open-domain QA over versioned regulatory documents, focusing on the semantic overlap from superseding amendments, and aiming to construct a regulatory-specific benchmark with time-stamped queries.</td>
+</tr>
+<tr>
+<td>U009</td>
+<td>What is the most effective way to combine temporal relevance and semantic similarity scores (e.g., learned weighting, gating, product) for improving retrieval accuracy in versioned document QA?</td>
+<td>validity</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U010</td>
+<td>Is it feasible to construct a benchmark of regulatory documents (e.g., US Code, EU regulations) with version histories, timestamps, and time-stamped question-answer pairs that reflect real-world information needs?</td>
+<td>feasibility</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U011</td>
+<td>What specific sources of versioned regulatory texts (e.g., US Code, EU regulations, national legislation) are publicly available with sufficient version history and timestamps to construct a meaningful benchmark for temporal-semantic QA evaluation?</td>
+<td>feasibility</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U012</td>
+<td>Does applying a temporal-semantic balance mechanism like Re3's query-aware gating to versioned regulatory documents for open-domain QA constitute a sufficient novelty, or is it a straightforward extension of existing temporal IR methods?</td>
+<td>novelty</td>
+<td>high</td>
+<td>partially resolved</td>
+<td>[1], [2] / none</td>
+<td>Published work shows that key aspects exist: IndiaFinBench (2026) demonstrates regulatory QA benchmarks with temporal reasoning tasks addressing supersession, and Re3 (2025) shows semantic-temporal balancing frameworks. The novelty may lie in the specific combination and empirical validation for open-domain QA.</td>
+</tr>
+<tr>
+<td>U013</td>
+<td>To what extent do versioned regulatory documents (statutes, codes, regulations) provide reliable, extractable timestamps for each version that can be used for temporal relevance modeling, and how do we handle cases where timestamps are missing, ambiguous, or follow complex versioning schemes?</td>
+<td>validity</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U014</td>
+<td>How can we design experiments to isolate the effect of temporal relevance modeling from confounding factors such as semantic matching improvements, query formulation changes, or retrieval strategy alterations when evaluating our temporal-semantic framework for regulatory QA?</td>
+<td>validity</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U015</td>
+<td>How feasible is it to construct a benchmark of regulatory documents with version histories, reliable timestamps, and time-stamped question-answer pairs that reflect realistic information needs across different time points, and what resources would be required for annotation and validation?</td>
+<td>feasibility</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U016</td>
+<td>Does adding a temporal relevance component to a standard document retriever provide statistically significant improvements in answer accuracy (Exact Match/F1) for open-domain QA over versioned regulatory texts compared to strong baselines including semantic-only retrievers and existing temporal-aware methods?</td>
+<td>evaluation</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U018</td>
+<td>The conclusion behind U017 was weakened by contradicting work; how should the direction change? (raised by ResearchForge)</td>
+<td>direction</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U019</td>
+<td>Does Re3's query-aware gating mechanism effectively handle the specific challenge of versioned regulatory documents where amendments supersede earlier clauses (creating semantic overlap), or is a specialized temporal relevance function needed for this use case?</td>
+<td>validity</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U020</td>
+<td>What are the most appropriate baseline methods for evaluating a temporal-semantic retrieval framework for open-domain QA over versioned regulatory documents, considering both general temporal IR approaches (like Re3) and domain-specific regulatory QA approaches?</td>
+<td>overlap</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U003</td>
+<td>What baseline time-aware retrieval techniques exist for versioned documents that we should compare against in our evaluation?</td>
+<td>overlap</td>
+<td>medium</td>
+<td>partially resolved</td>
+<td>[2], [22] / none</td>
+<td>Identified baselines include Re3 (learned gating), tempRALM, TempRetriever, TSM (heuristic fusion), and temporal graph-based methods. Need to determine which are most appropriate for versioned regulatory QA comparison.</td>
+</tr>
+<tr>
+<td>U007</td>
+<td>Does a retrieval-agnostic framework that combines temporal relevance with semantic similarity for versioned documents already exist under different terminology (e.g., temporal relevance models, time-aware retrievers)?</td>
+<td>novelty</td>
+<td>high</td>
+<td>resolved</td>
+<td>[2] / none</td>
+<td>Yes, a retrieval-agnostic framework that combines temporal relevance with semantic similarity for versioned documents already exists: Re3 (2025) is explicitly described as a "universal, plug-and-play, and lightweight framework for TIR" that "can be seamlessly integrated with existing dense retrievers" and is designed to be a "lightweight, plug-and-play retriever" that dynamically balances semantic and temporal information through a query-aware gating mechanism.</td>
+</tr>
+<tr>
+<td>U017</td>
+<td>Does published work contradict the current assessment: Our idea specifically targets versioned regulatory documents for open-domain question answering (not general IR), focuses on the problem where amendments supersede earlier clauses creating semantic overlap, proposes a retrieval-agnostic temporal component designed to work with any base retriever, and aims to construct a domain-specific benchmark with regulatory texts and time-stamped queries.? (raised by ResearchForge)</td>
+<td>contradiction</td>
+<td>high</td>
+<td>resolved (weakened)</td>
+<td>none / [1], [2]</td>
+<td>Published work shows that aspects of the idea are not novel: IndiaFinBench (2026) demonstrates existing work targeting versioned regulatory documents for QA-related tasks, addressing the supersession problem, and constructing domain-specific benchmarks with temporal reasoning tasks. Re3 (2025) shows existing frameworks for dynamically balancing semantic and temporal information. However, the specific combination of a retrieval-agnostic temporal component for open-domain QA over versioned regulatory texts may still offer novelty.</td>
+</tr>
+<tr>
+<td>U004</td>
+<td>Which metrics should be used to measure answer accuracy in the QA benchmark for evaluating temporal-semantic retrieval?</td>
+<td>evaluation</td>
+<td>low</td>
+<td>resolved</td>
+<td>none / none</td>
+<td>Standard QA metrics Exact Match and F1 are appropriate for measuring answer accuracy in the benchmark, supplemented by retrieval metrics like Recall@k and MRR to evaluate the retrieval component.</td>
+</tr>
+</tbody>
+</table>
+<h2>14. Suggested Next Steps</h2>
+<ol>
+<li>Resolve: What specific novelty does our retrieval-agnostic temporal relevance component offer beyond existing approaches like Re3 when applied to versioned regulatory documents for open-domain QA, particularly regarding handling of supersession mechanisms, timestamp reliability in real regulatory corpora, and experimental isolation of temporal modeling effects from semantic matching improvements?</li>
+<li>Design a control for the confounder: Observed improvements in answer accuracy could be confounded by enhancements to semantic matching or query formulation rather than the temporal modeling itself, especially when using learned combination mechanisms that may absorb semantic improvements, making it difficult to isolate the true contribution of the temporal component.</li>
+<li>Search for work newer than the most recent retrieved paper (2026) before claiming a distinction.</li>
+</ol>
+<h2>15. References</h2>
+<ol>
+<li>Rajveer Singh Pall. <strong>IndiaFinBench: An Evaluation Benchmark for Large Language Model Performance on Indian Financial Regulatory Text</strong>. <em>arXiv (preprint)</em>, 2026. <a href="https://arxiv.org/abs/2604.19298">https://arxiv.org/abs/2604.19298</a> (id <code>arxiv:2604.19298</code>; retrieved from arxiv)</li>
+<li>Jiawei Cao, Jie Ouyang, Zhaomeng Zhou et al.. <strong>Re3: Learning to Balance Relevance &amp; Recency for Temporal Information Retrieval</strong>. <em>arXiv.org</em>, 2025. <a href="https://www.semanticscholar.org/paper/663074e8a1dcdf751c7d517f55f50c1d629376e0">https://www.semanticscholar.org/paper/663074e8a1dcdf751c7d517f55f50c1d629376e0</a> doi:10.48550/arxiv.2509.01306 (id <code>arxiv:2509.01306</code>; retrieved from semantic_scholar; 0 citations per semantic_scholar)</li>
+<li>Iain Mackie, Ivan Sekulic, Shubham Chatterjee et al.. <strong>GRM: Generative Relevance Modeling Using Relevance-Aware Sample Estimation for Document Retrieval</strong>. <em>arXiv.org</em>, 2023. <a href="https://www.semanticscholar.org/paper/0b8eaf52001bafa01dda642a0358ce3355318bc9">https://www.semanticscholar.org/paper/0b8eaf52001bafa01dda642a0358ce3355318bc9</a> doi:10.48550/arxiv.2306.09938 (id <code>arxiv:2306.09938</code>; retrieved from semantic_scholar; 3 citations per semantic_scholar)</li>
+<li>Collarana Diego, Heuss Timm, Lehmann Jens et al.. <strong>A Question Answering System on Regulatory Documents</strong>. <em>Frontiers in Artificial Intelligence and Applications</em>, 2018. <a href="https://doi.org/10.3233/978-1-61499-935-5-41">https://doi.org/10.3233/978-1-61499-935-5-41</a> (id <code>doi:10.3233/978-1-61499-935-5-41</code>; retrieved from crossref; 7 citations per crossref)</li>
+<li>Hyunjin Kim, Jaejun Shim, Young Jin Kim et al.. <strong>Temporal Preference Optimization for Unsupervised Retrieval</strong>. <em>arXiv.org</em>, 2026. <a href="https://www.semanticscholar.org/paper/3b5514cd6f7f9307dea5bd922db840ce3d5915a2">https://www.semanticscholar.org/paper/3b5514cd6f7f9307dea5bd922db840ce3d5915a2</a> doi:10.48550/arxiv.2606.17664 (id <code>arxiv:2606.17664</code>; retrieved from semantic_scholar; 0 citations per semantic_scholar)</li>
+<li>Jamie Holdcroft, Abdelrahman Abdallah, Adam Jatowt. <strong>Difficulty-Gated Fusion of Reasoning Views for Temporal Retrieval</strong>. <em>arXiv (preprint)</em>, 2026. <a href="https://arxiv.org/abs/2608.08940">https://arxiv.org/abs/2608.08940</a> (id <code>arxiv:2608.08940</code>; retrieved from arxiv)</li>
+<li>Neil Newbold, Harry McLaughlin, Lee Gillam. <strong>Rank by Readability: Document Weighting for Information Retrieval</strong>. <em>Lecture Notes in Computer Science</em>, 2010. <a href="https://doi.org/10.1007/978-3-642-13084-7_3">https://doi.org/10.1007/978-3-642-13084-7_3</a> (id <code>doi:10.1007/978-3-642-13084-7_3</code>; retrieved from crossref; 4 citations per crossref)</li>
+<li>M. Sadek Ali, Mariano Consens, Mounia Lalmas. <strong>Extended structural relevance framework: a framework for evaluating structured document retrieval</strong>. <em>Information Retrieval</em>, 2012. <a href="https://doi.org/10.1007/s10791-012-9192-1">https://doi.org/10.1007/s10791-012-9192-1</a> (id <code>doi:10.1007/s10791-012-9192-1</code>; retrieved from crossref; 3 citations per crossref)</li>
+<li>Jiabao Chen, Yongquan Fan. <strong>Improving temporal question answering using temporal knowledge graph embedding</strong>. <em>2023 4th International Conference on Computer Engineering and Application (ICCEA)</em>, 2023. <a href="https://doi.org/10.1109/iccea58433.2023.10135342">https://doi.org/10.1109/iccea58433.2023.10135342</a> (id <code>doi:10.1109/iccea58433.2023.10135342</code>; retrieved from crossref; 1 citations per crossref)</li>
+<li>Fadi Yamout, Rachad Lakkis. <strong>Improved TFIDF weighting techniques in document Retrieval</strong>. <em>2018 Thirteenth International Conference on Digital Information Management (ICDIM)</em>, 2018. <a href="https://doi.org/10.1109/icdim.2018.8847156">https://doi.org/10.1109/icdim.2018.8847156</a> (id <code>doi:10.1109/icdim.2018.8847156</code>; retrieved from crossref; 11 citations per crossref)</li>
+<li>Naushad UzZaman, Hector Llorens, James Allen. <strong>Evaluating Temporal Information Understanding with Temporal Question Answering</strong>. <em>2012 IEEE Sixth International Conference on Semantic Computing</em>, 2012. <a href="https://doi.org/10.1109/icsc.2012.34">https://doi.org/10.1109/icsc.2012.34</a> (id <code>doi:10.1109/icsc.2012.34</code>; retrieved from crossref; 7 citations per crossref)</li>
+<li>Mayme Moon Zin, Myo Thida, S. Phithakkitnukoon. <strong>Applying TF-IDF Weighting Method and BM-25 Algorithm in Myanmar News Retrieval</strong>. <em>2025 20th International Joint Symposium on Artificial Intelligence and Natural Language Processing (iSAI-NLP)</em>, 2025. <a href="https://www.semanticscholar.org/paper/4faff61455a9197f3626b5feda9da18a9c0868e1">https://www.semanticscholar.org/paper/4faff61455a9197f3626b5feda9da18a9c0868e1</a> doi:10.1109/isai-nlp66160.2025.11320529 (id <code>doi:10.1109/isai-nlp66160.2025.11320529</code>; retrieved from semantic_scholar; 1 citations per semantic_scholar)</li>
+<li>Xuanang Chen, Ben He, Kai Hui et al.. <strong>Contextualized Offline Relevance Weighting for Efficient and Effective Neural Retrieval</strong>. <em>Annual International ACM SIGIR Conference on Research and Development in Information Retrieval</em>, 2021. <a href="https://www.semanticscholar.org/paper/9555077e9b2191d9ada157ed31aa976258924009">https://www.semanticscholar.org/paper/9555077e9b2191d9ada157ed31aa976258924009</a> doi:10.1145/3404835.3463073 (id <code>doi:10.1145/3404835.3463073</code>; retrieved from semantic_scholar; 7 citations per semantic_scholar)</li>
+<li>Savitha Srinivasan, Dragutin Petković. <strong>Phonetic confusion matrix based spoken document retrieval</strong>. 2000. <a href="https://doi.org/10.1145/345508.345552">https://doi.org/10.1145/345508.345552</a> (id <code>doi:10.1145/345508.345552</code>; retrieved from openalex; 77 citations per openalex)</li>
+<li>Adam Jatowt. <strong>Temporal Question Answering in News Article Collections</strong>. <em>Companion Proceedings of the Web Conference 2022</em>, 2022. <a href="https://doi.org/10.1145/3487553.3526023">https://doi.org/10.1145/3487553.3526023</a> (id <code>doi:10.1145/3487553.3526023</code>; retrieved from crossref; 3 citations per crossref)</li>
+<li>Xiao Wang, Craig Macdonald, N. Tonellotto et al.. <strong>ColBERT-PRF: Semantic Pseudo-Relevance Feedback for Dense Passage and Document Retrieval</strong>. <em>ACM Transactions on the Web</em>, 2022. <a href="https://www.semanticscholar.org/paper/5537feedc97256e81c6f1af66664dbcd19621d11">https://www.semanticscholar.org/paper/5537feedc97256e81c6f1af66664dbcd19621d11</a> doi:10.1145/3572405 (id <code>doi:10.1145/3572405</code>; retrieved from semantic_scholar; 83 citations per semantic_scholar)</li>
+<li>Hao-Wei Li, Hao-Jie Wu, Jie Bao et al.. <strong>Mitigating Semantic Bias in Multilingual Visual Document Retrieval via Language-Vision-Aware Late Interaction</strong>. <em>International Conference on Multimedia Retrieval</em>, 2026. <a href="https://www.semanticscholar.org/paper/47137a5aff2f93d10ca13d3227d69433102051d9">https://www.semanticscholar.org/paper/47137a5aff2f93d10ca13d3227d69433102051d9</a> doi:10.1145/3805622.3810802 (id <code>doi:10.1145/3805622.3810802</code>; retrieved from semantic_scholar; 0 citations per semantic_scholar)</li>
+<li>Umberto Straccia. <strong>Document Retrieval by Relevance Terminological Logics</strong>. <em>Electronic Workshops in Computing</em>, 1995. <a href="https://doi.org/10.14236/ewic/miro1995.16">https://doi.org/10.14236/ewic/miro1995.16</a> (id <code>doi:10.14236/ewic/miro1995.16</code>; retrieved from crossref; 1 citations per crossref)</li>
+<li>Shukan Liu, Ruilin Xu, Li Duan et al.. <strong>Metaknowledge Enhanced Open Domain Question Answering with Wiki Documents</strong>. <em>Sensors</em>, 2021. <a href="https://doi.org/10.20944/preprints202110.0220.v1">https://doi.org/10.20944/preprints202110.0220.v1</a> (id <code>doi:10.20944/preprints202110.0220.v1</code>; retrieved from crossref; 0 citations per crossref)</li>
+<li>Tomoyosi Akiba, Hirofumi Tsujimura. <strong>Error-tolerant question answering for spoken documents</strong>. <em>Interspeech 2007</em>, 2007. <a href="https://doi.org/10.21437/interspeech.2007-177">https://doi.org/10.21437/interspeech.2007-177</a> (id <code>doi:10.21437/interspeech.2007-177</code>; retrieved from crossref; 0 citations per crossref)</li>
+<li>Pei-Ning Chen, Kuan-Yu Chen, Berlin Chen. <strong>Leveraging relevance cues for improved spoken document retrieval</strong>. <em>Interspeech 2011</em>, 2011. <a href="https://doi.org/10.21437/interspeech.2011-373">https://doi.org/10.21437/interspeech.2011-373</a> (id <code>doi:10.21437/interspeech.2011-373</code>; retrieved from crossref; 3 citations per crossref)</li>
+<li>Shahla Rezvani, N. Naghshineh, Ahmad Khalilijafarabad. <strong>Identification of LSA Data Retrieval Method and Temporal Graph for Document Retrieval</strong>. <em>Tehnički glasnik</em>, 2025. <a href="https://www.semanticscholar.org/paper/7c79931e45b9e678480f53b11ba2d7ee05e9e269">https://www.semanticscholar.org/paper/7c79931e45b9e678480f53b11ba2d7ee05e9e269</a> doi:10.31803/tg-20230715000112 (id <code>doi:10.31803/tg-20230715000112</code>; retrieved from semantic_scholar; 1 citations per semantic_scholar)</li>
+<li>S. Sharon Benita, V. Srividhya. <strong>Retrieval Augmented Generation for Question Answering in Financial Documents</strong>. <em>Journal of Advanced Database Management &amp; Systems</em>, 2025. <a href="https://doi.org/10.37591/joadms.v12i02.226214">https://doi.org/10.37591/joadms.v12i02.226214</a> (id <code>doi:10.37591/joadms.v12i02.226214</code>; retrieved from crossref; 0 citations per crossref)</li>
+<li>Alaidine Ben Ayed, Ismaïl Biskri. <strong>On the Relevance of Query Expansion Using Parallel Corpora and Word Embeddings to Boost Text Document Retrieval Precision</strong>. 2020. <a href="https://www.semanticscholar.org/paper/2c81b8f7eb2aeb556a2e3609bbeff4570465fb52">https://www.semanticscholar.org/paper/2c81b8f7eb2aeb556a2e3609bbeff4570465fb52</a> doi:10.5121/ijnlc.2020.9101 (id <code>doi:10.5121/ijnlc.2020.9101</code>; retrieved from semantic_scholar; 1 citations per semantic_scholar)</li>
+<li>David Schmidt, Svenja Kenneweg, Julian Eggert et al.. <strong>Question Answering over Linked Data with Vague Temporal Adverbials</strong>. <em>Proceedings of the 17th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management</em>, 2025. <a href="https://doi.org/10.5220/0013778400004000">https://doi.org/10.5220/0013778400004000</a> (id <code>doi:10.5220/0013778400004000</code>; retrieved from crossref; 0 citations per crossref)</li>
+<li>Kannanganattu V. Prasanth, David L. Spector. <strong>Eukaryotic regulatory RNAs: an answer to the ‘genome complexity’ conundrum</strong>. <em>Genes &amp; Development</em>, 2007. <a href="https://doi.org/10.1101/gad.1484207">https://doi.org/10.1101/gad.1484207</a> (id <code>doi:10.1101/gad.1484207</code>; retrieved from openalex; 399 citations per openalex)</li>
+<li>Paula Ruth Williamson, Douglas G. Altman, Heather Bagley et al.. <strong>The COMET Handbook: version 1.0</strong>. <em>Trials</em>, 2017. <a href="https://doi.org/10.1186/s13063-017-1978-4">https://doi.org/10.1186/s13063-017-1978-4</a> (id <code>doi:10.1186/s13063-017-1978-4</code>; retrieved from openalex; 2086 citations per openalex)</li>
+<li>Chun-Ting Kuo, Wing-Kai Hon. <strong>Practical Index Framework for Efficient Time-Travel Phrase Queries on Versioned Documents</strong>. <em>2016 Data Compression Conference (DCC)</em>, 2016. <a href="https://doi.org/10.1109/dcc.2016.52">https://doi.org/10.1109/dcc.2016.52</a> (id <code>doi:10.1109/dcc.2016.52</code>; retrieved from crossref; 2 citations per crossref)</li>
+<li>Tu Ngoc Nguyen, Nattiya Kanhabua, Claudia Niederée et al.. <strong>A Time-aware Random Walk Model for Finding Important Documents in Web Archives</strong>. <em>Proceedings of the 38th International ACM SIGIR Conference on Research and Development in Information Retrieval</em>, 2015. <a href="https://doi.org/10.1145/2766462.2767832">https://doi.org/10.1145/2766462.2767832</a> (id <code>doi:10.1145/2766462.2767832</code>; retrieved from crossref; 9 citations per crossref)</li>
+</ol>
+<details><summary>Other retrieved papers (not cited in this report)</summary>
+
+- An Eigensystem for Topic Term Weighting yields Fair and Effective Document Rankings (2025) <https://www.semanticscholar.org/paper/905e0de7c0e24f0c3ab8bb1ed0ed672b960ac46b> `doi:10.54195/irrj.23480`
+- Web Document Retrieval Using Passage Retrieval, Connectivity Information, and Automatic Link Weighting–TREC-9 Report (2000) <https://doi.org/10.6028/nist.sp.500-249.padova> `doi:10.6028/nist.sp.500-249.padova`
+- Question Answering Using XML-Tagged Documents (2002) <https://doi.org/10.6028/nist.sp.500-251.qa-clresearch> `doi:10.6028/nist.sp.500-251.qa-clresearch`
+- Document Listing on Versioned Documents (2013) <https://doi.org/10.1007/978-3-319-02432-5_12> `doi:10.1007/978-3-319-02432-5_12`
+- Continuous Temporal Top-k Query over Versioned Documents (2014) <https://doi.org/10.1007/978-3-319-08010-9_55> `doi:10.1007/978-3-319-08010-9_55`
+- Versioned Documents in a Technical Document Management System (1990) <https://doi.org/10.1007/978-94-009-0705-8_43> `doi:10.1007/978-94-009-0705-8_43`
+- Improving document clustering using Okapi BM25 feature weighting (2011) <https://doi.org/10.1007/s10791-011-9163-y> `doi:10.1007/s10791-011-9163-y`
+- Regulatory focus theory and sustainable entrepreneurship (2017) <https://doi.org/10.1108/ijebr-12-2015-0269> `doi:10.1108/ijebr-12-2015-0269`
+- An LDA-smoothed relevance model for document expansion (2013) <https://doi.org/10.1145/2484028.2484110> `doi:10.1145/2484028.2484110`
+- Relevance feedback retrieval of time series data (1999) <https://doi.org/10.1145/312624.312676> `doi:10.1145/312624.312676`
+- Searching for studies: a guide to information retrieval for Campbell systematic reviews (2017) <https://doi.org/10.4073/cmg.2016.1> `doi:10.4073/cmg.2016.1`
+- From document retrieval to question answering (2003) <https://research.utwente.nl/en/publications/3c5b1ae9-93f7-4a7c-8b8b-a0f894a87a17> `openalex:W2111572281`
+- A Statistical Approach For Open Domain Question Answering (2008) <https://doi.org/10.1007/978-1-4020-4746-6_2> `doi:10.1007/978-1-4020-4746-6_2`
+- Relation Extraction for Open and Closed Domain Question Answering (2011) <https://doi.org/10.1007/978-3-642-17525-1_8> `doi:10.1007/978-3-642-17525-1_8`
+- Experiments adapting an open-domain question answering system to the geographical domain using scope-based resources (2006) <https://doi.org/10.3115/1708097.1708111> `doi:10.3115/1708097.1708111`
+- The Power of Noise: Redefining Retrieval for RAG Systems (2024) <https://doi.org/10.1145/3626772.3657834> `arxiv:2401.14887`
+- Supporting information retrieval from electronic health records: A report of University of Michigan’s nine-year experience in developing and using the Electronic Medical Record Search Engine (EMERSE) (2015) <https://doi.org/10.1016/j.jbi.2015.05.003> `doi:10.1016/j.jbi.2015.05.003`
+- Information filtering and information retrieval (1992) <https://doi.org/10.1145/138859.138861> `doi:10.1145/138859.138861`
+- Automatic Indexing and Abstracting of Document Texts (2002) <https://doi.org/10.1007/b116177> `doi:10.1007/b116177`
+- Temporal and multi-versioned XML documents: A survey (2014) <https://doi.org/10.1016/j.ipm.2013.08.003> `doi:10.1016/j.ipm.2013.08.003`
+- Retrieval of historical documents by word spotting (2009) <https://doi.org/10.1117/12.805602> `doi:10.1117/12.805602`
+- Indexing and Retrieval of Handwritten Documents (2014) <https://doi.org/10.1142/9789814368711_0005> `doi:10.1142/9789814368711_0005`
+- Faster temporal range queries over versioned text (2011) <https://doi.org/10.1145/2009916.2009993> `doi:10.1145/2009916.2009993`
+- Optimizing positional index structures for versioned document collections (2012) <https://doi.org/10.1145/2348283.2348319> `doi:10.1145/2348283.2348319`
+- Open-Domain Question–Answering (2006) <https://doi.org/10.1561/9781601980533> `doi:10.1561/9781601980533`
+- Open-domain Factoid Question Answering via Knowledge Graph Search (2016) <https://doi.org/10.18653/v1/w16-0104> `doi:10.18653/v1/w16-0104`
+- Textpresso: An Ontology-Based Information Retrieval and Extraction System for Biological Literature (2004) <https://doi.org/10.1371/journal.pbio.0020309> `doi:10.1371/journal.pbio.0020309`
+- Recurrent Coupled Topic Modeling over Sequential Documents (2021) <https://arxiv.org/abs/2106.13732> `arxiv:2106.13732`
+- On the concept of relevance in legal information retrieval (2017) <https://doi.org/10.1007/s10506-017-9195-8> `doi:10.1007/s10506-017-9195-8`
+- Safety and recommendations for TMS use in healthy subjects and patient populations, with updates on training, ethical and regulatory issues: Expert Guidelines (2020) <https://doi.org/10.1016/j.clinph.2020.10.003> `doi:10.1016/j.clinph.2020.10.003`
+- Intelligent Indexing and Semantic Retrieval of Multimodal Documents (2000) <https://doi.org/10.1023/a:1009962928226> `doi:10.1023/a:1009962928226`
+- When prevention promotes creativity: The role of mood, regulatory focus, and regulatory closure. (2011) <https://doi.org/10.1037/a0022981> `doi:10.1037/a0022981`
+- High resolution temporal profiles in the Emissions Database for Global Atmospheric Research (2020) <https://doi.org/10.1038/s41597-020-0462-2> `doi:10.1038/s41597-020-0462-2`
+- Topical N-Grams: Phrase and Topic Discovery, with an Application to Information Retrieval (2007) <https://doi.org/10.1109/icdm.2007.86> `doi:10.1109/icdm.2007.86`
+- How do Regulatory T Cells Work? (2009) <https://doi.org/10.1111/j.1365-3083.2009.02308.x> `doi:10.1111/j.1365-3083.2009.02308.x`
+- Rank and relevance in novelty and diversity metrics for recommender systems (2011) <https://doi.org/10.1145/2043932.2043955> `doi:10.1145/2043932.2043955`
+- Recommender systems for contextually-aware, versioned items (2019) <https://doi.org/10.1145/3298689.3346955> `doi:10.1145/3298689.3346955`
+- Information retrieval on the web (2000) <https://doi.org/10.1145/358923.358934> `doi:10.1145/358923.358934`
+- A comparison of search term weighting (1981) <https://doi.org/10.1145/511754.511759> `doi:10.1145/511754.511759`
+- If Cumulative Risk Assessment Is the Answer, What Is the Question? (2007) <https://doi.org/10.1289/ehp.9330> `doi:10.1289/ehp.9330`
+- COIL: Revisit Exact Lexical Match in Information Retrieval with Contextualized Inverted List (2021) <https://doi.org/10.18653/v1/2021.naacl-main.241> `doi:10.18653/v1/2021.naacl-main.241`
+- Mobile medical and health apps: state of the art, concerns, regulatory control and certification (2014) <https://doi.org/10.5210/ojphi.v5i3.4814> `doi:10.5210/ojphi.v5i3.4814`
+- OmicsLake: Versioned, Agent-Aware Data Lineage for R/Bioconductor Workflows (2026) <https://doi.org/10.64898/2026.07.17.739088> `doi:10.64898/2026.07.17.739088`
+- Evaluating Question Answering System Performance (2008) <https://doi.org/10.1007/978-1-4020-4746-6_13> `doi:10.1007/978-1-4020-4746-6_13`
+- Evaluating Interactive Question Answering (2008) <https://doi.org/10.1007/978-1-4020-4746-6_14> `doi:10.1007/978-1-4020-4746-6_14`
+- New Directions In Question Answering (2008) <https://doi.org/10.1007/978-1-4020-4746-6_18> `doi:10.1007/978-1-4020-4746-6_18`
+- A Review on Large Language Models: Architectures, Applications, Taxonomies, Open Issues and Challenges (2024) <https://doi.org/10.1109/access.2024.3365742> `doi:10.1109/access.2024.3365742`
+- miR2Disease: a manually curated database for microRNA deregulation in human disease (2008) <https://doi.org/10.1093/nar/gkn714> `doi:10.1093/nar/gkn714`
+- 31. Similar, more detail, document with Council's replies, March–April 1261 (1973) <https://doi.org/10.1093/oseo/instance.00256906> `doi:10.1093/oseo/instance.00256906`
+- Measuring the temporal dynamics of policy mixes – An empirical analysis of renewable energy policy mixes’ balance and design features in nine countries (2018) <https://doi.org/10.1016/j.respol.2018.03.012> `doi:10.1016/j.respol.2018.03.012`
+- A systematic literature review of blockchain-based applications: Current status, classification and open issues (2018) <https://doi.org/10.1016/j.tele.2018.11.006> `doi:10.1016/j.tele.2018.11.006`
+- 2017 ESC Guidelines on the Diagnosis and Treatment of Peripheral Arterial Diseases, in collaboration with the European Society for Vascular Surgery (ESVS) (2017) <https://doi.org/10.1093/eurheartj/ehx095> `doi:10.1093/eurheartj/ehx095`
+- LightRAG: Simple and Fast Retrieval-Augmented Generation (2025) <https://doi.org/10.18653/v1/2025.findings-emnlp.568> `doi:10.18653/v1/2025.findings-emnlp.568`
+- Adverse outcome pathways: opportunities, limitations and open questions (2017) <https://doi.org/10.1007/s00204-017-2045-3> `doi:10.1007/s00204-017-2045-3`
+- High-Throughput Metagenomic Technologies for Complex Microbial Community Analysis: Open and Closed Formats (2015) <https://doi.org/10.1128/mbio.02288-14> `doi:10.1128/mbio.02288-14`
+- CONSORT 2010 Explanation and Elaboration: updated guidelines for reporting parallel group randomised trials (2010) <https://doi.org/10.1136/bmj.c869> `doi:10.1136/bmj.c869`
+- Text Algorithms in Economics (2023) <https://doi.org/10.1146/annurev-economics-082222-074352> `doi:10.1146/annurev-economics-082222-074352`
+- Setting the future of digital and social media marketing research: Perspectives and research propositions (2020) <https://doi.org/10.1016/j.ijinfomgt.2020.102168> `doi:10.1016/j.ijinfomgt.2020.102168`
+- A field study of the software design process for large systems (1988) <https://doi.org/10.1145/50087.50089> `doi:10.1145/50087.50089`
+- Vertically Integrated Architectures (2019) <https://doi.org/10.1007/978-1-4842-4252-0> `doi:10.1007/978-1-4842-4252-0`
+- The Problem (2018) <https://doi.org/10.1007/978-1-4842-4252-0_1> `doi:10.1007/978-1-4842-4252-0_1`
+- Implicit Services (2018) <https://doi.org/10.1007/978-1-4842-4252-0_8> `doi:10.1007/978-1-4842-4252-0_8`
+- Persistence-Aware Programming (2018) <https://doi.org/10.1007/978-1-4842-4252-0_9> `doi:10.1007/978-1-4842-4252-0_9`
+- Management of Statin Intolerance in 2018: Still More Questions Than Answers (2018) <https://doi.org/10.1007/s40256-017-0259-7> `doi:10.1007/s40256-017-0259-7`
+- 2012 ACCF/AATS/SCAI/STS Expert Consensus Document on Transcatheter Aortic Valve Replacement (2012) <https://doi.org/10.1016/j.jacc.2012.01.001> `doi:10.1016/j.jacc.2012.01.001`
+- A survey of socially interactive robots (2003) <https://doi.org/10.1016/s0921-8890(02)00372-x> `doi:10.1016/s0921-8890(02)00372-x`
+- Minimal information for studies of extracellular vesicles 2018 (MISEV2018): a position statement of the International Society for Extracellular Vesicles and update of the MISEV2014 guidelines (2018) <https://doi.org/10.1080/20013078.2018.1535750> `doi:10.1080/20013078.2018.1535750`
+- Text mining and ontologies in biomedicine: Making sense of raw text (2005) <https://doi.org/10.1093/bib/6.3.239> `doi:10.1093/bib/6.3.239`
+- Deep learning for healthcare: review, opportunities and challenges (2017) <https://doi.org/10.1093/bib/bbx044> `doi:10.1093/bib/bbx044`
+- Microdosing psychedelics: More questions than answers? An overview and suggestions for future research (2019) <https://doi.org/10.1177/0269881119857204> `doi:10.1177/0269881119857204`
+- The PRISMA Statement for Reporting Systematic Reviews and Meta-Analyses of Studies That Evaluate Health Care Interventions: Explanation and Elaboration (2009) <https://doi.org/10.1371/journal.pmed.1000100> `doi:10.1371/journal.pmed.1000100`
+- Distributional Semantics Resources for Biomedical Text Processing (2013) <https://research.manchester.ac.uk/en/publications/8b865ebe-417a-41fb-acb7-241efe6a5490> `openalex:W2527896214`
+
+</details>
+
+<h2>Appendix A. Evidence Ledger</h2>
+<h3>[Evidence] claims (5)</h3>
+<ul>
+<li><strong>[Evidence]</strong> Re3 (2025) proposes a unified framework that dynamically balances semantic and temporal information through a query-aware gating mechanism for temporal information retrieval, achieving state-of-the-art results on Re2Bench benchmark. <em>(claim C001, confidence: high)</em></li>
+<li>[2], abstract (direct support, verified) "To address this gap, we introduce Re2Bench, a benchmark specifically designed to disentangle and evaluate Relevance, Recency, and their hybrid combination. Building on this foundation, we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism."</li>
+<li><strong>[Evidence]</strong> Re3 assumes explicit or reliably extractable timestamps, which may not hold in all settings, limiting its applicability to domains where document version timestamps are unavailable or unreliable. <em>(claim C003, confidence: high)</em></li>
+<li>[2], limitations (direct support, verified) "Assumes explicit or reliably extractable timestamps, which may not hold in all settings."</li>
+<li><strong>[Evidence]</strong> IndiaFinBench (2026) is an evaluation benchmark for Indian financial regulatory text that includes temporal reasoning tasks requiring models to "identify which version of a rule was in force at a given time" and explicitly addresses challenges posed by "references chains of superseding circulars that require temporal reasoning to untangle." <em>(claim C012, confidence: high)</em></li>
+<li>[1], p. 2 (direct support, verified) "references chains of superseding circulars that require temporal reasoning to untangle"</li>
+<li>[1], p. 4 (direct support, verified) "identify which version of a rule was in force at a given time"</li>
+<li><strong>[Evidence]</strong> Re3 (2025) proposes a unified framework that dynamically balances semantic and temporal information through a query-aware gating mechanism for temporal information retrieval, achieving state-of-the-art results on temporal IR benchmarks. <em>(claim C013, confidence: high)</em></li>
+<li>[2], abstract (direct support, verified) "we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism"</li>
+<li>[2], abstract (direct support, verified) "On Re2Bench, Re3 achieves state-of-the-art results, leading in R@1 across all three subsets"</li>
+<li><strong>[Evidence]</strong> Re3 (2025) is explicitly described as a "universal, plug-and-play, and lightweight framework for TIR" that "can be seamlessly integrated with existing dense retrievers" and is designed to be a "lightweight, plug-and-play retriever". <em>(claim C014, confidence: high)</em></li>
+<li>[2], p. 2 (direct support, verified) "universal, plug-and-play, and lightweight framework for TIR"</li>
+<li>[2], p. 2 (direct support, verified) "can be seamlessly integrated with existing dense retrievers"</li>
+<li>[2], p. 9 (direct support, verified) "designed to be a lightweight, plug-and-play retriever"</li>
+</ul>
+<h3>[Inference] claims (13)</h3>
+<ul>
+<li><strong>[Inference]</strong> The effectiveness of temporal relevance modeling depends heavily on the choice of temporal function (e.g., linear, exponential) and its parameters, which may not generalize across different document versioning patterns and amendment frequencies. <em>(claim C002, confidence: medium)</em></li>
+<li>[2], limitations (indirect support, verified) "Assumes explicit or reliably extractable timestamps, which may not hold in all settings."</li>
+<li>[2], future_work (indirect support, unverified) "Relax timestamp assumptions."</li>
+<li><strong>[Inference]</strong> Observed improvements in temporal-aware retrieval could be confounded by enhancements to semantic matching components rather than the temporal modeling itself, especially when using learned combinations that may absorb semantic improvements. <em>(claim C004, confidence: medium)</em></li>
+<li>[2], relation_to_idea (indirect support, unverified) "Re3 focuses on general temporal IR benchmarks; our idea targets versioned regulatory documents for open-domain QA, proposing a retrieval-agnostic temporal relevance component adaptable to any retriever."</li>
+<li><strong>[Inference]</strong> When using learned mechanisms to combine semantic and temporal signals (like Re3's query-aware gating), it becomes difficult to disentangle whether performance gains come from better temporal modeling or from the learned mechanism's ability to adjust semantic weighting, posing a challenge for ablation studies. <em>(claim C005, confidence: medium)</em></li>
+<li>[2], method (direct support, verified) "we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism."</li>
+<li>[2], future_work (indirect support, unverified) "Add interpretability tools."</li>
+<li><strong>[Inference]</strong> Re3 uses a query-aware gating mechanism to dynamically balance semantic and temporal information during re-ranking, which makes it challenging to isolate the contribution of temporal modeling from the learned gating function's effect on semantic weighting. <em>(claim C006, confidence: medium)</em></li>
+<li>[2], method (direct support, verified) "we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism."</li>
+<li><strong>[Inference]</strong> Re3 (2025) demonstrates that a retrieval-agnostic framework combining temporal relevance with semantic similarity for versioned documents already exists, as it is described as a universal, plug-and-play framework that dynamically balances semantic and temporal information through a query-aware gating mechanism and can be integrated with existing dense retrievers. <em>(claim C015, confidence: high)</em></li>
+<li>[2], p. 1 (direct support, verified) "we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism"</li>
+<li>[2], p. 2 (direct support, verified) "universal, plug-and-play, and lightweight framework for TIR"</li>
+<li>[2], p. 2 (direct support, verified) "can be seamlessly integrated with existing dense retrievers"</li>
+<li>[2], p. 9 (direct support, verified) "designed to be a lightweight, plug-and-play retriever"</li>
+<li><strong>[Inference]</strong> While Re3 (2025) provides a retrieval-agnostic framework for balancing semantic and temporal information, our idea specifically targets versioned regulatory documents for open-domain question answering, focusing on the problem where amendments supersede earlier clauses creating semantic overlap, and aims to construct a domain-specific benchmark with regulatory texts and time-stamped queries. <em>(claim C016, confidence: medium)</em></li>
+<li>[2], relation_to_idea (indirect support, unverified) "Re3 focuses on general temporal IR benchmarks; our idea targets versioned regulatory documents for open-domain QA, proposing a retrieval-agnostic temporal relevance component adaptable to any retriever."</li>
+<li><strong>[Inference]</strong> Re3 (2025) focuses on general temporal IR benchmarks (Re2Bench) to disentangle and evaluate Relevance, Recency, and their hybrid combination, while our idea specifically targets versioned regulatory documents for open-domain QA, focusing on the problem where amendments supersede earlier clauses creating semantic overlap, and aims to construct a domain-specific benchmark with regulatory texts and time-stamped queries. <em>(claim C017, confidence: medium)</em></li>
+<li>[2], p. 1 (direct support, verified) "we introduce Re2Bench"</li>
+<li>[2], p. 1 (direct support, verified) "a benchmark specifically designed"</li>
+<li><strong>[Inference]</strong> The Practical Index Framework for Efficient Time-Travel Phrase Queries on Versioned Documents (2016) focuses on enabling efficient time-travel phrase queries through specialized indexing structures, rather than combining temporal relevance with semantic similarity for ranking adjustments. <em>(claim C018, confidence: medium)</em></li>
+<li>[28], title (indirect support, unverified) "Practical Index Framework for Efficient Time-Travel Phrase Queries on Versioned Documents"</li>
+<li><strong>[Inference]</strong> The Time-aware Random Walk Model for Finding Important Documents in Web Archives (2015) applies random walk models with temporal awareness to identify important documents in web archives, focusing on importance scoring rather than combining temporal and semantic relevance for query-specific retrieval. <em>(claim C019, confidence: medium)</em></li>
+<li>[29], title (indirect support, unverified) "A Time-aware Random Walk Model for Finding Important Documents in Web Archives"</li>
+<li><strong>[Inference]</strong> While Re3 (2025) provides a retrieval-agnostic framework that dynamically balances semantic and temporal information through a query-aware gating mechanism for general temporal information retrieval, our idea specifically targets versioned regulatory documents for open-domain question answering, focusing on the semantic overlap problem created by superseding amendments and aiming to construct a domain-specific benchmark with regulatory texts and time-stamped queries. <em>(claim C020, confidence: high)</em></li>
+<li>[2], relation_to_idea (indirect support, unverified) "Re3 focuses on general temporal IR benchmarks; our idea targets versioned regulatory documents for open-domain QA, proposing a retrieval-agnostic temporal relevance component adaptable to any retriever."</li>
+<li>[4], problem (indirect support, unverified) "Question answering over regulatory documents, which are often versioned and require up-to-date information."</li>
+<li><strong>[Inference]</strong> The temporal graph approach based on LSA and citation/author occurrence (doi:10.31803/tg-20230715000112) models document relevance over time through temporal relationships in expert finding tasks, whereas our idea uses temporal proximity between query timestamps and version timestamps to adjust retrieval rankings for open-domain QA over versioned regulatory texts. <em>(claim C021, confidence: medium)</em></li>
+<li>[22], relation_to_idea (indirect support, unverified) "The paper uses temporal graph based on citation/author for expert finding; our idea focuses on versioned regulatory documents and uses temporal proximity between query date and version timestamp to adjust retrieval rankings."</li>
+<li><strong>[Inference]</strong> Contextualized Offline Relevance Weighting (doi:10.1145/3404835.3463073) improves retrieval efficiency by precomputing relevance weights using pseudo-queries, focusing on online latency reduction rather than incorporating temporal dynamics based on version timestamps for regulatory document QA. <em>(claim C022, confidence: medium)</em></li>
+<li>[13], relation_to_idea (indirect support, unverified) "CORW focuses on improving retrieval efficiency via offline pseudo-query weighting; our idea adds a temporal relevance component to adapt rankings based on version timestamps for QA over versioned texts."</li>
+<li><strong>[Inference]</strong> The strongest baselines for time-aware retrieval of versioned documents include Re3 (a retrieval-agnostic framework balancing semantic and temporal signals), time-travel phrase query frameworks (focused on efficient indexing), and temporal random walk models (for importance scoring). Our idea differs by specifically targeting open-domain QA over versioned regulatory documents, focusing on the semantic overlap from superseding amendments, and aiming to construct a regulatory-specific benchmark with time-stamped queries. <em>(claim C023, confidence: high)</em></li>
+<li>[2], relation_to_idea (indirect support, unverified) "Re3 focuses on general temporal IR benchmarks; our idea targets versioned regulatory documents for open-domain QA, proposing a retrieval-agnostic temporal relevance component adaptable to any retriever."</li>
+<li>[22], relation_to_idea (indirect support, unverified) "The paper uses temporal graph based on citation/author for expert finding; our idea focuses on versioned regulatory documents and uses temporal proximity between query date and version timestamp to adjust retrieval rankings."</li>
+<li>[13], relation_to_idea (indirect support, unverified) "CORW focuses on improving retrieval efficiency via offline pseudo-query weighting; our idea adds a temporal relevance component to adapt rankings based on version timestamps for QA over versioned texts."</li>
+</ul>
+<h3>[Assumption] claims (5)</h3>
+<ul>
+<li><strong>[Assumption]</strong> Each document version has a valid timestamp indicating when it was enacted or amended. <em>(claim C007, confidence: medium)</em></li>
+<li><strong>[Assumption]</strong> Queries are associated with a target date (the time at which the question is asked). <em>(claim C008, confidence: medium)</em></li>
+<li><strong>[Assumption]</strong> Semantic similarity (e.g., from a dense retriever) is a suitable baseline for relevance. <em>(claim C009, confidence: high)</em></li>
+<li><strong>[Assumption]</strong> The temporal relevance function can be modeled as a decaying function of time difference (e.g., exponential decay). <em>(claim C010, confidence: medium)</em></li>
+<li><strong>[Assumption]</strong> The combination of temporal and semantic scores can be a simple weighted sum. <em>(claim C011, confidence: low)</em></li>
+</ul>
+<h2>Appendix B. Search Log</h2>
+<table>
+<thead>
+<tr>
+<th>Query</th>
+<th>Sources (status: results)</th>
+<th>Papers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>temporal document retrieval versioned documents regulatory texts</td>
+<td>arxiv (ok: 0), openalex (ok: 10), semantic_scholar (error: 0), crossref (ok: 10)</td>
+<td>20</td>
+</tr>
+<tr>
+<td>temporal question answering regulatory documents</td>
+<td>arxiv (ok: 1), openalex (ok: 10), semantic_scholar (error: 0), crossref (ok: 10)</td>
+<td>20</td>
+</tr>
+<tr>
+<td>temporal relevance weighting document retrieval</td>
+<td>arxiv (ok: 2), openalex (ok: 10), semantic_scholar (ok: 10), crossref (ok: 10)</td>
+<td>31</td>
+</tr>
+<tr>
+<td>time-aware retrieval versioned documents regulatory</td>
+<td>arxiv (ok: 0), openalex (ok: 10), semantic_scholar (error: 0), crossref (ok: 10)</td>
+<td>19</td>
+</tr>
+<tr>
+<td>open domain question answering regulatory documents versioned temporal</td>
+<td>arxiv (ok: 0), openalex (ok: 10), semantic_scholar (error: 0), crossref (ok: 10)</td>
+<td>19</td>
+</tr>
+</tbody>
+</table>
+<h2>Appendix C. Investigation Log</h2>
+<p>Each step was chosen by the ResearchForge controller from the recorded research state.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Phase</th>
+<th>Action</th>
+<th>Why</th>
+<th>Alternatives considered</th>
+<th>Outcome</th>
+<th>Information gain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>INTAKE</td>
+<td>INTAKE</td>
+<td>Research idea received.</td>
+<td>none</td>
+<td>idea stored in the workspace</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>1</td>
+<td>FORMALIZE</td>
+<td>FORMALIZE</td>
+<td>The idea has not been formalized into a testable research question.</td>
+<td>none</td>
+<td>+85 papers; +4 searches; +6 uncertainties; idea formalized</td>
+<td>3</td>
+</tr>
+<tr>
+<td>2</td>
+<td>PLAN</td>
+<td>PLAN</td>
+<td>No investigation plan exists yet, so it is unclear what must be determined.</td>
+<td>none</td>
+<td>+4 uncertainties; investigation plan recorded</td>
+<td>1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>INVESTIGATE</td>
+<td>READ</td>
+<td>Retrieved papers have not been analyzed enough to judge overlap.</td>
+<td>none</td>
+<td>+6 analyses</td>
+<td>3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>SYNTHESIZE</td>
+<td>SYNTHESIZE</td>
+<td>Analyses exist but the field has not been mapped.</td>
+<td>none</td>
+<td>landscape recorded</td>
+<td>1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>CRITIQUE</td>
+<td>CRITIQUE</td>
+<td>The idea has not been challenged yet.</td>
+<td>none</td>
+<td>+11 claims; +5 verified claims; +6 uncertainties; +1 resolved uncertainties; critique recorded; uncertainties updated: U001, U002, U003, U004</td>
+<td>8</td>
+</tr>
+<tr>
+<td>6</td>
+<td>CHALLENGE</td>
+<td>CHALLENGE (U017: Does published work contradict the current assessment: Our idea specifical)</td>
+<td>The critique's assessment has not been challenged yet (U017); look for published work that contradicts it before investing in anything that builds on it.</td>
+<td>none</td>
+<td>+16 papers; +1 searches; +2 claims; +2 verified claims; +1 contradicted conclusions; +1 resolved uncertainties; uncertainties updated: U017</td>
+<td>8</td>
+</tr>
+<tr>
+<td>7</td>
+<td>CRITIQUE</td>
+<td>CRITIQUE (Does published work contradict the current assessment: Our idea specifically tar)</td>
+<td>The current critique predates contradicting evidence (U017 weakened); the assessment must be revised before continuing.</td>
+<td>none</td>
+<td>critique recorded; uncertainties updated: U012</td>
+<td>1</td>
+</tr>
+<tr>
+<td>8</td>
+<td>UNCERTAINTY</td>
+<td>COMPARE (U007: Does a retrieval-agnostic framework that combines temporal relevance with )</td>
+<td>Most valuable next step for high-importance novelty question U007: score 1.2 = importance 3 x expected gain 0.6 x relevance 1 x evidence deficiency 1 / cost 1.5. Next best: COMPARE on U008 (1.2).</td>
+<td>COMPARE U008 (1.2); READ U007 (1.125)</td>
+<td>+4 claims; +3 verified claims; +2 uncertainties; +1 resolved uncertainties; uncertainties updated: U007</td>
+<td>5</td>
+</tr>
+<tr>
+<td>9</td>
+<td>UNCERTAINTY</td>
+<td>COMPARE (U008: Which existing time-aware retrieval techniques for versioned documents (e.)</td>
+<td>Most valuable next step for high-importance overlap question U008: score 1.6 = importance 3 x expected gain 0.8 x relevance 1 x evidence deficiency 1 / cost 1.5. Next best: COMPARE on U020 (1.6).</td>
+<td>COMPARE U020 (1.6); COMPARE U006 (1.44)</td>
+<td>+6 claims; uncertainties updated: U008</td>
+<td>0</td>
+</tr>
+<tr>
+<td>10</td>
+<td>UNCERTAINTY</td>
+<td>READ (U020: What are the most appropriate baseline methods for evaluating a temporal-s)</td>
+<td>Most valuable next step for high-importance overlap question U020: score 1.125 = importance 3 x expected gain 0.75 x relevance 1 x evidence deficiency 1 / cost 2. Next best: PLAN_EXPERIMENT on U014 (1.08).</td>
+<td>PLAN_EXPERIMENT U014 (1.08); COMPARE U020 (1.066)</td>
+<td>+6 analyses</td>
+<td>3</td>
+</tr>
+<tr>
+<td>11</td>
+<td>UNCERTAINTY</td>
+<td>READ (U006: How to handle conflicting information across versions where an amendment s)</td>
+<td>Most valuable next step for high-importance confounder question U006: score 1.125 = importance 3 x expected gain 0.833 x relevance 0.9 x evidence deficiency 1 / cost 2. Next best: READ on U009 (1.125).</td>
+<td>READ U009 (1.125); READ U013 (1.125)</td>
+<td>+6 analyses</td>
+<td>3</td>
+</tr>
+<tr>
+<td>12</td>
+<td>UNCERTAINTY</td>
+<td>READ (U009: What is the most effective way to combine temporal relevance and semantic )</td>
+<td>Most valuable next step for high-importance validity question U009: score 1.181 = importance 3 x expected gain 0.875 x relevance 0.9 x evidence deficiency 1 / cost 2. Next best: READ on U013 (1.181).</td>
+<td>READ U013 (1.181); READ U014 (1.181)</td>
+<td>+6 analyses</td>
+<td>3</td>
+</tr>
+<tr>
+<td>13</td>
+<td>UNCERTAINTY</td>
+<td>READ (U013: To what extent do versioned regulatory documents (statutes, codes, regulat)</td>
+<td>Most valuable next step for high-importance validity question U013: score 1.215 = importance 3 x expected gain 0.9 x relevance 0.9 x evidence deficiency 1 / cost 2. Next best: READ on U014 (1.215).</td>
+<td>READ U014 (1.215); READ U019 (1.215)</td>
+<td>no recorded change; runtime note: phase exceeded 1200.0s and was stopped</td>
+<td>0</td>
+</tr>
+<tr>
+<td>14</td>
+<td>FINALIZE</td>
+<td>FINALIZE</td>
+<td>Stopping: time budget reached (3600 s).</td>
+<td>none</td>
+<td>finalizing</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+</body></html>

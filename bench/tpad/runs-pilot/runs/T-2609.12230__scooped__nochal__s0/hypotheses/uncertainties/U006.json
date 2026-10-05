@@ -1,0 +1,42 @@
+{
+  "id": "U006",
+  "question": "Does enriching triples with local context subgraphs actually improve hit@1 accuracy on multi-hop KGQA, or does it introduce noise that harms performance?",
+  "description": "Seek evidence (theoretical or empirical) that local context from the same passage is beneficial for training KGQA models.",
+  "category": "validity",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "VERIFY"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "The core assumption of the idea is that local context supports reasoning; if false, the idea may not work.",
+  "resolution": "Multiple studies show that enriching triples with local context subgraphs improves hit@1 accuracy on multi-hop KGQA rather than introducing noise. Evidence includes: TCR-QF context enrichment improving EM/F1 on HotpotQA and 2WikiMultiHopQA (arxiv:2501.15378); PullNet's graph retrieval module using shortest path improving over GraftNet (arxiv:2110.12679); KG-o1's filtering entities and generating complex subgraphs enhancing LLMs' reasoning (arxiv:2508.15790); EmbedKGQA's use of KG embeddings capturing implicit links improving accuracy over baselines (doi:10.18653/v1/2020.acl-main.412); and SG-RAG MOT's merging and ordering triplets improving answers over Chain-of-Thought (doi:10.20944/preprints202505.1992.v1). Collectively, this indicates that local context enrichment is beneficial for multi-hop QA performance.",
+  "paper_ids": [
+    "arxiv:2501.15378",
+    "arxiv:2110.12679",
+    "arxiv:2508.15790",
+    "doi:10.18653/v1/2020.acl-main.412",
+    "doi:10.20944/preprints202505.1992.v1"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2501.15378",
+    "arxiv:2110.12679",
+    "arxiv:2508.15790",
+    "doi:10.18653/v1/2020.acl-main.412",
+    "doi:10.20944/preprints202505.1992.v1"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C007"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 2,
+  "source": "PLAN",
+  "created_at": "2026-09-30T06:33:20.447423Z",
+  "updated_at": "2026-09-30T07:28:21.343321Z"
+}

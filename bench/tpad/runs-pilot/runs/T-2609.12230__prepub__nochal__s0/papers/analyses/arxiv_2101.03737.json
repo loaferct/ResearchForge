@@ -1,0 +1,48 @@
+{
+  "paper_id": "arxiv:2101.03737",
+  "relevance_tier": "high",
+  "problem": "Multi-hop Knowledge Base Question Answering (KBQA) lacks supervision signals at intermediate reasoning steps, making learning unstable or ineffective because only final answer feedback is available.",
+  "method": "Teacher-student framework: student network predicts final answer; teacher network learns intermediate supervision signals via forward and backward reasoning to provide more reliable entity distributions at intermediate steps, which are used as supervision signals for the student network.",
+  "key_assumptions": [
+    "Not explicitly stated in the paper."
+  ],
+  "main_contribution": "Proposes a novel teacher-student approach that learns intermediate supervision signals via forward and backward reasoning, demonstrating effectiveness on three benchmark datasets (MetaQA, WebQuestionsSP, Complex WebQuestions) and showing improvement over baseline NSM model, especially on harder datasets where Hits@1 increases by up to ~5.6 absolute points.",
+  "datasets": [
+    "MetaQA-1hop",
+    "MetaQA-2hop",
+    "MetaQA-3hop",
+    "WebQuestionsSP (webqsp)",
+    "Complex WebQuestions 1.1 (CWQ)"
+  ],
+  "benchmarks": [
+    "MetaQA-1hop",
+    "MetaQA-2hop",
+    "MetaQA-3hop",
+    "WebQuestionsSP",
+    "Complex WebQuestions 1.1 (CWQ)"
+  ],
+  "baselines": [
+    "KV-Mem, GraftNet, PullNet, SRN, EmbedKGQA, NSM (Neural State Machine)"
+  ],
+  "metrics": [
+    "Hits@1",
+    "F1"
+  ],
+  "results": "MetaQA-1hop: NSM 97.1%, NSM+𝑝 97.3%, NSM+ℎ 97.2%; MetaQA-2hop: NSM 99.9%, NSM+𝑝 99.9%, NSM+ℎ 99.9%; MetaQA-3hop: NSM 98.9%, NSM+𝑝 98.9%, NSM+ℎ 98.9%; WebQuestionsSP: NSM 68.7%, NSM+𝑝 73.9%, NSM+ℎ 74.3%; Complex WebQuestions: NSM 47.6%, NSM+𝑝 48.3%, NSM+ℎ 48.8%. F1 scores follow similar trends.",
+  "limitations": [
+    "Not explicitly stated in the paper."
+  ],
+  "future_work": [
+    "Enhancing entity embeddings using KB embedding methods to obtain better intermediate supervision signals."
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "Both aim to improve multi-hop reasoning via supervisory signals: the idea enriches training triples with local context subgraphs and uses an adaptive repair loop to generate corrective examples from one-hop failures followed by RL lower-hop transfer, while this paper learns intermediate supervision signals via a teacher network performing forward/backward reasoning to guide a student network. Overlap in using supervision signals; differences in mechanism (training data enrichment + failure-driven examples vs teacher-student intermediate signal learning) and stage (training data modification vs inference-time guidance).",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T09:10:20.352428Z"
+}

@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2107.06325",
+  "relevance_tier": "high",
+  "problem": "Visual Question Answering requires multi-modal reasoning over scene graphs to answer free-form questions about images, necessitating multi-hop reasoning over extracted scene entities and their relationships.",
+  "method": "Proposes Graphhopper: (1) derive a scene graph from the image describing objects, attributes, and mutual relationships; (2) train a reinforcement learning agent to autonomously navigate in a multi-hop manner over the extracted scene graph to generate reasoning paths, which are used to derive answers.",
+  "key_assumptions": [
+    "Scene graphs effectively capture the semantic and spatial relationships needed for VQA.",
+    "An RL agent can learn to navigate multi-hop paths over scene graphs to generate valid reasoning paths for answering."
+  ],
+  "main_contribution": "Graphhopper integrates scene graph derivation with RL-based multi-hop navigation, achieving human-level performance on manually curated GQA scene graphs and outperforming another state-of-the-art scene graph reasoning model on both manually curated and automatically generated scene graphs.",
+  "datasets": [
+    "GQA dataset (both manually curated and automatically generated scene graphs)"
+  ],
+  "benchmarks": [
+    "GQA"
+  ],
+  "baselines": [
+    "another state-of-the-art scene graph reasoning model (not named)"
+  ],
+  "metrics": [
+    "not stated in abstract (likely accuracy)"
+  ],
+  "results": "[\"Keeps up with human performance on manually curated scene graphs; outperforms another state-of-the-art scene graph reasoning model on both manually curated and automatically generated scene graphs by a significant margin.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "Combine scene graphs with commonsense knowledge graphs; employ more sophisticated reinforcement learning techniques."
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "The paper uses RL to navigate over extracted scene graphs for VQA, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer for KGQA.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T08:05:03.288104Z"
+}

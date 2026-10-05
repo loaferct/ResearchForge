@@ -1,0 +1,78 @@
+{
+  "id": "E001",
+  "title": "Volume-controlled, repair-blind audit of passage-local context supervision for multi-hop KGQA",
+  "research_question": "At matched supervision token budget and on a frozen, repair-blind held-out test split, does passage-local context-triple supervision improve deeper-hop (3-5 hop) KGQA over isolated-triple and volume-matched distractor supervision, and does the effect follow a non-monotonic dose-response in the amount and precision of attached context?",
+  "hypothesis": "At matched supervision tokens, examples, and gradient steps, and with a frozen test split that the repair loop cannot edit, same-passage context-triple supervision yields higher 3-5-hop accuracy than isolated-triple supervision and than volume-matched/relatedness-matched distractor padding, with the advantage growing with hop depth; the repair stage's out-of-sample gain is smaller than its published cleaned-retained-set gain; and the context benefit is non-monotonic in context size.",
+  "proposed_method": "Two-stage, volume-controlled audit of the published context-augmented KG supervision recipe. Stage 1: build a text-attributed KG with per-triple passage provenance, generate 1-5-hop QA items, and construct matched-token supervision arms: A = isolated triple/path plus neutral filler; B = isolated triple/path plus k random same-KG triples from other passages; C = isolated triple/path plus semantically related but non-passage-local triples; D = same-passage context triples (the method arm); E = D plus adaptive repair (repair allowed to modify only a disjoint repair-dev split). Every arm is matched on total training tokens, number of examples, and optimizer steps; each arm is trained with multiple seeds. Stage 2: repeat the primary contrast (A, B, C, D) on a larger backbone for the reported effect. A separate dose-response sub-study holds total tokens fixed while sweeping attached context count (0, k/4, k/2, k, 2k) to test for an intermediate optimum. Evaluation uses a frozen test split, never touched by repair, plus a blinded judge audit that flags frozen-test triples as noisy without making them visible to the repair loop. The repair stage additionally has an arm in which every error category receives the same number of repair examples, isolating allocation from repair content.",
+  "baselines": [
+    "KG-grounded (isolated triple/path) SFT at matched tokens, examples, and gradient steps",
+    "Volume-matched distractor padding: isolated triple plus equal-token random same-KG triples",
+    "Relatedness-matched padding: isolated triple plus semantically related but non-passage-local triples",
+    "CG-grounded (same-passage context) SFT, the closest work's method arm",
+    "SFT + adaptive repair with evaluation-set editing (closest-work protocol) versus repair with frozen test split",
+    "SFT + lower-hop RL (closest-work protocol) and SFT-only",
+    "Retrieval-based reference: subgraph retrieval / GNN-based retrieval baseline (optional, for external context)"
+  ],
+  "datasets": [
+    "A text-attributed corpus with triple-to-passage provenance: either a provenance-preserving extraction over an open corpus (GraphMERT-style pipeline retaining a passage/chunk identifier) or a KG-text alignment resource such as CDTP (approximately 15M text-supported triples across four domains).",
+    "A replication set generated like the closest work's disease-specific MCQ items, if any of its KGs or item generators become available, to check comparability with the published numbers.",
+    "A synthetic sanity-check set (small movies- or toy-domain KG with known paths) used only to validate that each arm's data pipeline constructs the intended token budgets before spending training compute."
+  ],
+  "workloads": [
+    "Multi-hop QA items stratified by hop depth (1, 2, 3, 4, 5), with equal item counts per depth across arms where possible",
+    "Training instances with three token budgets: short (isolated triple), medium (k/2 context triples), long (k or 2k context triples), all length-matched within an arm comparison",
+    "Repair rounds (0 to 4) with per-round frozen-test evaluation",
+    "Lower-hop RL training on 1-2-hop items followed by 3-5-hop evaluation",
+    "A held-out distractor-relevance workload: same-KG random triples and semantically related non-passage triples as the padding source"
+  ],
+  "hardware": "Two-stage design to bound cost. Stage 1 (all arms, dose-response, and seeds) on an open-weight model in the 7-8B class with parameter-efficient fine-tuning, on 1-2 GPUs with 80GB memory. Stage 2 (primary contrast only: isolated vs volume-matched vs same-passage, plus the repair-on-frozen-split comparison) on a 14B-class model with full or LoRA fine-tuning on 8x80GB-class GPUs. RL arms require additional on-policy generation and are run only for the primary contrast. Exact GPU hours are budget-dependent and were not verified; no execution was performed.",
+  "software_environment": "",
+  "metrics": [
+    "Per-hop-depth answer accuracy (1, 2, 3, 4, 5 hop), primary at 3-5 hops",
+    "Exact match and token-level F1 for the open-ended replication, alongside multiple-choice accuracy for comparability",
+    "Delta between the same-passage arm and each volume-matched/relatedness-matched arm at matched tokens (the decisive contrast)",
+    "Accuracy on the frozen test split before and after each repair round (out-of-sample repair gain)",
+    "Seed-level mean, standard deviation, and confidence intervals across training seeds",
+    "Quarantine rate of triples and blind judge flag rate on frozen-test triples",
+    "Per-token training loss trajectory as a check that arms are trained comparably",
+    "Context dose-response curve: accuracy as a function of context size at fixed total tokens"
+  ],
+  "ablations": [
+    "Context size sweep: 0, k/4, k/2, k, 2k attached triples at matched total tokens.",
+    "Context precision: same-passage vs random same-KG vs semantically related non-passage distractors.",
+    "Repair on/off, and repair-strength equalization (equal number of repair examples per error type) to remove the allocation confound.",
+    "RL on/off, and RL initialized from repaired vs unrepaired checkpoints.",
+    "Backbone scale: stage-1 smaller open model versus stage-2 14B-class confirmation of the primary contrast.",
+    "Question format: multiple-choice (for comparability with the closest work) versus open-ended answers."
+  ],
+  "controls": [],
+  "confounders_addressed": [
+    "Supervision volume: extra tokens in the context arm (addressed by volume-matched and relatedness-matched padding plus matched optimizer steps).",
+    "Evaluation-set cleaning by the repair loop (addressed by a frozen, repair-blind test split with per-round out-of-sample evaluation and a blind quarantine audit).",
+    "Unequal training allocation from the repair loop (addressed by equalizing the number of repair examples per error category as an additional arm).",
+    "Context size and distractor relevance (addressed by the dose-response sweep and precision conditions).",
+    "Seed noise and run-to-run variance (addressed by multiple seeds with reported variance, which the closest work does not report).",
+    "Question-generation and format effects (addressed by identical generators, option shuffling, and an open-ended replication).",
+    "Backbone and prompt differences (frozen across arms; the same prompt/format and decoding settings are used for every arm)."
+  ],
+  "expected_outcomes": "If H1' holds, the same-passage context arm exceeds the isolated-triple arm and, critically, exceeds the volume-matched and relatedness-matched padding arms at matched tokens, with the margin widening at 3-5 hops; a dose-response peaking at an intermediate context size would additionally support H4'. If the context arm matches the volume-matched pad arm, the observed published gain is attributable to added supervision volume rather than passage locality. For repair, a positive out-of-sample result would be a measurable but smaller frozen-test gain than the published cleaned-retained-set gain, with the difference bounding the selection artifact; a near-zero frozen-test gain would indicate the repair claim is largely an evaluation-editing effect.",
+  "failure_conditions": [
+    "The context arm is statistically indistinguishable from the volume-matched distractor arm at matched tokens across seeds: this falsifies the passage-locality claim (H1') and reduces the published CG-over-KG gap to a supervision-volume effect.",
+    "Accuracy decreases monotonically with more attached context rather than peaking: this falsifies the inverted-U hypothesis H4' in the direction opposite to the original idea's assumption, indicating context is uniformly harmful past the smallest size.",
+    "Repair gains on the frozen, repair-blind test split are within seed noise of zero: this falsifies the repair claim H2' as a knowledge-repair effect and supports the evaluation-set-cleaning explanation.",
+    "Seed-level variance exceeds the measured context or repair effect size: the experiment is inconclusive rather than supportive, and the hypothesis remains untested at this scale.",
+    "The volume-matched arms cannot be made token-equivalent (e.g., padding changes sequence structure enough to alter learning): the central contrast is unidentifiable and the design must switch to a per-token loss weighting or a fixed context-length truncation scheme."
+  ],
+  "reproducibility_notes": "No public code or data was found for the closest work or for GraphMERT, so the pipeline must be re-implemented; the plan therefore fixes splits and token counts in advance, logs them as hashes alongside seeds, and reports per-seed results. Token budgets for every arm are verified programmatically before training, and a small synthetic sanity set validates the data pipeline. Execution is not included here: no open implementation of the relevant context-augmented LLM pipeline exists, and training a 14B model with repair and RL is not a small, safe run that could be approved as a single command. If a suitable open repo becomes available, an execution spec should be added with one command per arm writing JSON metrics to $RF_RESULTS_FILE.",
+  "related_modification_id": "M001",
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2406.09994",
+    "arxiv:2202.13296",
+    "arxiv:2101.03737",
+    "arxiv:2510.06039"
+  ],
+  "execution": null,
+  "status": "planned",
+  "recorded_at": "2026-09-30T05:23:42.461847Z"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "arxiv:2605.24733",
+  "title": "StepGap: A Hybrid NLI-LLM Checker for Step-Level Evidence-Gap Detectionin Multi-Hop Question Answering",
+  "authors": [
+    "Yuelyu Ji",
+    "Zhuochun Li",
+    "Hui Ji",
+    "Daqing He"
+  ],
+  "year": 2026,
+  "published": "2026-05-23",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2605.24733",
+  "pdf_url": "https://arxiv.org/pdf/2605.24733v1",
+  "abstract": "We present \\textbf{StepGap}, a hybrid NLI-LLM decision tree that detects step-level evidence gaps in multi-hop QA and emits one of three typed labels: \\textsc{Contradicted Claim} (CC), \\textsc{Irrelevant Evidence} (IE), or \\textsc{Missing Bridge} (MB), each tied to a concrete repair action. On 82 multi-hop questions (181 annotated steps, $κ{=}0.704$), StepGap reaches sF1$=$72.0, within the bootstrap confidence interval of an LLM-only baseline (70.1) but with a more decomposable structure: every StepGap stage \\emph{hurts} F1 when removed, while three of four LLM-only removals \\emph{improve} F1 -- a sign of \\emph{competing-error cancellation}, where internal stages mask each other's errors. We further expose a \\emph{Q-F1 trap}: question-level F1 is mechanically inflated by checkers that flag every step, making step-level F1 the necessary diagnostic. Used as a typed GRPO process reward, StepGap improves Qwen2.5-7B-Instruct Exact Match from $32.1{\\pm}0.3$ to $35.4{\\pm}0.9$ across three seeds, with the single-run comparison showing a $+5.6$ Avg EM gain over the matched Search-R1 GRPO reproduction.",
+  "doi": null,
+  "arxiv_id": "2605.24733",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:44:12.932946Z",
+  "relevance": 0.2647,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "Exact Match F1 multi-hop QA"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

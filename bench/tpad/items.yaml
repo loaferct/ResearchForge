@@ -1,0 +1,743 @@
+name: tpad-pilot
+description: 'TPAD pilot items: realising papers submitted to arXiv 2026-09-07..10; ideas paraphrased by gpt-oss:120b; prior
+  work from Semantic Scholar references ranked by abstract-word overlap; closed-book probe with the agent model nemotron-3-super
+  (all NONE).'
+items:
+- id: T-2609.12230
+  idea: 'Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model
+    training typically uses isolated head‑relation‑tail triples, depriving the model of the surrounding context that supports
+    multi‑step inference. We propose to enrich each target triple (or path) with additional triples drawn from the same source
+    passage, forming a local context subgraph that is presented together with the primary supervision signal. The model will
+    be fine‑tuned under two regimes: one using only the target triple/path and another that also incorporates the supporting
+    context. To improve the reliability of the base facts, we will introduce an adaptive repair loop that detects one‑hop
+    failures, generates corrective examples, and iteratively refines the model. After this cleaning stage, we will apply reinforcement‑learning‑based
+    optimization on lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.'
+  realising:
+    title: 'Repair Before Reinforce: Context-Augmented Knowledge Graph Reasoning for Multi-Hop Question Answering'
+    arxiv: '2609.12230'
+    published: '2026-09-10'
+  prior_work: []
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.11572
+  idea: 'The reliability of open‑domain question answering drops sharply when source texts are continuously amended, as in
+    statutes, policies, or regulations. In such settings each new amendment supersedes earlier clauses while retaining much
+    of the original wording, creating a dense semantic overlap across successive versions. Existing time‑aware retrieval techniques
+    treat each version as an isolated snapshot and therefore cannot distinguish which revision best matches a time‑specific
+    query. We propose to develop a retrieval‑agnostic framework that enriches any standard document retriever with a temporal
+    relevance component: the rank of a candidate passage will be adjusted according to the elapsed time between the query’s
+    target date and the passage’s version timestamp, while still leveraging its semantic similarity to the query. To evaluate
+    the approach, we will construct a benchmark comprising regulatory documents with overlapping revisions and time‑stamped
+    queries, measuring how well the combined temporal‑semantic ranking improves answer accuracy.'
+  realising:
+    title: 'TimelyRAG: Semantic-Temporal Hybrid Retrieval for Time-Critical Question Answering in Overlapping-Evolving Documents'
+    arxiv: '2609.11572'
+    published: '2026-09-10'
+  prior_work:
+  - title: 'QPaug: Question and Passage Augmentation for Open-Domain Question Answering of LLMs'
+    arxiv: '2406.14277'
+    doi: 10.18653/v1/2024.findings-emnlp.527
+    published: '2024-06-20'
+  - title: Time-Sensitve Retrieval-Augmented Generation for Question Answering
+    doi: 10.1145/3627673.3679800
+    published: '2024-10-21'
+  - title: Unsupervised Dense Information Retrieval with Contrastive Learning
+    arxiv: '2112.09118'
+    published: '2021-12-16'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.11446
+  idea: We aim to improve collaborative inference among a set of diverse models by establishing a unified reliability metric
+    for their confidence scores. The plan is to first apply a model‑specific calibration step, using held‑out validation data,
+    so that each model’s output probabilities reflect true likelihoods. Once calibrated, we will define common thresholds
+    that determine whether a prediction can be accepted immediately, whether a more powerful model should be consulted, or
+    whether multiple model outputs should be combined. By basing decisions on calibrated confidence, the routing policy becomes
+    independent of the particular models or computational budget in use. We will also develop a theoretical link between calibration
+    and the expected selective risk, and evaluate the approach on language and vision benchmarks.
+  realising:
+    title: Calibration-Aware Uncertainty Cascades for Efficient Heterogeneous Model Collaboration
+    arxiv: '2609.11446'
+    published: '2026-09-10'
+  prior_work:
+  - title: Optimising Calls to Large Language Models with Uncertainty-Based Two-Tier Selection
+    arxiv: '2405.02134'
+    doi: 10.48550/arXiv.2405.02134
+    published: '2024-05-03'
+  - title: Calibrating Language Models with Adaptive Temperature Scaling
+    arxiv: '2409.19817'
+    doi: 10.48550/arXiv.2409.19817
+    published: '2024-09-29'
+  - title: 'FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance'
+    arxiv: '2305.05176'
+    doi: 10.48550/arXiv.2305.05176
+    published: '2023-05-09'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.11414
+  idea: We aim to improve the assignment of individual dialogue turns to the most appropriate large language model in a multi‑turn
+    conversation. The central difficulty is how to construct a prompt that preserves useful history while avoiding the mixing
+    of irrelevant information, which directly influences the selection quality. Our plan is to develop a context‑segmentation
+    technique that groups recent utterances into overlapping windows based on semantic similarity, then contracts each window
+    to retain only the most representative content. In parallel, we will introduce a two‑stage evaluation framework that separately
+    measures the fidelity of the constructed prompt and the effectiveness of the model‑selection decision, preventing the
+    two factors from confounding one another. This joint design is intended to enable more reliable multi‑turn model selection.
+  realising:
+    title: 'SWRouter: Similarity-Contractive Window Routing for Multi-Turn Large Language Model Conversations'
+    arxiv: '2609.11414'
+    published: '2026-09-10'
+  prior_work:
+  - title: Large Language Model Routing with Benchmark Datasets
+    arxiv: '2309.15789'
+    doi: 10.48550/arXiv.2309.15789
+    published: '2023-09-27'
+  - title: 'CMMLU: Measuring massive multitask language understanding in Chinese'
+    arxiv: '2306.09212'
+    doi: 10.48550/arXiv.2306.09212
+    published: '2023-06-15'
+  - title: 'Direct Preference Optimization: Your Language Model is Secretly a Reward Model'
+    arxiv: '2305.18290'
+    doi: 10.52202/075280-2338
+    published: '2023-05-29'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.11393
+  idea: 'Large language models often produce confident but incorrect reasoning chains, and existing inference‑time tuning
+    methods rely solely on confidence scores, which can be misleading. We propose to improve reasoning by jointly optimizing
+    for high confidence and for robustness of that confidence to small, local changes in the input prompt. The approach keeps
+    the base model fixed and learns a lightweight task‑specific prefix; during optimization the prefix is adjusted to increase
+    the model’s confidence while simultaneously minimizing the variation of that confidence under two perturbation regimes:
+    (1) random nearby modifications of the prefix to encourage distributional smoothness, and (2) worst‑case, adversarial
+    tweaks to bound sensitivity. By enforcing this stability constraint we aim to steer the model toward reasoning trajectories
+    that are both confident and reliable, and we will evaluate the method on a suite of reasoning benchmarks.'
+  realising:
+    title: 'Beyond Confidence: Stability-Aware Test-Time Adaptation for LLM Reasoning'
+    arxiv: '2609.11393'
+    published: '2026-09-10'
+  prior_work:
+  - title: 'Steer2Adapt: Dynamically Composing Steering Vectors Elicits Efficient Adaptation of LLMs'
+    arxiv: '2602.07276'
+    doi: 10.48550/arXiv.2602.07276
+    published: '2026-02-07'
+  - title: 'Seek in the Dark: Reasoning via Test-Time Instance-Level Policy Gradient in Latent Space'
+    arxiv: '2505.13308'
+    doi: 10.48550/arXiv.2505.13308
+    published: '2025-05-19'
+  - title: 'Model Whisper: Steering Vectors Unlock Large Language Models'' Potential in Test-time'
+    arxiv: '2512.04748'
+    doi: 10.48550/arXiv.2512.04748
+    published: '2025-12-04'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.11192
+  idea: Long‑range language models often rely on a separate compressor for each desired compression level, and the chosen
+    level is applied uniformly to every input despite widely differing information needs. We propose to train a single compression
+    model that is independent of any fixed budget by randomly sampling a memory‑budget size for each training instance. At
+    inference time the appropriate budget would be selected per example either by a confidence‑driven cascade that progressively
+    refines the compression until a quality threshold is met, or by a lightweight predictor that estimates the minimal budget
+    required for the given input. This framework aims to provide flexible, per‑instance compression without the overhead of
+    maintaining multiple specialized models.
+  realising:
+    title: 'FlexComp: One Model for Every Ratio in Context Compression'
+    arxiv: '2609.11192'
+    published: '2026-09-10'
+  prior_work:
+  - title: Adapting Language Models to Compress Contexts
+    arxiv: '2305.14788'
+    doi: 10.48550/arXiv.2305.14788
+    published: '2023-05-24'
+  - title: Autoencoding-Free Context Compression for LLMs via Contextual Semantic Anchors
+    arxiv: '2510.08907'
+    doi: 10.48550/arXiv.2510.08907
+    published: '2025-10-10'
+  - title: 'SnapKV: LLM Knows What You are Looking for Before Generation'
+    arxiv: '2404.14469'
+    doi: 10.48550/arXiv.2404.14469
+    published: '2024-04-22'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.11061
+  idea: 'The challenge is to obtain reliable step‑level credit in tree‑structured rollouts for reinforcement learning without
+    a learned critic. Existing strategies place branch points at fixed intervals or by measuring token‑level uncertainty,
+    but the utility of a branch depends heavily on whether the underlying value trajectory is actually turning at that location.
+    We propose to identify “pivot” positions by monitoring how the model’s internal estimate of the final answer evolves along
+    a rollout and to insert a fork immediately before the point of greatest divergence between successive belief estimates.
+    The belief signal can be extracted in three ways: a lightweight black‑box probe of the model’s output distribution, a
+    depth‑wise inspection of logits, or a direction in activation space learned offline. By using this signal solely to decide
+    fork locations, we aim to allocate the limited sampling budget to the most informative steps, improving credit assignment
+    while incurring minimal extra computation.'
+  realising:
+    title: 'Fork Where the Model Changes Its Mind: Belief-Shift Branching for Tree-Structured Reinforcement Learning'
+    arxiv: '2609.11061'
+    published: '2026-09-10'
+  prior_work:
+  - title: 'ReST-MCTS*: LLM Self-Training via Process Reward Guided Tree Search'
+    arxiv: '2406.03816'
+    doi: 10.48550/arXiv.2406.03816
+    published: '2024-06-06'
+  - title: 'Rewarding Progress: Scaling Automated Process Verifiers for LLM Reasoning'
+    arxiv: '2410.08146'
+    doi: 10.48550/arXiv.2410.08146
+    published: '2024-10-10'
+  - title: 'TreeRL: LLM Reinforcement Learning with On-Policy Tree Search'
+    arxiv: '2506.11902'
+    doi: 10.48550/arXiv.2506.11902
+    published: '2025-06-13'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.10441
+  idea: 'Large language models are constrained by a fixed maximum number of tokens, which hampers their ability to reason
+    over very long documents. Existing techniques that extend the effective context by processing the text sequentially and
+    updating a small memory are slow and often require costly reinforcement‑learning fine‑tuning, leading to brittle performance
+    on new data. We propose to reinterpret the reasoning task as a hierarchical filtering operation: the model will be prompted
+    with the query and applied repeatedly to overlapping chunks of the source text, producing compact summaries that are then
+    combined in a tree‑shaped aggregation. By allowing adjustable step sizes, inserting shortcut pathways to preserve salient
+    evidence, and running several parallel query‑focused filters, the approach aims to reduce the reasoning depth from linear
+    to logarithmic and to enable massive parallel execution without additional training.'
+  realising:
+    title: 'ConvMem: Convolutional Memory for Long-Context Reasoning'
+    arxiv: '2609.10441'
+    published: '2026-09-09'
+  prior_work:
+  - title: 'Memory-R1: Enhancing Large Language Model Agents to Manage and Utilize Memories via Reinforcement Learning'
+    arxiv: '2508.19828'
+    doi: 10.48550/arXiv.2508.19828
+    published: '2025-08-27'
+  - title: Ring Attention with Blockwise Transformers for Near-Infinite Context
+    arxiv: '2310.01889'
+    doi: 10.48550/arXiv.2310.01889
+    published: '2023-10-03'
+  - title: Efficient Memory Management for Large Language Model Serving with PagedAttention
+    arxiv: '2309.06180'
+    doi: 10.1145/3600006.3613165
+    published: '2023-09-12'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.10439
+  idea: Large language models often retain and reproduce sensitive or copyrighted material, raising privacy and compliance
+    risks. Retraining from scratch is costly, while existing unlearning techniques apply uniform parameter changes that can
+    harm the model’s usefulness and may be undone by later deployment steps such as quantization. We propose to develop a
+    selective‑layer unlearning strategy that first quantifies, for each transformer layer, how strongly it contributes to
+    reproducing the undesired content versus preserving the desired knowledge. By focusing weight updates on layers with high
+    influence on the forget set and low impact on the retain set, we aim to erase targeted information with minimal disturbance
+    to the rest of the network. The plan includes designing the significance metric, implementing layer‑focused fine‑tuning,
+    and evaluating robustness to post‑training quantization and adversarial prompts.
+  realising:
+    title: 'Forgetting Only What Matters: Layer-Selective Unlearning toward Robust LLMs'
+    arxiv: '2609.10439'
+    published: '2026-09-09'
+  prior_work:
+  - title: Catastrophic Failure of LLM Unlearning via Quantization
+    arxiv: '2410.16454'
+    published: '2024-10-21'
+  - title: 'VLA-Forget: Vision-Language-Action Unlearning for Embodied Foundation Models'
+    arxiv: '2604.03956'
+    doi: 10.48550/arXiv.2604.03956
+    published: '2026-04-05'
+  - title: Rethinking machine unlearning for large language models
+    arxiv: '2402.08787'
+    doi: 10.1038/s42256-025-00985-0
+    published: '2024-02-13'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.10346
+  idea: Multimodal language systems must handle hundreds of visual patches per image, leading to prohibitive inference costs.
+    Existing methods reduce this burden by discarding patches according to a single, fixed criterion, implicitly assuming
+    that one strategy works best for every picture. Preliminary analysis suggests that different pruning heuristics excel
+    on different inputs, and that the average‑best method masks substantial per‑sample variation. We propose to train a lightweight
+    selector that, given inexpensive visual and textual cues, predicts which pruning rule will be most effective for each
+    individual image at a prescribed reduction level, while retaining the option to bypass pruning when it is likely detrimental.
+    The selector will be a small plug‑in module that can be attached to any existing vision‑language model without altering
+    its parameters.
+  realising:
+    title: 'Beyond One-Size-Fits-All: Sample-Adaptive Strategy Routing for Vision Token Pruning in MLLMs'
+    arxiv: '2609.10346'
+    published: '2026-09-09'
+  prior_work:
+  - title: 'Are We Using the Right Benchmark: An Evaluation Framework for Visual Token Compression Methods'
+    arxiv: '2510.07143'
+    doi: 10.48550/arXiv.2510.07143
+    published: '2025-10-08'
+  - title: How Many Visual Tokens Do Multimodal Language Models Need? Scaling Visual Token Pruning with F^3A
+    arxiv: '2605.16359'
+    doi: 10.48550/arXiv.2605.16359
+    published: '2026-05-09'
+  - title: 'ATP-LLaVA: Adaptive Token Pruning for Large Vision Language Models'
+    arxiv: '2412.00447'
+    doi: 10.1109/CVPR52734.2025.02325
+    published: '2024-11-30'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.09883
+  idea: We aim to lower the inference cost of large language models by eliminating whole transformer layers while preserving
+    performance. Existing techniques that decide which layers to drop rely on collecting activations from calibration data,
+    which incurs additional computation. Our proposal is to infer redundancy between layers directly from the saved weight
+    matrices, eliminating the need for any forward passes. Specifically, we will compare the attention‑output projection matrices
+    and the down‑projection matrices of the feed‑forward networks across all layers, incorporate relative scaling factors,
+    and construct a pairwise similarity matrix. This matrix will be used to group similar layers and select a subset to retain,
+    thereby achieving layer reduction based solely on weight‑based similarity.
+  realising:
+    title: Forward-Free LLM Depth Pruning via Weight Redundancy
+    arxiv: '2609.09883'
+    published: '2026-09-09'
+  prior_work:
+  - title: Locality-Aware Redundancy Pruning for LLM Depth Compression
+    arxiv: '2605.27786'
+    doi: 10.48550/arXiv.2605.27786
+    published: '2026-05-27'
+  - title: 'ShortGPT: Layers in Large Language Models are More Redundant Than You Expect'
+    arxiv: '2403.03853'
+    doi: 10.48550/arXiv.2403.03853
+    published: '2024-03-06'
+  - title: A Simple and Effective Pruning Approach for Large Language Models
+    arxiv: '2306.11695'
+    doi: 10.48550/arXiv.2306.11695
+    published: '2023-06-20'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.09768
+  idea: 'We aim to tackle the latency bottleneck that arises when a retrieval‑augmented generation system concatenates a large
+    number of retrieved passages, inflating the input length and dramatically increasing the pre‑fill cost. Prior techniques
+    that reuse pre‑computed attention states can cut the time to first token, yet it is unclear whether they preserve answer
+    quality for extremely long contexts. We propose a two‑fold strategy: (i) fine‑tune the language model while explicitly
+    exposing it to the pattern of concatenated attention memories, encouraging it to handle such inputs more robustly; and
+    (ii) during inference, selectively recompute attention states for a chosen subset of the retrieved chunks while reusing
+    the rest. This combined plan is intended to retain the speed benefits of cache reuse while improving generation fidelity
+    for very long inputs.'
+  realising:
+    title: Fine-Tuning a KV Cache Concatenation-Aware Model or Recomputing KV Caches? Why Not Both?
+    arxiv: '2609.09768'
+    published: '2026-09-09'
+  prior_work:
+  - title: 'KVLink: Accelerating Large Language Models via Efficient KV Cache Reuse'
+    arxiv: '2502.16002'
+    doi: 10.48550/arXiv.2502.16002
+    published: '2025-02-21'
+  - title: 'TurboRAG: Accelerating Retrieval-Augmented Generation with Precomputed KV Caches for Chunked Text'
+    arxiv: '2410.07590'
+    doi: 10.48550/arXiv.2410.07590
+    published: '2024-10-10'
+  - title: 'CacheBlend: Fast Large Language Model Serving for RAG with Cached Knowledge Fusion'
+    arxiv: '2405.16444'
+    doi: 10.1145/3790254
+    published: '2024-05-26'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.09707
+  idea: Mathematical fine‑tuning currently applies the same cross‑entropy penalty to every target token, which can over‑fit
+    tokens the model already predicts confidently while over‑loading tokens it barely distinguishes. We propose to modulate
+    the supervision signal by measuring, for each token, the confidence gap between the correct symbol and the strongest competing
+    prediction. Tokens with very large gaps (already mastered) and those with very small or negative gaps (still ambiguous)
+    would receive reduced weight, while tokens whose gap lies in an intermediate range would be emphasized. A smooth weighting
+    function (e.g., a Gaussian centered on a chosen margin with adjustable bandwidth) can implement this without extra forward
+    passes or reference models. The plan is to test this re‑weighting on several large language models across standard mathematical
+    reasoning benchmarks and assess whether it yields more balanced confidence and improved performance.
+  realising:
+    title: Which Tokens Should SFT Actually Learn? A Token-Trimming Perspective on Mathematical Reasoning
+    arxiv: '2609.09707'
+    published: '2026-09-09'
+  prior_work:
+  - title: Enhancing Large Language Model Reasoning via Selective Critical Token Fine-Tuning
+    arxiv: '2510.10974'
+    doi: 10.48550/arXiv.2510.10974
+    published: '2025-10-13'
+  - title: 'VCORE: Variance-Controlled Optimization-based Reweighting for Chain-of-Thought Supervision'
+    arxiv: '2510.27462'
+    doi: 10.48550/arXiv.2510.27462
+    published: '2025-10-31'
+  - title: 'Rho-1: Not All Tokens Are What You Need'
+    arxiv: '2404.07965'
+    doi: 10.48550/arXiv.2404.07965
+    published: '2024-04-11'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.09835
+  idea: We aim to enable interactive personalization of large language models without modifying their parameters. The central
+    problem is that a user’s preferences are hidden and only gradually revealed through successive exchanges, making it difficult
+    to balance enduring tastes with moment‑to‑moment intents. Our approach is to keep a set of interpretable, natural‑language
+    hypotheses that capture both short‑term goals and long‑term inclinations. After each turn, we will employ a surrogate
+    choice model built from the same language model to evaluate how well each hypothesis explains the observed user response,
+    and then re‑weight the hypothesis set using a sequential Monte‑Carlo–style update. By iterating this process across dialogue
+    turns and sessions, we expect to maintain a dynamic, query‑aware profile that guides the model’s outputs toward the user’s
+    evolving preferences.
+  realising:
+    title: 'HyperTrace: Hypothesis-Based Preference Tracing for Online LLM Personalization'
+    arxiv: '2609.09835'
+    published: '2026-09-09'
+  prior_work:
+  - title: Latent Inter-User Difference Modeling for LLM Personalization
+    arxiv: '2507.20849'
+    doi: 10.48550/arXiv.2507.20849
+    published: '2025-07-28'
+  - title: 'Personalized Soups: Personalized Large Language Model Alignment via Post-hoc Parameter Merging'
+    arxiv: '2310.11564'
+    doi: 10.48550/arXiv.2310.11564
+    published: '2023-10-17'
+  - title: Instant Personalized Large Language Model Adaptation via Hypernetwork
+    arxiv: '2510.16282'
+    doi: 10.48550/arXiv.2510.16282
+    published: '2025-10-18'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.09156
+  idea: The growing volume of scholarly literature makes it increasingly difficult for authors to locate sources that directly
+    substantiate specific statements, and existing retrieval‑augmented generators tend to select papers based on surface similarity
+    rather than logical relevance. We propose to develop a modular framework that treats each citation decision as an active
+    reasoning problem. The system will first detect the location and intent of a claim, then formulate a purpose‑driven search
+    query, retrieve candidate papers, and finally run a reflective verification step that assesses whether the retrieved evidence
+    actually supports the claim. If the check fails, the loop will trigger a revised query or alternative source selection.
+    Training will use synthetically generated reasoning trajectories to teach the model to align claims with appropriate references.
+  realising:
+    title: 'ReCite: Agentic Reasoning for Faithful Citation'
+    arxiv: '2609.09156'
+    published: '2026-09-08'
+  prior_work:
+  - title: 'ScholarCopilot: Training Large Language Models for Academic Writing with Accurate Citations'
+    arxiv: '2504.00824'
+    doi: 10.48550/arXiv.2504.00824
+    published: '2025-04-01'
+  - title: Enabling Large Language Models to Generate Text with Citations
+    arxiv: '2305.14627'
+    doi: 10.48550/arXiv.2305.14627
+    published: '2023-05-24'
+  - title: 'FoVer: First-Order Logic Verification for Natural Language Reasoning'
+    doi: 10.1162/tacl.a.41
+    published: '2025-01-01'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.08650
+  idea: We aim to improve the breadth of correct solutions discovered by large reasoning models trained with reward‑based
+    reinforcement learning. Although such training raises per‑example accuracy, it often leaves the model’s overall solution
+    coverage stagnant because the exploration strategy during rollouts is limited. We propose to redesign the rollout process
+    by (1) adjusting the difficulty of generated sub‑problems according to the model’s current competence, (2) organizing
+    the exploration as a hierarchical search tree rather than as independent parallel attempts, and (3) steering the branching
+    decisions with a measure of sentence‑level entropy to promote semantically diverse continuations. An auxiliary term that
+    rewards diversity among sibling branches will be added to the training objective. The plan is to test this approach on
+    challenging mathematical reasoning benchmarks and assess its impact on expanding the set of correct answers discovered
+    during inference.
+  realising:
+    title: Difficulty-Adaptive Tree-Structured Policy Optimization for Expanding Reasoning Coverage in RLVR
+    arxiv: '2609.08650'
+    published: '2026-09-08'
+  prior_work:
+  - title: Lookahead Tree-Based Rollouts for Enhanced Trajectory-Level Exploration in Reinforcement Learning with Verifiable
+      Rewards
+    arxiv: '2510.24302'
+    doi: 10.48550/arXiv.2510.24302
+    published: '2025-10-28'
+  - title: 'Attention as a Compass: Efficient Exploration for Process-Supervised RL in Reasoning Models'
+    arxiv: '2509.26628'
+    doi: 10.48550/arXiv.2509.26628
+    published: '2025-09-30'
+  - title: Improving Sampling Efficiency in RLVR through Adaptive Rollout and Response Reuse
+    arxiv: '2509.25808'
+    doi: 10.48550/arXiv.2509.25808
+    published: '2025-09-30'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.08267
+  idea: 'Large language models often generate statements that are factually inaccurate, and current detection techniques rely
+    mainly on internal signals such as confidence scores or self‑consistency, which can be outdated or incomplete for specialized
+    or recent topics. We propose to enhance hallucination detection by grounding generation in external documents retrieved
+    at inference time. Specifically, the plan is to extract every named entity from the model’s output and compare it with
+    entities found in the retrieved passages, evaluating alignment along three complementary dimensions: lexical presence,
+    contextual fit, and relational consistency. To ensure robustness, we will also perform a counterfactual stability test
+    by perturbing the retrieved evidence and observing whether the entity‑evidence alignment persists. This approach aims
+    to identify entity‑level fabrications without modifying the underlying language model.'
+  realising:
+    title: Evidence-Aligned Entity Verification for Hallucination Detection in Retrieval-Augmented Generation
+    arxiv: '2609.08267'
+    published: '2026-09-08'
+  prior_work:
+  - title: 'ReDeEP: Detecting Hallucination in Retrieval-Augmented Generation via Mechanistic Interpretability'
+    arxiv: '2410.11414'
+    doi: 10.48550/arXiv.2410.11414
+    published: '2024-10-15'
+  - title: 'DelucionQA: Detecting Hallucinations in Domain-specific Question Answering'
+    arxiv: '2312.05200'
+    doi: 10.18653/v1/2023.findings-emnlp.59
+    published: '2023-12-08'
+  - title: Enhancing Uncertainty-Based Hallucination Detection with Stronger Focus
+    arxiv: '2311.13230'
+    doi: 10.48550/arXiv.2311.13230
+    published: '2023-11-22'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.08189
+  idea: Large language models contain many sequential processing blocks, yet many tokens do not require the full depth during
+    inference. Existing adaptive layer‑selection techniques decide locally, based only on the current token representation,
+    ignoring that earlier routing choices influence later hidden states and the overall computational budget. We propose to
+    endow the routing mechanism with a lightweight memory that accumulates a summary of past routing scores and the corresponding
+    residual updates as the token traverses the network. At each block, the router will condition jointly on this accumulated
+    history and the present hidden vector to determine whether to execute or skip the block. The backbone model remains frozen
+    while only small adapters and the memory‑augmented routers are trained, enabling more coherent and efficient depth adaptation.
+  realising:
+    title: 'Do Dynamic Routers Need Memory? HeRo: History-Aware Routing for Efficient LLM Inference'
+    arxiv: '2609.08189'
+    published: '2026-09-08'
+  prior_work:
+  - title: You Do Not Fully Utilize Transformer's Representation Capacity
+    arxiv: '2502.09245'
+    doi: 10.48550/arXiv.2502.09245
+    published: '2025-02-13'
+  - title: 'SkipGPT: Dynamic Layer Pruning Reinvented with Token Awareness and Module Decoupling'
+    arxiv: '2506.04179'
+    doi: 10.48550/arXiv.2506.04179
+    published: '2025-06-04'
+  - title: Adaptive Layer-skipping in Pre-trained LLMs
+    arxiv: '2503.23798'
+    doi: 10.48550/arXiv.2503.23798
+    published: '2025-03-31'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.08273
+  idea: Long‑term interactive agents accumulate large amounts of episodic information, which soon makes storage and real‑time
+    lookup prohibitively expensive. We propose a memory‑management framework that first groups past experiences into coherent
+    segments by exploiting global semantic similarity together with local temporal continuity. Within each segment we construct
+    a weighted spanning‑tree representation of the individual entries and iteratively collapse redundant nodes by merging
+    along the strongest edges, thereby reducing the overall footprint while preserving the most informative connections. For
+    retrieval, we plan to select a small set of anchor nodes and propagate relevance through their temporal neighborhoods,
+    allowing the system to locate pertinent memories efficiently. This approach aims to retain the functional performance
+    of the original memory while substantially lowering both memory size and query latency.
+  realising:
+    title: 'MemForest: Efficient Agent Memory Management via EventTree Partitioning and Progressive Merging'
+    arxiv: '2609.08273'
+    published: '2026-09-08'
+  prior_work: []
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.07286
+  idea: We aim to address the tendency of multimodal audio‑text systems to generate affirmative answers about sound events
+    that are not present in the input, a failure that compromises trustworthiness in audio question answering. The proposed
+    plan is to introduce a training‑free decoding modification that, at the moment the model first decides between “yes” and
+    “no”, compares the model’s output distribution on the actual audio with that obtained from a silent reference of identical
+    length. By measuring the confidence gap between these two distributions, we will apply an adaptive gate that suppresses
+    spurious affirmative tokens when the audio evidence is insufficient, while allowing them when the evidence is strong.
+    This contrastive, confidence‑driven mechanism is intended to reduce false positive predictions without altering the underlying
+    model parameters.
+  realising:
+    title: 'TAD: Token-Adaptive Contrastive Decoding with Confidence-Guided Gating for Hallucination Mitigation in Large Audio-Language
+      Models'
+    arxiv: '2609.07286'
+    published: '2026-09-07'
+  prior_work:
+  - title: Reducing Object Hallucination in Large Audio-Language Models via Audio-Aware Decoding
+    arxiv: '2506.07233'
+    doi: 10.1109/ASRU65441.2025.11434595
+    published: '2025-06-08'
+  - title: 'Teaching Audio-Aware Large Language Models What Does Not Hear: Mitigating Hallucinations through Synthesized Negative
+      Samples'
+    arxiv: '2505.14518'
+    doi: 10.48550/arXiv.2505.14518
+    published: '2025-05-20'
+  - title: 'AVCD: Mitigating Hallucinations in Audio-Visual Large Language Models through Contrastive Decoding'
+    arxiv: '2505.20862'
+    doi: 10.48550/arXiv.2505.20862
+    published: '2025-05-27'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.07050
+  idea: The challenge is to obtain all necessary supporting texts for questions that require several reasoning steps, where
+    each step often introduces new entities or relations that must be discovered sequentially. Current retrieval pipelines
+    typically issue a single query or perform a one‑time expansion, which cannot adapt to information uncovered during the
+    search and may retrieve redundant or irrelevant passages. We propose a training‑free retrieval system that (1) pre‑computes
+    for every passage a set of discriminative descriptors that highlight how it differs from its semantically close neighbors,
+    (2) during inference iteratively issues targeted probes that address gaps revealed by previously retrieved passages, (3)
+    refines the relevance scores of candidates using the pre‑computed descriptors, and (4) selects a diverse, complementary
+    subset of passages that together satisfy the evolving information needs. This approach aims to improve evidence coverage
+    and reduce noise in multi‑step question answering.
+  realising:
+    title: 'Beyond One-Shot Expansion: Contrastive Evidence Exploration for Multi-Hop Retrieval'
+    arxiv: '2609.07050'
+    published: '2026-09-07'
+  prior_work:
+  - title: Shifting from Ranking to Set Selection for Retrieval Augmented Generation
+    arxiv: '2507.06838'
+    doi: 10.18653/v1/2025.acl-long.861
+    published: '2025-07-09'
+  - title: 'Query, Decompose, Compress: Structured Query Expansion for Efficient Multi-Hop Retrieval'
+    arxiv: '2603.21024'
+    doi: 10.1145/3746252.3760968
+    published: '2025-11-10'
+  - title: 'CIRAG: Construction-Integration Retrieval and Adaptive Generation for Multi-hop Question Answering'
+    arxiv: '2601.06799'
+    doi: 10.48550/arXiv.2601.06799
+    published: '2026-01-11'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.10060
+  idea: The prevailing audits of social bias in large language models depend on the models’ generated text, which requires
+    costly benchmark datasets or external judges and can miss systematic changes that never surface in output. We propose
+    to examine the internal token‑level representations themselves, comparing a model before and after a modification such
+    as fine‑tuning. By fixing a small collection of exemplar sentences and encoding every input as its similarity profile
+    to these exemplars, we obtain a shared comparison space that makes representations from different checkpoints comparable.
+    In this space we will quantify how the association between demographic groups and positive versus negative attribute concepts
+    shifts. The plan is to evaluate this shift across several model families and bias‑related test suites, assess its alignment
+    with traditional output‑based measures, and verify robustness to the choice of exemplars, all while requiring far less
+    computation than existing methods.
+  realising:
+    title: Reference-Based Bias Detection in LLMs via Relative Representations of Hidden States
+    arxiv: '2609.10060'
+    published: '2026-09-09'
+  prior_work:
+  - title: 'Pooling And Attention: What Are Effective Designs For LLM-Based Embedding Models?'
+    arxiv: '2409.02727'
+    doi: 10.48550/arXiv.2409.02727
+    published: '2024-09-04'
+  - title: On Transferability of Bias Mitigation Effects in Language Model Fine-Tuning
+    doi: 10.18653/V1/2021.NAACL-MAIN.296
+    published: '2021-06-01'
+  - title: Semantics derived automatically from language corpora contain human-like biases
+    arxiv: '1608.07187'
+    doi: 10.1126/science.aal4230
+    published: '2016-08-25'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.09953
+  idea: Multilingual sentence encoders are typically trained to align whole sentences, yet they are increasingly deployed
+    for word‑ or span‑level tasks such as hallucination detection and sequence labeling, creating a gap between training objectives
+    and downstream use. We propose a lightweight post‑training step that injects supervision at the span level into an already
+    trained sentence encoder. By exposing the model to annotated text spans, the approach aims to refine the internal token
+    embeddings while preserving the encoder’s ability to produce high‑quality sentence vectors. The plan includes evaluating
+    the modified model on a suite of multilingual token‑level benchmarks as well as on standard sentence‑level retrieval and
+    classification tasks to assess whether span‑level signals can jointly enhance both granular and holistic representations.
+  realising:
+    title: Improving Cross-Lingual Token Representations by Adding a Pinch of SALT
+    arxiv: '2609.09953'
+    published: '2026-09-09'
+  prior_work: []
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.11655
+  idea: 'Training large language models with a recent momentum‑based optimizer often yields rapid convergence but suffers
+    from instability: the momentum matrix is forced toward a flat spectrum, which can cause sudden loss spikes and uncontrolled
+    growth of parameters. Existing remedies focus on clipping weights or attention logits and require changes to specific
+    model components, leaving the underlying instability unaddressed. We propose to stabilize this optimizer by modifying
+    its momentum update so that singular values exceeding a chosen bound are truncated, while the overall spectral shape is
+    retained. This spectral‑value clipping will be applied at the optimizer level, making it independent of model architecture.
+    We will develop a smooth approximation of the clipping operation using iterative matrix‑square‑root techniques, and we
+    will analyze convergence in non‑convex stochastic settings.'
+  realising:
+    title: 'Musec: MomentUm SpEctral Clipping for Stable Muon-type Training'
+    arxiv: '2609.11655'
+    published: '2026-09-10'
+  prior_work:
+  - title: Enhancing LLM Training via Spectral Clipping
+    arxiv: '2603.14315'
+    doi: 10.48550/arXiv.2603.14315
+    published: '2026-03-15'
+  - title: 'Gradient Clipping Beyond Vector Norms: A Spectral Approach for Matrix-Valued Parameters'
+    arxiv: '2605.11838'
+    doi: 10.48550/arXiv.2605.11838
+    published: '2026-05-12'
+  - title: 'NorMuon: Making Muon more efficient and scalable'
+    arxiv: '2510.05491'
+    doi: 10.48550/arXiv.2510.05491
+    published: '2025-10-07'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.30289
+  idea: In collaborative environments, agents must draw on both shared knowledge (team decisions, protocols) and private observations
+    (individual traces, intermediate results). Current memory‑augmented systems treat all stored items as a flat list and
+    rank them by relevance, importance, or recency, ignoring the hierarchical relationship between collective and personal
+    records and the fact that many entries become obsolete as the team’s consensus evolves. We propose to construct a two‑level
+    memory architecture that separates communal and individual entries, continuously updates a validity indicator for each
+    item by detecting and resolving conflicts, and then retrieves only those records whose validity flag remains true. The
+    retrieved, up‑to‑date memories will be used to ground the agent’s responses, ensuring that answers reflect the current
+    state of the collaboration.
+  realising:
+    title: 'Not All Memories Are Equal: Hierarchical Collaborative Memory for Validity-Aware Retrieval in LLM Agents'
+    arxiv: '2609.30289'
+    published: '2026-09-09'
+  prior_work:
+  - title: 'Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection'
+    arxiv: '2310.11511'
+    published: '2023-10-17'
+  - title: 'ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT'
+    arxiv: '2004.12832'
+    doi: 10.1145/3397271.3401075
+    published: '2020-04-27'
+  - title: Precise Zero-Shot Dense Retrieval without Relevance Labels
+    arxiv: '2212.10496'
+    doi: 10.18653/v1/2023.acl-long.99
+    published: '2022-12-20'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'
+- id: T-2609.08173
+  idea: We aim to improve the precision of latent‑feature editing for large language models when their outputs clash with
+    supplied contextual information. Existing techniques adjust a large collection of latent dimensions selected by simple
+    correlation, which often introduces unnecessary changes and degrades performance. Our proposal is to first discover a
+    compact set of latent units that exhibit strong causal influence on both preceding and succeeding representations, and
+    then construct directed chains linking these pivotal units. By modifying only the units along these chains, we expect
+    to achieve targeted correction with minimal side effects, yielding a more interpretable and efficient editing process.
+    This approach shifts the focus from bulk adjustments to selective, causally grounded interventions.
+  realising:
+    title: Key Path Identification for Resolving Knowledge Conflicts via SAE-based Steering
+    arxiv: '2609.08173'
+    published: '2026-09-08'
+  prior_work:
+  - title: 'Beyond Prompt Engineering: Robust Behavior Control in LLMs via Steering Target Atoms'
+    arxiv: '2505.20322'
+    doi: 10.48550/arXiv.2505.20322
+    published: '2025-05-23'
+  - title: 'AxBench: Steering LLMs? Even Simple Baselines Outperform Sparse Autoencoders'
+    arxiv: '2501.17148'
+    doi: 10.48550/arXiv.2501.17148
+    published: '2025-01-28'
+  - title: 'ReDeEP: Detecting Hallucination in Retrieval-Augmented Generation via Mechanistic Interpretability'
+    arxiv: '2410.11414'
+    doi: 10.48550/arXiv.2410.11414
+    published: '2024-10-15'
+  domain: cs
+  verification: '2026-09-30: idea text compared with the realising abstract for fidelity and for identifying strings by an
+    LLM assistant (Claude) working for the author; realising-paper metadata from the arXiv API; references and dates from
+    the Semantic Scholar API. Not yet independently checked by a human annotator.'

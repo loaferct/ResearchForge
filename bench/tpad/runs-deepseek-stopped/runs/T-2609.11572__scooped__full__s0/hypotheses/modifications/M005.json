@@ -1,0 +1,32 @@
+{
+  "id": "M005",
+  "title": "Graded interval-membership temporal scoring for incomplete or noisy validity metadata",
+  "description": "Use a graded interval-membership temporal term rather than a binary in-force indicator, and position it as graceful degradation for the regime the hard filter cannot serve: per-clause effective/expiry dates that are missing, conflicting or unofficial, and query as-of dates that must be inferred from text rather than matched by a regex. Each candidate version receives a soft membership score for the query date (high inside a well-supported interval, reduced when the interval is uncertain or partially overlapping the query date, non-zero for versions whose interval is unknown), combined with the semantic score exactly as before, with no re-indexing.",
+  "why_differs": "This is a narrower claim than the original modification. Prior et al. report that hard as-of-date filtering already solved the retrieval problem when metadata is clean, so the soft interval-aware score cannot be defended as a general improvement over filtering. The difference from Prior et al. and TaxFlow is now conditional: graded membership matters only when in-force dates are unofficial, missing or conflicting and the as-of date must be inferred, where a binary filter hard-excludes candidates. It still differs from TempRALM, which uses distance decay with no validity intervals.",
+  "technical_mechanism": "score(q,p) = s(q,p) + lambda * m(t_q, interval(p)), where m is a graded membership in [0,1] derived from the version interval and its uncertainty (e.g. 1 inside a confident interval, decaying near interval boundaries, a small value when the interval is unknown or conflicting), so uncertain versions remain retrievable and ranking degrades smoothly as metadata quality falls.",
+  "expected_benefit": "Retains recall when the hard filter's inputs are unreliable: a noisy or missing effective date no longer causes the correct in-force version to be excluded outright, and an imprecisely inferred as-of date degrades the ranking gradually rather than catastrophically. Under clean metadata it should match, not beat, the hard filter, which is the honest claim.",
+  "potential_novelty": "Hedged: no retrieved work scores temporal relevance by graded interval membership or studies version selection under noisy validity metadata, but the search budget was exhausted and TempRALM could not be citation-expanded, so this remains a provisional negative finding about the literature.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "The scoring change remains small, but it needs a representation of interval uncertainty (confidence or partial-overlap handling) and a rule for versions with unknown intervals, which requires curating or estimating metadata quality.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Adds a noise-injection study with a noise-level sweep and a crossover analysis on top of the base leakage-controlled plan; still no training and no index rebuild, so the extra cost is in experimental design and repeated runs rather than resources.",
+  "main_risk": "If real corpora provide effectively clean validity metadata, the variant degenerates to the already-published hard filter and the narrowed contribution is a rare fallback rather than a meaningful one; prevalence of metadata noise is currently unverified (U017).",
+  "required_baselines": [
+    "Hard in-force filter on clean metadata",
+    "Hard in-force filter with the same injected metadata noise and degraded as-of extraction",
+    "Semantic-only retrieval",
+    "Monotone elapsed-time decay (TempRALM-style)",
+    "Oracle in-force filter with clean metadata"
+  ],
+  "related_paper_ids": [
+    "arxiv:2605.23497",
+    "arxiv:2401.13222",
+    "doi:10.1080/08839514.2026.2626097"
+  ],
+  "addresses_gap_ids": [
+    "G002",
+    "G005"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T05:27:12.561015Z"
+}

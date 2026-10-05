@@ -1,0 +1,41 @@
+{
+  "paper_id": "doi:10.3390/info17040372",
+  "relevance_tier": "medium",
+  "problem": "Most previous studies have used separate approaches, i.e., either text summarization (TS) or question answering (QA). The aim of this paper is to develop an interaction between TS and QA in three stages to enhance information retrieval (IR) performance.",
+  "method": "First, SBERT is used for summarization. Second, an RAG method is employed to retrieve information and generate answers. In the architecture of RAG, retrieval of the document is fulfilled via all-MiniLM-L6-v2, while answer generation is performed via the T5 and BART-large-cnn models. Third, the retrieved answers are assessed and compared with a baseline system in which the documents are treated without summarization.",
+  "key_assumptions": [
+    "Summarization can improve the quality of retrieved information and answer generation in a RAG pipeline.",
+    "Evaluating retrieved answers against a baseline without summarization shows the benefit of the integration."
+  ],
+  "main_contribution": "A composite system that integrates text summarization and question answering in three stages to enhance IR performance, demonstrating improvements on the NIPS dataset.",
+  "datasets": [
+    "NIPS dataset"
+  ],
+  "benchmarks": [
+    "NIPS dataset (for IR evaluation)"
+  ],
+  "baselines": [
+    "Standard RAG baseline without summarization"
+  ],
+  "metrics": [
+    "text similarity",
+    "BERT scores for answer generation"
+  ],
+  "results": "\"Experimental evaluation conducted on the NIPS dataset demonstrates that the proposed approach significantly enhances summary informativeness and answer accuracy compared with traditional single-task approaches. The simulation results show improvements of 20.83% in text similarity and 2.38% in BERT scores for answer generation compared with the standard RAG baseline without summarization.\"",
+  "limitations": [
+    "Evaluation limited to NIPS dataset; may not generalize to other domains or evolving documents."
+  ],
+  "future_work": [
+    "Not explicitly stated in abstract."
+  ],
+  "code_availability": "\"Not stated in abstract\"",
+  "relation_to_idea": {
+    "problem_overlap": 0.1,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.1,
+    "conceptual_difference": "TSQA focuses on integrating summarization with QA to improve IR for long static documents, whereas the proposed idea focuses on temporal relevance weighting for QA over evolving documents with overlapping versions.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T09:15:35.507391Z"
+}

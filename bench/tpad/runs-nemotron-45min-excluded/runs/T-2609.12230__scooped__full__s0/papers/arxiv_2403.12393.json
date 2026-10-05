@@ -1,0 +1,41 @@
+{
+  "id": "arxiv:2403.12393",
+  "title": "Dr3: Ask Large Language Models Not to Give Off-Topic Answers in Open Domain Multi-Hop Question Answering",
+  "authors": [
+    "Yuan Gao",
+    "Yiheng Zhu",
+    "Yuanbin Cao",
+    "Yinzhi Zhou",
+    "Zhen Wu",
+    "Yujie Chen",
+    "Shenglan Wu",
+    "Haoyuan Hu",
+    "Xinyu Dai"
+  ],
+  "year": 2024,
+  "published": "2024-03-19",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2403.12393",
+  "pdf_url": "https://arxiv.org/pdf/2403.12393v1",
+  "abstract": "Open Domain Multi-Hop Question Answering (ODMHQA) plays a crucial role in Natural Language Processing (NLP) by aiming to answer complex questions through multi-step reasoning over retrieved information from external knowledge sources. Recently, Large Language Models (LLMs) have demonstrated remarkable performance in solving ODMHQA owing to their capabilities including planning, reasoning, and utilizing tools. However, LLMs may generate off-topic answers when attempting to solve ODMHQA, namely the generated answers are irrelevant to the original questions. This issue of off-topic answers accounts for approximately one-third of incorrect answers, yet remains underexplored despite its significance. To alleviate this issue, we propose the Discriminate->Re-Compose->Re- Solve->Re-Decompose (Dr3) mechanism. Specifically, the Discriminator leverages the intrinsic capabilities of LLMs to judge whether the generated answers are off-topic. In cases where an off-topic answer is detected, the Corrector performs step-wise revisions along the reversed reasoning chain (Re-Compose->Re-Solve->Re-Decompose) until the final answer becomes on-topic. Experimental results on the HotpotQA and 2WikiMultiHopQA datasets demonstrate that our Dr3 mechanism considerably reduces the occurrence of off-topic answers in ODMHQA by nearly 13%, improving the performance in Exact Match (EM) by nearly 3% compared to the baseline method without the Dr3 mechanism.",
+  "doi": null,
+  "arxiv_id": "2403.12393",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:40:04.399234Z",
+  "relevance": 0.75,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering datasets HotpotQA 2WikiMultiHopQA"
+  ],
+  "code_urls": [],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

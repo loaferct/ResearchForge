@@ -1,0 +1,74 @@
+{
+  "id": "G001",
+  "gap": "No existing work enriches training triples with local context subgraphs from the same passage for multi-hop knowledge graph question answering, which limits the model's ability to leverage passage-level contextual supervision during training.",
+  "evidence": [
+    {
+      "paper_id": "doi:10.26615/978-954-452-102-8-014",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "KGEIR identifies key entities from questions, builds an initial graph from retrieved paragraphs, reasons over this structure, identifies information gaps, and iteratively re-trieves additional context to refine the graph until sufficient information is gathered.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2101.03737",
+      "experiment_run_id": null,
+      "location": "p. 3",
+      "quote": "In our approach, the student network aims to find the correct answer to the query, while the teacher network tries to learn intermediate supervision signals for improving the reasoning capacity of the student network.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2305.13691",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "We propose a data synthesis framework for multi-hop question answering that allows for improving smaller language models with less than 10 human-annotated question answer pairs.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2312.15194",
+      "experiment_run_id": null,
+      "location": "p. 3",
+      "quote": "PokeMQA is a lightweight model editor that can be seamlessly integrated into any backbone LLMs, without changing parameters in the deployed language models.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2501.16350",
+      "experiment_run_id": null,
+      "location": "p. 11",
+      "quote": "Our method consists of four main components: question parsing, named entity recognition, conversion of complex questions into SPARQL queries, and SPARQL query execution and response composition.",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote not found in retrieved abstract/full text"
+    },
+    {
+      "paper_id": "arxiv:2502.14245",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "ChainRAG progressively handles each sub-question by completing missing key entities and retrieving relevant sentences from a sentence graph for answer generation.",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote not found in retrieved abstract/full text"
+    }
+  ],
+  "related_paper_ids": [
+    "doi:10.26615/978-954-452-102-8-014",
+    "arxiv:2101.03737",
+    "arxiv:2305.13691",
+    "arxiv:2312.15194",
+    "arxiv:2501.16350",
+    "arxiv:2502.14245"
+  ],
+  "why_unaddressed": "Prior work focuses on inference-time knowledge graph construction, teacher-student intermediate supervision, LLM-based data synthesis, knowledge editing, question decomposition, or retrieval augmentation with sentence graphs, but none modify the training triples themselves to include passage-level context subgraphs.",
+  "research_question": "Does enriching each training triple with additional triples from the same source passage (forming a local context subgraph) improve multi-hop KGQA performance compared to training on isolated triples alone?",
+  "potential_experiment": "Fine-tune a language model on a multi-hop KGQA dataset (e.g., HotpotQA) using two regimes: (A) training on isolated head-relation-tail triples extracted from the corpus; (B) training on triples enriched with additional triples from the same source passage (local context subgraph). Evaluate both models on held-out multi-hop QA Exact Match and F1 scores.",
+  "confidence": "medium",
+  "verification_required": "",
+  "recorded_at": "2026-09-30T09:29:22.057756Z"
+}

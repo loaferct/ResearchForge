@@ -1,0 +1,31 @@
+{
+  "id": "M001",
+  "title": "Validity-gated (valid-time) temporal relevance instead of elapsed-time decay",
+  "description": "Replace the elapsed-time (recency-decay) temporal term with valid-time membership: a passage's temporal relevance is determined by whether the query's target date falls inside the clause's in-force interval [effective_from, effective_to), with hard exclusion of not-yet-in-force and superseded clauses before semantic ranking. Recency decay is retained only as an explicit comparison arm rather than the default signal.",
+  "why_differs": "The closest systems use exponential decay or learnable decay as the temporal signal, which equates age with loss of validity; TempFinRAG uses a hard as-of boundary but inside a multimodal financial pipeline. This modification makes valid-time membership the temporal term itself, in a retriever-independent layer, and treats decay as merely one ablation arm.",
+  "technical_mechanism": "Derive a per-clause in-force interval [effective_from, effective_to) from amendment metadata (e.g., entry-into-force and applicability dates under a legal identifier standard). Define a temporal gate tau(q,p)=1 if target_date(q) is in the interval, else 0. Apply the gate to the base retriever's candidate list before scoring (or multiply it into the final score) so only in-force clauses are ranked, then rank by the base retriever's semantic/lexical score; optionally add a small graded tie-break favouring the clause whose validity window most tightly contains the target date. No retraining and no change to the base retriever; the layer sits between candidate generation and top-k selection.",
+  "expected_benefit": "Removes the failure mode in which a recent but superseded or not-yet-in-force amendment outranks a long-lived in-force clause; makes the hypothesis plausible for point-in-time legal questions rather than only for news-like recency questions.",
+  "potential_novelty": "Hedged: the valid-time/bitemporal requirement is already stated conceptually in the legal-retrieval literature, so novelty would rest on the empirical demonstration that valid-time gating outperforms recency decay for near-duplicate amended clauses, not on the concept.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Validity intervals must be parsed or reconstructed from amendment metadata; the retrieval-side change is a simple candidate filter plus score adjustment and needs no retraining.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Requires per-clause in-force intervals and a query set whose authoritative version is deliberately not always the latest; evaluation itself reuses standard retrievers and a fixed reader.",
+  "main_risk": "Passage-level validity metadata may be unavailable or noisy, and if only legislation-level dates exist the valid-time gate degenerates into a coarse document filter that neither helps nor hurts.",
+  "required_baselines": [
+    "Semantic-only retrieval with the same base retriever",
+    "Recency/exponential-decay re-ranking",
+    "Hard as-of filter alone",
+    "Published fixed three-signal hybrid (lexical+dense+decay)"
+  ],
+  "related_paper_ids": [
+    "arxiv:2606.09724",
+    "doi:10.3390/computers15080471",
+    "doi:10.3390/sym18091498",
+    "doi:10.2139/ssrn.7174868"
+  ],
+  "addresses_gap_ids": [
+    "G002"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T04:34:42.822415Z"
+}

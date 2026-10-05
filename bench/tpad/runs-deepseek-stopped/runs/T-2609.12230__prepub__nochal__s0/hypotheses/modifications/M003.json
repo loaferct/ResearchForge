@@ -1,0 +1,29 @@
+{
+  "id": "M003",
+  "title": "Replace the naive one-hop repair loop with error-type attribution and targeted repair",
+  "description": "Insert a failure-attribution stage before any corrective-example generation. Using controlled perturbations on the KG and question pipeline, classify each failing instance into (i) incorrect base fact, (ii) entity-linking/retrieval failure, (iii) composition/shortcut failure. Run the repair loop only on type-(i) failures and report per-type repair rates, with a full-loop comparison as an ablation. If type (i) does not dominate, replace the repair loop with a retrieval/entity-linking fix or drop the component.",
+  "why_differs": "NSM addresses missing intermediate supervision rather than diagnosing failure types; GNN-RAG names entity-linking failure as a limitation but does not attribute or repair errors. This modification makes failure attribution the experimental object, so the repair loop can be kept, narrowed, or rejected on evidence rather than assumption.",
+  "technical_mechanism": "Build perturbation variants of the KG and questions; fit the model on each and label failures by construction. For natural failures, classify with a rule-based/marker-based detector (e.g. whether a wrong intermediate entity vs. a wrong topic-entity link is implicated), then generate corrective examples only for base-fact failures and measure per-type repair rate and collateral harm.",
+  "expected_benefit": "Tests the idea's weakest assumption directly and prevents the predicted failure mode where the loop chases entity-linking or composition errors and amplifies them; yields a reusable diagnostic whether or not the repair loop works.",
+  "potential_novelty": "Hedged: error-type taxonomies exist elsewhere in QA, but no retrieved multi-hop KGQA work reports per-type repair rates under perturbations, so this is plausibly a first for this sub-area and is useful even if the repair loop is refuted.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Perturbation harnesses and error-type labels must be built; the existing repair loop then needs to be restricted to a failure subset.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Requires building controlled perturbation harnesses (inject false triples, corrupt entity links, add composition depth) and re-running evaluation per perturbation, but each run is cheap relative to LLM fine-tuning.",
+  "main_risk": "Perturbation-injected errors may not match naturally occurring errors, so the attribution taxonomy could be an artefact of the perturbations. Validating on naturally failing instances (with manual or model-assisted labels) is needed.",
+  "required_baselines": [
+    "Unrestricted repair loop (current idea)",
+    "Attributed repair loop (type-(i) only)",
+    "No-repair baseline",
+    "Oracle error-type labels (upper bound)"
+  ],
+  "related_paper_ids": [
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "arxiv:2101.03737"
+  ],
+  "addresses_gap_ids": [
+    "G002"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:28:13.498398Z"
+}

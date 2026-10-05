@@ -1,0 +1,28 @@
+{
+  "id": "M001",
+  "title": "Dynamic Context Sizing Mechanism",
+  "description": "Replace the fixed-size local context subgraph with a dynamic sizing mechanism that determines the optimal number of additional triples per target triple based on passage complexity, entity density, or uncertainty estimates from a lightweight predictor.",
+  "why_differs": "Unlike fixed-context approaches in existing work (e.g., arxiv:2407.13101 uses fixed summarization, arxiv:2202.13296 retrieves variable-sized subgraphs but at inference time only), this modification adapts context size at the training level to optimize the trade-off between contextual benefit and noise for each specific triple.",
+  "technical_mechanism": "Train a lightweight context size predictor (e.g., based on passage length, entity count, or relation diversity) that outputs the number of additional triples to include for each target triple, or use uncertainty estimation from the model's initial predictions to gate context inclusion.",
+  "expected_benefit": "Reduces noise from irrelevant triples while preserving contextual benefits, leading to more efficient training and better generalization, particularly addressing the optimal context size gap (G001).",
+  "potential_novelty": "Combines adaptive computation with context-enriched training for KGQA, which has not been explicitly explored in existing literature.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Requires designing and training a context size predictor or uncertainty estimator, adding moderate complexity to the training pipeline but using established techniques.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Requires ablation studies comparing fixed vs. dynamic sizing and implementation of the predictor mechanism.",
+  "main_risk": "The predictor may add overhead or fail to accurately estimate optimal context size, potentially underperforming than a well-tuned fixed size.",
+  "required_baselines": [
+    "Fixed context size (0, 2, 5, 10 additional triples)",
+    "Base model without context enrichment"
+  ],
+  "related_paper_ids": [
+    "arxiv:2407.13101",
+    "arxiv:2202.13296",
+    "arxiv:2603.23512"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T06:20:26.284124Z"
+}

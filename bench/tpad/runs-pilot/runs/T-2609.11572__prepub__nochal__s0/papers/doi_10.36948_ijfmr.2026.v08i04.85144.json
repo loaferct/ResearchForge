@@ -1,0 +1,34 @@
+{
+  "id": "doi:10.36948/ijfmr.2026.v08i04.85144",
+  "title": "Retrieval-Augmented Detection: Grounding Intrusion Analysis in Historical Incident Corpora",
+  "authors": [
+    "V. B",
+    "Neha Patil"
+  ],
+  "year": 2026,
+  "published": "2026-08-05",
+  "venue": "International Journal For Multidisciplinary Research",
+  "url": "https://www.semanticscholar.org/paper/4d2eddfee44b4297f6c109af1ff30f644cf0a480",
+  "pdf_url": "https://www.ijfmr.com/papers/2026/4/85144.pdf",
+  "abstract": "Modern security operations centers (SOCs) are saturated with alerts whose disposition depends less on the alert itself than on institutional memory: whether a comparable pattern has been seen before, what it was found to mean, and how it was resolved. That memory exists — in closed tickets, investigation notes, and analyst dispositions — but it is unstructured, weakly indexed, and effectively unavailable at triage time. This paper introduces Retrieval-Augmented Detection (RAD), an architecture in which retrieval over a historical incident corpus participates in the detection decision itself rather than only in post-hoc narration. RAD contributes four mechanisms: (i) a normalization stage that maps heterogeneous detector output into a common schema suitable for embedding; (ii) hybrid dense–sparse retrieval over analyst-adjudicated incident records with an explicit temporal-decay weighting that discounts precedent drawn from superseded infrastructure; (iii) an evidence-conditioned scoring function in which retrieved precedent modulates detection confidence and every generated assertion carries a provenance link to a specific incident identifier; and (iv) a retrieval-support threshold below which the system abstains rather than emitting an unsupported verdict. We distinguish RAD from prior retrieval-augmented work in IT operations, which applies retrieval after an incident is declared in order to explain it; RAD applies retrieval before disposition in order to decide it. We identify abstention calibration as the central open problem for safe deployment, together with the failure surface a precedent-based architecture inherits — corpus poisoning, precedent staleness, and the systematic bias of a corpus that records only what was previously detected. This paper presents the architecture and formal problem definition; empirical validation is left to future work.",
+  "doi": "10.36948/ijfmr.2026.v08i04.85144",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "4d2eddfee44b4297f6c109af1ff30f644cf0a480",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T10:32:23.896037Z",
+  "relevance": 0.25,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal decay weighting retrieval"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

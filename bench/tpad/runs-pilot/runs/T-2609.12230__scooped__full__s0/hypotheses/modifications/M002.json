@@ -1,0 +1,28 @@
+{
+  "id": "M002",
+  "title": "External knowledge‑base verification for adaptive repair",
+  "description": "Replace or augment the LLM‑judged adaptive repair loop with a verification step that checks candidate triples against a trusted external KG (e.g., Wikidata) using string matching or embedding similarity, and only retains triples that are supported by the external source.",
+  "why_differs": "The adaptive repair in arXiv:2609.12230 relies solely on LLM judgments and self‑correction, which may perpetuate biases. UniKGQA and Co‑E do not include an explicit repair mechanism. Using an external KB provides an objective source of truth to reduce error propagation.",
+  "technical_mechanism": "After generating repair examples from unresolved one‑hop failures, candidate triples are queried against a snapshot of Wikidata via SPARQL or a local triple store; triples with a match above a confidence threshold are kept, others are discarded or sent back for revision.",
+  "expected_benefit": "Higher precision of the repaired knowledge base, leading to more reliable lower‑hop foundations and better generalization to higher‑hop QA.",
+  "potential_novelty": "Integrating external KG verification into the adaptive repair loop for multi‑hop QA training has not been described in the surveyed literature.",
+  "implementation_difficulty": "high",
+  "implementation_difficulty_basis": "Requires setting up and synchronizing a external KG snapshot, implementing SPARQL lookups, and handling missing matches.",
+  "experimental_difficulty": "high",
+  "experimental_difficulty_basis": "Experiments must compare repair effectiveness with and without external verification, measuring changes in one‑hop accuracy and downstream multi‑hop performance.",
+  "main_risk": "If the external KG is incomplete or out‑of‑sync with the source corpus, valid triples may be incorrectly removed, hurting recall.",
+  "required_baselines": [
+    "LLM‑judged adaptive repair (as in arXiv:2609.12230)",
+    "no repair"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "doi:10.3233/sw-140134",
+    "arxiv:2212.00959"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T07:10:55.592103Z"
+}

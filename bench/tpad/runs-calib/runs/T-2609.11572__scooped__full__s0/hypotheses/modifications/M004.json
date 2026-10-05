@@ -1,0 +1,30 @@
+{
+  "id": "M004",
+  "title": "Bitemporal evaluation: valid time versus transaction time as the ranking signal",
+  "description": "Model both legal time axes explicitly: valid time (when a clause produces legal effect) and transaction time (when the version entered the official record), following the legal informatics standard that encodes date of entry into force and date of applicability. Compare ranking by valid time, by transaction time, and by elapsed time from each, to test whether the two axes are interchangeable for retrieval.",
+  "why_differs": "Existing decay-based systems conflate a single document timestamp with age; the legal-retrieval framework that prescribes bitemporal correctness offers no empirical comparison. This modification makes the two axes an experimental factor rather than an architectural assumption.",
+  "technical_mechanism": "Store two timestamps per clause: valid-time bounds (entry into force, applicability start/end) and a transaction-time date (official record publication). Define independent temporal terms from each axis and evaluate four rankers over the same candidate pool: valid-time membership, transaction-time ordering, decay from valid time, and decay from transaction time. Restrict the informative analysis to clauses where the axes diverge (retroactive or delayed-application provisions) so the comparison has power, and report results separately for that subset.",
+  "expected_benefit": "Directly tests the bitemporal requirement that legal-retrieval theory prescribes but no retrieved work evaluates empirically, and identifies which timestamp a practical system must index.",
+  "potential_novelty": "Hedged: the bitemporal distinction is already articulated conceptually in legal-retrieval theory, so the contribution would be the first empirical comparison of the two axes for retrieval, not the distinction itself.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Both date fields are standard in legal identifiers for some jurisdictions, but normalizing them across a corpus and aligning them with clause granularity is non-trivial.",
+  "experimental_difficulty": "high",
+  "experimental_difficulty_basis": "Requires two timestamp fields per clause, a corpus where they diverge (retroactive or delayed-application provisions), and a query set sensitive to the distinction; such cases may be rare and hard to annotate.",
+  "main_risk": "If valid time and transaction time coincide for most clauses in the chosen corpus, the comparison is uninformative and the modification yields no measurable difference.",
+  "required_baselines": [
+    "Valid-time membership (as in the validity-gated arm)",
+    "Transaction-time ordering",
+    "Elapsed-time decay from valid time",
+    "Elapsed-time decay from transaction time"
+  ],
+  "related_paper_ids": [
+    "arxiv:2606.09724",
+    "doi:10.3390/computers15080471"
+  ],
+  "addresses_gap_ids": [
+    "G001",
+    "G002"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T04:34:42.854022Z"
+}

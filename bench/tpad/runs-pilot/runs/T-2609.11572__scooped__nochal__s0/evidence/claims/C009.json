@@ -1,0 +1,35 @@
+{
+  "id": "C009",
+  "statement": "Existing temporal relevance methods like TempRALM are designed for specific retriever types (e.g., dense Contriever-based) with score normalization tailored to those retrievers, while our idea proposes a retrieval-agnostic component that can be applied to both dense and sparse retrievers without modification to their core algorithms.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 5",
+      "quote": "based on a general-purpose dense retriever that uses a dual- encoder architecture, based on the Contriever [7]",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote not found in retrieved abstract/full text"
+    },
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "To align the temporal score with the numerical range of the semantic score from equation 1, we employ a normalization process",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote not found in retrieved abstract/full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "TempRALM",
+    "dense retriever",
+    "Contriever",
+    "retriever-specific",
+    "score normalization"
+  ],
+  "recorded_at": "2026-09-30T10:07:21.354507Z"
+}

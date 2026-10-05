@@ -1,0 +1,38 @@
+{
+  "id": "doi:10.18653/v1/2023.acl-long.385",
+  "title": "Few-shot In-context Learning on Knowledge Base Question Answering",
+  "authors": [
+    "Tianle Li",
+    "Xueguang Ma",
+    "Alex Zhuang",
+    "Yu Gu",
+    "Yu Su",
+    "Wenhu Chen"
+  ],
+  "year": 2023,
+  "published": "2023-01-01",
+  "venue": null,
+  "url": "https://doi.org/10.18653/v1/2023.acl-long.385",
+  "pdf_url": "https://aclanthology.org/2023.acl-long.385.pdf",
+  "abstract": "Question answering over knowledge bases is considered a difficult problem due to the challenge of generalizing to a wide variety of possible natural language questions.Additionally, the heterogeneity of knowledge base schema items between different knowledge bases often necessitates specialized training for different knowledge base question-answering (KBQA) datasets.To handle questions over diverse KBQA datasets with a unified trainingfree framework, we propose KB-BINDER, which for the first time enables few-shot incontext learning over KBQA tasks.Firstly, KB-BINDER leverages large language models like Codex to generate logical forms as the draft for a specific question by imitating a few demonstrations.Secondly, KB-BINDER grounds on the knowledge base to bind the generated draft to an executable one with BM25 score matching.The experimental results on four public heterogeneous KBQA datasets show that KB-BINDER can achieve a strong performance with only a few in-context demonstrations.Especially on GraphQA and 3-hop MetaQA, KB-BINDER can even outperform the state-of-the-art trained models.On GrailQA and WebQSP, our model is also on par with other fully-trained models.We believe KB-BINDER can serve as an important baseline for future research.Our code is available at",
+  "doi": "10.18653/v1/2023.acl-long.385",
+  "arxiv_id": null,
+  "openalex_id": "W4385570025",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 69,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T05:05:05.931214Z",
+  "relevance": 0.3,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "instruction tuning LLM knowledge graph question answering subgraph context supervision"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

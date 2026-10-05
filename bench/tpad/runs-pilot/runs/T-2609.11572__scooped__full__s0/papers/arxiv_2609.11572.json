@@ -1,0 +1,41 @@
+{
+  "id": "arxiv:2609.11572",
+  "title": "TimelyRAG: Semantic-Temporal Hybrid Retrieval for Time-Critical Question Answering in Overlapping-Evolving Documents",
+  "authors": [
+    "Youngeun Nam",
+    "Joeun Kim",
+    "Hwanjun Song",
+    "Susik Yoon",
+    "Jae-Gil Lee",
+    "Byung Suk Lee"
+  ],
+  "year": 2026,
+  "published": "2026-09-10",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2609.11572",
+  "pdf_url": "https://arxiv.org/pdf/2609.11572v1",
+  "abstract": "Although large language models (LLMs) and retrieval-augmented generation (RAG) have advanced open-domain question answering (QA), they remain unreliable when documents evolve through amendments. Existing time-sensitive retrieval methods address only the disjoint-evolving environment, where each update is an independent snapshot. However, laws, policies, and regulations often operate in overlapping-evolving environments, where amendments override earlier clauses while preserving most content, creating strong semantic overlap across versions. We propose TimelyRAG, a retriever-agnostic framework that incorporates temporal distance into ranking to align queries with version-appropriate documents. We also introduce TimelyQABench, the first benchmark for regulation-heavy domains with overlapping-evolving challenges. Experiments show consistent gains, up to +28.6% in nDCG@10, highlighting the importance of temporal reasoning for reliable QA over evolving documents. All resources are available at https://github.com/kaist-dmlab/TimelyRAG.",
+  "doi": null,
+  "arxiv_id": "2609.11572",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T09:04:43.313835Z",
+  "relevance": 0.75,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal retrieval question answering versioned documents",
+    "overlapping evolving documents question answering"
+  ],
+  "code_urls": [
+    "https://github.com/kaist-dmlab/TimelyRAG"
+  ],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

@@ -1,0 +1,52 @@
+{
+  "id": "C043",
+  "statement": "Two quantitative patterns bear directly on whether temporal metrics and answer metrics agree. First, a point-in-time system reports near-total temporal compliance with far less than perfect answer quality - leakage reduced to 1.7% alongside 78.9% accuracy - so temporal compliance does not imply correct answers and the two metrics are not redundant rescalings of one another. Second, system ordering in this literature is already known to depend on the evaluation slice: hybrid retrieval achieves the highest overall performance while BM25 outperforms hybrid on multihop queries.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "improves answer accuracy from 66.7% to 78.9% over hybrid RAG while reducing temporal evidence leakage from 10.8% to 1.7% and hallucination from 17.3% to 7.9%",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.2139/ssrn.7087840",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Hybrid retrieval achieves the highest overall performance",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.2139/ssrn.7087840",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "BM25 outperforms hybrid on multihop queries",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "roughly 16.5% of NQ-Open",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "metric redundancy",
+    "system ranking",
+    "slice dependence",
+    "point-in-time"
+  ],
+  "recorded_at": "2026-09-30T04:43:49.511065Z"
+}

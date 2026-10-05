@@ -1,0 +1,44 @@
+{
+  "id": "arxiv:2512.16149",
+  "title": "ToolForge: A Data Synthesis Pipeline for Multi-Hop Search without Real-World APIs",
+  "authors": [
+    "Hao Chen",
+    "Zhexin Hu",
+    "Jia-Jun Chai",
+    "Haochen Yang",
+    "Hang He",
+    "Xiaohan Wang",
+    "Wei Lin",
+    "Luhang Wang",
+    "Guo-Jun Yin",
+    "Zhuofeng Zhao"
+  ],
+  "year": 2025,
+  "published": "2025-12-18",
+  "venue": "arXiv.org",
+  "url": "https://www.semanticscholar.org/paper/2fd6513fde30e2e38c73335037390685d98cc336",
+  "pdf_url": null,
+  "abstract": "Training LLMs to invoke tools and leverage retrieved information necessitates high-quality, diverse data. However, existing pipelines for synthetic data generation often rely on tens of thousands of real API calls to enhance generalization, incurring prohibitive costs while lacking multi-hop reasoning and self-reflection. To address these limitations, we introduce ToolForge, an automated synthesis framework that achieves strong real-world tool-calling performance by constructing only a small number of virtual tools, eliminating the need for real API calls. ToolForge leverages a (question, golden context, answer) triple to synthesize large-scale tool-learning data specifically designed for multi-hop search scenarios, further enriching the generated data through multi-hop reasoning and self-reflection mechanisms. To ensure data fidelity, we employ a Multi-Layer Validation Framework that integrates both rule-based and model-based assessments. Empirical results show that a model with only 8B parameters, when trained on our synthesized data, outperforms GPT-4o on multiple benchmarks. Our code and dataset are publicly available at https://github.com/Buycar-arb/ToolForge .",
+  "doi": "10.48550/arxiv.2512.16149",
+  "arxiv_id": "2512.16149",
+  "openalex_id": null,
+  "s2_id": "2fd6513fde30e2e38c73335037390685d98cc336",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 9,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T07:50:25.428402Z",
+  "relevance": 0.1471,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "local context subgraph training triples multi-hop question answering"
+  ],
+  "code_urls": [
+    "https://github.com/Buycar-arb/ToolForge"
+  ],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

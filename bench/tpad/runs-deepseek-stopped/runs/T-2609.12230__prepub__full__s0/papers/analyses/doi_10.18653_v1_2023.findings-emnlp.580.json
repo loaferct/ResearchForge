@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.18653/v1/2023.findings-emnlp.580",
+  "relevance_tier": "medium",
+  "problem": "Knowledge graph completion - predicting missing head-relation-tail links - using a large language model (title only; abstract unavailable).",
+  "method": "Not stated in abstract. From the title, the method places knowledge (KG context) in the LLM's context window to perform knowledge graph completion.",
+  "key_assumptions": [
+    "not stated in abstract (no abstract available in the retrieved record)"
+  ],
+  "main_contribution": "Not stated in abstract. The title indicates an LLM that is given knowledge in context for knowledge graph completion (link prediction over triples).",
+  "datasets": [
+    "not stated in abstract"
+  ],
+  "benchmarks": [
+    "knowledge graph completion (standard KGC benchmarks, names not stated in abstract)"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "not stated in abstract (abstract unavailable; full text not open access)",
+  "limitations": [
+    "Abstract unavailable in the retrieved record, so overlap with the idea could not be verified from text.",
+    "Task is link prediction, not multi-hop QA, based on the title."
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "KICGPT (from title) enriches an LLM prompt with KG context to complete individual triples; it does not change the training supervision signal, does not use same-source-passage context, has no repair loop, and does not evaluate multi-hop QA or shallow-to-deep hop transfer. It is the closest named 'context for KG' LLM method but on link prediction rather than multi-hop QA.",
+    "basis": "Problem overlap moderate: both give an LLM additional KG facts as context for a KG reasoning target. Method overlap moderate: 'knowledge in context' is close to the idea's context enrichment; evaluation overlap low: KGC link prediction on standard KGC benchmarks is a different task and metric from multi-hop KGQA Hits@1. No abstract could be retrieved, so these values are inferred from the title and venue only and are low-confidence."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:10:57.258962Z"
+}

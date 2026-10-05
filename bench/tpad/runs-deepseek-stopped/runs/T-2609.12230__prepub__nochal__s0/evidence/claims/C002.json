@@ -1,0 +1,24 @@
+{
+  "id": "C002",
+  "statement": "Retrieval-based context construction for KGQA can fail when the retrieved subgraph does not contain the answer, for example under entity-linking errors, so context availability is an assumption rather than a guarantee.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "doi:10.18653/v1/2025.findings-acl.856",
+      "experiment_run_id": null,
+      "location": "p. 9, Section 8 Limitations",
+      "quote": "GNN-RAG assumes that the KG subgraph, on which the GNN reasons, contains answer nodes. However, this may not be true for all questions or when errors in entity linking happen.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "analysis",
+  "tags": [
+    "context retrieval",
+    "limitation",
+    "entity linking"
+  ],
+  "recorded_at": "2026-09-30T05:17:51.079382Z"
+}

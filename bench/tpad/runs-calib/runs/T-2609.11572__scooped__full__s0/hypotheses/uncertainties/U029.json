@@ -1,0 +1,37 @@
+{
+  "id": "U029",
+  "question": "Do existing retrievers already select the correct in-force clause version most of the time on amended legal text, leaving no measurable version-confusion problem?",
+  "description": "The entire direction assumes existing retrievers actually fail at version selection on amended legal text. If semantic or hybrid retrieval already places the in-force clause first most of the time - for instance because amendments change enough wording, or because the current consolidated text dominates the corpus - then the measured failure rate is near zero, the problem premise fails, and there is no gap for a temporal gate to close. No retrieved work reports a version-level failure rate for any retriever, so the magnitude is entirely unknown.",
+  "category": "validity",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "SEARCH"
+  ],
+  "confidence": 0.55,
+  "confidence_basis": "One quantitative anchor (10.8% temporal-evidence leakage for hybrid RAG in point-in-time financial QA) plus three qualitative capability and failure statements, none of which measure clause-version confusion in amended legal text; the comparability of the leakage metric to version contamination is itself uncertain (recorded separately).",
+  "rationale": "The premise of the study is that version confusion is common, but no retrieved work measures it; the experiment's first descriptive result decides whether the rest of the programme is worth running.",
+  "resolution": "Partially resolved: the premise is plausible but unmeasured. The only quantitative anchor in the retrieved set is a hybrid RAG baseline leaking temporally invalid evidence at 10.8% under a point-in-time protocol, reduced to 1.7% by an as-of boundary - implying that roughly one in nine retrievals violated the information boundary when the boundary was known - supported by statements that current architectures cannot determine whether a retrieved provision remains in force, that corpora containing only current versions make past-date queries anachronistic, and by a roughly 15-point accuracy drop on present-day questions with an updated corpus. None of this measures clause-version confusion on amended legal text, and the leakage metric is not the same quantity. Consequently the plan (E003) makes the failure rate itself the first measurement, with pre-registered stop/go thresholds so that a near-zero rate ends the programme instead of being reinterpreted.",
+  "paper_ids": [
+    "doi:10.2139/ssrn.7174868",
+    "arxiv:2608.21409",
+    "arxiv:2606.09724",
+    "doi:10.3390/sym18091498",
+    "arxiv:2109.06157"
+  ],
+  "supporting_paper_ids": [
+    "doi:10.3390/sym18091498",
+    "arxiv:2608.21409",
+    "arxiv:2606.09724"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T04:39:42.389418Z",
+  "updated_at": "2026-09-30T04:40:43.741176Z"
+}

@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2601.19827",
+  "title": "When Iterative RAG Beats Ideal Evidence: A Diagnostic Study in Scientific Multi-hop Question Answering",
+  "authors": [
+    "Mahdi Astaraki",
+    "Mohammad Arshi Saloot",
+    "Ali Shiraee Kasmaee",
+    "H. Mahyar",
+    "Soheila Samiee"
+  ],
+  "year": 2026,
+  "published": "2026-01-27",
+  "venue": "Trans. Mach. Learn. Res.",
+  "url": "https://www.semanticscholar.org/paper/37bbcda29cee967af1ed81c6259ac64e14e70cfe",
+  "pdf_url": null,
+  "abstract": "Retrieval-Augmented Generation (RAG) extends large language models (LLMs) beyond parametric knowledge, yet it is unclear when iterative retrieval-reasoning loops meaningfully outperform static RAG, particularly in scientific domains requiring multi-hop reasoning over sparse, heterogeneous evidence. We provide the first controlled, mechanism-level diagnostic evaluation of whether synchronized iterative retrieval and reasoning can surpass even an idealized static upper bound (Gold Context) RAG. We benchmark eleven state-of-the-art LLMs under three regimes: (i) No Context, measuring reliance on parametric memory; (ii) Gold Context, where all oracle evidence is supplied at once; and (iii) Iterative RAG, a training-free controller that alternates retrieval, hypothesis refinement, and evidence-aware stopping. Using the chemistry-focused ChemKGMultiHopQA dataset, we isolate questions requiring genuine retrieval and analyze retrieval coverage gaps, anchor carry drop, query quality, composition fidelity, and control calibration. Iterative RAG consistently outperforms Gold Context, with gains up to 25.6 percentage points, especially for non-reasoning fine-tuned models. Staged retrieval reduces late-hop failures, mitigates context overload, and enables dynamic correction of early hypothesis drift, but failure modes remain, including incomplete hop coverage, distractor latch trajectories, early stopping miscalibration, and high composition failure rates even with perfect retrieval. Overall, the process of staged retrieval is often more influential than the mere presence of ideal evidence. We provide practical guidance for deploying and diagnosing RAG in specialized scientific settings. Code and evaluation results are available at https://github.com/Matroid1998/Iterative-rag",
+  "doi": "10.48550/arxiv.2601.19827",
+  "arxiv_id": "2601.19827",
+  "openalex_id": null,
+  "s2_id": "37bbcda29cee967af1ed81c6259ac64e14e70cfe",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 2,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T06:49:50.543859Z",
+  "relevance": 0.2647,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "context enriched triple training multi-hop question answering",
+    "local context subgraph training multi-hop question answering"
+  ],
+  "code_urls": [
+    "https://github.com/Matroid1998/Iterative-rag"
+  ],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

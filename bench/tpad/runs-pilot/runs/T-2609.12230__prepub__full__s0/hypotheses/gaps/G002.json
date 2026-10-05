@@ -1,0 +1,44 @@
+{
+  "id": "G002",
+  "gap": "Lack of an adaptive repair loop that detects one-hop failures, generates corrective examples, and iteratively refines the model before applying reinforcement‑learning transfer.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2601.01195",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Specifically, MRE begins with prompt engineering to guide the LLM in generating diverse reasoning trajectories for a given question. Valid reasoning trajectories are then selected for supervised fine-tuning, serving as a cold-start strategy. Finally, we introduce Tree-Group Relative Policy Optimization (T-GRPO)...",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.1016/j.eswa.2024.124652",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Incorporates multi-perspective information (e.g., multiple relation paths or entity views) into the reinforcement learning framework to enrich the state representation and improve the policy for multi-hop KGQA.",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote not found in retrieved abstract/full text"
+    },
+    {
+      "paper_id": "doi:10.1016/j.ins.2022.11.042",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Introduces an anticipation embedding into the reinforcement learning framework to predict future rewards and guide the agent toward more promising reasoning paths in incomplete KGs.",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote not found in retrieved abstract/full text"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2601.01195",
+    "doi:10.1016/j.eswa.2024.124652",
+    "doi:10.1016/j.ins.2022.11.042"
+  ],
+  "why_unaddressed": "Existing RL‑based KGQA methods inject auxiliary signals (multi‑perspective, anticipation, trajectory) directly into the RL policy or use trajectory‑based supervision, but none incorporate an iterative self‑repair loop that corrects one‑hop failures before RL transfer.",
+  "research_question": "Does adding an adaptive repair loop that detects one‑hop prediction failures and generates corrective examples improve the reliability of base facts and lead to better Hits@1 after RL transfer compared to a model without such a loop?",
+  "potential_experiment": "Train a language model with triple supervision, then iteratively: (1) evaluate on one‑hop validation queries, (2) collect failed predictions, (3) generate corrected triples, (4) add them to the training set, and repeat for a fixed number of epochs before applying RL transfer to lower‑hop QA instances.",
+  "confidence": "medium",
+  "verification_required": "Search for any prior work that describes an adaptive repair loop for KGQA or related tasks.",
+  "recorded_at": "2026-09-30T07:59:14.952825Z"
+}

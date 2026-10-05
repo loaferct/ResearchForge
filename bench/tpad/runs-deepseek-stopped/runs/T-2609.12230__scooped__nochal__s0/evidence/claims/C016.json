@@ -1,0 +1,43 @@
+{
+  "id": "C016",
+  "statement": "The adaptive repair loop and repair-before-RL ordering proposed in the idea are already implemented and evaluated: an LLM-judged, history-aware repair pipeline audits failed one-hop validation cases, categorizes invalid/noisy triples versus missing knowledge, generates targeted repair examples, and RL initialized from repaired checkpoints yields larger and more stable gains than RL from unrepaired ones.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 7 (§3 overview)",
+      "quote": "Section 3.6 describes the LLM-judged and history-aware adaptive triple repair pipeline, which identifies unresolved 1-hop knowledge gaps after SFT and generates targeted repair examples.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 16 (repair workflow figure text)",
+      "quote": "Judge 1: Audit Incorrect Validation Cases For each failed case, judge the triple and the validation question. Invalid triple Noisy or unsuppo",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 29 (§5.3)",
+      "quote": "RL initialized from unrepaired SFT checkpoints gives small or inconsistent gains, whereas RL initialized from repaired checkpoints produces larger and more stable improvements.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "repair-loop",
+    "reinforcement-learning",
+    "prior-art",
+    "U006"
+  ],
+  "recorded_at": "2026-09-30T05:21:04.291640Z"
+}

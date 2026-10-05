@@ -1,0 +1,988 @@
+[[page 1]]
+Variational Reasoning for
+Question Answering with Knowledge Graph
+Yuyu Zhang1∗
+, Hanjun Dai 1∗
+, Zornitsa Kozareva 2, Alexander J. Smola 2, and Le Song 1
+1College of Computing, Georgia Institute of Technology
+2Amazon Web Services
+1{yuyu.zhang, hanjun.dai, lsong }@cc.gatech.edu
+2{kozareva, smola}@amazon.com
+Abstract
+Knowledge graph is known to be helpful for the task of question answering (QA), since it
+provides well-structured relational information between entities, and allows one to further infer
+indirect facts. However, it is challenging to build QA systems which can learn to reason over
+knowledge graphs based on question-answer pairs alone. First, when people ask questions, their
+expressions are noisy (for example, typos in texts, or variations in pronunciations), which is non-
+trivial for the QA system to match those mentioned entities to the knowledge graph. Second,
+many questions require multi-hop logic reasoning over the knowledge graph to retrieve the
+answers. To address these challenges, we propose a novel and uniﬁed deep learning architecture,
+and an end-to-end variational learning algorithm which can handle noise in questions, and learn
+multi-hop reasoning simultaneously. Our method achieves state-of-the-art performance on a
+recent benchmark dataset in the literature. We also derive a series of new benchmark datasets,
+including questions for multi-hop reasoning, questions paraphrased by neural translation model,
+and questions in human voice. Our method yields very promising results on all these challenging
+datasets.
+1 Introduction
+Question answering (QA) has been a long-standing research problem in Machine Learning and
+Artiﬁcial Intelligence. Thanks to the creation of large-scale knowledge graphs such as DBPedia [1]
+and Freebase [2], QA systems can be armed with well-structured knowledge on speciﬁc and open
+domains. Many traditional approaches for KG-powered QA are based on semantic parsers [3, 4, 5, 6],
+which ﬁrst map a question to formal meaning representation (e.g. logical form) and then translate
+it to a KB query. The answer to the question can be retrieved by executing the query. One of the
+disadvantages of these approaches is that the model is not trained end-to-end and errors may be
+cascaded.
+With the recent success of deep learning, some end-to-end solutions based on neural networks
+have been proposed and show very promising performance on benchmark datasets, such as Memory
+∗Both authors contributed equally to the paper.
+1
+arXiv:1709.04071v1  [cs.LG]  12 Sep 2017
+
+[[page 2]]
+Networks [7], Key-Value Memory Networks [8] and Gated Graph Sequence Neural Networks [9].
+However, these neural approaches treat the KG as a ﬂattened big table of itemized knowledge
+records, making it hard to exploit the structure information in the graph and thus weak on logic
+reasoning. When the answer is not a direct neighbor of the topic entity in question (i.e. there are
+multiple hops between question and answer entities in the KG), which requires logic reasoning over
+the KG, the neural approaches usually perform poorly. For instance, it is easy to handle single-hop
+questions like “Who wrote the paper titled ...? ” by querying itemized knowledge records in triples
+(paper title, authored by, author name). However, logic reasoning on the KG is required for multi-
+hop questions such as “ Who have co-authored papers with ...? ”. With the KG, we start from the
+mentioned author, and followauthor authored−−−−−→paper
+authored by
+−−−−−−−→author to ﬁnd answers. A common
+remedy is the so-called knowledge graph completion: create new relations for non-neighbor entity
+pairs in the KG [10, 11, 12]. However, multi-hop reasoning is combinatorial in nature, i.e. the
+number of multi-hop relations grow explosively with the increase of hops. For example, if we create
+new relation types like friend-of-friend and friend-of-friend-of-friend, the number of edges in the
+KG will explode, which is intractable for both storage and computation.
+Another key challenge is how to locate topic entities in the KG. Most existing works assume
+that the topic entity in question can be located by simple string matching [8, 13, 9, 5], which is
+often not true. When people ask questions, either in text or speech, various noise can be introduced
+in the expressions. For example, people are likely to make typos or name ambiguity in question.
+In even harder case, audio questions, people may pronounce the same entity diﬀerently in diﬀerent
+questions, even for the same person. Due to these noises, it is hard to do exact matching to
+locate topic entities. For text questions, broad matching techniques (e.g. hand-craft rules, regular
+expressions, edit distance, etc.) are widely used for entity recognition [14]. However, they require
+domain experts and lots of human eﬀort. For speech questions, it is even harder to match topic
+entities directly. Most existing QA systems ﬁrst do speech recognition, converting the audio to
+text, and then match entities in text. Unfortunately, the error rate is typically high for speech
+recognition system to recognize entities in voice, such as human names or street addresses. Since it
+is not end-to-end, the error of the speech recognition system may cascade to aﬀect the downstream
+QA system.
+Typically, the training data for QA system is provided as question-answer pairs, where ﬁne-
+grained annotation of these pairs are not available, or only available for a few. More speciﬁcally,
+there are very few explicit annotations of the exact entity present in the question, the type of the
+questions, and the exact logic reasoning steps along the knowledge graph leading to the answer.
+Thus it is challenging to simultaneously learn to locate the topic KG entity in the question, and
+ﬁgure out the unknown reasoning steps pointing to the answer based on training question-answer
+pairs alone.
+To address the challenges mentioned above, we propose an end-to-end learning framework for
+question answering with knowledge graph named variational reasoning network (VRN), which have
+the following new features:
+• We build a probabilistic modeling framework for end-to-end QA system, which can simulta-
+neously handle uncertain topic entity and multi-hop reasoning.
+• We propose a novel propagation-like deep learning architecture over the knowledge graph to
+perform logic inference in the probabilistic model.
+• We apply the REINFORCE algorithm with variance reduction technique to make the system
+2
+
+[[page 3]]
+end-to-end trainable.
+• Based on the MovieQA dataset, we derive a series of new challenging benchmark datasets
+MetaQA1 (MoviE Text Audio QA) intended for research on question-answering systems.
+These datasets contain over 400K questions for both single- and multi-hop reasoning. To
+test QA systems in more realistic (and more diﬃcult) scenarios, MetaQA also provides
+neural-translation-model-paraphrased datasets, and text-to-speech-based audio datasets.
+Extensive experiments show that our method achieves state-of-the-art performance on both
+single- and multi-hop datasets, demonstrating the capability of multi-hop reasoning. Moreover, we
+obtain promising results on the challenging audio QA datasets, showing the eﬀectiveness of end-
+to-end learning framework. With the rise of virtual assistant tools (e.g. Alexa, Cortana, Google
+Assistant and Siri), QA systems are now even closer to our daily life. This paper is one step towards
+more realistic QA systems, which can handle noisy question input in both text and speech, and
+learn from examples to reason over the knowledge graph.
+2 Related Work
+QA with semantic parser: Most traditional approaches for KG-powered QA are based on
+semantic parsers, which map the question to a certain meaning representation or logical form [3,
+4, 15, 5, 6], or directly map the question to an executable program [16]. These approaches require
+domain-speciﬁc grammars, rules, or ﬁne-grained annotations. Also, they are not designed to handle
+noisy questions, and do not support end-to-end training since they use separate stages for question
+parsing and logic reasoning.
+Neural approaches for QA: The family of memory networks achieves state-of-the-art perfor-
+mance in various kinds of QA tasks. Some of them are able to do reasoning within local con-
+text [17, 18] using attention mechanism [19]. For QA with KG, Miller et al. [8] achieves state-of-
+the-art performance, outperforming previous works [20, 7] on benchmark datasets. Recent work [21]
+uses neural programmer model for QA with single knowledge table. However, the multi-hop reason-
+ing capability of these approaches depends on recurrent attentions and there is no explicit traversal
+over the KG.
+Graph embedding: Recently, researchers have built deep architectures to embed structured data,
+such as trees [22, 23, 24] or graphs [25, 26, 27]. Also some works [9, 28] extend it to sequential case
+like multi-step reasoning. However, these approaches only work on small instances like sentences or
+molecules. Instead, our work embeds the reasoning-graph from source entity to every target entity
+in large-scale knowledge graph.
+Multi-hop reasoning: There are some other works on knowledge graph completion with traversal,
+which requires path sampling [12, 29] or dynamic programming [30]. Our work can handle QA with
+natural language or human speech, and the reasoning-graph embeddings can represent complicated
+reasoning rules.
+In summary, most of the existing approaches have separate stages for entity locating, such as
+keyword matching, frequency-based method, and domain-speciﬁc methods [31]. Since they are not
+jointly trained with the reasoning part, the errors in entity locating (e.g. incorrectly recognized
+name entity from speech recognition system) will be cascaded to the downstream QA system.
+1Our new benchmark dataset collections MetaQA are publicly available at https://goo.gl/f3AmcY.
+3
+
+[[page 4]]
+The	actor	of	Lost	Christmas	
+also	starred	in	which	
+movies?
+𝑔(𝐺$→&)
+𝑃)*(𝑦|𝑞)
+𝑦	~	𝑃)*(𝑦|𝑞)𝑓123(𝑞)
+……
+.Inner	product
+Shifty
+Reasoning-Graph
+Embedding
+Topic Entity
+Recognition
+Question
+Representations
+Answer
+Retrieval
+argmax
+&
+𝑃)9(𝑎|𝑦,𝑞)Classifier
+𝑓<3(𝑞)
+𝑔(𝐺$→=2>	?@	3A1	B?CD>)
+𝑔(𝐺$→EAF@3$)
+Knowledge	Graph
+Lost	Christmas
+John	Hay
+written by
+acted
+Jason	Flemyngreleased in
+2011
+directed by
+End	of	the	world
+Shifty
+acted
+directed by The	Truth	About	Love
+written by
+……
+𝑔(𝐺$→GA1	GCH3A
+IJ?H3	K?L1
+)
+Figure 1: End-to-end architecture of the variational reasoning network (VRN) for question-answering with
+knowledge graph. The model consists of two probabilistic modules for topic entity recognition ( P (y|q))
+and logic reasoning over knowledge graph ( P (a|y,q )) respectively. Inside the knowledge base plate, the
+scope of entity Lost Christmas (colored red) is illustrated, and each colored ellipsoid plate corresponds to
+the reasoning graph leading to a potential answer colored in yellow. The reasoning graphs are eﬃciently
+embedded and scored against the question embeddings to retrieve the best answer. During training, to handle
+the non-diﬀerentiable sampling operation y∼ P (y|q), we use variational posterior with the REINFORCE
+algorithm.
+3 Model
+3.1 Problem deﬁnition
+Knowledge base/graph (KG): A knowledge graph is a directed graph where the entities and
+their relations are represented by nodes and edges, respectively, i.e. G = (V (G),E (G)). Further-
+more, each edge fromE(G) is a triplet (a1
+i,ri,a 2
+i ), representing a directed relationri between subject
+entitya1
+i and object entity a2
+i both from the node set V (G). Each entity in the knowledge graph
+can also contain additional information such as type and text description. For instance, entity a1
+i
+is described as actor Jennifer Lawrence, and entity a2
+i is movie Passengers. Then a relation in the
+knowledge graph can be ( Jennifer Lawrence, acted in, Passengers), where the corresponding ri is
+acted in. In this work, we assume that the knowledge graph is given.
+Question answering with KG: Given a question q, the algorithm is asked to output an entity
+in the knowledge graph which properly answers the question. For example, q can be a question
+like “who acted in the movie Passengers ?”, and one possible answer is Jennifer Lawrence, which
+is an entity in the KG. In a more challenging setting, q can even be an audio segment reading the
+same question. The training set Dtrain ={(qi,ai)}N
+i=1 contains N pairs of question and answers.
+Note that ﬁne-grained annotation is not present, such as the exact entity present in the question,
+question type, or the exact logic reasoning steps along the knowledge graph leading to the answer.
+Thus, a QA system with KG should be able to handle noisy entity in questions and learn multi-hop
+reasoning directly from question-answer pairs.
+3.2 Overall formulation
+To address both key challenges in a uniﬁed probabilistic framework, we propose the variational rea-
+soning network (VRN). The overall architecture is shown in Fig 1. VRN consists of two probabilistic
+4
+
+[[page 5]]
+modules, as described below.
+Module for topic entity recognition: Recognizing the topic entity y (or the entity mentioned
+in the question) is the ﬁrst step in performing logic reasoning over the knowledge graph 2. For
+example, the topic entity mentioned in Sec 3.1 is the movie Passenger. We denote such entity as
+y, and model the compatibility of this entity with the question q as a probabilistic model Pθ1(y|q),
+which shows the probability of the KG entity y being mentioned in the question q. Depending on
+the question form (text or audio), the parameterization of Pθ1(y|q) may be diﬀerent and details
+can be found in Sec 3.3.
+Module for logic reasoning over knowledge graph: Given the topic entity y, one need to
+reason over the knowledge graph to ﬁnd out the answer a. As described in Sec 3.1, the algorithm
+should learn to use the reasoning rule (y, acted by,a ) for that question. Since there is no annotations
+for such reasoning step, the QA system has to learn it only from question-answer pairs. Thus we
+model the likelihood of an answer a being correct given entity y and question q asPθ2(a|y,q ). The
+parameterization of Pθ2(a|y,q ) need to capture traversal or reasoning over knowledge graph, which
+is explained in detail in Sec 3.4.
+Since the topic entity in question is not annotated, it is natural to formulate the problem by
+treating the topic entity y as a latent variable. With the two probabilistic components above, we
+model the probability of answer a being correct given question q as∑
+y∈V (G)Pθ1(y|qi)Pθ2(ai|y,qi),
+which sums out all possibilities of the latent variable. Given a training set Dtrain of N question-
+answer pairs, the set of parameters θ1 andθ2 can be estimated by maximizing the log-likelihood of
+this latent variable model:
+max
+θ1,θ2
+1
+N
+N∑
+i=1
+log
+
+ ∑
+y∈V (G)
+Pθ1(y|qi)Pθ2(ai|y,qi)
+
+. (1)
+Next we will describe our parametrization ofPθ1(y|q) andPθ2(a|y,q ), and the algorithms for learning
+and inference based on that.
+3.3 Probabilistic module for topic entity recognition
+Most existing QA approaches assume that topic entities are annotated, or can be simply found
+via string matching. However, for more realistic questions or even audio questions, a more general
+approach is to build a recognizer that can be trained jointly with the logic reasoning engine.
+To handle unlabeled topic entities, we notice that the full context of the question can be helpful.
+For example, Michael could either be the name of a movie or an actor. It is hard to tell which one
+relates to the question by merely looking at this entity name. However, we should be able to resolve
+the unique entity by checking the surrounding words in the question. Similarly, in the knowledge
+graph there could be multiple entities with the same name, but the connected edges (relations) of
+the entity nodes are diﬀerent, which helps to resolve the unique entity. For example, as a movie
+name, Michael may be connected with a directed by edge pointing to an entity of director; while
+as an actor name, Michael may be connected with birthday and height edges.
+Speciﬁcally, we use a neural network fent(·) : q↦→ Rd which can represent the question q in a
+d dimensional vector. Depending on the question form (text or audio), this neural network can be
+a simple embedding network mapping bag-of-words to a vector, or a recurrent neural network to
+2In this paper, we consider the case with single topic entity in each question.
+5
+
+[[page 6]]
+Chopper
+Andrew 
+Dominik
+Killing Them Softly
+Crime
+y
+Brown's RequiemThe Assassination
+0
+1
+1
+2
+ 2
+ 2
+directed_by
+has_genre
+written_by
+ Embedding
+Propagation
+Figure 2: A question like “ movie sharing same genre and director ” would require two reasoning
+pathsy→ Crime→a andy→ Andrew Dominik→a. The vector representation should encode the
+information of the entire reasoning-graph, which can be computed recursively. Thus the embedding
+of Andrew Dominik can be reused by The assassination and Killing Them Softly .
+embed sentences, or a convolution neural network to embed audio questions. Thus the probability
+of having y in q is
+Pθ1(y|q) = softmax
+(
+W⊤
+y fent(q)
+)
+(2)
+= exp(W⊤
+y fent(q))∑
+y′∈V (G) exp(W⊤
+y′fent(q)), (3)
+where Wy∈ Rd,∀y∈ V (G) are the weights in the last classiﬁcation layer. This parameterization
+avoids heuristic keyword matching for the entity as is done in previous work [8, 20], and makes the
+entity recognition process diﬀerentiable and end-to-end trainable.
+3.4 Probabilistic module for logic reasoning over knowledge graph
+Algorithm 1 Joint training of VRN
+1: Initialize θ1,θ 2,φ with small labeled set
+2: for i = 1 to n do
+3: Sample (qi,ai) from the training data
+4: Sample{yj}M
+j=1 using (8)
+5: Smoothing ˜µ, ˜σ with{A(yj,ai,qi)}M
+j=1
+6: Update the baseline b(a,q ) using least square
+7: ψ←ψ−η∇ψL using (10)
+8: θ1←θ1−η∇θ1L, θ2←θ2−η∇θ2L
+9: end for
+Parameterizing the reasoning model Pθ2(a|y,q ) is challenging, since1) the knowledge graph can
+be very large; 2) the required logic reasoning is unknown and can be multi-step. In other words,
+6
+
+[[page 7]]
+retrieving the answer requires multi-step traversal over a gigantic graph. Thus in this paper, we
+propose a reasoning-graph embedding architecture, where all the inference rules and their complex
+combinations are represented as nonlinear embeddings in vector space and will be learned.
+Scope of y. More speciﬁcally, we assume the maximum number of steps (or hops), T , of the
+logic reasoning is known to the algorithm. Starting from a topic entity y, we perform topological
+sort (ignoring the original edge direction) for all entities within T hops according to the knowledge
+graph. After that, we get an ordered list of entities a1,a 2,...,a m and their relations from the
+knowledge graph. We call this subgraph Gy with ordered nodes as the scope of y. Fig 2 shows an
+example of a 2-hop scope, where entities are labeled with their topological distance to the source
+entity.
+Reasoning graph to a. Given a potential answer a in the scope Gy, we denote Gy→a to be
+the minimum subgraph that contains all the paths from y to a inGy. The actual logic reasoning
+leading to answer a for question q is unknown but hidden in the reasoning graph. Thus we will
+learn a vector representation (or embedding) for Gy→a, denoted as g(Gy→a)∈ Rd, for scoring the
+compatibility of the question type and the hidden path in the reasoning graph.
+More speciﬁcally, suppose the question is embedded using a neural network fqt(·) : q↦→ Rd,
+which captures the question type and implies the type of logic reasoning we need to perform over
+knowledge graph. Then the compatibility (or likelihood) of answera being correct can be computed
+using the embedded reasoning graph Gy→a and the scopeGy as
+Pθ2(a|y,q ) = softmax
+(
+fqt(q)⊤g(Gy→a)
+)
+(4)
+= exp(fqt(q)⊤g(Gy→a))∑
+a′∈V (Gy) exp(fqt(q)⊤g(Gy→a′)). (5)
+We note that the normalization in the likelihood requires the embedding of the reasoning graphs
+for all entities a′ in the scope Gy. This may involve thousands of or even more reasoning graphs
+depending on the KG and the number of hops. Computing these embeddings separately can be
+very computationally expensive. Instead, we develop a neural architecture which can compute these
+embeddings jointly and share intermediate computations.
+Joint embedding reasoning graphs. More speciﬁcally, we propose a “forward graph embed-
+ding” architecture, which is analogous to forward ﬁltering in Hidden Markov Model or Bayesian
+Network. The embedding of the reasoning graph for a is computed recursively using its parents’
+embeddings:
+g(Gy→a) = 1
+#Parent(a)
+∑
+aj∈Parent(a),(aj,r,a) or ( a,r,aj )∈Gy
+σ(V× [g(Gy→aj),⃗ er]), (6)
+where⃗ er is the one-hot encoding of relation type r∈R ,V ∈ Rd×(d+|R|) are the model parameters,
+σ(·) is a nonlinear function such as ReLU, and #Parent(a) counts the number of parents ofa inGy.
+The only boundary case is g(Gy→y) =⃗0 when y =a. Overall, computing the embedding g(Gy→a)
+for all a takesO(|V (Gy)| +|E(Gy)|) time, which is proportional to the number of nodes and edges
+in the scopeGy.
+This formulation is able to capture various reasoning rules. Take Fig 2 as an example: the
+embedding of the entity Killing Them Softly sums up the two embeddings propagated from its
+parents. Thus it tends to match the reasoning paths from the parent entities. Note that this
+7
+
+[[page 8]]
+formulation is signiﬁcantly diﬀerent from the work in [25, 26, 27], where embedding is computed
+for each small molecular graph separately. Furthermore, those graph embedding methods often
+contain iterative processes which visit each nodes multiple times.
+4 End-to-end Learning
+In this section, we describe the algorithm for learning the parameters in Pθ1(y|q) and Pθ2(a|y,q ).
+The overall learning algorithm is described in Algorithm 1.
+4.1 Variational method with inverse reasoning-graph embedding
+EM algorithm is often used to learn latent variable models. However, performing exact EM updates
+for the objective in (1) is intractable since the posterior cannot be computed in closed form. Instead,
+we use variational inference and optimize the negative Helmholtz variational free energy:
+max
+ψ,θ1,θ2
+L(ψ,θ 1,θ 2) = 1
+N
+N∑
+i=1
+EQψ(y|qi,ai)[
+logPθ1(y|qi) + logPθ2(ai|y,qi)
+− logQψ(y|qi,ai)], (7)
+where the variational posterior Qψ(y|q,a ) is jointly learned with the model. Note that (7) is
+essentially optimizing the lower bound of (1). Thus to reduce the approximation error, a powerful
+set of posterior distributions is necessary.
+V ariational posterior. Qψ computes the likelihood of the topic entity y for a question q, with
+additional information of answer a. Thus besides the direct text or acoustic compatibility of y
+and q, we can also introduce logic match with the help of a. Similar to the forward propagation
+architecture used in Sec 3.4, here we can deﬁne the scope Ga for answer a, the inverse reasoning
+graphGa→y, and the inverse embedding architecture to eﬃciently compute the embedding ˜g(Ga→y).
+Finally, the variational posterior consists of two parts:
+Qψ(y|q,a )∝ exp
+(
+˜W⊤
+y ˜fent(q) + ˜fqt(q)⊤˜g(Ga→y)
+)
+, (8)
+where the normalization is done over all entities y′ in the scope Ga. Furthermore, the embedding
+operators ˜fent, ˜fqt and parameters{ ˜Wy}y∈V (G) are deﬁned in the same way as (4) and (6) but with
+diﬀerent set of parameters. One can also share the parameter to obtain a more compact model.
+4.2 REINFORCE with variance reduction
+Since the latent variable y in the variational objective (7) takes discrete values, which is not diﬀer-
+entiable with respect to ψ, we use the REINFORCE algorithm [32] with variance reduction [33] to
+tackle this problem.
+First, using the likelihood ratio trick, the gradient of L with respect to posterior parameters ψ
+can be computed as (for simplicity of notation, we assume that there is only one training instance,
+i.e. N = 1):
+∇ψL = EQψ(y|a,q)
+[
+∇ψ logQψ(y|a,q )A(y,a,q )
+]
+, (9)
+8
+
+[[page 9]]
+Table 1: Test results (% hits@1) on Vanilla and Vanilla-EU datasets. EU stands for entity unla-
+beled.
+Vanilla
+1-hop
+Vanilla
+2-hop
+Vanilla
+3-hop
+Vanilla-EU
+1-hop
+Vanilla-EU
+2-hop
+Vanilla-EU
+3-hop
+VRN 97.5 89.9 62.5 82.0 75.6 38.3
+Bordes et al. [20]’s QA system 95.7 81.8 28.4 39.5 38.3 26.9
+KV-MemNN 95.8 25.1 10.1 35.8 10.3 10.5
+Supervised embedding 54.4 29.1 28.9 18.1 23.2 25.3
+whereA(y,a,q ) = logPθ1(y|q)+log Pθ2(a|y,q )−logQψ(y|q,a ) can be treated as the learning signal
+in policy gradient.
+Second, to reduce the variance of gradient, we center and normalize the signal A(y,a,q ) and
+also subtract a baseline function b(a,q ) [33]. Finally, the gradient in (9) can be approximated by
+the Monte Carlo method using K samples of the latent variable from Qψ:
+∇ψL≈ 1
+K
+∑K
+j=1∇ψ logQψ(yj|a,q )
+( (A(yj,a,q)−˜µ)
+˜σ −b(a,q )
+)
+, (10)
+where ˜µ and ˜σ estimate the mean and standard deviation ofA(yj,a,q ) with moving average. b(a,q )
+is another neural network that ﬁts the expected normalized learning signal. In our experiments, we
+simply build a two-layer perceptron with concatenated one-hot answer and question features. Here
+b(a,q ) tries to ﬁt ˜A(yj,a,q ) = (A(yj,a,q)−˜µ)
+˜σ by minimizing the square loss. For other parameters θ1
+and θ2 in Pθ1(y|q) and P(θ2)(a|y,q ) respectively, the gradients are computed in the normal way.
+5 Inference
+During inference, we are only given the question q, and ideally we want to ﬁnd the answer by com-
+puting arg maxy,a log (Pθ1(y|q)Pθ2(a|y,q )). However, this computation is quadratic in the number
+of entities and thus too expensive. Alternatively, we can approximate it via beam search. So we
+selectk candidate entitiesy1,y 2,...,y k with top scores from Pθ1(y|q), and then the answer is given
+by
+a∗ = argmax
+a∈Gy,y∈{y1,y2,...,yk}
+logPθ2(a|y,q ). (11)
+In our experiments, we found that k = 1 (equivalent as greedy inference) can already achieve good
+performance.
+6 Experiments
+6.1 The MetaQA benchmark
+There is an existing public QA dataset named WikiMovies 3, which consists of question-answer
+pairs in the domain of movies and provides a medium-sized knowledge graph [8]. However, it has
+3It is available at https://research.fb.com/downloads/babi.
+9
+
+[[page 10]]
+Table 2: Test results (% hits@1) on NTM-EU and Audio-EU datasets. EU stands for entity
+unlabeled.
+NTM-EU
+1-hop
+NTM-EU
+2-hop
+NTM-EU
+3-hop
+Audio-EU
+1-hop
+Audio-EU
+2-hop
+Audio-EU
+3-hop
+VRN 81.3 69.7 38.0 37.0 24.6 21.1
+Bordes et al. [20]’s QA system 32.5 32.3 25.3 18.5 19.3 15.3
+KV-MemNN 33.9 8.7 10.2 4.3 7.0 15.3
+Supervised embedding 16.1 22.8 24.2 4.1 6.1 12.1
+several limitations: 1) all questions in it are single-hop, thus it is not able to evaluate the ability
+of reasoning; 2) there is no noise on the topic entity in question, so it can be easily located in the
+knowledge graph; 3) it is generated from very limited number of text templates, which is easy to
+be exploited by models and of limited practical value. Some small datasets like WebQuestions [5]
+are mostly for single-hop questions; while WikiTableQuestions [34] involves tiny knowledge table
+for each question, instead of one large-scale knowledge graph shared among all questions.
+Thus in this paper, we introduce a new challenging question-answer benchmark: MetaQA
+(MoviE Text Audio QA). It contains more than 400K questions for both single and multi-hop
+reasoning, and provides more realistic text and audio versions. MetaQA serves as a comprehensive
+extension of WikiMovies. Due to the page limit, we brieﬂy list the datasets included in MetaQA
+below, and put more details in Appendix A.
+• V anilla: We have the original WikiMovies as the Vanilla 1-hop dataset. For multi-hop
+reasoning, we design 21 types of 2-hop questions and 15 types of 3-hop questions, and generate
+them by random sampling from a text template pool. Details and question examples are in
+Appendix B.
+• NTM: Thanks to the recent breakthrough in neural translation models (NTM), we can
+introduce more variations over the Vanilla datasets. We use a NTM trained by dual learning
+techniques [35] to paraphrase question by ﬁrst translating it from English to French, and then
+sample translations back to English with beam search. The questions in the NTM dataset
+have diﬀerent wordings but keep the same meaning. This dataset also contains 1-hop, 2-hop
+and 3-hop categories.
+• Audio: To make it even more practical and challenging, we generate audio datasets with the
+help of text-to-speech (TTS) system. We use Google TTS service to read all the questions
+in Vanilla. We also provide extracted MFCC features for each question. The Audio dataset
+also contains 1-hop, 2-hop and 3-hop categories. Note that although the audio is machine-
+generated, it is still much less regulated compared to text-template-generated data, and have
+a lot of variations in waveforms. For example, even for the same word, the TTS system
+can have diﬀerent intonations depending on the word position in question and other context
+words. Visualization of the audio data can be found in Appendix C.
+10
+
+[[page 11]]
+1-hop 2-hop 3-hop 1-hop 2-hop 3-hop
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0Accuracy
+Vanilla-EU NTM-EU
+Performance improvement of entity recognizer
+5% init
+joint train
+Figure 3: Improvement of the entity recognizer.
+6.2 Competitor methods
+We have three competitor methods: 1) as discussed in Sec 2, Miller et al. [8] proposed Key-Value
+Memory Networks (KV-MemNN), and reported state-of-the-art results at that time on WikiMovies;
+2) Bordes et al. [20]’s QA system also tries to embed the inference subgraph for reasoning, but the
+representation is simply an unordered bag-of-relationships and neighbor entities; 3) the “supervised
+embedding” is considered as yet another baseline method, which is a simple approach but often
+works surprisingly well as reported in Dodge et al. [13].
+We implement baseline methods with Tensorﬂow [36]. Our results on Vanilla 1-hop are consis-
+tent with the reported performance in [8]. We take whichever higher and report it in Table 1. For
+example, our KV-MemNN obtains 95.8% test accuracy, while the original paper reports 93.9% on
+the same dataset, so we just report 95.8% in table.
+When training KV-MemNN, we use the same number of “internal hops” as the hop number of
+that dataset. We also try to use more “internal hops” than the dataset hop number, but it is not
+helpful. Also, we insert knowledge items within 3 hops of the located topic entity to the memory
+slots, which ensures that if the topic entity is correctly matched, the answer is existing somewhere
+in the memory array.
+6.3 Experimental settings
+We use all the datasets inMetaQA for experiments. We follow the same split of train/validation/test
+for all datasets. The number of questions in each part is listed in Appendix (Table 3). We tune
+hyperparameters on validation set for all methods. In both Vanilla and NTM, we use bag-of-words
+representation for entity name to parameterize Wy in (3).
+For Vanilla, we have two diﬀerent settings: 1) provide the entity labels in all questions, so that
+we can compare with KV-MemNN under the same setting of Miller et al. [8] on Vanilla 1-hop
+dataset; 2) only provide 5% entity labels among all questions, named as Vanilla-EU (EU stands for
+topic entity unlabeled). We make all the methods use bag-of-words representation of the question,
+and avoid hard entity matching. This setting is more of a sanity check of how much the method
+11
+
+[[page 12]]
+is dependent on labeled topic entities. In practice, hard matching can always be an option on text
+data, but it is not feasible for audio data.
+To make task more realistic and challenging, we experiment with EU setting for NTM and
+Audio datasets. For NTM-EU, only 5% topic entity labels among all questions are provided. For
+Audio-EU, a higher labeled ratio 20% since it is much more diﬃcult than text data. To handle the
+variant length of audio questions, we use a simple convolutional neural network (CNN) with three
+convolutional layers and three max-pooling layers to embed the audio questions into ﬁxed-dimension
+vectors. We put more details about CNN embedding in Appendix D.
+For all the EU setting above, the small set of entity labeled questions are used to initialize
+a topic entity recognizer. After that, all methods train on entire dataset but without the entity
+labels. For VRN, we show that this pretrained recognizer will also get improved with variational
+joint training; for other baselines, the entity recognizer will be ﬁxed.
+6.4 Results and discussions
+The experimental results are listed in Table 1 and Table 2.
+V anilla: Since all the topic entities are labeled, Vanilla mainly evaluates the ability of logic rea-
+soning. Note that Vanilla 1-hop is the same as WikiMovies, which is included for sanity check. All
+the baseline methods achieve similar performance as reported in the original papers [8, 20], while
+our method performs the best. It is clear to see that 2- and 3-hop questions are harder, leading to
+signiﬁcant accuracy drop on all methods. Nevertheless, our method still achieves promising results
+and lead competitors by a large margin. We notice that KV-MemNN is not performing well on
+multi-hop reasoning, perhaps due to explosion of relevant knowledge items.
+V anilla-EU:Without topic entity labels, all reasoning-based methods are getting worse on multi-
+hop questions. However, supervised embedding gets better in this case, since it just learns to
+remember the pair of question and answer entities. According to the statistics in Appendix (Ta-
+ble 4), a big portion of questions can be answered by just memorizing the pairs in training data.
+That explains why supervised embedding behaves diﬀerently on this dataset.
+NTM-EU: The questions in this dataset are paraphrased by neural translation model, which
+increases the variety of wordings, and makes the task harder. It is reasonable that all methods are
+getting slightly worse results compared to Vanilla-EU. The same explanation applies to supervised
+embedding, which is not reasoning but memorizing all the pairs. This is indeed weak generalization
+and it takes advantage of the nature of this dataset, but it is not likely to perform well on new
+entity pairs.
+Audio-EU: This audio dataset is the most challenging one. As mentioned in Sec 6.1, even the same
+word can be pronounced in a variety of intonations. It is hard to recognize the entity in audio data,
+also hard to tell the question type. It is not surprising that all methods perform worse compared to
+text data. Our method achieves 37% on 1-hop audio questions, which is very promising. For 2-hop
+and 3-hop questions, our method still outperforms other methods. Clearly, there is large room for
+improvement on audio QA. We leave it as future work, and hopefully the MetaQA benchmark
+can facilitate more researchers working on QA systems.
+6.5 Model ablation
+Since our framework uses variational method to jointly learn the entity recognizer and reasoning
+graph embedding, we here do the model ablation to answer the following two questions: 1) is the
+12
+
+[[page 13]]
+reasoning graph embedding approach necessary for inference? 2) is the variational method helpful
+for joint training?
+Importance of reasoning graph embedding: As the results shown in Table 1, our proposed
+VRN outperforms all the other baselines, especially in 3-hop setting. Since this experiment only
+compares the reasoning ability, it clearly shows that simply representing the inference rule as linear
+combination of reasoning graph entities is not enough.
+Improvement of entity recognition with joint training: In Fig 3 we show that using our joint
+training framework with variance reduction REINFORCE, we can improve the entity recognition
+performance further without the corresponding topic entity label supervision. For 1-hop and 2-hop
+questions, our model can improve greatly. While for 3-hop, since the inference task is much harder,
+we can only marginally improve the performance. For audio data, we’ve improved by 10% in 1-hop
+case, and it is hard to improve further for multi hops. In Table 1 the baselines perform much worse
+in the EU setting, due to the absence of joint training.
+6.6 Inspection of learning and inference
+We study the convergence of our learning algorithm in Appendix E.1. It shows variance reduction
+technique helps the convergence signiﬁcantly, while simpler tasks converge better. Also we present
+an example inference path with highest score in the reasoning graph in Appendix E.2. To answer
+“What are the main languages in David Mandel ﬁlms?”, the model learns to ﬁnd the movieEuroTrip
+ﬁrst through directed or wrote relationships, then follow in language to get the correct answer
+German.
+13
+
+[[page 14]]
+References
+[1] S¨ oren Auer, Christian Bizer, Georgi Kobilarov, Jens Lehmann, Richard Cyganiak, and Zachary
+Ives. Dbpedia: A nucleus for a web of open data. The semantic web , 2007.
+[2] Kurt Bollacker, Colin Evans, Praveen Paritosh, Tim Sturge, and Jamie Taylor. Freebase: a
+collaboratively created graph database for structuring human knowledge. In Proceedings of
+the 2008 ACM SIGMOD international conference on Management of data , 2008.
+[3] James Clarke, Dan Goldwasser, Ming-Wei Chang, and Dan Roth. Driving semantic parsing
+from the world’s response. In Proceedings of the fourteenth conference on computational natural
+language learning, 2010.
+[4] Percy Liang, Michael I Jordan, and Dan Klein. Learning dependency-based compositional
+semantics. In Proceedings of the 49th Annual Meeting of the Association for Computational
+Linguistics: Human Language Technologies-Volume 1 , 2011.
+[5] Jonathan Berant, Andrew Chou, Roy Frostig, and Percy Liang. Semantic parsing on freebase
+from question-answer pairs. In In Proceedings of the Conference on Empirical Methods in
+Natural Language Processing, 2013.
+[6] Wen-tau Yih, Ming-Wei Chang, Xiaodong He, and Jianfeng Gao. Semantic parsing via staged
+query graph generation: Question answering with knowledge base. In Proceedings of the 53rd
+Annual Meeting of the Association for Computational Linguistics , 2015.
+[7] Jason Weston, Sumit Chopra, and Antoine Bordes. Memory networks. arXiv preprint
+arXiv:1410.3916, 2014.
+[8] Alexander Miller, Adam Fisch, Jesse Dodge, Amir-Hossein Karimi, Antoine Bordes, and Ja-
+son Weston. Key-value memory networks for directly reading documents. arXiv preprint
+arXiv:1606.03126, 2016.
+[9] Yujia Li, Daniel Tarlow, Marc Brockschmidt, and Richard Zemel. Gated graph sequence neural
+networks. arXiv preprint arXiv:1511.05493 , 2015.
+[10] Richard Socher, Danqi Chen, Christopher D Manning, and Andrew Ng. Reasoning with neural
+tensor networks for knowledge base completion. In Advances in Neural Information Processing
+Systems, pages 926–934, 2013.
+[11] Xin Dong, Evgeniy Gabrilovich, Geremy Heitz, Wilko Horn, Ni Lao, Kevin Murphy, Thomas
+Strohmann, Shaohua Sun, and Wei Zhang. Knowledge vault: A web-scale approach to proba-
+bilistic knowledge fusion. In SIGKDD, 2014.
+[12] Kelvin Guu, John Miller, and Percy Liang. Traversing knowledge graphs in vector space. arXiv
+preprint arXiv:1506.01094, 2015.
+[13] Jesse Dodge, Andreea Gane, Xiang Zhang, Antoine Bordes, Sumit Chopra, Alexander Miller,
+Arthur Szlam, and Jason Weston. Evaluating prerequisite qualities for learning end-to-end
+dialog systems. arXiv preprint arXiv:1511.06931 , 2015.
+14
+
+[[page 15]]
+[14] Delip Rao, Paul McNamee, and Mark Dredze. Entity linking: Finding extracted entities in
+a knowledge base. In Multi-source, multilingual information extraction and summarization ,
+pages 93–115. Springer, 2013.
+[15] Tom Kwiatkowski, Eunsol Choi, Yoav Artzi, and Luke Zettlemoyer. Scaling semantic parsers
+with on-the-ﬂy ontology matching. In EMNLP, 2013.
+[16] Chen Liang, Jonathan Berant, Quoc Le, Kenneth D Forbus, and Ni Lao. Neural symbolic
+machines: Learning semantic parsers on freebase with weak supervision. arXiv preprint
+arXiv:1611.00020, 2016.
+[17] Ankit Kumar, Ozan Irsoy, Jonathan Su, James Bradbury, Robert English, Brian Pierce, Pe-
+ter Ondruska, Ishaan Gulrajani, and Richard Socher. Ask me anything: Dynamic memory
+networks for natural language processing. arXiv preprint arXiv:1506.07285 , 2015.
+[18] Sainbayar Sukhbaatar, Jason Weston, Rob Fergus, et al. End-to-end memory networks. In
+Advances in neural information processing systems , pages 2440–2448, 2015.
+[19] Z. Yang, X. He, J. Gao, L. Deng, and A.J. Smola. Stacked attention networks for image
+question answering. arXiv preprint arXiv:1511.02274 , 2015.
+[20] Antoine Bordes, Sumit Chopra, and Jason Weston. Question answering with subgraph em-
+beddings. arXiv preprint arXiv:1406.3676 , 2014.
+[21] Arvind Neelakantan, Quoc V Le, Martin Abadi, Andrew McCallum, and Dario Amodei. Learn-
+ing a natural language interface with neural programmer. arXiv preprint arXiv:1611.08945 ,
+2016.
+[22] Richard Socher, Alex Perelygin, Jean Y Wu, Jason Chuang, Christopher D Manning, An-
+drew Y Ng, and Christopher Potts. Recursive deep models for semantic compositionality over
+a sentiment treebank. In EMNLP, 2013.
+[23] Ozan Irsoy and Claire Cardie. Deep recursive neural networks for compositionality in language.
+In Advances in Neural Information Processing Systems , pages 2096–2104, 2014.
+[24] Lili Mou, Ge Li, Lu Zhang, Tao Wang, and Zhi Jin. Convolutional neural networks over
+tree structures for programming language processing. In Proceedings of the Thirtieth AAAI
+Conference on Artiﬁcial Intelligence , 2016.
+[25] David K Duvenaud, Dougal Maclaurin, Jorge Iparraguirre, Rafael Bombarell, Timothy Hirzel,
+Al´ an Aspuru-Guzik, and Ryan P Adams. Convolutional networks on graphs for learning
+molecular ﬁngerprints. In Advances in Neural Information Processing Systems , pages 2215–
+2223, 2015.
+[26] Hanjun Dai, Bo Dai, and Le Song. Discriminative embeddings of latent variable models for
+structured data. In ICML, 2016.
+[27] James Atwood and Don Towsley. Diﬀusion-convolutional neural networks. In Advances in
+Neural Information Processing Systems, pages 1993–2001, 2016.
+15
+
+[[page 16]]
+[28] Daniel D. Johnson. Learning graphical state transitions. In Proceedings of the 5th International
+Conference on Learning Representations, ICLR’17, 2017.
+[29] Arvind Neelakantan, Benjamin Roth, and Andrew McCallum. Compositional vector space
+models for knowledge base completion. arXiv preprint arXiv:1504.06662 , 2015.
+[30] Kristina Toutanova, Xi Victoria Lin, Wen-tau Yih, Hoifung Poon, and Chris Quirk. Compo-
+sitional learning of embeddings for relation paths in knowledge bases and text. In Proceedings
+of the 54th Annual Meeting of the Association for Computational Linguistics , volume 1, pages
+1434–1444, 2016.
+[31] Yi Yang and Ming-Wei Chang. S-mart: Novel tree-based structured learning algorithms ap-
+plied to tweet entity linking. arXiv preprint arXiv:1609.08075 , 2016.
+[32] Ronald J. Williams. Simple statistical gradient-following algorithms for connectionist rein-
+forcement learning. Machine Learning, 8:229–256, 1992.
+[33] Andriy Mnih and Karol Gregor. Neural variational inference and learning in belief networks.
+arXiv preprint arXiv:1402.0030 , 2014.
+[34] Panupong Pasupat and Percy Liang. Compositional semantic parsing on semi-structured ta-
+bles. arXiv preprint arXiv:1508.00305 , 2015.
+[35] Di He, Yingce Xia, Tao Qin, Liwei Wang, Nenghai Yu, Tieyan Liu, and Wei-Ying Ma. Dual
+learning for machine translation. In Advances in Neural Information Processing Systems, pages
+820–828, 2016.
+[36] Abadi Martın, Ashish Agarwal, Paul Barham, Eugene Brevdo, and et. al. Tensorﬂow: Large-
+scale machine learning on heterogeneous systems. 2015.
+16
+
+[[page 17]]
+Appendix
+A Details of the MetaQA benchmark
+V anilla 1-hop dataset: Our Vanilla 1-hop dataset is derived from the WikiMovies dataset.
+Following the settings in [8], we use the wiki entities branch of WikiMovies. To make it easier
+to use, we apply an automatic entity labeling on the dataset. Speciﬁcally, we parse each question
+with left-to-right largest consumption of entity names and then normal words, and highlight the
+entity in question with a pair of square brackets. A few entity names are identical to normal words,
+which will lead to “fake entities” to be labeled in the question. For simplicity, we just remove those
+ambiguous questions, which makes our Vanilla 1-hop text dataset slightly smaller than WikiMovies.
+We also provide corresponding question type identiﬁer ﬁles for train / validation/ test sets.
+V anilla 2-hop dataset: The WikiMovies dataset has 1-hop questions only, which inspires us to
+generate new datasets for 2-hop and 3-hop reasoning. For 2-hop questions, we design 21 question
+types in total:
+• Actor / Writer / Director to Movie to Actor / Writer / Director / Year / Language / Genre
+(18 types)
+• Movie to Actor / Writer / Director to Movie (3 types)
+Following the way that WikiMovies is generated, we design 10 question templates and uniformly
+randomly sample from them when generating questions.
+V anilla 3-hop dataset: For 3-hop questions, we don’t consider awkward question types: Actor /
+Writer / Director to Movie to Actor / Writer / Director to Movie, since they’re counter-intuitive
+and quite confusing. For example: The directors of the movies acted by [@entity] have directed
+which movies? Instead, we construct meaningful 3-hop questions in 15 question types:
+• Movie to Actor / Writer / Director to Movie to Actor / Writer / Director / Year / Language
+/ Genre (diﬀerent roles for the former and latter roles)
+NTM datasets: We use one of the state-of-the-art machine translation models, named dual
+learning for neural translation model [35], to generate 1-hop, 2-hop and 3-hop NTM datasets. We
+ﬁrstly translate the corresponding Vanilla dataset from English to French, and then translate it
+back to English with beam search. We guarantee that the topic entity can still be found in the
+question. By doing so, we can automatically paraphrase the questions, which introduces variations
+in question wordings and thus leads to more realistic scenario.
+Audio datasets: To generate 1-hop, 2-hop and 3-hop audio datasets, we use Google text-to-speech
+API 4 to read all questions in Vanilla datasets and save the audio as mp3 ﬁles. It takes time to
+process hundreds of thousands of audio ﬁles. For convenience, we also provide extracted MFCC
+features for each question.
+B Question samples
+In the MetaQA benchmark, we have in total 21 types of 2-hop questions, and 15 types of 3-hop
+questions. The exact question types and examples are listed in Table 5 and Table 6.
+4We use the API from https://github.com/pndurette/gTTS.
+17
+
+[[page 18]]
+0 50 100 150 200 250 300
+# mini-batch
+0
+10
+20
+30
+40
+50Total loss
+Convergence of variational training
+Vanilla: 1-hop
+Vanilla: 2-hop
+Vanilla: 3-hop
+(a) Convergence on Vanilla datasets
+0 50 100 150 200 250 300
+# mini-batch
+0
+20
+40
+60
+80Total loss
+Convergence of variational training
+NTM: 1-hop
+NTM: 2-hop
+NTM: 3-hop (b) Convergence on NTM datasets
+Figure 4: Convergence of our VRN on diﬀerent text datasets. Here X-axis represents # mini-batch,
+and Y-axis reports the total loss for learning θ1,θ 2,ψ and baseline b(q,a ).
+Vanilla:	What	are	the	primary	languages	in	the	
+movies	directed	byDavid	Mandel?
+NTM:	What	are	the	main	languages	in	David	
+Mandel	films?
+Q: A:German
+EuroTrip
+directed
+starred_actors
+Jeff	Schaffer Alec	Berg
+written_by
+wrote
+German
+Scott	Mechlowicz
+directed_by
+directed_by
+written_by
+in_language
+...…
+David	Mandel
+0.34 0.72
+14.87
+22.19
+Figure 5: Example of the learned 2-hop inference.
+18
+
+[[page 19]]
+Table 3: Statistics of the datasets in the MetaQA benchmark.
+# of Questions
+1-hop 2-hop 3-hop
+Train 96,106 118,980 114,196
+Validation 9,992 14,872 14,274
+Test 9,947 14,872 14,274
+Table 4: Ratios of new entities and new entity pairs in each dataset.
+1-hop 2-hop 3-hop
+New entities in validation (%) 20.0 5.0 0.1
+New entities in test (%) 20.6 4.7 0.1
+New entity pairs in validation (%) 34.1 28.1 32.1
+New entity pairs in test (%) 34.5 28.6 32.2
+C Visualization of audio data
+We visualize the MFCC features of two questions sharing the same entity, as in Fig 6. It is clear
+that the entity part (highlighted by red dotted lines) is similar but not exactly the same. This
+shows the diﬃculty of handling the audio questions.
+D Details of CNN embedding
+To answer audio questions, we need information of both the topic entity in question, and the
+question type, i.e. what is asking about that entity. So we train two CNNs with diﬀerent objectives:
+one is to predict the topic entity, and the other is to predict the question type. We use the same
+input (MFCC features of audio questions) for both CNNs, and only use training data to ﬁt them.
+We treat the activations of the second last layer (before softmax layer) as the embeddings of audio
+questions.
+E More experiment results
+E.1 Convergence of VRN
+We visualize the training loss in Fig 4 to get an idea of how it converges. We can see using the
+variance reduction technique, the training converges very fast. Also as expected, for simpler tasks
+involving fewer inference steps, they can converge to a better solution.
+E.2 Visualization of the learned reasoning rule
+To check what the reasoning graph have learned, we visualize the inference path with highest score
+in the reasoning-graph. Speciﬁcally, for 1-hop answers, we simply check the compatibility between
+19
+
+[[page 20]]
+0 0.5 1 1.5 2 2.5 3 3.5
+Time
+3
+2
+1
+0
+1
+2
+3
+(a) MFCC features of question: What ﬁlms did Dolly Parton star in?
+0 0.5 1 1.5 2 2.5 3 3.5
+Time
+3
+2
+1
+0
+1
+2
+3
+(b) MFCC features of question: Which movies was Dolly Parton the writer
+of?
+0 0.15 0.3 0.45 0.6 0.75 0.9 1.1
+Time
+3
+2
+1
+0
+1
+2
+3
+(c) MFCC features of the
+shared entity in both ques-
+tions: Dolly Parton.
+Figure 6: Visualization of the MFCC features of two questions sharing the same entity. The red
+dotted box highlights the entity parts.
+edge type and question embedding; for answers with multi-hop, we traverse from answer to topic
+entity, and take the edge whose embedding has maximum compatibility with the question.
+We show one 2-hop inference result in Fig 5. To answer the NTM question correctly, one need
+to use either directed or wrote relation to ﬁnd the movie EuroTrip ﬁrst, then follow in language to
+get the correct answer German.
+20
+
+[[page 21]]
+Table 5: Examples of the 21 types of 2-hop questions in the MetaQA benchmark.
+Question Type Count Example
+Movie to Actor to Movie 11,709 The actor of Ruby Cairo also starred in which
+ﬁlms?
+Movie to Director to Movie 11,412 Which ﬁlms share the same director of Vampires
+Suck?
+Movie to Writer to Movie 8,817 Which movies have the same screenwriter of The
+Pianist?
+Actor to Movie to Actor 9,547 Who co-starred with Joel Evans?
+Actor to Movie to Director 9,241 Who co-starred with Carlo Ninchi?
+Actor to Movie to Genre 8,548 What are the genres of the movies acted by
+Melora Hardin?
+Actor to Movie to Language 3,067 What are the main languages in Molly Windsor
+starred movies
+Actor to Movie to Writer 8,499 Who wrote the movies acted by James Madio?
+Actor to Movie to Year 10,072 When did the movies acted by Masato Hagiwara
+release?
+Director to Movie to Actor 4,800 Who acted in the ﬁlms directed by Jerry Lon-
+don?
+Director to Movie to Director 1,797 Who directed movies together with Chad Sta-
+helski?
+Director to Movie to Genre 5,205 What types are the ﬁlms directed by Phillip
+Noyce?
+Director to Movie to Language 1,850 What are the languages spoken in the movies
+directed by Peter Sellers?
+Director to Movie to Writer 3,688 Who wrote the movies directed by Gary McK-
+endry?
+Director to Movie to Year 6,026 When were the ﬁlms directed by Jonathan Kahn
+released?
+Writer to Movie to Actor 8,447 Who acted in the ﬁlms written by Travis Milloy?
+Writer to Movie to Director 7,342 Who directed the ﬁlms written by Nick Damici?
+Writer to Movie to Genre 8,633 What types are the movies written by Amza Pel-
+lea?
+Writer to Movie to Language 2,629 What are the primary languages in the ﬁlms
+written by John Musker?
+Writer to Movie to Writer 7,142 Who wrote ﬁlms together with Jonah Hill?
+Writer to Movie to Year 10,226 When did the movies directed by Paul Linke re-
+lease?
+21
+
+[[page 22]]
+Table 6: Examples of the 15 types of 3-hop questions in the MetaQA benchmark.
+Question Type Count Example
+Movie to Actor to Movie to Director 11,600 Who directed ﬁlms that share actors with
+the ﬁlm Last Passenger?
+Movie to Actor to Movie to Genre 11,513 What types are the ﬁlms starred by actors
+in Jack Reacher?
+Movie to Actor to Movie to Language 8,735 What are the languages spoken in the
+ﬁlms starred by Blade actors?
+Movie to Actor to Movie to Writer 11,516 Which person wrote the movies starred by
+the actors in Ludwig?
+Movie to Actor to Movie to Year 11,688 When did the movies starred by Witch-
+board actors release?
+Movie to Director to Movie to Actor 10,784 Who acted in the ﬁlms directed by the di-
+rector of The Road?
+Movie to Director to Movie to Genre 10,822 What types are the ﬁlms directed by the
+director of Holly?
+Movie to Director to Movie to Language 5,909 The movies that share directors with the
+movie Eﬃ Briest were in which languages?
+Movie to Director to Movie to Writer 11,005 Who wrote ﬁlms that share directors with
+the ﬁlm Male and Female?
+Movie to Director to Movie to Year 11,350 When did the ﬁlms release whose directors
+also directed Date Movie?
+Movie to Writer to Movie to Actor 8,216 Who acted in the movies written by the
+writer of Bottle Rocket?
+Movie to Writer to Movie to Director 8,734 Who directed ﬁlms for the writer of Sugar?
+Movie to Writer to Movie to Genre 8,212 What types are the movies written by the
+screenwriter of The Gospel?
+Movie to Writer to Movie to Language 3,908 What languages are the ﬁlms that share
+writers with The Bat in?
+Movie to Writer to Movie to Year 8,752 When did the ﬁlms release whose screen-
+writers also wrote Crash?
+22

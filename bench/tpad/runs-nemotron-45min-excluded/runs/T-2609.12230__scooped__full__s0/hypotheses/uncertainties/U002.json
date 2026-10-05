@@ -1,0 +1,39 @@
+{
+  "id": "U002",
+  "question": "How should one-hop failures be detected to trigger the adaptive repair loop?",
+  "description": "The adaptive repair loop relies on detecting one-hop failures, but the mechanism for failure detection is unspecified (e.g., based on model confidence, correctness on single-hop probes, or other signals).",
+  "category": "validity",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "SEARCH",
+  "possible_actions": [],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Effective failure detection is crucial for the repair loop to generate meaningful corrective examples without excessive noise.",
+  "resolution": "One-hop failures can be detected using several mechanisms: (1) model uncertainty signals such as diagnostic messages from the language model (as in S-Path-RAG's Neural-Socratic Graph Dialogue loop), (2) backward consistency verification that checks alignment between final answer and cited evidence (as in closed-loop medical KGQA), (3) reflection loops that iteratively optimize based on generation feedback (as in RAKR), and (4) discriminator-based judgments of answer correctness (as in Dr3's off-topic detection). These approaches enable triggering an adaptive repair loop to generate corrective examples and iteratively refine the model.",
+  "paper_ids": [
+    "arxiv:2603.23512",
+    "doi:10.1117/12.3120384",
+    "doi:10.1109/iccc68654.2025.11437995",
+    "arxiv:2403.12393"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2603.23512",
+    "doi:10.1117/12.3120384",
+    "doi:10.1109/iccc68654.2025.11437995",
+    "arxiv:2403.12393"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C004",
+    "C006",
+    "C005",
+    "C003"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T05:42:24.863623Z",
+  "updated_at": "2026-09-30T06:16:41.563669Z"
+}

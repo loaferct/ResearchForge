@@ -1,0 +1,24 @@
+{
+  "id": "D009",
+  "direction": "Stop presenting 'retrieval-agnostic' as a contribution. Treat the post-hoc gate as an implementation choice that makes one implementation reusable across retrievers, and report the cross-retriever result only as an empirical finding (per-retriever effect sizes and whether the sign is consistent), explicitly noting that measured retriever behaviour in regulatory QA is heterogeneous. The benchmark contribution and the valid-time-versus-recency comparison carry the work.",
+  "hypothesis": "A single post-hoc valid-time gate can be applied unchanged to sparse, dense and hybrid retrievers, and its effect on clause-level point-in-time retrieval is either consistently beneficial or demonstrably retriever-dependent - a result that is reported either way rather than assumed.",
+  "rationale": "Retriever-agnostic temporal filtering already exists as an ontology-governed pre-retrieval filter, temporal information is embedded across layers elsewhere, and a regulatory QA benchmark shows the retrievers themselves rank differently by query type. These together remove the architectural framing from the contribution list while leaving a legitimate empirical question, which the planned factorial already answers at low marginal cost. This direction deserves investigation next because it aligns the claims with the overlap evidence and prevents the write-up from resting on a property that the compared work already exhibits.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": "D008",
+  "research_question": "When one post-hoc valid-time gate is applied unchanged across sparse, dense and hybrid retrievers on clause-versioned amended legal text, is its effect on point-in-time retrieval consistent across retrievers or does it vary with the base retriever, and how does it compare with the published recency-decay hybrid?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "doi:10.3390/computers15080471",
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.2139/ssrn.7087840",
+    "arxiv:2608.21409"
+  ],
+  "uncertainty_ids": [
+    "U005",
+    "U001",
+    "U021",
+    "U008"
+  ],
+  "recorded_at": "2026-09-30T04:39:25.707839Z"
+}

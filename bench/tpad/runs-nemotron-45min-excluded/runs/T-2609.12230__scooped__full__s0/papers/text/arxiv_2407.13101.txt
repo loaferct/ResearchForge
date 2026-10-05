@@ -1,0 +1,954 @@
+[[page 1]]
+Retrieve, Summarize, Plan: Advancing Multi-hop Question
+Answering with an Iterative Approach
+Zhouyu Jiang
+Ant Group
+Shanghai, China
+jiangzhouyu.jzy@antgroup.com
+Mengshu Sun
+Ant Group
+Beijing, China
+mengshu.sms@antgroup.com
+Zhiqiang Zhang
+Ant Group
+Hangzhou, Zhejiang, China
+lingyao.zzq@antgroup.com
+Lei Liang
+Ant Group
+Hangzhou, Zhejiang, China
+leywar.liang@antgroup.com
+Abstract
+Multi-hop question answering is a challenging task with distinct
+industrial relevance, and Retrieval-Augmented Generation (RAG)
+methods based on large language models (LLMs) have become a
+popular approach to tackle this task. Owing to the potential in-
+ability to retrieve all necessary information in a single iteration,
+a series of iterative RAG methods has been recently developed,
+showing significant performance improvements. However, existing
+methods still face two critical challenges: context overload resulting
+from multiple rounds of retrieval, and over-planning and repeti-
+tive planning due to the lack of a recorded retrieval trajectory. In
+this paper, we propose a novel iterative RAG method called ReSP,
+equipped with a dual-function summarizer. This summarizer com-
+presses information from retrieved documents, targeting both the
+overarching question and the current sub-question concurrently.
+Experimental results on the multi-hop question-answering datasets
+HotpotQA and 2WikiMultihopQA demonstrate that our method
+significantly outperforms the state-of-the-art, and exhibits excellent
+robustness concerning context length.
+CCS Concepts
+• Information systems→ Question answering.
+Keywords
+Retrieval-Augmented Generation, Question Answering, LLMs
+ACM Reference Format:
+Zhouyu Jiang, Mengshu Sun, Zhiqiang Zhang, and Lei Liang. 2018. Retrieve,
+Summarize, Plan: Advancing Multi-hop Question Answering with an Iter-
+ative Approach. In Proceedings of Make sure to enter the correct conference
+title from your rights confirmation email (Conference acronym ’XX). ACM,
+New York, NY, USA, 10 pages. https://doi.org/XXXXXXX.XXXXXXX
+Permission to make digital or hard copies of all or part of this work for personal or
+classroom use is granted without fee provided that copies are not made or distributed
+for profit or commercial advantage and that copies bear this notice and the full citation
+on the first page. Copyrights for components of this work owned by others than the
+author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or
+republish, to post on servers or to redistribute to lists, requires prior specific permission
+and/or a fee. Request permissions from permissions@acm.org.
+Conference acronym ’XX, June 03–08, Woodstock, NY
+© 2018 Copyright held by the owner/author(s). Publication rights licensed to ACM.
+ACM ISBN 978-1-4503-XXXX-X/18/06
+https://doi.org/XXXXXXX.XXXXXXX
+1 Introduction
+Open-domain question answering is a task that involves providing
+factual responses based on extensive documents [29, 37] and is of
+significant application in hot industry scenarios such as intelligent
+assistants and generative search engines [8, 22]. Multi-hop question
+answering is one common and challenging sub-task within this
+field, requiring the system to integrate information to complete
+multi-step reasoning and answer questions [20].
+With the rapid development of large language models (LLMs),
+retrieval-augmented generation (RAG) based on these LLMs has
+become a popular method for addressing open-domain question
+answering [4, 17, 19, 23, 26]. The typical RAG process involves
+using a retriever to recall documents from a corpus that are rele-
+vant to a given query and using these documents as context inputs
+for the LLMs to generate responses. However, when dealing with
+multi-hop question answering, conventional RAG techniques fre-
+quently fall short of aggregating all the critical information within
+a singular retrieval iteration, leading to incomplete or incorrect
+answers. Consequently, a new genre of iterative RAG methods
+that incorporate question planning has recently been developed
+[2, 24, 28]. These methods assess after each retrieval whether the
+information at hand is sufficient for answering the question. If it is
+not, the methods generate a sub-question for the next step and per-
+form another retrieval, iterating this process until the question can
+be satisfactorily answered. Owing to the employment of multiple
+retrieval iterations, iterative RAG has achieved a notable improve-
+ment in multi-hop question-answering scenarios compared to the
+single-round RAG approaches.
+However, existing iterative RAG methods still encounter two
+principal challenges when handling multi-hop question answering.
+Firstly, due to multiple rounds of retrieval, iterative RAG methods
+have to deal with a longer context in contrast to single-round RAG
+methods, which consequently introduces more noise from the doc-
+uments and increases the risk of the model missing key information
+during response generation [18]. Secondly, current iterative RAG
+methods are heavily dependent on the model’s interpretation of
+retrieved documents for decision-making, lacking a concrete record
+of the navigated trajectory. This makes it difficult for the model to
+discern whether the information needed to answer the overarching
+question has been sufficiently gathered and whether a sub-question
+has already been retrieved, leading to two issues: an over-planning
+scenario wherein the iterative process does not stop even despite
+arXiv:2407.13101v2  [cs.CL]  30 Jan 2025
+
+[[page 2]]
+Conference acronym ’XX, June 03–08, Woodstock, NY Jiang et al.
+Question
+Retriever
+Documents
+LLM
+Maybenotenough
+Question
+Retriever
+Documents
+LLM
+Context overload
+Sub-question
+Redundantplanning
+Single-round RAG Iterative RAG
+Figure 1: RAG pipelines illustration and challenges faced.
+sufficient information has been retrieved, and a repetitive planning
+scenario wherein a sub-question that has already been retrieved is
+reproduced [36].
+The two challenges mentioned previously are primarily related to
+the effective processing of information obtained during the retrieval
+phase. To tackle this, drawing inspiration from query-focused sum-
+marization [5, 34], we introduce the ReSP (Retrieve, Summarize,
+Plan) approach. This method not only condenses but also function-
+ally decomposes the information accrued in each retrieval episode.
+Specifically, we integrate a novel LLM-based summarizer within
+the established iterative RAG framework and refine the iterative
+process. The summarizer undertakes dual roles: firstly, it compiles
+a summary of corroborative information from the retrieved docu-
+ments for the overarching target question, termed the global evi-
+dence memory ; secondly, it crafts a response for the current sub-
+question based on the retrieved documents, termed the local path-
+way memory. At the inception of each iteration, the accumulated
+global evidence memory and local pathway memory are combined
+as contextual inputs for the model’s evaluation. Should the infor-
+mation be evaluated as adequate, the procedure advances to the
+generation of the final response; otherwise, a new sub-question is
+formulated, with the requirement that the model must not generate
+previously retrieved sub-questions.
+Our experimental findings reveal that, under uniform experi-
+mental settings, the ReSP model markedly surpasses a range of
+current single-round and iterative RAG approaches when evaluated
+on multi-hop question-answering benchmarks such as HotpotQA
+[35] and 2WikiMultihopQA [9]. Notably, it exhibits a substantial
+enhancement in performance, with an increase of 4.1 F1 score over
+the state-of-the-art (SOTA) on HotpotQA, and an improvement of
+4.4 F1 score over the SOTA on 2WikiMultihopQA. Furthermore,
+we conducted a series of in-depth comparative studies to discern
+the effect of base model choice on its performance and confirmed
+that ReSP possesses commendable robustness to context length
+compared to other RAG methods.
+In conclusion, our contributions are as follows:
+• Targeting the multi-hop question-answering scenario, we
+propose an innovative iterative RAG approach that incor-
+porates query-focused summarization to tackle the context
+overload problem resulting from multiple rounds of retrieval.
+In particular, we have refined the summarizer’s function to
+compress information aimed at both the overarching ques-
+tion and the current sub-question, thereby optimizing issues
+related to over-planning and repetitive planning.
+• Experimental results show that our approach significantly
+surpasses existing methods in performance, and it exhibits
+considerable robustness to variations in context length.
+2 Related Works
+Retrieval-Augmented Generation. Retrieval-Augmented Gen-
+eration (RAG) enhances LLMs by retrieving relevant documents
+from external databases and integrating them into the generation
+process [10, 13, 15, 17, 39]. Recent work can be divided into single-
+round RAG [16, 25, 32] and iterative RAG [2, 12, 24, 28] based on
+the number of retrieval rounds. In multi-hop question-answering
+scenarios, iterative RAG often achieves better results because it
+allows for detailed decomposition of the question. However, due to
+the increased number of iterations, iterative RAG faces challenges
+in long-context processing.
+Query-focused summarization. Query-focused summariza-
+tion (QFS) aims to extract or generate a summary of an input docu-
+ment that directly answers or is relevant to a given query[5]. Due
+to the higher requirements of QFS tasks regarding annotation accu-
+racy and data diversity compared to typical summarization tasks,
+data scarcity has long-limited performance improvement. Previous
+work has mainly focused on dataset construction [ 3, 21, 33, 38],
+proposing specialized datasets for scenarios such as news, debates,
+and meetings.
+Recent work has attempted to introduce QFS into single-round
+RAG for refined information compression [ 7, 32]but has not ex-
+tended to iterative RAG, nor has it decomposed the functions of
+QFS. To the best of our knowledge, we are the first to integrate QFS
+with iterative RAG to address multi-hop question answering.
+3 Preliminary
+In this section, we formulate the task of single-round RAG and
+iterative RAG.
+3.1 Single-round RAG
+Given a question𝑞 and a retrieval corpus𝐷 ={𝑑𝑖}|𝐷|
+𝑖=1, the retrieval-
+augmented LLM needs to generate an answer 𝑦 based on the re-
+trieved documents relevant to the question. The process can be
+represented as:
+𝑦 = LLMGen([𝑞,𝐷𝑞], PromptGen) (1)
+where𝐷𝑞 is the retrieved documents for the question𝑞. PromptGen
+is the designated prompt for QA task. LLMGen is the role of LLM,
+which focuses on QA task.
+3.2 Iterative RAG
+Compared to single-round RAG, iterative RAG introduces an eval-
+uation and decision-making process for the current state in each
+
+[[page 3]]
+Retrieve, Summarize, Plan: Advancing Multi-hop Question Answering with an Iterative Approach Conference acronym ’XX, June 03–08, Woodstock, NY
+Reasoner Retriever Summarizer
+Global Evidence 
+Memory 
+Local Pathway 
+Memory 
+Generator
+Top-k Documents
+A
+Q*
+Overarching
+Question
+Planned
+Sub-question
+Output Answer
+Q
+QOverarching 
+Question
+Top-k 
+Documents
+Summarizer
+ Q*
+Top-k 
+Documents
+Planned
+Sub-question Summarizer
+Global Evidence 
+Memory 
+LocalPathway
+Memory 
+Judgement as ‘Yes’
+Figure 2: The ReSP framework consists of four modules: Reasoner, Retriever, Summarizer, and Generator. The reasoner makes
+decisions based on the current memory queues, determining whether to exit the iteration and generate a response or to produce
+a sub-question for further iteration. The retriever searches the corpus based on the sub-question provided by the reasoner (for
+the first iteration, the sub-question is the same as the overarching question, thus the reasonser is bypassed). The summarizer
+performs dual summarization on the retrieved documents, extracting information relevant to both the overarching question Q
+and the current sub-question Q*, and stores the summaries in the global evidence memory and local pathway memory queues
+respectively. The generator produces answer A based on the information in the memory queues.
+iteration. Specifically, in each iteration, the LLM will provide an
+action𝑎, which has only binary values(exit, continue), and can be
+represented as:
+𝑎 = LLMjudge([𝑞,𝑠𝑡𝑎𝑡𝑒], Promptjudge) (2)
+where𝑠𝑡𝑎𝑡𝑒 refers to the historical retrieved documents or the infor-
+mation derived from them. Promptjudge is the designated prompt
+for judgment. LLMjudge is an LLM used to assess the state and
+provide action signals.
+The next step is determined based on the value of𝑎:
+𝑛𝑒𝑥𝑡 _𝑠𝑡𝑒𝑝 =
+(
+LLMplan([𝑞,𝑠𝑡𝑎𝑡𝑒], Promptplan),𝑎 = continue
+answer_generation,𝑎 = exit
+(3)
+where Promptplan is the designated prompt for sub-question gener-
+ation. LLMplan is an LLM for breaking down problems.
+4 Methodology
+Figure 2 illustrates our ReSP framework, which consists of four
+components: Reasoner, Retriever, Summarizer, and Generator.
+Essentially, Reasoner, Summarizer, and Generator are all based on
+a fine-tuning-free LLM, designed to execute specific tasks using
+an array of carefully selected prompt engineering techniques. For
+specific prompt templates, please see Table 1. Our main contribution
+lies in the Summarizer, while the design of the other modules is
+similar to that of conventional iterative RAG methods.
+4.1 Dual-Function Summarizer
+As mentioned earlier, our goal is to address issues of context over-
+load and redundant planning. To tackle context overload, a straight-
+forward approach is to employ summarization to compress infor-
+mation. However, even with summarization, the model still lacks
+an explicit record of the planning path, which does not resolve the
+issue of redundant planning. During the iterative process, over-
+planning could arise if summaries overlook information crucial for
+directly addressing the overarching question, or repetitive planning
+might occur if the information difference between different rounds
+of summaries is not significant. Therefore, a more sophisticated
+design of the summarizer is necessary to distinguish the functions
+of various pieces of information.
+Drawing on the idea of query-focused summarization, we have
+designed a dual-function summarizer. Confronted with retrieved
+documents, this summarizer concurrently executes two tasks: pro-
+ducing summaries of supporting information pertinent to the over-
+arching question and generating responses for the current sub-
+question, while managing two distinct memory queues–the global
+evidence memory and the local pathway memory. Summaries re-
+lated to the overarching question are deposited into the global
+evidence memory, serving to explicitly signal the model to cease
+iterations when information is enough, thus mitigating the risk
+of over-planning. Concurrently, responses for the current sub-
+question, alongside the sub-question itself, are stored in the local
+pathway memory. This explicitly guides the model’s recognition
+
+[[page 4]]
+Conference acronym ’XX, June 03–08, Woodstock, NY Jiang et al.
+Table 1: The prompt templates of different modules in ReSP. The input parameters include Overarching question : the input
+question; Sub-question: the current sub-question generated by the reasoner; Combined memory queues : the concatenated content
+of the global evidence memory and local pathway memory queues for each iteration; docs: the documents retrieved from a
+single round of retrieval.
+Module Function Prompt
+Reasoner
+Judge
+Judging based solely on the current known information and without allowing
+for inference, are you able to completely and accurately respond to the question
+Overarching question ? \nKnown information: Combined memory queues .
+\nIf you can, please reply with "Yes" directly; if you cannot and need more
+information, please reply with "No" directly.
+Plan
+You serve as an intelligent assistant, adept at facilitating users through com-
+plex, multi-hop reasoning across multiple documents. Please understand the
+information gap between the currently known information and the target
+problem.Your task is to generate one thought in the form of question for next
+retrieval step directly. DON’T generate the whole thoughts at once!\n DON’T
+generate thought which has been retrieved.\n [Known information]: Combined
+memory queues\n [Target question]:Overarching question\n [You Thought]:
+Summarizer
+Global Evidence
+Passages: docs\nYour job is to act as a professional writer. You will write a good-
+quality passage that can support the given prediction about the question only
+based on the information in the provided supporting passages. Now, let’s start.
+After you write, please write [DONE] to indicate you are done. Do not write
+a prefix (e.g., "Response:") while writing a passage.\nQuestion:Overarching
+question\nPassage:
+Local Pathway
+Judging based solely on the current known information and without allow-
+ing for inference, are you able to respond completely and accurately to the
+question Sub-question? \nKnown information: Combined memory queues .
+If yes, please reply with "Yes", followed by an accurate response to the question
+Sub-question, without restating the question; if no, please reply with "No"
+directly.
+Generator Response Generation
+Answer the question based on the given reference. \nOnly give me the an-
+swer and do not output any other words.\nThe following are given reference:
+Combined memory queues\n Question: Overarching question
+of the progress in the question planning path as well as the sub-
+questions that have been historically retrieved, preventing repeti-
+tive planning.
+4.2 Summary-Enhanced Iterative RAG Process
+Here we delineate the refined iterative RAG workflow that incor-
+porates the dual-function summarizer. The pseudocode for the
+algorithm implementation is shown as Algorithm 1.
+Given a query Q and a document corpus D, we initially deploy a
+retriever to identify the K documents from D that are most relative
+to Q. These documents are then directed into the summarizer for
+summary creation and memory queue updates (note that during
+the first iteration, the sub-question is essentially the overarching
+question, so there is no generation of response for the current sub-
+question). Subsequently, the contents of the two memory queues
+are concatenated to provide context input for the reasoner, which
+is responsible for determining whether the current information is
+sufficient to address the overarching question. Should it be adequate,
+the iterative process is halted, and the memory queues are utilized
+as context for the generator to produce the final answer. If the
+information is insufficient, the reasoner generates a subsequent sub-
+question Q* that is distinct from previously retrieved sub-questions
+based on the current context, prompting the next iteration round.
+5 Experimental Settings and Results
+5.1 Datasets
+We conduct experiments on two multi-hop question-answering
+benchmark datasets: HotpotQA [ 35] and 2WikiMultihopQA [ 9].
+These two datasets are both constructed based on Wikipedia doc-
+uments, which enables the utilization of a consistent document
+corpus and retrievers to provide external references for LLMs. Fol-
+lowing the open-sourced RAG toolkit FlashRAG [14], we employ
+its preprocessed dataset format. For each dataset, we utilize the
+first 1,000 entries from the original development set for testing. We
+report the token-level F1 score of answer strings to evaluate the
+quality of the generation.
+5.2 Experimental Setup
+In our main experiments, we employ the Llama3-8B-instruct[1] as
+the base model and E5-base-v2 [30] as the retriever. The retrieval
+
+[[page 5]]
+Retrieve, Summarize, Plan: Advancing Multi-hop Question Answering with an Iterative Approach Conference acronym ’XX, June 03–08, Woodstock, NY
+Algorithm 1 Multi-hop QA through ReSP
+Input: Overarching question𝑄, Document corpus𝐷, Retriever𝑅,
+LLMs with different roles(𝐿𝐿𝑀𝑅𝑒𝑎𝑠𝑜𝑛,𝐿𝐿𝑀𝑆𝑢𝑚,𝐿𝐿𝑀𝐺𝑒𝑛), Max
+number of iterations𝑀
+𝑖𝑓 _𝑓𝑖𝑛𝑖𝑠ℎ𝑒𝑑 ← False
+𝑟𝑢𝑛_𝑐𝑛𝑡← 0
+𝑞←𝑄
+𝑆𝐺𝑙𝑜𝑏𝑎𝑙 ←[]
+𝑆𝐿𝑜𝑐𝑎𝑙←[]
+while not𝑖𝑓 _𝑓𝑖𝑛𝑖𝑠ℎ𝑒𝑑 and𝑟𝑢𝑛_𝑐𝑛𝑡 <𝑀 do
+𝑟𝑢𝑛_𝑐𝑛𝑡←𝑟𝑢𝑛_𝑐𝑛𝑡+ 1
+𝐷𝑞←𝑅(𝑞)
+if𝑞 ≠𝑄 then
+𝑆𝐿𝑜𝑐𝑎𝑙←𝑆𝐿𝑜𝑐𝑎𝑙+𝐿𝐿𝑀𝑆𝑢𝑚([𝑞,𝐷𝑞], Promptlocal)
+end if
+𝑆𝐺𝑙𝑜𝑏𝑎𝑙 ←𝑆𝐺𝑙𝑜𝑏𝑎𝑙+𝐿𝐿𝑀𝑠𝑢𝑚([𝑄,𝐷𝑞], Promptglobal)
+𝑖𝑓 _𝑓𝑖𝑛𝑖𝑠ℎ𝑒𝑑 ←𝐿𝐿𝑀𝑅𝑒𝑎𝑠𝑜𝑛([𝑄,𝑆𝐺𝑙𝑜𝑏𝑎𝑙,𝑆𝐿𝑜𝑐𝑎𝑙], Promptjudge)
+if not𝑖𝑓 _𝑓𝑖𝑛𝑖𝑠ℎ𝑒𝑑 then
+𝑄∗←𝐿𝐿𝑀𝑅𝑒𝑎𝑠𝑜𝑛([𝑄,𝑆𝐺𝑙𝑜𝑏𝑎𝑙,𝑆𝐿𝑜𝑐𝑎𝑙], Promptplan)
+𝑞←𝑄∗
+end if
+end while
+𝐴←𝐿𝐿𝑀𝐺𝑒𝑛([𝑄,𝑆𝐺𝑙𝑜𝑏𝑎𝑙,𝑆𝐿𝑜𝑐𝑎𝑙], PromptGen)
+Output: Final answer𝐴
+corpus comprises Wikipedia data from December 2018, consisting
+of approximately 20 million pre-segmented passages. For the model
+and data links, please refer to the FlashRAG open-source repository
+1.
+The model’s maximum input length is set to 12,000, and the
+maximum output length is set to 200. For each query, we retrieve
+the top-5 documents from the corpus based on vector similarity
+as the result. The maximum number of iterations is set to 3. If the
+retrieval process is still in iteration after 3 attempts, the model will
+directly proceed to the final response generation. All experiments
+are conducted on 4 NVIDIA A100 GPUs.
+5.3 Baselines
+We select representative methods from single-round RAG and iter-
+ative RAG as baselines for comparison.
+Direct Prompting: LLM directly generates answers without
+retrieval.
+Single-round RAG: Standard RAG directly generates answers
+based on all retrieved documents. SuRe [16] constructs and ranks
+summaries of the retrieved passages for each of the multiple answer
+candidates. RECOMP [32] compresses retrieved documents into
+textual summaries before in-context integration. REPLUG [25]
+prepends each retrieved document separately to the input context
+and ensembles output probabilities from different passes.
+Iterative RAG: Iter-RetGen [24] leverages the model output
+from the previous iteration as a specific context to help retrieve
+more relevant knowledge. Self-RAG [2] enhances an LM’s quality
+and factuality through retrieval and self-reflection. FLARE [12]
+1https://github.com/RUC-NLPIR/FlashRAG
+iteratively uses the upcoming sentence to anticipate future content,
+which is then utilized as a query to retrieve relevant documents
+to regenerate the sentence if it contains low-confidence tokens.
+IRCoT [28] guides the retrieval with Chain-of-Thought (CoT) [31]
+and in turn uses retrieved results to improve CoT.
+5.4 Main Results
+Our results on HotpotQA and 2WikiMultihopQA are displayed
+in Table 2. First, we notice that iterative RAG, especially IRCoT,
+demonstrates significant performance improvements compared to
+single-round RAG. This suggests that conducting multiple rounds
+of retrieval can indeed capture information more comprehensively
+and produce more accurate responses. Second, within single-round
+RAG, RECOMP, which incorporates summarization, exhibits su-
+perior performance, indicating that summarization is an effective
+method of information compression even within single-round RAG.
+These findings validate the rationale behind our approach, which
+combines multi-round retrieval with summarization.
+Our method, ReSP, achieves significant improvements on both
+datasets, outperforming the SOTA by4.1 F1 score on HotpotQA and
+4.4 F1 score on 2WikiMultihopQA, surpassing a range of existing
+iterative RAG methods. This demonstrates the effectiveness of the
+approach we propose.
+To analyze whether ReSP can address context overload and re-
+dundant planning issues, we record key statistics during the model’s
+execution.
+Initially, concerning the issue of context overload, utilizing Hot-
+potQA as an example, when the maximum number of iterations
+is limited to three, the recorded average total word count of the
+retrieved documents during the process is 509.59, while the average
+word count of the evidence information provided to the generator
+is 86.61, culminating in a compression ratio of 5.88. This indicates
+that ReSP significantly compresses useful information during the
+process, helping to prevent context overload.
+Regarding redundant planning, ReSP exhibits an average itera-
+tion count of 1.24 for HotpotQA and 1.60 for 2WikiMultihopQA,
+while IRCoT has counts of 1.80 and 2.32, respectively. This indicates
+that ReSP considerably minimizes planning steps.
+Additionally, as shown in Table 3, we provide a comparison of
+computation time. We record the runtime of standard RAG, IRCoT,
+and ReSP on 200 instances, maintaining the same experimental en-
+vironment described before. The results indicate that the iterative
+ReSP takes longer compared to the single-round standard RAG,
+which may make it less suitable for time-sensitive scenarios un-
+less specialized engineering optimizations are performed. However,
+compared to IRCoT, which is also an iterative method, ReSP signif-
+icantly reduces runtime by compressing context and minimizing
+redundant planning while achieving better performance.
+It is noteworthy that ReSP allows for the exposure of both global
+and local evidence information collected at each step of the problem-
+solving process. This is particularly suitable for scenarios that de-
+mand high transparency and trustworthiness of model outputs,
+such as legal and medical fields. In these contexts, users can under-
+stand how the problem is decomposed, how information is retrieved,
+
+[[page 6]]
+Conference acronym ’XX, June 03–08, Woodstock, NY Jiang et al.
+Table 2: Performance comparison on HotpotQA and 2WikiMultihopQA. All methods except Self-RAG utilize fine-tuning-free
+Llama3-8B-instruct for generation. Self-RAG uses trained selfrag-llama2-7B released by authores. We run experiments five
+times and report the average token-level F1 score of answer strings. The result of ReSP outperforms baseline models in t-test at
+p < 0.05 level. The best results are in bold and the second best results are underlined.
+Method Pipeline type HotpotQA 2WikiMultihopQA
+Direct Prompting – 28.4 33.9
+Standard RAG Single-round RAG 38.6 20.1
+SuRe [16] Single-round RAG 33.4 20.6
+RECOMP[32] Single-round RAG 37.5 32.4
+REPLUG[25] Single-round RAG 31.2 21.1
+Iter-RetGen[24] Iterative RAG 38.3 21.6
+Self-RAG[2] Iterative RAG 29.6 25.1
+FLARE [12] Iterative RAG 28.0 33.9
+IRCoT[28] Iterative RAG 43.1 32.4
+ReSP(ours) Iterative RAG 47.2 38.3
+Table 3: Comparison of computation time.
+Method HotpotQA 2WikiMultihopQA
+Standard RAG 1.1min 1.2min
+IRCoT 41.8min 48.2min
+ReSP 9.5min 13.7min
+and how the final answer is organized during the process. This ad-
+vantage is not present in standard RAG and other iterative RAG
+methods that do not record the retrieval process.
+6 Empirical Analysis
+To further analyze ReSP, we conduct comparative experiments to
+investigate the adaptability across different open-source base mod-
+els and the impact of the base model size on modules’ performance.
+Additionally, we examine the method’s robustness concerning two
+key variables: context length and maximum number of iterations.
+Through case studies, we demonstrate that ReSP can mitigate the
+issues of over-planning and repetitive planning.
+6.1 Adaptability across different base models
+Considering popularity, performance, and computational cost, we
+utilized the open-source Llama3-8B-Instruct as the base model in
+our main experiments to validate the effectiveness of our method.
+In practical scenarios, there are many other base model series to
+choose from. To assess the adaptability of our method across differ-
+ent base model series, we select three open-source base models of
+similar size to Llama3-8B-Instruct for experiments, maintaining con-
+sistency in other experimental settings: Qwen2.5-7B-Instruct[27],
+gemma-2-9b-it[11], and Deepseek-V2-Lite-Chat[6]. All models
+can be available on HuggingFace234 .
+The results on HotpotQA are shown in Figure 3. It can be ob-
+served that, compared to Standard RAG and IRCoT, the ReSP method
+2https://huggingface.co/Qwen/Qwen2.5-7B-Instruct
+3https://huggingface.co/google/gemma-2-9b-it
+4https://huggingface.co/deepseek-ai/DeepSeek-V2-Lite-Chat
+consistently achieves significant improvements across three differ-
+ent base models. This demonstrates our method’s strong adaptabil-
+ity to various base models.
+Qwen2.5-7B-Instruct gemma-2-9b-it Deepseek-V2-Lite-Chat
+Base model
+0
+10
+20
+30
+40
+50F1 Score
+Standard RAG
+IRCoT
+ReSP
+Figure 3: Performance comparison across different base mod-
+els. We report the token-level F1 score obtained from testing
+on the HotpotQA dataset.
+6.2 Impact of the base model size
+ReSP features a modular design, wherein each module works inde-
+pendently, allowing for the use of different base models to collabo-
+rate. To provide empirical guidance for model selection in practical
+applications, we test how the size of the model affects the perfor-
+mance of each module.
+We substitute Llama3-70B-Instruct for Llama3-8B-Instruct and
+use this larger model as the base for the Reasoner, Summarizer, and
+Generator modules respectively, comparing the effect changes with
+the original results. Table 4 presents our experimental results.
+Firstly, regarding the reasoner module, the changes are inconsis-
+tent across the two datasets, with an improvement on HotpotQA
+but a decline on 2WikiMultihopQA. The reason for this inconsis-
+tency is that 2WikiMultihopQA has questions with more logical
+
+[[page 7]]
+Retrieve, Summarize, Plan: Advancing Multi-hop Question Answering with an Iterative Approach Conference acronym ’XX, June 03–08, Woodstock, NY
+Table 4: Impact of base model size on different modules.
+Reasoner Summarizer Generator HotpotQA 2WikiMultihopQA
+Llama3-8B-Instruct Llama3-8B-Instruct Llama3-8B-Instruct 47.2 38.3
+Llama3-70B-Instruct Llama3-8B-Instruct Llama3-8B-Instruct 48.8(+1.6pt) 37.2(-1.1pt)
+Llama3-8B-Instruct Llama3-70B-Instruct Llama3-8B-Instruct 47.3(+0.1pt) 34.1(-4.2pt)
+Llama3-8B-Instruct Llama3-8B-Instruct Llama3-70B-Instruct 48.2(+1.0pt) 38.7(+0.4pt)
+hops compared to HotpotQA. A larger model is likely to give more
+detailed planning steps, leading to a failure to obtain all the neces-
+sary information to answer the question within the set maximum
+number of iterations, hence causing a drop in performance.
+Secondly, for the summarizer module, we observe that using a
+larger model size does not result in performance improvements; in
+fact, there is a significant decline on 2WikiMultihopQA. Upon re-
+viewing the summarization logs, we find that Llama3-70B-Instruct
+is more lenient in discerning relevance. It tends to extract informa-
+tion that seems related but is actually irrelevant to the question,
+which can disrupt the planning and ultimately the generation of
+responses.
+Lastly, regarding the generator module, we observe consistent
+improvements when using Llama3-70B-Instruct, which suggests
+that even when provided with clear evidence, a model with stronger
+semantic comprehension capabilities still aids in generating more
+accurate responses.
+In summary, in real-world applications, it is advisable to allo-
+cate a larger base model to the generator, as long as the available
+resources allow for it. However, for the reasoner module, if the
+allowable number of iterations is low, there is no need to use a
+larger base model. The summarizer also does not require a larger
+base model.
+6.3 Robustness to context length
+Standard RAG IRCoT ReSP
+Method
+0
+10
+20
+30
+40
+50F1 Score
+Top-3
+Top-5
+Top-8
+Top-10
+Top-15
+Figure 4: Bar chart of the performance variations of different
+RAG methods with varying numbers of retrieved documents
+per iteration. We report the token-level F1 score obtained
+from testing on the HotpotQA dataset.
+To further determine whether ReSP can address the issue of
+context overload, we adjust the number of documents retrieved
+per iteration and observe the changes in performance. Our com-
+parison involves using standard RAG and IRCoT as control groups.
+These experiments are carried out on the HotpotQA dataset. Re-
+sults are shown in Figure 4. Firstly, when the number of documents
+retrieved per iteration k is set to 3, all three methods experience a
+notable decrease in performance. This indicates that the adequacy
+of information retrieved in a single round significantly affects both
+single-round and iterative RAG methods. Therefore, it is necessary
+to extend the context length during application appropriately.
+When k is greater than 5, the standard RAG and IRCoT exhibit
+a performance degradation trend. Particularly, IRCoT, which uti-
+lizes iterative retrieval, suffers from a more significant performance
+drop due to the accumulation of retrieved information. This demon-
+strates that context overload has a pervasive impact on existing
+RAG methods.
+Our method demonstrates exceptional robustness to context
+length, delivering consistent performance regardless of whether
+k is set to 15 or 5. This is because we extract key information in
+each iteration, effectively maintaining a stable and concise context
+for the generator. As a result, the generator remains unaffected by
+changes in the length of retrieved documents during the process.
+6.4 Exploration of the number of iterations
+1 2 3 4 5
+Maximum number of iterations
+36
+38
+40
+42
+44
+46
+48F1 Score
+HotpotQA
+2WikiMultihopQA
+Figure 5: Performance with different maximum number of
+iterations.
+In our main experiments, the maximum number of allowed itera-
+tions was set to three, following the construction methods detailed
+in the HotpotQA and 2WikiMultihopQA papers, where most multi-
+hop questions are resolved within three hops. However, in practical
+
+[[page 8]]
+Conference acronym ’XX, June 03–08, Woodstock, NY Jiang et al.
+Table 5: Case studies comparing IRCoT and ReSP. They are conducted to provide evidence of ReSP’s capability in addressing
+the issues of over-planning and repetitive planning.
+Issue Question IRCoT ReSP
+Over-planning
+Victor Varnada directed
+Twisted Fortune, which
+starred which brother
+of Eddie Murphy?
+Round 0 Thought:
+"The text does not mention Twisted
+Fortune, it talks about Eddie Mur-
+phy’s career and his brother Charlie
+Murphy. What’s the next step?"
+Round 0 Thought:
+[Global Evidence Memory]: "Vic-
+tor Varnado directed the black com-
+edy Twisted Fortune, which starred
+Charlie Murphy, a brother of Eddie
+Murphy. "
+–>[Judgment]: "Yes"
+–>[Response]: "Charlie Murphy"
+Repetitive planning
+What is Rachelle Amy
+Beinart’s role in the film
+that follows a group of
+rebels on a mission?
+Round 0 Thought:
+"Rachelle Amy Beinart is not men-
+tioned in any of the provided
+Wikipedia articles. "
+Round 1 Thought:
+"Rachelle Amy Beinart is not men-
+tioned. "
+...
+Round 0 Thought:
+[Sub-question]: "Who is Rachelle
+Amy Beinart?"
+Round 1 Thought:
+[Sub-question]: "What film men-
+tioned in the provided passages fea-
+tures a group of rebels on a mis-
+sion?"
+...
+applications, the maximum number of iterations can significantly
+affect the performance of iterative RAG methods. Consequently,
+we conducted comparative experiments by varying the maximum
+iterations from 1 to 5 to observe the resulting performance changes
+in ReSP.
+As illustrated in Figure 5, a significant decline in ReSP’s per-
+formance is observed when the maximum number of iterations is
+less than three, indicating that gathering information over mul-
+tiple rounds can enhance response accuracy. However, when the
+maximum number of iterations exceeds three, the performance
+improvements become negligible. This is attributed to ReSP’s op-
+timization for redundant planning, enabling problem resolution
+within a reasonable number of hops. These findings are consistent
+with the average iteration statistics presented in the Section 5.4.
+6.5 Case Study
+We present evidence of ReSP addressing over-planning and repeti-
+tive planning by comparing cases of IRCoT and ReSP on two ques-
+tions, as shown in Table 5.
+In the first case, the retrieved documents remain consistent be-
+cause the initial retrieval question is the same. Despite this con-
+sistency, the two models take different approaches to their sub-
+sequent actions. IRCoT, which combines information processing
+and planning in a single step, tackles a higher level of task com-
+plexity. Unfortunately, it fails to capture information related to
+"Twisted Fortune" , which leads the model to conclude that ad-
+ditional retrieval is necessary, thereby leading to over-planning
+and unnecessary steps. In contrast, ReSP effectively and compre-
+hensively gathers the necessary supporting facts related to the
+overarching question by utilizing the summarizer. As a result, the
+reasoner accurately assesses that the question can be answered with
+the information at hand. Consequently, the generator can produce
+the correct response, allowing the process to conclude successfully
+after just the first round of retrieval, without the need for further
+iterations.
+In the second case, after the first round of retrieval, both mod-
+els arrive at similar decisions due to the absence of information
+concerning the main subject, "Rachelle Amy Beinart" in the re-
+trieved documents. As a result, both models initiate queries for doc-
+uments specifically related to "Rachelle Amy Beinart" . However,
+limitations in document coverage or the capabilities of the retriever
+result in no relevant documents being found on "Rachelle Amy
+Beinart". At this juncture, the models adopt different approaches
+in formulating sub-questions. Without a recorded retrieval trajec-
+tory, IRCoT is constrained to make decisions solely based on the
+current set of information, which leads it to continue querying
+"Rachelle Amy Beinart" , resulting in repetitive and unproduc-
+tive planning. In contrast, ReSP employs a strategy that avoids
+generating previously retrieved sub-questions. This allows it to
+adapt by adjusting the retrieval subject and crafting a new sub-
+question focused on "film that follows a group of rebels
+on a mission" . This shift in focus helps ReSP circumvent repet-
+itive planning, enhancing the efficiency and effectiveness of the
+retrieval process.
+7 Conclusion
+In this work, we propose an iterative RAG approach that incorpo-
+rates query-focused summarization. By employing a dual-function
+summarizer to simultaneously compress information from retrieved
+documents targeting the overarching question and the current sub-
+question, we address the context overload and redundant planning
+issues commonly encountered in multi-hop question answering.
+Experimental results demonstrate that our method significantly out-
+performs other single-round and iterative RAG methods. Further-
+more, we hope that our empirical analysis will aid the community
+in practical applications.
+
+[[page 9]]
+Retrieve, Summarize, Plan: Advancing Multi-hop Question Answering with an Iterative Approach Conference acronym ’XX, June 03–08, Woodstock, NY
+References
+[1] AI@Meta. 2024. Llama 3 Model Card. (2024). https://github.com/meta-llama/
+llama3/blob/main/MODEL_CARD.md
+[2] Akari Asai, Zeqiu Wu, Yizhong Wang, Avirup Sil, and Hannaneh Hajishirzi.
+2024. Self-RAG: Learning to Retrieve, Generate, and Critique through Self-
+Reflection. In The Twelfth International Conference on Learning Representations .
+https://openreview.net/forum?id=hSyW5go0v8
+[3] Tal Baumel, Raphael Cohen, and Michael Elhadad. 2016. Topic concentration in
+query focused summarization datasets. In Proceedings of the AAAI Conference on
+Artificial Intelligence, Vol. 30.
+[4] Tianchi Cai, Zhiwen Tan, Xierui Song, Tao Sun, Jiyan Jiang, Yunqi Xu, Yinger
+Zhang, and Jinjie Gu. 2024. FoRAG: Factuality-optimized Retrieval Augmented
+Generation for Web-enhanced Long-form Question Answering. In Proceedings
+of the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining
+(Barcelona, Spain) (KDD ’24). Association for Computing Machinery, New York,
+NY, USA, 199–210. https://doi.org/10.1145/3637528.3672065
+[5] Hoa Trang Dang. 2006. DUC 2005: Evaluation of Question-Focused Summariza-
+tion Systems. In Proceedings of the Workshop on Task-Focused Summarization
+and Question Answering , Tat-Seng Chua, Jade Goldstein, Simone Teufel, and
+Lucy Vanderwende (Eds.). Association for Computational Linguistics, Sydney,
+Australia, 48–55. https://aclanthology.org/W06-0707
+[6] DeepSeek-AI. 2024. DeepSeek-V2: A Strong, Economical, and Efficient Mixture-
+of-Experts Language Model. arXiv:2405.04434 [cs.CL]
+[7] Darren Edge, Ha Trinh, Newman Cheng, Joshua Bradley, Alex Chao, Apurva
+Mody, Steven Truitt, and Jonathan Larson. 2024. From Local to Global: A Graph
+RAG Approach to Query-Focused Summarization. arXiv:2404.16130 [cs.CL]
+https://arxiv.org/abs/2404.16130
+[8] Gemini-Team. 2024. Gemini: A Family of Highly Capable Multimodal Models.
+arXiv:2312.11805 [cs.CL] https://arxiv.org/abs/2312.11805
+[9] Xanh Ho, Anh-Khoa Duong Nguyen, Saku Sugawara, and Akiko Aizawa. 2020.
+Constructing A Multi-hop QA Dataset for Comprehensive Evaluation of Reason-
+ing Steps. In Proceedings of the 28th International Conference on Computational
+Linguistics, Donia Scott, Nuria Bel, and Chengqing Zong (Eds.). International
+Committee on Computational Linguistics, Barcelona, Spain (Online), 6609–6625.
+https://doi.org/10.18653/v1/2020.coling-main.580
+[10] Gautier Izacard and Edouard Grave. 2021. Leveraging Passage Retrieval with
+Generative Models for Open Domain Question Answering. In Proceedings of the
+16th Conference of the European Chapter of the Association for Computational
+Linguistics: Main Volume, Paola Merlo, Jorg Tiedemann, and Reut Tsarfaty (Eds.).
+Association for Computational Linguistics, Online, 874–880. https://doi.org/10.
+18653/v1/2021.eacl-main.74
+[11] Tris Warkentin Jeanine Banks. 2024. Gemma: Introducing new state-of-the-art
+open models. https://blog.google/technology/developers/gemma-open-models/
+[12] Zhengbao Jiang, Frank Xu, Luyu Gao, Zhiqing Sun, Qian Liu, Jane Dwivedi-
+Yu, Yiming Yang, Jamie Callan, and Graham Neubig. 2023. Active Retrieval
+Augmented Generation. In Proceedings of the 2023 Conference on Empirical Meth-
+ods in Natural Language Processing , Houda Bouamor, Juan Pino, and Kalika
+Bali (Eds.). Association for Computational Linguistics, Singapore, 7969–7992.
+https://doi.org/10.18653/v1/2023.emnlp-main.495
+[13] Zhouyu Jiang, Ling Zhong, Mengshu Sun, Jun Xu, Rui Sun, Hui Cai, Shuhan
+Luo, and Zhiqiang Zhang. 2024. Efficient Knowledge Infusion via KG-LLM
+Alignment. In Findings of the Association for Computational Linguistics ACL
+2024, Lun-Wei Ku, Andre Martins, and Vivek Srikumar (Eds.). Association for
+Computational Linguistics, Bangkok, Thailand and virtual meeting, 2986–2999.
+https://doi.org/10.18653/v1/2024.findings-acl.176
+[14] Jiajie Jin, Yutao Zhu, Xinyu Yang, Chenghao Zhang, and Zhicheng Dou. 2024.
+FlashRAG: A Modular Toolkit for Efficient Retrieval-Augmented Generation
+Research. CoRR abs/2405.13576 (2024). arXiv:2405.13576 https://arxiv.org/abs/
+2405.13576
+[15] Urvashi Khandelwal, Omer Levy, Dan Jurafsky, Luke Zettlemoyer, and Mike
+Lewis. 2020. Generalization through Memorization: Nearest Neighbor Lan-
+guage Models. In International Conference on Learning Representations . https:
+//openreview.net/forum?id=HklBjCEKvH
+[16] Jaehyung Kim, Jaehyun Nam, Sangwoo Mo, Jongjin Park, Sang-Woo Lee, Min-
+joon Seo, Jung-Woo Ha, and Jinwoo Shin. 2024. SuRe: Summarizing Retrievals
+using Answer Candidates for Open-domain QA of LLMs. In The Twelfth Interna-
+tional Conference on Learning Representations . https://openreview.net/forum?id=
+w4DW6qkRmt
+[17] Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin,
+Naman Goyal, Heinrich Küttler, Mike Lewis, Wen-tau Yih, Tim Rocktäschel,
+Sebastian Riedel, and Douwe Kiela. 2020. Retrieval-augmented generation for
+knowledge-intensive NLP tasks. InProceedings of the 34th International Conference
+on Neural Information Processing Systems (Vancouver, BC, Canada) (NIPS ’20).
+Curran Associates Inc., Red Hook, NY, USA, Article 793, 16 pages.
+[18] Nelson F. Liu, Kevin Lin, John Hewitt, Ashwin Paranjape, Michele Bevilacqua,
+Fabio Petroni, and Percy Liang. 2024. Lost in the Middle: How Language Models
+Use Long Contexts. Transactions of the Association for Computational Linguistics
+12 (2024), 157–173. https://doi.org/10.1162/tacl_a_00638
+[19] Xiao Liu, Hanyu Lai, Hao Yu, Yifan Xu, Aohan Zeng, Zhengxiao Du, Peng Zhang,
+Yuxiao Dong, and Jie Tang. 2023. WebGLM: Towards An Efficient Web-Enhanced
+Question Answering System with Human Preferences. In Proceedings of the 29th
+ACM SIGKDD Conference on Knowledge Discovery and Data Mining (Long Beach,
+CA, USA) (KDD ’23). Association for Computing Machinery, New York, NY, USA,
+4549–4560. https://doi.org/10.1145/3580305.3599931
+[20] Vaibhav Mavi, Anubhav Jangra, and Adam Jatowt. 2024. Multi-hop Question
+Answering. arXiv:2204.09140 [cs.CL] https://arxiv.org/abs/2204.09140
+[21] Preksha Nema, Mitesh M. Khapra, Anirban Laha, and Balaraman Ravindran. 2017.
+Diversity driven attention model for query-based abstractive summarization.
+In Proceedings of the 55th Annual Meeting of the Association for Computational
+Linguistics (Volume 1: Long Papers) , Regina Barzilay and Min-Yen Kan (Eds.).
+Association for Computational Linguistics, Vancouver, Canada, 1063–1072. https:
+//doi.org/10.18653/v1/P17-1098
+[22] OpenAI. 2024. GPT-4 Technical Report. arXiv:2303.08774 [cs.CL] https://arxiv.
+org/abs/2303.08774
+[23] Yujia Qin, Zihan Cai, Dian Jin, Lan Yan, Shihao Liang, Kunlun Zhu, Yankai Lin, Xu
+Han, Ning Ding, Huadong Wang, Ruobing Xie, Fanchao Qi, Zhiyuan Liu, Maosong
+Sun, and Jie Zhou. 2023. WebCPM: Interactive Web Search for Chinese Long-form
+Question Answering. In Proceedings of the 61st Annual Meeting of the Association
+for Computational Linguistics (Volume 1: Long Papers) , Anna Rogers, Jordan Boyd-
+Graber, and Naoaki Okazaki (Eds.). Association for Computational Linguistics,
+Toronto, Canada, 8968–8988. https://doi.org/10.18653/v1/2023.acl-long.499
+[24] Zhihong Shao, Yeyun Gong, Yelong Shen, Minlie Huang, Nan Duan, and Weizhu
+Chen. 2023. Enhancing Retrieval-Augmented Large Language Models with It-
+erative Retrieval-Generation Synergy. In Findings of the Association for Com-
+putational Linguistics: EMNLP 2023 , Houda Bouamor, Juan Pino, and Kalika
+Bali (Eds.). Association for Computational Linguistics, Singapore, 9248–9274.
+https://doi.org/10.18653/v1/2023.findings-emnlp.620
+[25] Weijia Shi, Sewon Min, Michihiro Yasunaga, Minjoon Seo, Richard James, Mike
+Lewis, Luke Zettlemoyer, and Wen-tau Yih. 2024. REPLUG: Retrieval-Augmented
+Black-Box Language Models. In Proceedings of the 2024 Conference of the North
+American Chapter of the Association for Computational Linguistics: Human Lan-
+guage Technologies (Volume 1: Long Papers) , Kevin Duh, Helena Gomez, and
+Steven Bethard (Eds.). Association for Computational Linguistics, Mexico City,
+Mexico, 8371–8384. https://aclanthology.org/2024.naacl-long.463
+[26] Shamane Siriwardhana, Rivindu Weerasekera, Elliott Wen, Tharindu Kalu-
+arachchi, Rajib Rana, and Suranga Nanayakkara. 2023. Improving the Domain
+Adaptation of Retrieval Augmented Generation (RAG) Models for Open Domain
+Question Answering. Transactions of the Association for Computational Linguistics
+11 (2023), 1–17. https://doi.org/10.1162/tacl_a_00530
+[27] Qwen Team. 2024. Qwen2.5: A Party of Foundation Models. https://qwenlm.
+github.io/blog/qwen2.5/
+[28] Harsh Trivedi, Niranjan Balasubramanian, Tushar Khot, and Ashish Sabharwal.
+2023. Interleaving Retrieval with Chain-of-Thought Reasoning for Knowledge-
+Intensive Multi-Step Questions. In Proceedings of the 61st Annual Meeting of the
+Association for Computational Linguistics (Volume 1: Long Papers) , Anna Rogers,
+Jordan Boyd-Graber, and Naoaki Okazaki (Eds.). Association for Computational
+Linguistics, Toronto, Canada, 10014–10037. https://doi.org/10.18653/v1/2023.acl-
+long.557
+[29] Ellen M. Voorhees and Dawn M. Tice. 2000. The TREC-8 Question Answer-
+ing Track. In Proceedings of the Second International Conference on Language
+Resources and Evaluation (LREC’00) , M. Gavrilidou, G. Carayannis, S. Markan-
+tonatou, S. Piperidis, and G. Stainhauer (Eds.). European Language Resources
+Association (ELRA), Athens, Greece. http://www.lrec-conf.org/proceedings/
+lrec2000/pdf/26.pdf
+[30] Liang Wang, Nan Yang, Xiaolong Huang, Binxing Jiao, Linjun Yang, Daxin Jiang,
+Rangan Majumder, and Furu Wei. 2022. Text Embeddings by Weakly-Supervised
+Contrastive Pre-training. arXiv preprint arXiv:2212.03533 (2022).
+[31] Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, brian ichter, Fei Xia,
+Ed H. Chi, Quoc V Le, and Denny Zhou. 2022. Chain of Thought Prompting Elicits
+Reasoning in Large Language Models. In Advances in Neural Information Pro-
+cessing Systems, Alice H. Oh, Alekh Agarwal, Danielle Belgrave, and Kyunghyun
+Cho (Eds.). https://openreview.net/forum?id=_VjQlMeSB_J
+[32] Fangyuan Xu, Weijia Shi, and Eunsol Choi. 2024. RECOMP: Improving Retrieval-
+Augmented LMs with Context Compression and Selective Augmentation. In The
+Twelfth International Conference on Learning Representations. https://openreview.
+net/forum?id=mlJLVigNHp
+[33] Ruochen Xu, Song Wang, Yang Liu, Shuohang Wang, Yichong Xu, Dan Iter,
+Pengcheng He, Chenguang Zhu, and Michael Zeng. 2023. LMGQS: A Large-scale
+Dataset for Query-focused Summarization. In Findings of the Association for
+Computational Linguistics: EMNLP 2023 , Houda Bouamor, Juan Pino, and Kalika
+Bali (Eds.). Association for Computational Linguistics, Singapore, 14764–14776.
+https://doi.org/10.18653/v1/2023.findings-emnlp.984
+[34] Yumo Xu and Mirella Lapata. 2020. Coarse-to-Fine Query Focused Multi-
+Document Summarization. In Proceedings of the 2020 Conference on Empirical
+Methods in Natural Language Processing (EMNLP) , Bonnie Webber, Trevor Cohn,
+
+[[page 10]]
+Conference acronym ’XX, June 03–08, Woodstock, NY Jiang et al.
+Yulan He, and Yang Liu (Eds.). Association for Computational Linguistics, Online,
+3632–3645. https://doi.org/10.18653/v1/2020.emnlp-main.296
+[35] Zhilin Yang, Peng Qi, Saizheng Zhang, Yoshua Bengio, William Cohen, Ruslan
+Salakhutdinov, and Christopher D. Manning. 2018. HotpotQA: A Dataset for
+Diverse, Explainable Multi-hop Question Answering. In Proceedings of the 2018
+Conference on Empirical Methods in Natural Language Processing , Ellen Riloff,
+David Chiang, Julia Hockenmaier, and Jun’ichi Tsujii (Eds.). Association for
+Computational Linguistics, Brussels, Belgium, 2369–2380. https://doi.org/10.
+18653/v1/D18-1259
+[36] Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik R Narasimhan,
+and Yuan Cao. 2023. ReAct: Synergizing Reasoning and Acting in Language
+Models. In The Eleventh International Conference on Learning Representations .
+https://openreview.net/forum?id=WE_vluYUL-X
+[37] Qin Zhang, Shangsi Chen, Dongkuan Xu, Qingqing Cao, Xiaojun Chen, Trevor
+Cohn, and Meng Fang. 2023. A Survey for Efficient Open Domain Question
+Answering. In Proceedings of the 61st Annual Meeting of the Association for Com-
+putational Linguistics (Volume 1: Long Papers) , Anna Rogers, Jordan Boyd-Graber,
+and Naoaki Okazaki (Eds.). Association for Computational Linguistics, Toronto,
+Canada, 14447–14465. https://doi.org/10.18653/v1/2023.acl-long.808
+[38] Ming Zhong, Da Yin, Tao Yu, Ahmad Zaidi, Mutethia Mutuma, Rahul Jha,
+Ahmed Hassan Awadallah, Asli Celikyilmaz, Yang Liu, Xipeng Qiu, et al. 2021.
+QMSum: A new benchmark for query-based multi-domain meeting summariza-
+tion. arXiv preprint arXiv:2104.05938 (2021).
+[39] Yujia Zhou, Zheng Liu, Jiajie Jin, Jian-Yun Nie, and Zhicheng Dou. 2024. Metacog-
+nitive Retrieval-Augmented Large Language Models. In The Web Conference 2024.
+https://openreview.net/forum?id=TW2gJyR6Mj

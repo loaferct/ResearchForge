@@ -1,0 +1,36 @@
+{
+  "id": "G001",
+  "gap": "No retrieved study isolates the effect of training-time context-enriched supervision from the effect of inference-time context construction in multi-hop KGQA. Every analyzed context-construction system operates at inference (SG-RAG MOT prompts a frozen LLM; CLAUSE adapts 'without retraining'; Co-E is training-free), while a training-free system is reported competitive with trained ones. Whether internalizing context during fine-tuning adds anything beyond supplying context at test time is therefore untested.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2607.23278",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Evaluated on six multi-hop QA benchmarks, Co-E improves over comparable training-free open-backbone baselines and is competitive with larger or trained systems.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2509.21035",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "During inference, a single checkpoint runs under hard budgets (caps) or fixed prices (soft trade-offs), adapting per query without retraining.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2607.23278",
+    "arxiv:2509.21035",
+    "doi:10.20944/preprints202505.1992.v1",
+    "arxiv:2609.10237"
+  ],
+  "why_unaddressed": "The retrieved corpus frames context as a retrieval/prompting or architecture problem; the training-time works found (EmbedKGQA, MHGRN, Variational Reasoning, STRuCT-LLM) change supervision in other ways (embeddings, graph modules, latent paths, executable queries) and do not vary context presence in supervision. The comparison requires holding inference context constant, which none of the retrieved papers does.",
+  "research_question": "Under a matched supervision token budget and identical inference-time context, does training-time context-enriched supervision outperform triple-only supervision and a training-free context baseline on multi-hop KGQA?",
+  "potential_experiment": "Fine-tune the same base model under (a) isolated triple/path supervision and (b) the same supervision plus context, then evaluate all models under the same inference-time context (including a no-context and a context-provided setting) and against a training-free context baseline at matched token budget; include a shuffled/random-context arm and identical templates.",
+  "confidence": "medium",
+  "verification_required": "Search for recent work on knowledge-grounded instruction tuning / pretraining with retrieved subgraphs (alternative terminology such as 'knowledge-enhanced pretraining', 'graph-augmented fine-tuning', 'contextualized KG supervision'), and check whether any trains and evaluates under matched inference context; also check for negative results reporting that training-time context does not help.",
+  "recorded_at": "2026-09-30T05:25:47.712056Z"
+}

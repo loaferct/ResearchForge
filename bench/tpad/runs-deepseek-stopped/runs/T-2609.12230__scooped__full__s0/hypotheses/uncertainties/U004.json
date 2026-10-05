@@ -1,0 +1,33 @@
+{
+  "id": "U004",
+  "question": "Can the full context-augmented + repair + RL pipeline be reproduced or re-implemented feasibly (available code/data, judge and fine-tuning compute budget) for a ~14B LLM?",
+  "description": "The full recipe requires: KG/CG construction from source text with triple-to-chunk traceability, structured QA item generation for 1-5 hop reasoning, SFT of a ~14B model, multiple rounds of LLM-judged adaptive repair (each round requiring judge calls plus continual fine-tuning), a lower-hop RL stage, and evaluation on 3-5-hop items. This is a multi-stage, compute-heavy pipeline. It is unclear whether code/data from the closest work (arxiv:2609.12230) is released and whether the pipeline is reproducible within the investigation's compute budget, which determines whether any experiment plan can actually be executed.",
+  "category": "feasibility",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "VERIFY",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Feasibility gates whether an experiment plan is actionable at all; a search for the closest work's released code and for lower-cost substitutes (smaller backbone, public KGs) would change the plan's shape. No code link is recorded yet for arxiv:2609.12230.",
+  "resolution": "No code or data repository for the closest work (arxiv:2609.12230) was found: the retrieved full text (65 pages) contains no GitHub/code-release URL in the searched passages, and GitHub searches for its framework and for GraphMERT returned no repositories. Related but methodologically different work does have code: arxiv:2202.13296 releases https://github.com/RUCKBReasoning/SubgraphRetrievalKBQA (Python, Freebase/WebQSP/CWQ scripts, last push 2022) and arxiv:2101.03737 releases https://github.com/RichardHGL/WSDM2021_NSM. Consequently, reproducing the exact context-augmented + repair + RL pipeline would require re-implementation, while subgraph-retrieval and intermediate-supervision baselines are reproducible. Compute cost of the 14B SFT + iterative judge repair + RL stack remains unassessed.",
+  "paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2202.13296",
+    "arxiv:2101.03737"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "PLAN",
+  "created_at": "2026-09-30T05:05:55.891724Z",
+  "updated_at": "2026-09-30T05:09:03.512860Z"
+}

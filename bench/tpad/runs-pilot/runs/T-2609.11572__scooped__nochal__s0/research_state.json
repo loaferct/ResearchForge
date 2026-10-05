@@ -1,0 +1,1237 @@
+{
+  "project": "T-2609.11572__scooped__nochal__s0",
+  "idea": "The reliability of open‑domain question answering drops sharply when source texts are continuously amended, as in statutes, policies, or regulations. In such settings each new amendment supersedes earlier clauses while retaining much of the original wording, creating a dense semantic overlap across successive versions. Existing time‑aware retrieval techniques treat each version as an isolated snapshot and therefore cannot distinguish which revision best matches a time‑specific query. We propose to develop a retrieval‑agnostic framework that enriches any standard document retriever with a temporal relevance component: the rank of a candidate passage will be adjusted according to the elapsed time between the query’s target date and the passage’s version timestamp, while still leveraging its semantic similarity to the query. To evaluate the approach, we will construct a benchmark comprising regulatory documents with overlapping revisions and time‑stamped queries, measuring how well the combined temporal‑semantic ranking improves answer accuracy.",
+  "created_at": "2026-09-30T09:42:19.168772Z",
+  "updated_at": "2026-09-30T10:30:00.747244Z",
+  "status": "incomplete",
+  "dsh_session_id": "session-5e2392b7-2568-4caf-998b-0a7fc9f1cbd3",
+  "provider": "ollama-cloud",
+  "model": "nemotron-3-super",
+  "phases": [
+    {
+      "name": "formalize",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T09:42:19.171163Z",
+      "finished_at": "2026-09-30T09:44:04.599704Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 11,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "literature",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T09:46:06.825485Z",
+      "finished_at": "2026-09-30T09:47:32.408402Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 11,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "analysis",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T09:47:32.423235Z",
+      "finished_at": "2026-09-30T09:51:05.366949Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 18,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "landscape",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T09:51:05.379992Z",
+      "finished_at": "2026-09-30T09:51:46.982265Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 2,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "critique",
+      "status": "complete",
+      "attempts": 7,
+      "started_at": "2026-09-30T09:51:46.995854Z",
+      "finished_at": "2026-09-30T09:54:20.222371Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 130,
+      "failed_tool_calls": 11
+    },
+    {
+      "name": "gaps",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least one evidence-linked gap (record_gap), or record_no_gap if the evidence supports none"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "modifications",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least 2 modifications (have 0); call record_modification"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "experiments",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T09:58:36.881268Z",
+      "finished_at": "2026-09-30T09:59:52.282662Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 5,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "report",
+      "status": "complete",
+      "attempts": 0,
+      "started_at": "2026-09-30T10:30:00.721137Z",
+      "finished_at": "2026-09-30T10:30:00.747243Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    }
+  ],
+  "error": null,
+  "loop_phase": "FINALIZE",
+  "current_action": "FINALIZE",
+  "current_focus": null,
+  "budget": {
+    "iterations": 16,
+    "tool_calls": 177,
+    "failed_tool_calls": 15,
+    "runtime_failures": 0,
+    "seconds": 2860.54,
+    "tokens": 22400074
+  },
+  "decisions": [
+    {
+      "iteration": 0,
+      "phase": "INTAKE",
+      "action": "INTAKE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Research idea received.",
+      "evidence": "idea: The reliability of open‑domain question answering drops sharply when source texts are continuously amended, as in statutes, policies, or regulations. In such settings each new amendment supersedes ear",
+      "expected_outcome": "",
+      "outcome": "idea stored in the workspace",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:42:19.169342Z"
+    },
+    {
+      "iteration": 1,
+      "phase": "FORMALIZE",
+      "action": "FORMALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been formalized into a testable research question.",
+      "evidence": "0 papers from 0 searches, 0 analyzed, 0 claims (0 verified), 0 open uncertainties",
+      "expected_outcome": "Problem, hypothesis, variables, assumptions and search queries recorded.",
+      "outcome": "+13 papers; +1 searches; idea formalized",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_paper",
+        "record_idea_analysis",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 13,
+        "relevant_papers": 12,
+        "searches": 1,
+        "idea_formalized": 1
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:42:19.170757Z"
+    },
+    {
+      "iteration": 2,
+      "phase": "PLAN",
+      "action": "PLAN",
+      "focus": null,
+      "focus_id": null,
+      "reason": "No investigation plan exists yet, so it is unclear what must be determined.",
+      "evidence": "13 papers from 1 searches, 0 analyzed, 0 claims (0 verified), 0 open uncertainties",
+      "expected_outcome": "Questions to answer, search topics and initial uncertainties recorded.",
+      "outcome": "+5 uncertainties; investigation plan recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "mcp__mcp__researchforge__record_uncertainty",
+        "record_investigation_plan",
+        "record_uncertainty"
+      ],
+      "state_changes": {
+        "uncertainties_created": 5,
+        "plan_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:44:04.604092Z"
+    },
+    {
+      "iteration": 3,
+      "phase": "INVESTIGATE",
+      "action": "SEARCH",
+      "focus": "temporal relevance",
+      "focus_id": null,
+      "reason": "Literature coverage is insufficient: at least 2 distinct search queries (have 1).",
+      "evidence": "13 papers from 1 searches, 0 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Retrieve the work closest to the idea.",
+      "outcome": "+35 papers; +3 searches",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "expand_citations",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 35,
+        "relevant_papers": 18,
+        "searches": 3
+      },
+      "info_gain": 2.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:46:06.822465Z"
+    },
+    {
+      "iteration": 4,
+      "phase": "INVESTIGATE",
+      "action": "READ",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Retrieved papers have not been analyzed enough to judge overlap.",
+      "evidence": "48 papers from 4 searches, 0 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Structured analyses of the most relevant papers.",
+      "outcome": "+4 analyses",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "list_papers",
+        "record_paper_analysis",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "analyses": 4
+      },
+      "info_gain": 2.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:47:32.417959Z"
+    },
+    {
+      "iteration": 5,
+      "phase": "INVESTIGATE",
+      "action": "READ",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Retrieved papers have not been analyzed enough to judge overlap.",
+      "evidence": "48 papers from 4 searches, 4 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Structured analyses of the most relevant papers.",
+      "outcome": "+2 analyses",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_paper",
+        "record_paper_analysis"
+      ],
+      "state_changes": {
+        "analyses": 2
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:50:22.185508Z"
+    },
+    {
+      "iteration": 6,
+      "phase": "SYNTHESIZE",
+      "action": "SYNTHESIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Analyses exist but the field has not been mapped.",
+      "evidence": "48 papers from 4 searches, 6 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "A landscape placing the idea among approaches.",
+      "outcome": "landscape recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_records",
+        "record_landscape"
+      ],
+      "state_changes": {
+        "landscape_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:51:05.374753Z"
+    },
+    {
+      "iteration": 7,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been challenged yet.",
+      "evidence": "48 papers from 4 searches, 6 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Strongest objections recorded as critique and uncertainties.",
+      "outcome": "+5 claims; +5 verified claims; +2 uncertainties; critique recorded; uncertainties updated: U002, U004",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_paper",
+        "get_research_state",
+        "record_claim",
+        "record_critique",
+        "record_uncertainty",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 5,
+        "verified_claims": 5,
+        "uncertainties_created": 2,
+        "critique_recorded": 1
+      },
+      "info_gain": 6.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:51:46.990412Z"
+    },
+    {
+      "iteration": 8,
+      "phase": "UNCERTAINTY",
+      "action": "SEARCH",
+      "focus": "U001: Is there existing work that combines temporal relevance with semantic similarity in a retrieval-agnostic way for QA over versioned regulatory text?",
+      "focus_id": "U001",
+      "reason": "Most valuable next step for high-importance novelty question U001: score 1.139 = importance 3 x expected gain 0.633 x relevance 1 x evidence deficiency 0.6 / cost 1. Next best: PLAN_EXPERIMENT on U006 (1.08).",
+      "evidence": "48 papers from 4 searches, 6 analyzed, 5 claims (5 verified), 7 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U001.",
+      "outcome": "+46 papers; +3 searches; +1 resolved uncertainties; uncertainties updated: U001",
+      "candidates": [
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U001",
+          "target": "Is there existing work that combines temporal relevance with semantic similarity in a retrieval-agnostic way for QA over versioned regulatory text?",
+          "importance": 3.0,
+          "expected_gain": 0.633,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier SEARCH steps",
+          "relevance": 1.0,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 1.139
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U006",
+          "target": "Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?",
+          "importance": 3.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.4",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.08
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U006",
+          "target": "Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.08
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U003",
+          "target": "Can we construct a benchmark of versioned regulatory documents with time-stamped queries?",
+          "importance": 2.0,
+          "expected_gain": 0.633,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier SEARCH steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 0.886
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U007",
+          "target": "Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.84
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U007",
+          "target": "Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.84
+        }
+      ],
+      "expected_gain": 0.633,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "get_paper",
+        "search_paper_text",
+        "search_papers",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "papers": 46,
+        "relevant_papers": 19,
+        "searches": 3,
+        "uncertainties_resolved": 1
+      },
+      "info_gain": 4.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:54:20.231677Z"
+    },
+    {
+      "iteration": 9,
+      "phase": "UNCERTAINTY",
+      "action": "PLAN_EXPERIMENT",
+      "focus": "U006: Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?",
+      "focus_id": "U006",
+      "reason": "Most valuable next step for high-importance validity question U006: score 1.08 = importance 3 x expected gain 0.4 x relevance 0.9 x evidence deficiency 1 / cost 1. Next best: VERIFY on U006 (1.08).",
+      "evidence": "94 papers from 7 searches, 6 analyzed, 5 claims (5 verified), 6 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U006.",
+      "outcome": "+1 experiment plans",
+      "candidates": [
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U006",
+          "target": "Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?",
+          "importance": 3.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.4",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.08
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U006",
+          "target": "Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.08
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U007",
+          "target": "Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.84
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U007",
+          "target": "Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.84
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U005",
+          "target": "Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.72
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U005",
+          "target": "Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.72
+        }
+      ],
+      "expected_gain": 0.4,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "record_experiment_plan",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "plans": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:58:36.873155Z"
+    },
+    {
+      "iteration": 10,
+      "phase": "UNCERTAINTY",
+      "action": "COMPARE",
+      "focus": "U007: Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+      "focus_id": "U007",
+      "reason": "Most valuable next step for high-importance feasibility question U007: score 0.84 = importance 3 x expected gain 0.6 x relevance 0.7 x evidence deficiency 1 / cost 1.5. Next best: VERIFY on U007 (0.84).",
+      "evidence": "94 papers from 7 searches, 6 analyzed, 5 claims (5 verified), 6 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U007.",
+      "outcome": "+5 claims; +3 verified claims",
+      "candidates": [
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U007",
+          "target": "Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.84
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U007",
+          "target": "Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.84
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U005",
+          "target": "Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.72
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U005",
+          "target": "Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.72
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U006",
+          "target": "Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.5,
+          "score": 0.648
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U002",
+          "target": "How similar is our proposed method to Re3 (arxiv:2509.01306) which balances relevance and recency via a query-aware gating mechanism?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.504
+        }
+      ],
+      "expected_gain": 0.6,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "get_paper",
+        "record_claim",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 5,
+        "verified_claims": 3
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:59:52.296200Z"
+    },
+    {
+      "iteration": 11,
+      "phase": "UNCERTAINTY",
+      "action": "COMPARE",
+      "focus": "U005: Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?",
+      "focus_id": "U005",
+      "reason": "Most valuable next step for medium-importance confounder question U005: score 0.96 = importance 2 x expected gain 0.8 x relevance 0.9 x evidence deficiency 1 / cost 1.5. Next best: VERIFY on U007 (0.84).",
+      "evidence": "94 papers from 7 searches, 6 analyzed, 10 claims (8 verified), 6 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U005.",
+      "outcome": "+6 claims; +6 verified claims; uncertainties updated: U005",
+      "candidates": [
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U005",
+          "target": "Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?",
+          "importance": 2.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.96
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U007",
+          "target": "Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.84
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U005",
+          "target": "Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.72
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U002",
+          "target": "How similar is our proposed method to Re3 (arxiv:2509.01306) which balances relevance and recency via a query-aware gating mechanism?",
+          "importance": 3.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.672
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U006",
+          "target": "Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.5,
+          "score": 0.648
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U007",
+          "target": "Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+          "importance": 3.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps, halved for 1 earlier attempt on U007",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.56
+        }
+      ],
+      "expected_gain": 0.8,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "get_paper",
+        "record_claim",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 6,
+        "verified_claims": 6
+      },
+      "info_gain": 6.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:08:08.477344Z"
+    },
+    {
+      "iteration": 12,
+      "phase": "UNCERTAINTY",
+      "action": "VERIFY",
+      "focus": "U007: Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+      "focus_id": "U007",
+      "reason": "Most valuable next step for high-importance feasibility question U007: score 0.84 = importance 3 x expected gain 0.6 x relevance 0.7 x evidence deficiency 1 / cost 1.5. Next best: COMPARE on U002 (0.728).",
+      "evidence": "94 papers from 7 searches, 6 analyzed, 16 claims (14 verified), 6 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U007.",
+      "outcome": "+2 claims; +2 verified claims; uncertainties updated: U007",
+      "candidates": [
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U007",
+          "target": "Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.84
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U002",
+          "target": "How similar is our proposed method to Re3 (arxiv:2509.01306) which balances relevance and recency via a query-aware gating mechanism?",
+          "importance": 3.0,
+          "expected_gain": 0.867,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.728
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U006",
+          "target": "Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.5,
+          "score": 0.648
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U007",
+          "target": "Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+          "importance": 3.0,
+          "expected_gain": 0.433,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier COMPARE steps, halved for 1 earlier attempt on U007",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.606
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U004",
+          "target": "Does temporal relevance actually improve QA accuracy, or could it hurt due to noise or misalignment?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.454
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U004",
+          "target": "Does temporal relevance actually improve QA accuracy, or could it hurt due to noise or misalignment?",
+          "importance": 3.0,
+          "expected_gain": 0.367,
+          "gain_basis": "prior 0.4, observed mean over 1 earlier PLAN_EXPERIMENT steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.416
+        }
+      ],
+      "expected_gain": 0.6,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "record_claim",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 2,
+        "verified_claims": 2
+      },
+      "info_gain": 2.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:20:35.323945Z"
+    },
+    {
+      "iteration": 13,
+      "phase": "UNCERTAINTY",
+      "action": "COMPARE",
+      "focus": "U002: How similar is our proposed method to Re3 (arxiv:2509.01306) which balances relevance and recency via a query-aware gating mechanism?",
+      "focus_id": "U002",
+      "reason": "Most valuable next step for high-importance overlap question U002: score 0.728 = importance 3 x expected gain 0.867 x relevance 1 x evidence deficiency 0.42 / cost 1.5. Next best: VERIFY on U006 (0.684).",
+      "evidence": "94 papers from 7 searches, 6 analyzed, 18 claims (16 verified), 5 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U002.",
+      "outcome": "+1 claims; +1 verified claims",
+      "candidates": [
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U002",
+          "target": "How similar is our proposed method to Re3 (arxiv:2509.01306) which balances relevance and recency via a query-aware gating mechanism?",
+          "importance": 3.0,
+          "expected_gain": 0.867,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.728
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U006",
+          "target": "Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?",
+          "importance": 3.0,
+          "expected_gain": 0.633,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier VERIFY steps",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.5,
+          "score": 0.684
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U004",
+          "target": "Does temporal relevance actually improve QA accuracy, or could it hurt due to noise or misalignment?",
+          "importance": 3.0,
+          "expected_gain": 0.633,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier VERIFY steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.479
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U004",
+          "target": "Does temporal relevance actually improve QA accuracy, or could it hurt due to noise or misalignment?",
+          "importance": 3.0,
+          "expected_gain": 0.367,
+          "gain_basis": "prior 0.4, observed mean over 1 earlier PLAN_EXPERIMENT steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.416
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Can we construct a benchmark of versioned regulatory documents with time-stamped queries?",
+          "importance": 2.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.35
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U005",
+          "target": "Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?",
+          "importance": 2.0,
+          "expected_gain": 0.633,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier VERIFY steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.319
+        }
+      ],
+      "expected_gain": 0.867,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "record_claim",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 1,
+        "verified_claims": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:26:53.943182Z"
+    },
+    {
+      "iteration": 14,
+      "phase": "UNCERTAINTY",
+      "action": "VERIFY",
+      "focus": "U006: Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?",
+      "focus_id": "U006",
+      "reason": "Most valuable next step for high-importance validity question U006: score 0.684 = importance 3 x expected gain 0.633 x relevance 0.9 x evidence deficiency 0.6 / cost 1.5. Next best: VERIFY on U002 (0.532).",
+      "evidence": "94 papers from 7 searches, 6 analyzed, 19 claims (17 verified), 5 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U006.",
+      "outcome": "+1 claims; +1 verified claims",
+      "candidates": [
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U006",
+          "target": "Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?",
+          "importance": 3.0,
+          "expected_gain": 0.633,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier VERIFY steps",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.5,
+          "score": 0.684
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U002",
+          "target": "How similar is our proposed method to Re3 (arxiv:2509.01306) which balances relevance and recency via a query-aware gating mechanism?",
+          "importance": 3.0,
+          "expected_gain": 0.633,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier VERIFY steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.532
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U004",
+          "target": "Does temporal relevance actually improve QA accuracy, or could it hurt due to noise or misalignment?",
+          "importance": 3.0,
+          "expected_gain": 0.633,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier VERIFY steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.479
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U004",
+          "target": "Does temporal relevance actually improve QA accuracy, or could it hurt due to noise or misalignment?",
+          "importance": 3.0,
+          "expected_gain": 0.367,
+          "gain_basis": "prior 0.4, observed mean over 1 earlier PLAN_EXPERIMENT steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.416
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Can we construct a benchmark of versioned regulatory documents with time-stamped queries?",
+          "importance": 2.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.35
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U005",
+          "target": "Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?",
+          "importance": 2.0,
+          "expected_gain": 0.633,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier VERIFY steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.319
+        }
+      ],
+      "expected_gain": 0.633,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "record_claim",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 1,
+        "verified_claims": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:27:41.771747Z"
+    },
+    {
+      "iteration": 15,
+      "phase": "UNCERTAINTY",
+      "action": "VERIFY",
+      "focus": "U002: How similar is our proposed method to Re3 (arxiv:2509.01306) which balances relevance and recency via a query-aware gating mechanism?",
+      "focus_id": "U002",
+      "reason": "Most valuable next step for high-importance overlap question U002: score 0.448 = importance 3 x expected gain 0.533 x relevance 1 x evidence deficiency 0.42 / cost 1.5. Next best: PLAN_EXPERIMENT on U004 (0.416).",
+      "evidence": "94 papers from 7 searches, 6 analyzed, 20 claims (18 verified), 4 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U002.",
+      "outcome": "no recorded change",
+      "candidates": [
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U002",
+          "target": "How similar is our proposed method to Re3 (arxiv:2509.01306) which balances relevance and recency via a query-aware gating mechanism?",
+          "importance": 3.0,
+          "expected_gain": 0.533,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier VERIFY steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.448
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U004",
+          "target": "Does temporal relevance actually improve QA accuracy, or could it hurt due to noise or misalignment?",
+          "importance": 3.0,
+          "expected_gain": 0.367,
+          "gain_basis": "prior 0.4, observed mean over 1 earlier PLAN_EXPERIMENT steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.416
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U004",
+          "target": "Does temporal relevance actually improve QA accuracy, or could it hurt due to noise or misalignment?",
+          "importance": 3.0,
+          "expected_gain": 0.533,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier VERIFY steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.403
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Can we construct a benchmark of versioned regulatory documents with time-stamped queries?",
+          "importance": 2.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.35
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U002",
+          "target": "How similar is our proposed method to Re3 (arxiv:2509.01306) which balances relevance and recency via a query-aware gating mechanism?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.315
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U002",
+          "target": "How similar is our proposed method to Re3 (arxiv:2509.01306) which balances relevance and recency via a query-aware gating mechanism?",
+          "importance": 3.0,
+          "expected_gain": 0.367,
+          "gain_basis": "prior 0.6, observed mean over 3 earlier COMPARE steps, halved for 1 earlier attempt on U002",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.308
+        }
+      ],
+      "expected_gain": 0.533,
+      "estimated_cost": 1.5,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": 0.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:28:31.297979Z"
+    },
+    {
+      "iteration": 16,
+      "phase": "UNCERTAINTY",
+      "action": "PLAN_EXPERIMENT",
+      "focus": "U004: Does temporal relevance actually improve QA accuracy, or could it hurt due to noise or misalignment?",
+      "focus_id": "U004",
+      "reason": "Most valuable next step for high-importance validity question U004: score 0.416 = importance 3 x expected gain 0.367 x relevance 0.9 x evidence deficiency 0.42 / cost 1. Next best: READ on U003 (0.35).",
+      "evidence": "94 papers from 7 searches, 6 analyzed, 20 claims (18 verified), 3 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U004.",
+      "outcome": "uncertainties updated: U004",
+      "candidates": [
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U004",
+          "target": "Does temporal relevance actually improve QA accuracy, or could it hurt due to noise or misalignment?",
+          "importance": 3.0,
+          "expected_gain": 0.367,
+          "gain_basis": "prior 0.4, observed mean over 1 earlier PLAN_EXPERIMENT steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.416
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Can we construct a benchmark of versioned regulatory documents with time-stamped queries?",
+          "importance": 2.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.35
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U004",
+          "target": "Does temporal relevance actually improve QA accuracy, or could it hurt due to noise or misalignment?",
+          "importance": 3.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.6, observed mean over 3 earlier VERIFY steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.302
+        },
+        {
+          "action": "VERIFY",
+          "uncertainty_id": "U005",
+          "target": "Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?",
+          "importance": 2.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.6, observed mean over 3 earlier VERIFY steps",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.202
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U005",
+          "target": "Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?",
+          "importance": 2.0,
+          "expected_gain": 0.367,
+          "gain_basis": "prior 0.6, observed mean over 3 earlier COMPARE steps, halved for 1 earlier attempt on U005",
+          "relevance": 0.9,
+          "deficiency": 0.42,
+          "cost": 1.5,
+          "score": 0.185
+        }
+      ],
+      "expected_gain": 0.367,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "record_experiment_plan",
+        "update_uncertainty"
+      ],
+      "state_changes": {},
+      "info_gain": 0.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:28:50.202387Z"
+    },
+    {
+      "iteration": 17,
+      "phase": "FINALIZE",
+      "action": "FINALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Stopping: iteration budget reached (16).",
+      "evidence": "94 papers from 7 searches, 6 analyzed, 20 claims (18 verified), 3 open uncertainties",
+      "expected_outcome": "Report what was established and what remains open.",
+      "outcome": "finalizing",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:30:00.703794Z"
+    }
+  ],
+  "no_progress": {
+    "VERIFY:U002": 1
+  },
+  "blocked_actions": [],
+  "critiques": 1,
+  "papers_at_last_critique": 48,
+  "finalize_reason": "Stopping: iteration budget reached (16).",
+  "awaiting_approval": [],
+  "investigation_closed": null,
+  "investigation_closed_at": null,
+  "challenged_refs": [],
+  "research_decision": "INSUFFICIENT_EVIDENCE",
+  "research_decision_basis": "high-importance questions remain unresolved (U002, U004, U006, U007)"
+}

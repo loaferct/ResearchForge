@@ -1,0 +1,26 @@
+{
+  "id": "M003",
+  "title": "Regime-conditioned temporal weighting: superseded by unified interval-membership scoring (ablation only)",
+  "description": "Superseded and not recommended. Separate temporal weight sets for current versus historically anchored queries were motivated by the observation that recency helps post-cutoff queries but harms historical ones. That tension is specific to monotone elapsed-time decay; a single validity-interval-membership term already returns the in-force version for any query date, and Prior et al. show one regime-independent as-of-date rule retrieves correctly across all their question categories (C023, C024). Regime conditioning is retained only as a possible ablation, to confirm that conditioning on an inferred regime adds nothing once intervals are used.",
+  "why_differs": "It does not differ in any way that survives the evidence: the regime split exists to correct a pathology of elapsed-time decay (always favouring recency), and an interval-membership term removes that pathology for all query dates at once. Retaining regime conditioning as a contribution would be redundant against the already-recorded interval-aware modification and would not distinguish the work from Prior et al.'s single regime-independent filter.",
+  "technical_mechanism": "Two temporal weight sets or an asymmetric function selected by an inferred query regime, retained only as an ablation against the unified interval-membership score.",
+  "expected_benefit": "Only as a negative control: if regime conditioning fails to improve on the unified interval-membership term, it confirms that regime-specific tuning is unnecessary and that a single retrieval-agnostic rule suffices, simplifying deployment.",
+  "potential_novelty": "Low and now withdrawn. The retrieved literature motivates the two regimes, but the mechanism is subsumed by interval-aware scoring; presenting regime conditioning as novel would overstate the contribution.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "As an ablation it requires only two weight configurations selected by a regime label; no new data or modelling.",
+  "experimental_difficulty": "low",
+  "experimental_difficulty_basis": "If evaluated at all, it is an additional arm under the same corpus, index and metrics as the unified term, adding only the per-regime stratification the plan already includes.",
+  "main_risk": "The main risk is wasted effort: the evidence already indicates the component is redundant, so pursuing it as a contribution would distract from the interval-membership work and dilute the paper's claim.",
+  "required_baselines": [
+    "Unified interval-membership term (no regime parameters)",
+    "Hard in-force filter",
+    "Semantic-only retrieval"
+  ],
+  "related_paper_ids": [
+    "arxiv:2605.23497",
+    "arxiv:2401.13222"
+  ],
+  "addresses_gap_ids": [],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:29:29.290381Z"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.3390/sym18091572",
+  "title": "ContextGuard-RAG: Contextual Integrity-Aware Retrieval-Augmented Generation with Multi-Agent Privacy Enforcement for Sensitive Document Question Answering",
+  "authors": [
+    "Faisal Alhwikem",
+    "Amir Raza Khan",
+    "Fawwad Hassan Jaskani"
+  ],
+  "year": 2026,
+  "published": "2026-09-20",
+  "venue": "Symmetry",
+  "url": "https://doi.org/10.3390/sym18091572",
+  "pdf_url": null,
+  "abstract": "Large language model (LLM)-powered retrieval-augmented generation (RAG) systems significantly reduce factual errors in question answering, but they present a novel and under-investigated attack surface: factual information in retrieved text can be exposed in ways that do not align with the disclosure norms of the information itself. In legal, medical, and enterprise environments, this leakage is not only a confidentiality violation but a contextual integrity (CI) violation, where privacy is understood as the appropriate flow of information between roles and for specific purposes. Current defenses are mostly input minimizers or post hoc output filters that are blind to the circumstances of the data source (sender, recipient, purpose), creating a structural gap between the document store and the model generation step. We introduce ContextGuard-RAG, a multi-agent privacy enforcement framework that embeds CI theory directly into the retrieval and generation pipeline. It consists of three tightly coupled components: a CI-policy encoder that attaches sender, recipient, subject, information-type, and transmission-principle norms to retrieved contexts from document metadata; a privacy-aware reranker that filters contexts violating inferred CI norms using a fine-tuned cross-encoder classifier; and a generative firewall agent that sanitizes output using reinforcement learning to avoid transitive leakage through document-derived hallucinations or indirect inferences. On PrivacyQA, MedQA, and LegalBench, ContextGuard-RAG reduces CI violations by about 34 percent relative to vanilla RAG, by 13.5 percent on average over AirGapAgent, and by 10 percent on average over the 1-2-3 Check multi-agent reasoning approach, while achieving parity with the best accuracy baseline in ROUGE-L (within 0.6 absolute points) and remaining stable under context-hijacking adversarial probes. Unlike prior approaches, ContextGuard-RAG performs norm-aware retrieval rather than post hoc filtering and benefits four backbone LLMs without retraining the upstream agents.",
+  "doi": "10.3390/sym18091572",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T04:59:32.334938Z",
+  "relevance": 0.4375,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "time-aware retrieval temporal relevance document versions question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

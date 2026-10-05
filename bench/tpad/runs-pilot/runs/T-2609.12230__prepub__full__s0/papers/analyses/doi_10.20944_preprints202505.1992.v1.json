@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.20944/preprints202505.1992.v1",
+  "relevance_tier": "high",
+  "problem": "Large Language Models (LLMs) often hallucinate, especially on domain-specific tasks requiring reasoning; previous SubGraph Retrieval Augmented Generation (SG-RAG) leverages Cypher queries to retrieve subgraphs, but redundancy in retrieved triplets can affect answer precision.",
+  "method": "SG-RAG leverages Cypher queries to search the given knowledge graph and retrieve the necessary subgraph; the Merging and Ordering Triplets (MOT) step applies hierarchical merging on retrieved subgraphs to decrease redundancy and orders triplets using Breadth First Search (BFS) traversal algorithm.",
+  "key_assumptions": [
+    "Hierarchical merging of overlapping subgraphs reduces redundancy without losing essential information.",
+    "Ordering triplets via BFS traversal helps the LLM generate more precise answers by providing a structured sequence."
+  ],
+  "main_contribution": "SG-RAG MOT provides more accurate answers than Chain-of-Thought and Graph Chain-of-Thought on the MetaQA benchmark, demonstrating that merging (up to some point) highly overlapping subgraphs and defining an order among triplets helps the LLM generate precise answers.",
+  "datasets": [
+    "MetaQA benchmark (movies domain)"
+  ],
+  "benchmarks": [
+    "MetaQA"
+  ],
+  "baselines": [
+    "Chain-of-Thought, Graph Chain-of-Thought"
+  ],
+  "metrics": [
+    "not stated in abstract (likely accuracy or Hits@1)"
+  ],
+  "results": "[\"Our experiments show that the SG-RAG MOT provides more accurate answers than Chain-of-Though and Graph Chain-of-Though.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "SG-RAG MOT focuses on retrieval augmentation with subgraph merging and ordering for LLM generation, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:11:18.379107Z"
+}

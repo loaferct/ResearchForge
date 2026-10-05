@@ -1,0 +1,44 @@
+{
+  "id": "U003",
+  "question": "Would any accuracy gain from the context regime be attributable to the context itself rather than to the model seeing more tokens/triples or more training signal per example?",
+  "description": "The natural control is matched supervision budget: equal number of examples AND equal token budget, with the isolated regime given unrelated/random triples of the same length. Without this, gains are uninterpretable.",
+  "category": "confounder",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "VERIFY",
+    "PLAN_EXPERIMENT",
+    "REFINE"
+  ],
+  "confidence": 0.75,
+  "confidence_basis": "Based on four directly relevant retrieved papers with verbatim quotes (IKG/KGSweetSpot, Lost in the Middle, Never Lost in the Middle) plus the DrKGC and SG-RAG MOT contradiction; the specific matched-budget training-time experiment has not been run by anyone in the retrieved set, so the conclusion is about experimental design rather than a measured KGQA result.",
+  "rationale": "This is the single most likely way the main effect could be an artifact, and it directly determines whether the contribution is defensible.",
+  "resolution": "Partially resolved, and reframed. Evidence shows the confounder is real but is not fundamentally about token counts: (i) imprecise selection of KG knowledge can push performance below the no-context zero-shot baseline, and expanding subgraph scope raises recall while lowering precision (C015, C016, IKG/KGSweetSpot); (ii) language models use long contexts non-uniformly, with significant degradation depending on the position of relevant information (C017, Lost in the Middle); (iii) how well a model uses supplied context is itself trainable (C018, Never Lost in the Middle). Meanwhile no retrieved work runs a matched-example, matched-token comparison of training-time context supervision with an equal-length irrelevant-context arm (C019). Therefore a token-matched comparison alone would still leave the attribution ambiguous; the experiment must include an equal-length irrelevant/random-triples arm and a relevance-selection condition, and treat B-vs-C (relevant vs. equal-length irrelevant context) as the primary contrast. Verification remaining: run the factorial study; no KGQA paper in the searched set reports this comparison.",
+  "paper_ids": [
+    "doi:10.1109/ickg66886.2025.00020",
+    "arxiv:2307.03172",
+    "arxiv:2311.09198",
+    "arxiv:2506.00708",
+    "doi:10.20944/preprints202505.1992.v1"
+  ],
+  "supporting_paper_ids": [
+    "doi:10.1109/ickg66886.2025.00020",
+    "arxiv:2307.03172",
+    "arxiv:2311.09198"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C015",
+    "C016",
+    "C017",
+    "C018",
+    "C019"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T05:09:01.565861Z",
+  "updated_at": "2026-09-30T05:29:18.755680Z"
+}

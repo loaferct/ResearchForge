@@ -1,0 +1,40 @@
+{
+  "id": "U010",
+  "question": "Does adding all co-passage triples to a supervision signal help or hurt, given that one line of work reports gains from merging context while another reports that long/noisy graph context degrades performance? Must context triples be selected for reasoning relevance rather than taken wholesale from the passage?",
+  "description": "SG-RAG MOT finds that merging overlapping retrieved subgraphs (up to a point) and ordering triplets improves answer precision on MetaQA, while DrKGC identifies overly long/noisy graph context as a failure mode and deliberately retrieves compact query-specific subgraphs. If co-passage context enrichment adds triples without selectivity, it may hit exactly the noise problem DrKGC warns about; the idea has no explicit mechanism for choosing which co-passage triples are reasoning-relevant.",
+  "category": "contradiction",
+  "importance": "high",
+  "status": "open",
+  "next_action": "CHALLENGE",
+  "possible_actions": [
+    "CHALLENGE",
+    "SEARCH",
+    "COMPARE",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": 0.7,
+  "confidence_basis": "Two directly contradictory verbatim statements from retrieved papers, but neither tests passage-derived context with matched budgets, so the relevant regime is untested.",
+  "rationale": "This directly threatens the idea's core mechanism: if co-passage triples are topical noise, the context regime may underperform the isolated baseline, and the design would need a relevance-selection step (which would then need to be compared against existing subgraph retrieval).",
+  "resolution": "Still open, and the contradiction is confirmed by verbatim quotes: SG-RAG MOT reports that merging highly overlapping subgraphs helps, while DrKGC states that overly long graph-context inputs introduce noise and cost. Neither tests co-passage context with matched budgets, so the direction of the effect for the idea's mechanism is unknown; a relevance-selection step (or an ablation over selection rules) is likely required.",
+  "paper_ids": [
+    "doi:10.20944/preprints202505.1992.v1",
+    "arxiv:2506.00708"
+  ],
+  "supporting_paper_ids": [
+    "doi:10.20944/preprints202505.1992.v1"
+  ],
+  "contradicting_paper_ids": [
+    "arxiv:2506.00708"
+  ],
+  "claim_ids": [
+    "C003",
+    "C004",
+    "C014"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "SYNTHESIZE",
+  "created_at": "2026-09-30T05:18:48.760342Z",
+  "updated_at": "2026-09-30T05:22:15.769354Z"
+}

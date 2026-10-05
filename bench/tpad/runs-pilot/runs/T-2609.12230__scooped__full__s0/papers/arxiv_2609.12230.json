@@ -1,0 +1,37 @@
+{
+  "id": "arxiv:2609.12230",
+  "title": "Repair Before Reinforce: Context-Augmented Knowledge Graph Reasoning for Multi-Hop Question Answering",
+  "authors": [
+    "Tharaka Fonseka",
+    "N. Jha"
+  ],
+  "year": 2026,
+  "published": "2026-09-10",
+  "venue": null,
+  "url": "https://www.semanticscholar.org/paper/ec5848d2380c1c9f9664887fb517008245d1548c",
+  "pdf_url": null,
+  "abstract": "Question-answering often requires reasoning across multiple connected facts rather than retrieving a single isolated relation. Knowledge graphs (KGs) provide a structured way to represent such facts, but training large language models (LLMs) only on isolated KG head-relation-tail triples may limit their ability to learn the surrounding context needed for multi-hop reasoning. In this work, we propose a context-augmented training framework for multi-hop question-answering. Although generally applicable, we validate the framework in the context of disease-specific KGs, extracted using a reliable KG extraction framework called GraphMERT, for Gastroparesis and Diabetes. For each primary KG triple, we attach supporting triples extracted from the same source text chunk to form a context graph (CG). This creates two supervision settings: KG-grounded supervision, which uses only the target KG triple or path, and CG-grounded supervision, which uses the target KG triple or path together with supporting context triples. We train the Qwen3-14B model using supervised fine-tuning (SFT) under both settings, producing KGModel and CGModel variants. To strengthen the lower-hop factual foundation of the models, we introduce an LLM-judged, history-aware adaptive repair pipeline that identifies unresolved one-hop failures, continually fine-tunes on targeted repair examples, and removes or quarantines problematic noisy triples. This repair stage enables the models to reach 100% accuracy on the cleaned retained one-hop validation sets. Finally, we employ reinforcement learning (RL) using lower-hop question-answer items and evaluate generalization on harder 3-hop, 4-hop, and 5-hop tasks. Across both diseases, context-augmented supervision consistently improves multi-hop performance over KG-only supervision. RL initialized from repaired SFT checkpoints yields larger and more stable gains.",
+  "doi": null,
+  "arxiv_id": "2609.12230",
+  "openalex_id": "W7212634901",
+  "s2_id": "ec5848d2380c1c9f9664887fb517008245d1548c",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T06:49:50.543689Z",
+  "relevance": 0.5882,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "context enriched triple training multi-hop question answering",
+    "local context subgraph training multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": true,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": [
+    "abstract (from semantic_scholar) never mentions 'Repair Before Reinforce'; it may belong to another work"
+  ]
+}

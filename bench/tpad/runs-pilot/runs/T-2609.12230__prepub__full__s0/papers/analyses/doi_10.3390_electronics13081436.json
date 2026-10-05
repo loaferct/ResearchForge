@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.3390/electronics13081436",
+  "relevance_tier": "high",
+  "problem": "Multi-hop QA requires integrating machine comprehension with relational reasoning; existing models struggle with complex relational paths and lack transparency in reasoning.",
+  "method": "Introduces Dependent Syntactic Semantic Augmented Graph Network (DSSAGN) that leverages synergy between syntactic structures and semantic relationships within knowledge graphs to model multi-hop relations and dynamically prioritize syntactic–semantic context.",
+  "key_assumptions": [
+    "Combining syntactic and semantic information improves relational reasoning for multi-hop QA.",
+    "Dynamic prioritization of syntactic–semantic context enhances interpretability and accuracy."
+  ],
+  "main_contribution": "DSSAGN architecture that integrates syntactic and semantic augmentations for improved interpretability, scalability, and accuracy in multi-hop KGQA.",
+  "datasets": [
+    "not stated in abstract"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"not stated in abstract\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "The paper focuses on augmenting graph networks with syntactic-semantic dependencies, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:03:18.823561Z"
+}

@@ -1,0 +1,41 @@
+{
+  "paper_id": "doi:10.18653/v1/2024.findings-emnlp.848",
+  "relevance_tier": "medium",
+  "problem": "Time-Sensitive QA requires using specific temporal contexts and time-evolving facts, but large language models have limited sensitivity to temporal information and inadequate temporal reasoning capabilities.",
+  "method": "Temporal Information-Aware Embedding plus Granular Contrastive Reinforcement Learning to enhance temporal awareness and reasoning in LLMs for time-sensitive QA.",
+  "key_assumptions": [
+    "Temporal information within questions and time-evolving facts can be embedded and exploited",
+    "Reinforcement learning with granular contrastive signals improves temporal reasoning"
+  ],
+  "main_contribution": "A framework enhancing temporal awareness and reasoning in LLMs via Temporal Information-Aware Embedding and Granular Contrastive Reinforcement Learning, evaluated on four TSQA datasets.",
+  "datasets": [
+    "Four TSQA datasets (names not stated in abstract)"
+  ],
+  "benchmarks": [
+    "Four TSQA datasets (names not stated in abstract)"
+  ],
+  "baselines": [
+    "Existing large language models"
+  ],
+  "metrics": [
+    "not stated in abstract (TSQA task performance implied)"
+  ],
+  "results": "The framework significantly outperforms existing LLMs on TSQA across four datasets.",
+  "limitations": [
+    "not stated in abstract",
+    "Addresses reader/model temporal reasoning rather than retrieval ranking over document versions"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "Improves the reader/model's temporal reasoning via embeddings and reinforcement learning instead of adjusting retrieval rank; no notion of document versions, supersession, or validity intervals.",
+    "basis": "Abstract shows a model-side temporal-reasoning intervention evaluated on TSQA datasets; no retrieval component, versioned corpus, or temporal ranking term."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T04:29:58.652788Z"
+}

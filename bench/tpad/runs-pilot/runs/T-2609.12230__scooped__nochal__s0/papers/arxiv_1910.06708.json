@@ -1,0 +1,37 @@
+{
+  "id": "arxiv:1910.06708",
+  "title": "Efficiently Embedding Dynamic Knowledge Graphs",
+  "authors": [
+    "Tianxing Wu",
+    "Arijit Khan",
+    "Melvin Yong",
+    "Guilin Qi",
+    "Meng Wang"
+  ],
+  "year": 2019,
+  "published": "2019-10-15",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/1910.06708",
+  "pdf_url": "https://arxiv.org/pdf/1910.06708v2",
+  "abstract": "Knowledge graph (KG) embedding encodes the entities and relations from a KG into low-dimensional vector spaces to support various applications such as KG completion, question answering, and recommender systems. In real world, knowledge graphs (KGs) are dynamic and evolve over time with addition or deletion of triples. However, most existing models focus on embedding static KGs while neglecting dynamics. To adapt to the changes in a KG, these models need to be retrained on the whole KG with a high time cost. In this paper, to tackle the aforementioned problem, we propose a new context-aware Dynamic Knowledge Graph Embedding (DKGE) method which supports the embedding learning in an online fashion. DKGE introduces two different representations (i.e., knowledge embedding and contextual element embedding) for each entity and each relation, in the joint modeling of entities and relations as well as their contexts, by employing two attentive graph convolutional networks, a gate strategy, and translation operations. This effectively helps limit the impacts of a KG update in certain regions, not in the entire graph, so that DKGE can rapidly acquire the updated KG embedding by a proposed online learning algorithm. Furthermore, DKGE can also learn KG embedding from scratch. Experiments on the tasks of link prediction and question answering in a dynamic environment demonstrate the effectiveness and efficiency of DKGE.",
+  "doi": "10.1016/j.knosys.2022.109124",
+  "arxiv_id": "1910.06708",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T06:48:28.708583Z",
+  "relevance": 0.1842,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "contextualized triples knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

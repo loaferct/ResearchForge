@@ -1,0 +1,45 @@
+{
+  "paper_id": "arxiv:2601.01195",
+  "relevance_tier": "high",
+  "problem": "Temporal knowledge graph question answering (TKGQA) suffers from suboptimal decisions and error propagation because large language models retrieve subgraphs with numerous temporally similar and semantically complex relations at each hop.",
+  "method": "Multi-hop Reasoning Enhanced (MRE) framework: (1) prompt engineering to guide LLM in generating diverse reasoning trajectories; (2) selecting valid trajectories for supervised fine-tuning (cold-start); (3) Tree-Group Relative Policy Optimization (T-GRPO)—a recursive, tree-structured learning-by-exploration approach where at each hop exploration establishes strong causal dependencies on the previous hop and evaluation is informed by multi-path exploration feedback from subsequent hops.",
+  "key_assumptions": [
+    "Prompt engineering can generate diverse and useful reasoning trajectories.",
+    "Selecting valid trajectories for supervised fine-tuning provides a good initialization for RL.",
+    "Tree-structured credit assignment in T-GRPO improves exploration and reduces reliance on sparse final-step rewards."
+  ],
+  "main_contribution": "A unified framework (MRE) integrating trajectory sampling, supervised fine-tuning, and a novel T-GRPO algorithm for TKGQA, improving LLM with structured subgraph retrieval and trajectory-aware temporal reasoning.",
+  "datasets": [
+    "CRONQUESTIONS",
+    "TIMEQUESTIONS"
+  ],
+  "benchmarks": [
+    "CRONQUESTIONS",
+    "TIMEQUESTIONS"
+  ],
+  "baselines": [
+    "CRONQUESTIONS: EaE, EmbedKGQA, CronKGQA, EntityQR, TMA, TSQA, CTRN, TempoQR, BERT, RoBERTa, ChatGPT; TIMEQUESTIONS: CronKGQA, TempoQR, TwiRGCN"
+  ],
+  "metrics": [
+    "Hits@1",
+    "Hits@10"
+  ],
+  "results": "MRE sets new SOTA on CRONQUESTIONS with 98.2% Hits@1 and 99.6% Hits@10 (outperforming TempoQR by +6.4% and +1.8%); near-perfect on simple questions (99.9% Hits@1); strong performance on entity and time question types; reduces 3-hop error rate by over 75% vs TempoQR. On TIMEQUESTIONS achieves 59.4% Hits@1, matching TwiRGCN and outperforming CronKGQA and TempoQR; shows improved performance on implicit (+4.5%) and ordinal (+6.0%) question types.",
+  "limitations": [
+    "GRPO (Flat) relies on sparse reward supervision assigned only at the final step, limiting exploration; T-GRPO addresses this by leveraging tree-structured reward propagation.",
+    "Dependence on quality of prompt-generated trajectories may affect performance."
+  ],
+  "future_work": [
+    "Not explicitly stated in the paper."
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "Both aim to improve multi-hop reasoning; the paper uses RL with trajectory-based optimization, while the idea proposes context subgraph enrichment and adaptive repair loop followed by RL lower-hop transfer. Overlap in using RL for reasoning, but differs in context enrichment and repair loop.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T07:39:34.576681Z"
+}

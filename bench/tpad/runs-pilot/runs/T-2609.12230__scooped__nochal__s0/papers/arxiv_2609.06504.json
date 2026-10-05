@@ -1,0 +1,44 @@
+{
+  "id": "arxiv:2609.06504",
+  "title": "CAM: Question Answering on Entity-Centric Videos with Continuous Extraction and Adaptive Querying",
+  "authors": [
+    "Yizhou Tian",
+    "Zizhe Chen",
+    "Shiyuan Deng",
+    "Garry Yang",
+    "Zijie Dai",
+    "Luohao Pan",
+    "Hao Lin",
+    "Peiqi Yin",
+    "Xiao Yan",
+    "James Cheng"
+  ],
+  "year": 2026,
+  "published": "2026-09-06",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2609.06504",
+  "pdf_url": "https://arxiv.org/pdf/2609.06504v1",
+  "abstract": "Memory facilitates question answering over long videos by extracting and retrieving facts to fit within the limited context windows of multimodal LLMs (MLLMs). Existing solutions typically extract independent memory entries from fixed-length video clips and thus cannot capture high-level semantics that need to be summarized over extended time periods, such as character traits and relations. Moreover, they rely solely on similarity-based retrieval and may fail to retrieve the fine-grained details required for question answering. To tackle these problems, we propose CAM, featuring continuous extraction for high-level semantics and adaptive querying for fine-grained details. In particular, CAM stores the entities and relations extracted from video clips in a knowledge graph. To capture the high-level semantics of each entity or relation, CAM summarizes the local subgraph of the target entity or relation once the subgraph reaches a predefined size. To retrieve the fine-grained details required for question answering, CAM supports multiple search methods, including knowledge graph traversal, video re-watching, and audio listening. It utilizes a planner-executor-verifier pipeline to adaptively compose these search methods according to question intent. Evaluations on three benchmarks show that CAM outperforms SOTA baselines and improves their accuracy by up to 23 percentage points. Code is available at https://github.com/Jake-Tian/CAM.",
+  "doi": null,
+  "arxiv_id": "2609.06504",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T06:28:33.447022Z",
+  "relevance": 0.6429,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "local context subgraph knowledge graph question answering"
+  ],
+  "code_urls": [
+    "https://github.com/Jake-Tian/CAM"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

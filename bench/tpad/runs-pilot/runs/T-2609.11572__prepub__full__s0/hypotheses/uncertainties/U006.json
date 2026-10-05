@@ -1,0 +1,28 @@
+{
+  "id": "U006",
+  "question": "How to handle conflicting information across versions where an amendment supersedes a clause, especially when the temporal component may still retrieve outdated versions?",
+  "description": "The temporal component must effectively suppress outdated versions for time-specific queries while still allowing retrieval of historical versions when the query targets a past date. We need to ensure the temporal relevance function correctly models supersession.",
+  "category": "confounder",
+  "importance": "high",
+  "status": "open",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": 0.6,
+  "confidence_basis": "Based on assumption in idea analysis that needs verification against actual regulatory drafting practices.",
+  "rationale": "If the temporal function does not adequately discount outdated versions, the retriever may return conflicting or incorrect information, hurting QA accuracy.",
+  "resolution": "The idea assumes latest version's clause overrides earlier ones, but we need to verify how supersession works in different regulatory systems and whether temporal proximity alone correctly captures validity.",
+  "paper_ids": [],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T10:14:42.989375Z",
+  "updated_at": "2026-09-30T10:58:23.234588Z"
+}

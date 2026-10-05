@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2605.18796",
+  "title": "UCCI: Calibrated Uncertainty for Cost-Optimal LLM Cascade Routing",
+  "authors": [
+    "Varun Kotte"
+  ],
+  "year": 2026,
+  "published": "2026-05-11",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2605.18796",
+  "pdf_url": "https://arxiv.org/pdf/2605.18796v1",
+  "abstract": "LLM cascades and model routing promise lower inference cost by sending easy queries to a small model and escalating hard ones to a large model, but most deployed routers use uncalibrated confidence scores and require per-workload threshold tuning. We present UCCI, a calibration-first router that maps token-level margin uncertainty to a per-query error probability via isotonic regression and selects the escalation threshold by constrained cost minimization. Under three explicit assumptions, threshold policies on the calibrated score are cost-optimal, and isotonic calibration achieves O(n^{-1/3}) sample complexity for expected calibration error (ECE). On a production named entity recognition workload of 75,000 queries served by 4B and 12B instruction-tuned LLMs on H100 GPUs, UCCI cuts inference cost by 31% (95% CI: [27%, 35%]) at micro-F1 = 0.91 while reducing ECE from 0.12 to 0.03. At the same operating point, UCCI beats entropy thresholding, split-conformal routing, and a FrugalGPT-style learned threshold. All cascade results use end-to-end routing on actual model outputs and measured H100 latency, not simulated routing from global accuracies or nominal API prices.",
+  "doi": null,
+  "arxiv_id": "2605.18796",
+  "openalex_id": "W7161832508",
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T11:24:31.207438Z",
+  "relevance": 0.4545,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "confidence threshold routing"
+  ],
+  "code_urls": [
+    "https://github.com/varunkotte6/ucci"
+  ],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

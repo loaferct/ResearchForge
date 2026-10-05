@@ -1,0 +1,38 @@
+{
+  "id": "arxiv:2212.00959",
+  "title": "UniKGQA: Unified Retrieval and Reasoning for Solving Multi-hop Question Answering Over Knowledge Graph",
+  "authors": [
+    "Jinhao Jiang",
+    "Kun Zhou",
+    "Wayne Xin Zhao",
+    "Ji-Rong Wen"
+  ],
+  "year": 2022,
+  "published": "2022-12-02",
+  "venue": "arXiv (Cornell University)",
+  "url": "http://arxiv.org/abs/2212.00959",
+  "pdf_url": "https://arxiv.org/pdf/2212.00959",
+  "abstract": "Multi-hop Question Answering over Knowledge Graph~(KGQA) aims to find the answer entities that are multiple hops away from the topic entities mentioned in a natural language question on a large-scale Knowledge Graph (KG). To cope with the vast search space, existing work usually adopts a two-stage approach: it first retrieves a relatively small subgraph related to the question and then performs the reasoning on the subgraph to find the answer entities accurately. Although these two stages are highly related, previous work employs very different technical solutions for developing the retrieval and reasoning models, neglecting their relatedness in task essence. In this paper, we propose UniKGQA, a novel approach for multi-hop KGQA task, by unifying retrieval and reasoning in both model architecture and parameter learning. For model architecture, UniKGQA consists of a semantic matching module based on a pre-trained language model~(PLM) for question-relation semantic matching, and a matching information propagation module to propagate the matching information along the directed edges on KGs. For parameter learning, we design a shared pre-training task based on question-relation matching for both retrieval and reasoning models, and then propose retrieval- and reasoning-oriented fine-tuning strategies. Compared with previous studies, our approach is more unified, tightly relating the retrieval and reasoning stages. Extensive experiments on three benchmark datasets have demonstrated the effectiveness of our method on the multi-hop KGQA task. Our codes and data are publicly available at~\\url{https://github.com/RUCAIBox/UniKGQA}.",
+  "doi": "10.48550/arxiv.2212.00959",
+  "arxiv_id": "2212.00959",
+  "openalex_id": "W4310744116",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 29,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T05:08:30.976811Z",
+  "relevance": 0.55,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "MetaQA WebQSP CWQ benchmark multi-hop knowledge graph question answering evaluation"
+  ],
+  "code_urls": [
+    "https://github.com/RUCAIBox/UniKGQA"
+  ],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

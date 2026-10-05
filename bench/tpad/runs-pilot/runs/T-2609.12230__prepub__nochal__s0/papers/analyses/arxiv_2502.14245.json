@@ -1,0 +1,44 @@
+{
+  "paper_id": "arxiv:2502.14245",
+  "relevance_tier": "high",
+  "problem": "In retrieval-augmented multi-hop question answering, the key entities are often missed in LLMs’ sub-question decomposition, known as the “lost-in-retrieval” problem, which degrades retrieval performance and disrupts the reasoning chain, leading to incorrect answers.",
+  "method": "ChainRAG: a progressive retrieval and rewriting framework that constructs a sentence graph with entity indexing, performs question decomposition, retrieves relevant sentences from the graph, and rewrites sub-questions to complete missing key entities, iteratively building a seamless chain for accurate retrieval and answer generation.",
+  "key_assumptions": [
+    "Not explicitly stated in the paper."
+  ],
+  "main_contribution": "ChainRAG consistently outperforms baselines (NaiveRAG, Iter-RetGen, LongRAG, HippoRAG+IR-CoT) on MuSiQue, 2WikiMultiHopQA, and HotpotQA datasets in both effectiveness (F1/EM) and efficiency, demonstrating that mitigating lost-in-retrieval improves multi-hop QA performance.",
+  "datasets": [
+    "MuSiQue",
+    "2WikiMultiHopQA (2Wiki)",
+    "HotpotQA"
+  ],
+  "benchmarks": [
+    "MuSiQue",
+    "2WikiMultiHopQA",
+    "HotpotQA"
+  ],
+  "baselines": [
+    "NaiveRAG, Iter-RetGen (Shao et al., 2023), LongRAG (Jiang et al., 2024), HippoRAG w/ IR-CoT (Gutiérrez et al., 2024)"
+  ],
+  "metrics": [
+    "Exact Match (EM)",
+    "F1-score"
+  ],
+  "results": "ChainRAG (CxtInt variant) achieves EM 49.40% on MuSiQue, 70.58% on 2Wiki, 64.22% on HotpotQA; F1 38.00%, 61.50%, 50.00% respectively. Compared to NaiveRAG, ChainRAG improves average F1 by approximately 60% on MuSiQue and shows significant gains across all datasets vs advanced RAG methods.",
+  "limitations": [
+    "The iterative process of retrieval and sub-question rewriting increases computational resources and time compared to NaiveRAG, posing challenges for resource-constrained environments; additional limitations not fully captured in the available text."
+  ],
+  "future_work": [
+    "Optimize efficiency by exploring lightweight graph traversal and adaptive termination strategies to reduce LLM calls and resource consumption; enhance dynamic adaptability by developing dataset-specific edge construction policies to better align with diverse text structures."
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.7,
+    "conceptual_difference": "Both aim to improve retrieval-augmented multi-hop QA: the idea enriches training triples with local context subgraphs from the same passage and uses an adaptive repair loop to generate corrective examples from one‑hop failures followed by RL lower‑hop transfer, while ChainRAG focuses on mitigating lost-in-retrieval via sentence graph construction, question decomposition, retrieval, and sub‑question rewriting at inference time. Overlap in using additional context to improve reasoning; differences in mechanism (training data enrichment + failure‑driven RL vs graph‑based retrieval + rewriting) and stage (training vs inference).",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T09:27:10.166264Z"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "U006",
+  "question": "Can the benchmark decouple recency from correctness (include queries whose in-force version is not the latest), so that a pure recency prior cannot trivially match the proposed temporal term?",
+  "description": "If the benchmark's correct answer is usually the newest version, a trivial recency prior matches the temporal term, and the experiment cannot distinguish 'temporal relevance' from 'always prefer the latest version'. A valid design must include queries whose authoritative version is old or mid-chain, and must report the recency-only baseline explicitly.",
+  "category": "evaluation",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "REFINE",
+    "SEARCH"
+  ],
+  "confidence": 0.7,
+  "confidence_basis": "Direct evidence of an analogous construction (SituatedQA crowdsources alternative temporal contexts and their answers; point-in-time financial QA measures temporal evidence leakage, which presupposes past as-of dates) plus explicit validity-date metadata in legal identifiers. The caveat is that such queries are a minority in natural corpora, and no legal version-level instance was found.",
+  "rationale": "Decay-based systems report very high temporal accuracy; if target dates cluster near the present, recency and validity coincide and the claimed mechanism is untested.",
+  "resolution": "Resolved: decoupling recency from correctness is both feasible and precedented, and it is required for the claim to be identifiable. SituatedQA constructs alternative temporal contexts together with their corresponding answers, i.e. the same question is annotated with different gold answers at different dates; point-in-time financial QA is built on as-of dates and reports temporal evidence leakage (10.8% to 1.7%), which only exists when the correct evidence at a past as-of date differs from later evidence; and legal identifiers encode date of entry into force and date of applicability, so the in-force clause version at an arbitrary historical target date is derivable from amendment history. The concrete design follows: build queries by walking each clause's version chain, sample target dates inside each version's validity interval, oversample a non-latest-gold stratum, use version identity (not answer text) as the gold label, and report per-stratum results with a recency-only baseline. Caveat: the non-latest stratum may be a minority of naturally occurring questions (SituatedQA found ~16.5% of NQ-Open context-dependent), so deliberate oversampling is needed for statistical power.",
+  "paper_ids": [
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.3390/sym18091498",
+    "arxiv:2505.20243",
+    "arxiv:2109.06157",
+    "arxiv:2606.09724"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2109.06157",
+    "doi:10.3390/sym18091498",
+    "arxiv:2606.09724"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "CRITIQUE",
+  "created_at": "2026-09-30T04:31:31.176174Z",
+  "updated_at": "2026-09-30T04:35:18.018523Z"
+}

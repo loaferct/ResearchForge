@@ -1,0 +1,33 @@
+{
+  "id": "doi:10.2139/ssrn.6691280",
+  "title": "Comparative Evaluation of Large Language Model Augmentation Strategies: RAG, Knowledge Graph, Multi-Step Agent, Fine-Tuning, and Hybrid Approaches",
+  "authors": [
+    "Hari Prasad Sampatirao"
+  ],
+  "year": 2026,
+  "published": null,
+  "venue": null,
+  "url": "https://doi.org/10.2139/ssrn.6691280",
+  "pdf_url": null,
+  "abstract": "The rapid proliferation of large language models (LLMs) has generated substantial interest in techniques for grounding model responses in domain-specific knowledge. This paper presents a systematic empirical comparison of five LLM augmentation strategies applied to document-grounded question answering over a corpus of academic research documents: (1) Retrieval-Augmented Generation (RAG) with FAISS vector search and bibliography filtering, (2) Knowledge Graph (KG) augmentation using NetworkX-based co-occurrence graphs, (3) a Multi-Step Reasoning Agent employing iterative plan-searchreason-synthesise cycles, (4) parameter-efficient fine-tuning of TinyLlama-1.1B via Low-Rank Adaptation (LoRA), and (5) a Hybrid approach combining all three retrieval strategies to feed the fine-tuned model. Using TinyLlama/TinyLlama-1.1B-Chat-v1.0 as the base model across all conditions, we evaluate each approach on five domain-relevant research questions using keyword-overlap relevance scoring and response-time measurement. The Multi-Step Agent achieved the highest average relevance score (0.88), followed by the Hybrid approach (0.67) and Fine-tuning (0.46), while vanilla RAG performed the worst on direct relevance despite lower latency. Our analysis identifies trade-offs between answer quality, computational cost, and deployment complexity, yielding practical guidance for researchers and practitioners selecting LLM augmentation strategies for knowledge-intensive tasks.",
+  "doi": "10.2139/ssrn.6691280",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T05:15:59.796497Z",
+  "relevance": 0.2414,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "token-matched compute-matched control context augmentation fine-tuning ablation language model"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

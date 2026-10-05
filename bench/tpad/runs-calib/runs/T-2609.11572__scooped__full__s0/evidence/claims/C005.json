@@ -1,0 +1,33 @@
+{
+  "id": "C005",
+  "statement": "Adding an explicit temporal decay term to semantic retrieval is not novel in isolation: it is already instantiated as a lexical+dense+exponential-decay hybrid over a temporal benchmark and as learnable exponential decay inside graph-based retrieval. Therefore any contribution from the proposed idea cannot rest on the temporal-decay mechanism alone; it must rest on the retrieval-agnostic formulation, the amended-statute benchmark, and/or the distinction between recency and legal validity.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.2139/ssrn.7174868",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "We propose a three-signal hybrid framework integrating BM25 lexical matching, dense semantic embeddings, and exponential temporal decay, which achieves 99.8% temporal accuracy and 50.8% entity precision across all three languages",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.1109/iri69576.2026.00090",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "Layer 2 integrates learnable exponential decay functions into graph-based retrieval",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "analysis",
+  "tags": [
+    "novelty",
+    "overlap",
+    "direction"
+  ],
+  "recorded_at": "2026-09-30T04:30:38.759354Z"
+}

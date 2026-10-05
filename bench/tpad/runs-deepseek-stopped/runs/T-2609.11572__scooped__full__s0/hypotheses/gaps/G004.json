@@ -1,0 +1,34 @@
+{
+  "id": "G004",
+  "gap": "Construct validity of time-sensitive legal QA evaluation is unexamined: the only version-aware statutory benchmark is fully LLM-generated (697 generated pairs, 312 expert-accepted) with LLM-judged answers, so it is unknown whether measured improvements reflect real retrieval behaviour on amended law or artifacts of the generator and judge.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 5",
+      "quote": "From a total of 697 generated pairs, 312 were accepted.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "LLM-as-a-judge validated against human expert ratings",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2605.23497",
+    "doi:10.1111/jels.12413"
+  ],
+  "why_unaddressed": "Benchmark construction and evaluation are both LLM-driven with expert screening, and no retrieved work reports the agreement between synthetic-item rankings and independent real-query rankings for this task.",
+  "research_question": "Do improvements measured on synthetic, LLM-generated time-sensitive legal QA items transfer to real time-stamped legal queries, or are they artifacts of generation and LLM judging?",
+  "potential_experiment": "Compare model rankings on synthetic benchmark items against a small human-annotated or historically sourced set of real time-stamped legal queries, and include a content-blind date-only baseline to quantify how much score is attributable to timestamps alone.",
+  "confidence": "medium",
+  "verification_required": "Requires access to real time-stamped legal queries (e.g. logs or published point-in-time research questions) and a human-annotated audit sample.",
+  "recorded_at": "2026-09-30T05:24:06.072037Z"
+}

@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2404.00492",
+  "relevance_tier": "high",
+  "problem": "Existing models for multi-hop question answering under knowledge editing perform poorly when questions contain explicit temporal contexts.",
+  "method": "Proposes TEMPLE-MQA: first constructs a time-aware graph (TAG) to store edit knowledge structurally, then uses inference path, structural retrieval, and joint reasoning stages to discern temporal contexts in the question query.",
+  "key_assumptions": [
+    "Storing edit knowledge in a time-aware graph improves the handling of temporal contexts.",
+    "The proposed inference path and joint reasoning stages can effectively discern temporal contexts."
+  ],
+  "main_contribution": "TEMPLE-MQA framework for multi-hop QA under knowledge editing that handles temporal contexts, plus a new dataset TKEMQA for MQA with temporal scopes.",
+  "datasets": [
+    "TKEMQA dataset (new benchmark for MQA with temporal scopes)"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "baseline models (not specified)"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"Experiments on benchmark datasets demonstrate that TEMPLE-MQA significantly outperforms baseline models.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "The paper focuses on temporal knowledge editing and constructing time-aware graphs, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:54:40.769549Z"
+}

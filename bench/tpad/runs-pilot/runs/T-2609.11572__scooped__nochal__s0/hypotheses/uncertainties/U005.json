@@ -1,0 +1,30 @@
+{
+  "id": "U005",
+  "question": "Could observed improvements be due to better retrieval of recent documents rather than temporal relevance per se?",
+  "description": "Need to isolate effect of temporal relevance from general recency bias.",
+  "category": "confounder",
+  "importance": "medium",
+  "status": "partially_resolved",
+  "next_action": "VERIFY",
+  "possible_actions": [
+    "COMPARE",
+    "VERIFY"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Confounder could invalidate causal claim.",
+  "resolution": "While TempRALM's scoring mechanism inherently prefers more recent passages within the valid temporal window, their evaluation shows largest improvements when querying about past events where semantic matching to current text fails (different years), suggesting the temporal component primarily helps select passages from the correct time period rather than merely preferring recent documents. However, their evaluation design (where correct answers are always the most recent valid passage) prevents disentangling whether improvements come from selecting the correct time period versus preferring the most recent passage within that period. Re3's Re2Bench, designed to disentangle relevance and recency, may offer a cleaner assessment.",
+  "paper_ids": [
+    "arxiv:2401.13222",
+    "arxiv:2509.01306"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "PLAN",
+  "created_at": "2026-09-30T09:45:46.877033Z",
+  "updated_at": "2026-09-30T10:20:35.300702Z"
+}

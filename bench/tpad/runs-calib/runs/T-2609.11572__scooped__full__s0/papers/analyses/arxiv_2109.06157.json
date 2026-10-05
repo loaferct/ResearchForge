@@ -1,0 +1,43 @@
+{
+  "paper_id": "arxiv:2109.06157",
+  "relevance_tier": "medium",
+  "problem": "Answers to the same question change depending on extra-linguistic context (when and where the question is asked), yet the standard static QA evaluation paradigm does not measure adaptation to new contexts.",
+  "method": "Identify context-dependent questions in existing open-retrieval QA datasets via annotation/heuristics, crowdsource alternative contexts and their answers, then evaluate whether existing open-retrieval systems answer with up-to-date facts when given an updated evidence corpus.",
+  "key_assumptions": [
+    "Context-dependence can be identified and crowdsourced for existing questions",
+    "Temporal context is adequately represented by a date",
+    "Adaptation to new facts is tested by swapping in an updated retrieval corpus"
+  ],
+  "main_contribution": "SituatedQA, a dataset of questions with alternative temporal/geographic contexts and answers, plus an empirical demonstration that open-retrieval QA does not adapt to updated facts even with an updated corpus.",
+  "datasets": [
+    "9K questions annotated from four existing open-retrieval QA datasets (e.g., NQ-Open) with alternative temporal/geographic contexts and answers"
+  ],
+  "benchmarks": [
+    "SituatedQA"
+  ],
+  "baselines": [
+    "Open-retrieval QA systems (retriever-reader pipelines, e.g., DPR-style) trained on past data with an updated evidence corpus"
+  ],
+  "metrics": [
+    "Answer accuracy"
+  ],
+  "results": "Roughly 16.5% of NQ-Open questions are context-dependent; state-of-the-art retrieval-based systems with an updated corpus are 15 percentage points less accurate on questions asked in the present; models struggle on frequently updated answers.",
+  "limitations": [
+    "Temporal context is a date, with no versioning, supersession or near-duplicate revision structure",
+    "The corpus-update test replaces documents rather than tracking amendments to the same text",
+    "Covers temporal and geographic contexts as a joint study"
+  ],
+  "future_work": [
+    "Open-retrieval QA benchmarks should incorporate extra-linguistic context to stay relevant globally and in the future"
+  ],
+  "code_availability": "Public: https://situatedqa.github.io/ (data, code, datasheet)",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "Diagnoses the problem (retrieval QA does not adapt to updated facts) rather than proposing a temporal relevance term; its notion of temporal context is a question date over a web QA corpus, not a validity interval over near-duplicate amended clauses.",
+    "basis": "Full text and abstract confirm time-dependent answers and retrieval failure on updated corpora; however the paper proposes no temporal ranking component and its corpus lacks amendment/version structure."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T04:29:58.643183Z"
+}

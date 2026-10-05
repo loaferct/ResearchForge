@@ -1,0 +1,114 @@
+{
+  "field_name": "Temporal Information Retrieval for Versioned Texts in Question Answering",
+  "categories": [
+    {
+      "name": "Query Expansion Techniques",
+      "parent": null,
+      "description": "Methods that expand queries using generated text, embeddings, or pseudo-relevance feedback to improve retrieval effectiveness.",
+      "paper_ids": [
+        "arxiv:2306.09938",
+        "doi:10.5121/ijnlc.2020.9101"
+      ]
+    },
+    {
+      "name": "Temporal Information Retrieval",
+      "parent": null,
+      "description": "Approaches that model temporal aspects (e.g., recency, time constraints) in retrieval, often balancing relevance and time signals.",
+      "paper_ids": [
+        "arxiv:2509.01306"
+      ]
+    },
+    {
+      "name": "Efficient Retrieval",
+      "parent": null,
+      "description": "Techniques that reduce online latency via offline precomputation, approximate methods, or lightweight models.",
+      "paper_ids": [
+        "doi:10.1145/3404835.3463073"
+      ]
+    },
+    {
+      "name": "Temporal Graph / Expert Finding",
+      "parent": null,
+      "description": "Methods that construct temporal graphs based on citation, author, or occurrence to model document relevance over time.",
+      "paper_ids": [
+        "doi:10.31803/tg-20230715000112"
+      ]
+    },
+    {
+      "name": "Question Answering over Regulatory Documents",
+      "parent": null,
+      "description": "QA systems tailored for regulatory, legal, or policy documents, often considering document structure and versioning.",
+      "paper_ids": [
+        "doi:10.3233/978-1-61499-935-5-41"
+      ]
+    }
+  ],
+  "idea_position": "Temporal Information Retrieval (specifically applied to versioned regulatory documents for open-domain QA)",
+  "dominant_approaches": [
+    "Learned gating mechanisms to dynamically balance semantic and temporal signals (e.g., Re3)",
+    "Temporal graph modeling based on document relationships over time",
+    "Offline precomputation of relevance weights for efficient retrieval",
+    "Query expansion using embeddings or generated text"
+  ],
+  "common_assumptions": [
+    "Each document version has a valid timestamp indicating enactment or amendment time.",
+    "Queries are associated with a target date (the time the question is asked).",
+    "Semantic similarity (e.g., from dense retrievers) provides a useful baseline for relevance.",
+    "Temporal relevance can be modeled as a function of time difference (e.g., decaying function).",
+    "Combining temporal and semantic signals can improve retrieval for time-sensitive queries."
+  ],
+  "common_datasets": [
+    "MS MARCO (passage and document ranking)",
+    "TREC Robust04",
+    "CODEC",
+    "Re2Bench (Relevance & Recency Benchmark)"
+  ],
+  "common_benchmarks": [
+    "MS MARCO",
+    "TREC Robust04",
+    "CODEC",
+    "Re2Bench"
+  ],
+  "common_metrics": [
+    "Recall@K",
+    "Mean Reciprocal Rank (MRR)",
+    "Mean Average Precision (MAP)",
+    "Normalized Discounted Cumulative Gain (nDCG)",
+    "Precision@K"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Assumes explicit or reliably extractable timestamps, which may not hold in all settings.",
+      "paper_ids": [
+        "arxiv:2509.01306"
+      ]
+    },
+    {
+      "description": "Evaluation limited to specific domains (e.g., web, news), lacking generalization to other areas like scientific literature or regulatory texts.",
+      "paper_ids": [
+        "arxiv:2509.01306",
+        "arxiv:2306.09938"
+      ]
+    },
+    {
+      "description": "Reliance on external components (e.g., neural re-rankers) adds complexity and latency.",
+      "paper_ids": [
+        "arxiv:2306.09938"
+      ]
+    },
+    {
+      "description": "Latency may increase with large candidate pools when using re-ranking or complex temporal modeling.",
+      "paper_ids": [
+        "arxiv:2509.01306"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Applying learned temporal relevance gating (like Re3) to versioned regulatory documents for QA",
+    "Combining temporal graph methods with semantic retrieval for expert finding over regulatory versions",
+    "Integrating query expansion with temporal relevance for handling hallucinations in versioned text QA",
+    "Using offline precomputation (like CORW) to enable efficient temporal-semantic retrieval over large versioned corpora"
+  ],
+  "contradictions": [],
+  "recorded_at": "2026-09-30T10:26:41.872224Z"
+}

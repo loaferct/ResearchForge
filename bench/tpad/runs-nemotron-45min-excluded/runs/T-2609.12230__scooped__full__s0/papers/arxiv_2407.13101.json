@@ -1,0 +1,41 @@
+{
+  "id": "arxiv:2407.13101",
+  "title": "Retrieve, Summarize, Plan: Advancing Multi-hop Question Answering with an Iterative Approach",
+  "authors": [
+    "Zhouyu Jiang",
+    "Mengshu Sun",
+    "Lei Liang",
+    "Zhiqiang Zhang"
+  ],
+  "year": 2024,
+  "published": "2024-07-18",
+  "venue": "The Web Conference",
+  "url": "https://arxiv.org/abs/2407.13101",
+  "pdf_url": "https://arxiv.org/pdf/2407.13101v2",
+  "abstract": "Multi-hop question answering is a challenging task with distinct industrial relevance, and Retrieval-Augmented Generation (RAG) methods based on large language models (LLMs) have become a popular approach to tackle this task. Owing to the potential inability to retrieve all necessary information in a single iteration, a series of iterative RAG methods has been recently developed, showing significant performance improvements. However, existing methods still face two critical challenges: context overload resulting from multiple rounds of retrieval, and over-planning and repetitive planning due to the lack of a recorded retrieval trajectory. In this paper, we propose a novel iterative RAG method called ReSP, equipped with a dual-function summarizer. This summarizer compresses information from retrieved documents, targeting both the overarching question and the current sub-question concurrently. Experimental results on the multi-hop question-answering datasets HotpotQA and 2WikiMultihopQA demonstrate that our method significantly outperforms the state-of-the-art, and exhibits excellent robustness concerning context length.",
+  "doi": "10.1145/3701716.3716889",
+  "arxiv_id": "2407.13101",
+  "openalex_id": "W4411549472",
+  "s2_id": "8051818817a9a3815be6623a679d4a7f5a7b7964",
+  "source": "arxiv",
+  "sources": [
+    "arxiv",
+    "openalex",
+    "semantic_scholar"
+  ],
+  "citation_count": 12,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T05:40:04.398895Z",
+  "relevance": 0.75,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering datasets HotpotQA 2WikiMultiHopQA",
+    "subgraph size multi-hop question answering context"
+  ],
+  "code_urls": [],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": [
+    "abstract (from arxiv) never mentions 'Retrieve, Summarize, Plan'; it may belong to another work"
+  ]
+}

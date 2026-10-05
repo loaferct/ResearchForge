@@ -1,0 +1,284 @@
+{
+  "field_name": "Context construction and supervision for multi-hop knowledge-graph question answering",
+  "categories": [
+    {
+      "name": "Inference-time context construction (retrieval, prompting, agents)",
+      "parent": null,
+      "description": "Methods that leave the reader language model frozen and improve multi-hop KGQA by choosing which KG triples to place in the prompt/context at inference.",
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1",
+        "arxiv:2509.21035",
+        "arxiv:2609.10237",
+        "arxiv:2607.23278"
+      ]
+    },
+    {
+      "name": "Subgraph retrieval with merging and ordering",
+      "parent": "Inference-time context construction (retrieval, prompting, agents)",
+      "description": "Retrieve a local subgraph with Cypher/SPARQL, deduplicate/merge overlapping triplets, and impose an order before prompting.",
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    },
+    {
+      "name": "Learned/agentic context engineering under resource budgets",
+      "parent": "Inference-time context construction (retrieval, prompting, agents)",
+      "description": "Treat context construction as a sequential decision process and learn the selection policy (e.g., constrained multi-agent RL) with latency/token budgets.",
+      "paper_ids": [
+        "arxiv:2509.21035"
+      ]
+    },
+    {
+      "name": "Controlled prompt-composition ablation",
+      "parent": "Inference-time context construction (retrieval, prompting, agents)",
+      "description": "Systematically vary which triples, syntax, order, and grounding instruction enter the prompt, using gold subgraphs to remove retriever variance.",
+      "paper_ids": [
+        "arxiv:2609.10237"
+      ]
+    },
+    {
+      "name": "Training-free graph-text memory co-evolution",
+      "parent": "Inference-time context construction (retrieval, prompting, agents)",
+      "description": "Maintain synchronized textual and relational working memory during reasoning, extracting triples from text and injecting graph facts back into generation.",
+      "paper_ids": [
+        "arxiv:2607.23278"
+      ]
+    },
+    {
+      "name": "Knowledge-augmented language model architectures",
+      "parent": null,
+      "description": "Methods that change the model architecture or input representation to fuse a KG subgraph with language, trained on downstream QA labels.",
+      "paper_ids": [
+        "doi:10.18653/v1/2020.emnlp-main.99",
+        "doi:10.1609/aaai.v32i1.12057",
+        "arxiv:2410.08475"
+      ]
+    },
+    {
+      "name": "Subgraph reasoning modules fused with pretrained language models",
+      "parent": "Knowledge-augmented language model architectures",
+      "description": "Multi-hop graph relation networks over extracted KG subgraphs, unifying path-based reasoning and GNNs.",
+      "paper_ids": [
+        "doi:10.18653/v1/2020.emnlp-main.99"
+      ]
+    },
+    {
+      "name": "Latent-path / variational training from QA pairs",
+      "parent": "Knowledge-augmented language model architectures",
+      "description": "Learn multi-hop reasoning from question-answer pairs alone with latent variables, without explicit reasoning-chain supervision.",
+      "paper_ids": [
+        "doi:10.1609/aaai.v32i1.12057"
+      ]
+    },
+    {
+      "name": "Sparse-KG prompting with link extrapolation",
+      "parent": "Knowledge-augmented language model architectures",
+      "description": "Prompt the LLM to build entity groups and probe plausible (factual and extrapolated) relationships to compensate for very sparse KGs.",
+      "paper_ids": [
+        "arxiv:2410.08475"
+      ]
+    },
+    {
+      "name": "KG-embedding-based multi-hop KGQA",
+      "parent": null,
+      "description": "Use knowledge graph embeddings and missing-link prediction so multi-hop QA can be answered over sparse KGs without restricting answers to a prespecified neighborhood.",
+      "paper_ids": [
+        "doi:10.18653/v1/2020.acl-main.412"
+      ]
+    },
+    {
+      "name": "Reinforcement-learning-based training for structured/graph reasoning",
+      "parent": null,
+      "description": "Train models (or policies) with RL to perform graph-structured reasoning, query parsing, or context selection.",
+      "paper_ids": [
+        "arxiv:2506.21575",
+        "arxiv:2509.21035"
+      ]
+    },
+    {
+      "name": "RL over executable query formalisms (SQL/Cypher)",
+      "parent": "Reinforcement-learning-based training for structured/graph reasoning",
+      "description": "Joint RL + CoT over relational and graph query languages with topology-aware rewards, inducing cross-formalism transfer and zero-shot downstream QA gains.",
+      "paper_ids": [
+        "arxiv:2506.21575"
+      ]
+    },
+    {
+      "name": "RL over context-selection policies",
+      "parent": "Reinforcement-learning-based training for structured/graph reasoning",
+      "description": "Constrained multi-agent RL that learns what to expand and keep in the prompt under resource budgets.",
+      "paper_ids": [
+        "arxiv:2509.21035"
+      ]
+    },
+    {
+      "name": "Training-time supervision-signal design for KG reasoning",
+      "parent": null,
+      "description": "The category the proposed idea occupies: changing what the model is trained on (triple/path supervision, context-enriched supervision, corrective examples) rather than only what it sees at inference.",
+      "paper_ids": [
+        "doi:10.18653/v1/2023.findings-emnlp.580",
+        "arxiv:2506.21575",
+        "doi:10.18653/v1/2020.emnlp-main.99"
+      ]
+    },
+    {
+      "name": "Knowledge-in-context for knowledge graph completion",
+      "parent": "Training-time supervision-signal design for KG reasoning",
+      "description": "Give an LLM additional KG facts in context to predict missing head-relation-tail links (link prediction, not multi-hop QA).",
+      "paper_ids": [
+        "doi:10.18653/v1/2023.findings-emnlp.580"
+      ]
+    },
+    {
+      "name": "Proposed: same-passage context-enriched triple/path supervision + adaptive repair loop + low-hop RL",
+      "parent": "Training-time supervision-signal design for KG reasoning",
+      "description": "Fine-tune with a local context subgraph drawn from the same source passage as the target triple/path, compare triple-only vs context-enriched regimes, repair one-hop failures with generated corrective examples, then apply RL on lower-hop instances and test transfer to deeper hops.",
+      "paper_ids": []
+    }
+  ],
+  "idea_position": "The idea sits in the 'Training-time supervision-signal design for KG reasoning' category, and specifically in an empty sub-category (same-passage context-enriched triple/path supervision + repair loop + low-hop RL). Every analyzed high-relevance work instead occupies the 'Inference-time context construction' category (SG-RAG MOT, CLAUSE, the answer-path prompt study, Co-E) or the 'Knowledge-augmented LM architectures' / 'KG-embedding' categories. The closest neighbors are inference-time subgraph curation (A1-A3) and RL policy training (C2); no analyzed paper changes the fine-tuning supervision signal by adding same-passage context triples, and none reports hop-depth transfer from shallow-only training.",
+  "dominant_approaches": [
+    "Retrieve/assemble a local KG subgraph and prompt a frozen or lightly adapted LLM (SG-RAG MOT, CLAUSE, Co-E, answer-path study)",
+    "Fuse a KG subgraph with a pretrained language model through a dedicated graph module (GreaseLM/MHGRN)",
+    "Use KG embeddings and missing-link prediction to cope with sparsity (EmbedKGQA)",
+    "Learn context selection or query parsing with RL under rewards/budgets (CLAUSE, STRuCT-LLM)",
+    "Training-free prompting that builds or extrapolates a relational context around the query (GIVE, Co-E)"
+  ],
+  "common_assumptions": [
+    "A bounded local subgraph of triples is the right evidence container for multi-hop questions.",
+    "Adding relevant KG triples to the model's context improves multi-hop accuracy (explicitly challenged by the answer-path study and by CLAUSE's over-retrieval finding).",
+    "The reader model or its training supervision need not change; most methods operate on context at inference.",
+    "Reasoning paths / gold subgraphs are obtainable (gold SPARQL, path supervision) and can be used for training or evaluation.",
+    "Hop depth (chain length) is the primary difficulty axis of multi-hop QA.",
+    "KG incompleteness and noise are handled by retrieval, extrapolation, or embeddings rather than by repairing the training supervision.",
+    "Answer accuracy on standard benchmarks (MetaQA/WebQSP/CWQ/CommonsenseQA) is the primary success criterion, sometimes with latency/token budgets."
+  ],
+  "common_datasets": [
+    "MetaQA",
+    "WebQuestionsSP",
+    "ComplexWebQuestions",
+    "HotpotQA",
+    "FactKG",
+    "CommonsenseQA",
+    "OpenbookQA",
+    "CR-LT-KGQA",
+    "Spider",
+    "Text2Cypher",
+    "PubmedQA",
+    "BioASQ",
+    "Processbank",
+    "UMLS",
+    "ConceptNet"
+  ],
+  "common_benchmarks": [
+    "MetaQA 2-hop/3-hop",
+    "WebQuestionsSP",
+    "ComplexWebQuestions",
+    "HotpotQA",
+    "FactKG",
+    "CommonsenseQA / OpenbookQA",
+    "Text-to-SQL (Spider) / Text-to-Cypher",
+    "Knowledge graph completion (standard KGC benchmarks, names not retrieved for KICGPT)"
+  ],
+  "common_metrics": [
+    "Hits@1",
+    "answer accuracy",
+    "EM@1",
+    "F1",
+    "end-to-end latency",
+    "token budget / selected tokens",
+    "edge growth",
+    "execution accuracy (semantic parsing)"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Context is constructed or curated at inference; the language model's training supervision is not the manipulated variable, so it is untested whether a better training signal (not better retrieval) is what multi-hop KGQA needs.",
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1",
+        "arxiv:2509.21035",
+        "arxiv:2607.23278",
+        "arxiv:2609.10237",
+        "doi:10.18653/v1/2020.emnlp-main.99"
+      ]
+    },
+    {
+      "description": "No per-hop-depth breakdown or explicit shallow-to-deep transfer measurement; results are reported at aggregate or single-depth level (e.g., MetaQA-2-hop headline, zero-shot KGQA gain only +1.7%).",
+      "paper_ids": [
+        "arxiv:2509.21035",
+        "arxiv:2506.21575",
+        "doi:10.18653/v1/2020.acl-main.412",
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    },
+    {
+      "description": "Base facts are trusted as-is: sparsity/noise is compensated by extrapolation, retrieval, or link prediction, and errors are not detected and repaired in a training loop.",
+      "paper_ids": [
+        "arxiv:2410.08475",
+        "doi:10.18653/v1/2020.acl-main.412",
+        "arxiv:2607.23278"
+      ]
+    },
+    {
+      "description": "Evaluation is often on a single benchmark or narrow domain (e.g., MetaQA only; UMLS/ConceptNet; CommonsenseQA/OpenbookQA), limiting generality of the claims.",
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1",
+        "arxiv:2410.08475",
+        "doi:10.18653/v1/2020.emnlp-main.99"
+      ]
+    },
+    {
+      "description": "Inaccessible or missing evidence (no abstract/full text) prevents verification of method and result overlap for some works.",
+      "paper_ids": [
+        "doi:10.18653/v1/2023.findings-emnlp.580"
+      ]
+    },
+    {
+      "description": "Training-based approaches either use large models/heavy RL infrastructure or use latent variables rather than explicit context supervision, making them hard to compare against lightweight context-enriched fine-tuning.",
+      "paper_ids": [
+        "arxiv:2506.21575",
+        "doi:10.1609/aaai.v32i1.12057"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Training-time context-enriched supervision for multi-hop KGQA under a matched supervision-token budget, compared directly against triple/path-only fine-tuning of the same model.",
+    "Same-source-passage (text-aligned) context triples for standard multi-hop KGQA benchmarks, most of which use KG-neighborhood retrieval rather than passage-grounded context.",
+    "Combining an adaptive one-hop failure detector/repair loop with context-enriched supervision, with one-hop failure rate as a reported diagnostic.",
+    "RL optimization restricted to lower-hop instances with an explicit, pre-registered measurement of transfer to deeper hops (hop-depth breakdown and transfer gap).",
+    "A relevance-controlled context ablation (same-passage vs shuffled/random triples at fixed budget) to separate 'more tokens' from 'supporting context'.",
+    "Separating the value of the answer path from the value of surrounding context at training time (currently only tested at inference time)."
+  ],
+  "contradictions": [
+    {
+      "description": "Ordering/merging triplets is claimed to improve answer precision (SG-RAG MOT), whereas a controlled study finds that syntax, triple order, and subgraph size produce no measurable effect at multi-hop depth; only the presence of the answer path matters.",
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1",
+        "arxiv:2609.10237"
+      ]
+    },
+    {
+      "description": "The proposed direction assumes that adding surrounding context triples helps, but the answer-path study finds that replacing all non-chain triples with unrelated-entity material changes multi-hop accuracy by only +0.003 F1, and CLAUSE finds over-retrieval and distractor triples depress accuracy.",
+      "paper_ids": [
+        "arxiv:2609.10237",
+        "arxiv:2509.21035"
+      ]
+    },
+    {
+      "description": "Training-free systems are reported competitive with trained systems (Co-E), while trained/embedding-based systems claim state-of-the-art gains (EmbedKGQA, GreaseLM), leaving unclear how much headroom specifically belongs to training-time supervision versus inference-time context.",
+      "paper_ids": [
+        "arxiv:2607.23278",
+        "doi:10.18653/v1/2020.acl-main.412",
+        "doi:10.18653/v1/2020.emnlp-main.99"
+      ]
+    },
+    {
+      "description": "EmbedKGQA treats KG incompleteness as the central obstacle to multi-hop KGQA, while inference-time context methods largely assume the needed triples can be retrieved or extrapolated at query time; the two framings imply different remedies (link repair vs context construction).",
+      "paper_ids": [
+        "doi:10.18653/v1/2020.acl-main.412",
+        "arxiv:2410.08475",
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    }
+  ],
+  "recorded_at": "2026-09-30T05:13:25.520082Z"
+}

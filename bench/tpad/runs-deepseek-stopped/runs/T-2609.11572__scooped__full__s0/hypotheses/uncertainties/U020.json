@@ -1,0 +1,31 @@
+{
+  "id": "U020",
+  "question": "How accurately can a query's target date be inferred when it is implicit rather than explicitly stated, and does date-inference error dominate validity-metadata noise as a failure source for interval-membership scoring?",
+  "description": "The interval-membership component needs the query's target date. Prior et al. obtain it by a regex over the question, which assumes the date is stated explicitly. TIQ exists precisely because implicit time constraints ('during the Cold War') are a distinct, harder problem. If target dates are often implicit in real legal queries, the temporal component requires a date-inference step whose errors propagate directly into version selection and could dominate the metadata-noise effect being proposed as the contribution.",
+  "category": "feasibility",
+  "importance": "medium",
+  "status": "open",
+  "next_action": "INVESTIGATE_GAP",
+  "possible_actions": [
+    "INVESTIGATE_GAP",
+    "SEARCH",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "If implicit dates are common and inferred poorly, the temporal term's input error may swamp the metadata-noise effect the refined direction relies on, changing which robustness failure to study.",
+  "resolution": "",
+  "paper_ids": [],
+  "supporting_paper_ids": [
+    "arxiv:2605.23497",
+    "doi:10.1145/3589335.3651895"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T05:29:17.283542Z",
+  "updated_at": "2026-09-30T05:29:17.283749Z"
+}

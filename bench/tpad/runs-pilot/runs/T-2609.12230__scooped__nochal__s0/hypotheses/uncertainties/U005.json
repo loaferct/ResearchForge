@@ -1,0 +1,33 @@
+{
+  "id": "U005",
+  "question": "How much does the proposed method overlap with existing KGQA approaches that use contextual information (e.g., PullNet, GraftNet, KG-o1)?",
+  "description": "Assess the degree of similarity between the proposed local context subgraph enrichment and existing methods that incorporate contextual or subgraph information.",
+  "category": "overlap",
+  "importance": "medium",
+  "status": "partially_resolved",
+  "next_action": "COMPARE",
+  "possible_actions": [
+    "COMPARE",
+    "READ"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Understanding overlap helps clarify the incremental contribution and avoid duplication.",
+  "resolution": "The proposed idea overlaps with existing KGQA approaches (PullNet, GraftNet, KG-o1) in the goal of incorporating contextual information to improve reasoning, but differs in mechanism: PullNet adds shortest-path supervised signal during retrieval, GraftNet uses a variational graph CNN on question-specific subgraphs, and KG-o1 constructs a training dataset via entity filtering, logical path construction, and DPO. The proposed idea instead enriches each target triple with local context subgraphs from the same source passage and includes an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction.",
+  "paper_ids": [
+    "arxiv:2110.12679",
+    "arxiv:2508.15790"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2110.12679",
+    "arxiv:2508.15790"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "PLAN",
+  "created_at": "2026-09-30T06:33:09.724278Z",
+  "updated_at": "2026-09-30T07:09:22.595300Z"
+}

@@ -1,0 +1,49 @@
+{
+  "paper_id": "arxiv:2306.09938",
+  "relevance_tier": "high",
+  "problem": "Query expansion using Large Language Models (LLMs) can generate irrelevant content (hallucinations) that harms retrieval effectiveness.",
+  "method": "Generative Relevance Modeling (GRM) with Relevance-Aware Sample Estimation (RASE) that estimates relevance of generated documents via similarity to real documents in the collection, using a neural re-ranker to weight expansion terms.",
+  "key_assumptions": [
+    "LLMs can generate documents covering subtopics of complex information needs.",
+    "Semantic similarity to real documents approximates the relevance of generated content."
+  ],
+  "main_contribution": "GRM framework that improves query expansion effectiveness by reducing hallucination impact through relevance-aware weighting.",
+  "datasets": [
+    "TREC Robust04",
+    "CODEC"
+  ],
+  "benchmarks": [
+    "TREC Robust04",
+    "CODEC"
+  ],
+  "baselines": [
+    "BM25+RM3",
+    "GRF",
+    "GRF-News",
+    "SPLADE+RM3",
+    "CEQE",
+    "PCT+PRF"
+  ],
+  "metrics": [
+    "MAP",
+    "nDCG",
+    "Recall@1k"
+  ],
+  "results": "[\"GRM improves MAP by 6-9% and Recall@1k by 2-4% over prior state-of-the-art expansion methods on TREC Robust04 and CODEC.\"]",
+  "limitations": [
+    "Effectiveness depends on the quality of generated documents; requires a neural re-ranker for RASE.",
+    "Performance varies significantly across queries.",
+    "Reliance on external re-ranker adds complexity."
+  ],
+  "future_work": [],
+  "code_availability": "[]",
+  "relation_to_idea": {
+    "problem_overlap": 0.3,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.1,
+    "conceptual_difference": "GRM focuses on query expansion via LLM-generated documents; our idea addresses temporal dynamics in versioned documents for QA, not query expansion.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T10:23:20.437307Z"
+}

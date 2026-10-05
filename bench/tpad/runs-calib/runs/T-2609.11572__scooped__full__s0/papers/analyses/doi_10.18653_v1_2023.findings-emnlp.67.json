@@ -1,0 +1,44 @@
+{
+  "paper_id": "doi:10.18653/v1/2023.findings-emnlp.67",
+  "relevance_tier": "medium",
+  "problem": "Answering time-sensitive questions from long documents requires temporal reasoning over the times in questions and documents; it is open whether LLMs can do this from text alone or benefit from externally extracted temporal structure.",
+  "method": "Use existing temporal information extraction systems to build temporal graphs of events, times and relations in questions and documents, then fuse these graphs into Transformer models for time-sensitive QA.",
+  "key_assumptions": [
+    "Existing temporal information extraction systems can construct useful temporal graphs of questions and documents",
+    "Fusing temporal graphs into text input benefits Transformer reasoning"
+  ],
+  "main_contribution": "A method for fusing temporal graphs of events, times and temporal relations into Transformer input, establishing state-of-the-art performance on SituatedQA and three TimeQA splits.",
+  "datasets": [
+    "SituatedQA",
+    "TimeQA (three splits)"
+  ],
+  "benchmarks": [
+    "SituatedQA",
+    "Three splits of TimeQA"
+  ],
+  "baselines": [
+    "Graph convolution-based approaches",
+    "Transformer models with and without fine-tuning"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "Fusing temporal graphs into input text substantially enhances temporal reasoning of Transformer models with or without fine-tuning and outperforms graph convolution-based approaches, setting new state-of-the-art performance on SituatedQA and three TimeQA splits.",
+  "limitations": [
+    "not stated in abstract",
+    "Targets temporal reasoning over a given document set rather than selecting among document versions"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.15,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "Improves temporal reasoning inside the reader by injecting extracted temporal graphs, not by re-ranking retrieved passages by version time; no amended/versioned documents or validity intervals.",
+    "basis": "Abstract shows temporal-graph fusion into Transformer encoders evaluated on SituatedQA/TimeQA; shares the time-sensitive QA problem and two relevant benchmarks but has no retrieval-ranking or document-version component."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T04:29:58.660899Z"
+}

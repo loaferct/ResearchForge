@@ -1,0 +1,38 @@
+{
+  "id": "doi:10.2139/ssrn.6203161",
+  "title": "An Adaptive Error Correction Method for Training Physics-informed Neural Networks to Solve Inverse Problems with Noisy Observational Data",
+  "authors": [
+    "Wensheng Li",
+    "Hanting Guan",
+    "Hao Wang",
+    "Ruifeng Zhou",
+    "Chao Zhang",
+    "Dacheng Tao"
+  ],
+  "year": 2026,
+  "published": null,
+  "venue": null,
+  "url": "https://doi.org/10.2139/ssrn.6203161",
+  "pdf_url": null,
+  "abstract": "Physics-informed neural networks (PINNs) provide a data-driven framework for solving partial differential equation (PDE) inverse problems, whose unknown parameters are estimated by utilizing observational data. In many practical problems, since the available observational data often contain random noise and even are of a limited size, the conventional training strategy of inverse problems could not provide reasonable numerical solutions and even lead to training failure. In this study, we first introduce a trainable error correction (EC) factor for each observational sample to mitigate the negative effect of noise. These EC factors with a fixed learning rate could introduce extra bias into the obtained training results after the noise is nearly eliminated. To address this issue, we further propose an adaptive error correction (AdaEC) method, which dynamically adjusts the learning rate of the EC factors by monitoring the relationship between the PDE residual loss calculated on the observational data and that calculated on the collocation points during the training process. Since the AdaEC method neither introduces any additional module into PINNs nor requires any prior knowledge of the noise distribution, it has a high applicability in practice. The theoretical analysis and comparative experiments with recent methods support the effectiveness of the proposed AdaEC method. Finally, we illustrate the practical engineering application of AdaEC in the Timoshenko beam inverse problem.",
+  "doi": "10.2139/ssrn.6203161",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T05:04:08.836917Z",
+  "relevance": 0.45,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "iterative data repair self-training noisy knowledge graph facts error correction"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

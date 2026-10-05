@@ -1,0 +1,41 @@
+{
+  "paper_id": "doi:10.3390/electronics13081436",
+  "relevance_tier": "low",
+  "problem": "Multi-hop QA requires integrating machine comprehension with relational reasoning over KGs, and prior models either handle complex relational paths poorly or lack transparency in reasoning.",
+  "method": "Dependent Syntactic Semantic Augmented Graph Network (DSSAGN): an architecture that combines syntactic structures with semantic relations in a graph network and dynamically prioritizes syntactic-semantic context to model multi-hop relations.",
+  "key_assumptions": [
+    "Syntactic structure and semantic relations jointly improve multi-hop relational reasoning and interpretability. [abstract]",
+    "Dynamic prioritization of syntactic-semantic context is beneficial for complex relational paths. [abstract]"
+  ],
+  "main_contribution": "A dependent syntactic-semantic augmented graph network claimed to improve interpretability, scalability, and accuracy for multi-hop QA by modeling multi-hop relations and dynamically prioritizing syntactic-semantic context.",
+  "datasets": [
+    "Not stated in the abstract."
+  ],
+  "benchmarks": [
+    "Not stated in the abstract."
+  ],
+  "baselines": [
+    "Not stated in the abstract."
+  ],
+  "metrics": [
+    "Not stated in the abstract."
+  ],
+  "results": "Claimed improvements in interpretability, scalability, and accuracy; no numbers or datasets are stated in the abstract.",
+  "limitations": [
+    "Abstract gives no datasets, baselines, metrics, or numerical results, so claims are unverifiable from the retrieved record.",
+    "No relation to LLM supervised fine-tuning on KG triples, context-attached supervision, repair, or RL."
+  ],
+  "future_work": [
+    "Not stated in the abstract."
+  ],
+  "code_availability": "Not stated in the abstract.",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.25,
+    "evaluation_overlap": 0.15,
+    "conceptual_difference": "DSSAGN adds syntactic-semantic graph reasoning structure to a multi-hop QA network; the idea instead changes the training supervision by attaching passage-local context triples to each target triple and adds repair and RL. Conceptual overlap is limited to the general multi-hop KGQA problem framing.",
+    "basis": "Problem overlap 0.4 for shared multi-hop KGQA framing; method overlap 0.25 because both enrich relational context, but DSSAGN does so via architecture (syntactic-semantic graph networks) rather than supervision design, with no triple-attached context, repair, or RL; evaluation overlap 0.15 because no datasets, metrics, or baselines could be verified from the abstract."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:08:14.332772Z"
+}

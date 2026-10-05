@@ -1,0 +1,38 @@
+{
+  "id": "U001",
+  "question": "Does training-time context-enriched (same-passage subgraph) triple/path supervision already exist and subsume the proposed method, or is context injection predominantly an inference-time/prompting technique?",
+  "description": "The core novelty claim is that context should enrich the training supervision signal, not only inference-time retrieval. If prior work already fine-tunes on subgraphs or passage-grounded supervision, the contribution shrinks to an empirical comparison.",
+  "category": "novelty",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Retrieved work so far (SG-RAG MOT doi:10.20944/preprints202505.1992.v1; KICGPT doi:10.18653/v1/2023.findings-emnlp.580; GreaseLM/MHGRN doi:10.18653/v1/2020.emnlp-main.99) injects subgraphs/KG context at retrieval or inference time; none was found that isolates same-passage context as a training-time supervision variable.",
+  "resolution": "Partially resolved by the retrieved set: no directly matching work was found that uses same-passage context triples as a training-time supervision signal. All analyzed context-construction works (SG-RAG MOT, CLAUSE, Co-E, the answer-path prompt study) manipulate context at inference for an un-retrained reader, and the training-time works found (EmbedKGQA, GreaseLM, Variational Reasoning, STRuCT-LLM) do not use passage-context supervision. This is a search result over the recorded queries only; alternative terminology (e.g., contextualized KG pretraining, passage-grounded instruction tuning, graph-augmented LM pretraining) has not yet been searched.",
+  "paper_ids": [
+    "doi:10.20944/preprints202505.1992.v1",
+    "doi:10.18653/v1/2023.findings-emnlp.580",
+    "doi:10.18653/v1/2020.emnlp-main.99",
+    "arxiv:2509.21035",
+    "arxiv:2607.23278",
+    "arxiv:2609.10237"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.10237",
+    "arxiv:2509.21035"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T05:06:11.582918Z",
+  "updated_at": "2026-09-30T05:16:37.569411Z"
+}

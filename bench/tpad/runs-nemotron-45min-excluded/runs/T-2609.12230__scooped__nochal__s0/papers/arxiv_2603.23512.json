@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2603.23512",
+  "title": "S-Path-RAG: Semantic-Aware Shortest-Path Retrieval Augmented Generation for Multi-Hop Knowledge Graph Question Answering",
+  "authors": [
+    "Rong Fu",
+    "Yemin Wang",
+    "Tianxiang Xu",
+    "Yongtai Liu",
+    "Weizhi Tang",
+    "Wangyu Wu",
+    "Xiaowen Ma",
+    "Simon Fong"
+  ],
+  "year": 2026,
+  "published": "2026-03-05",
+  "venue": "The Web Conference",
+  "url": "https://www.semanticscholar.org/paper/a5849638f34e2346e89fe6b82683a22f74ab6fb0",
+  "pdf_url": "https://doi.org/10.1145/3774904.3792459",
+  "abstract": "We present S-Path-RAG, a semantic-aware shortest-path Retrieval-Augmented Generation framework designed to improve multi-hop question answering over large knowledge graphs. S-Path-RAG departs from one-shot, text-heavy retrieval by enumerating bounded-length, semantically weighted candidate paths using a hybrid weighted k-shortest, beam, and constrained random-walk strategy, learning a differentiable path scorer together with a contrastive path encoder and lightweight verifier, and injecting a compact soft mixture of selected path latents into a language model via cross-attention. The system runs inside an iterative Neural-Socratic Graph Dialogue loop in which concise diagnostic messages produced by the language model are mapped to targeted graph edits or seed expansions, enabling adaptive retrieval when the model expresses uncertainty. This combination yields a retrieval mechanism that is both token-efficient and topology-aware while preserving interpretable path-level traces for diagnostics and intervention. We validate S-Path-RAG on standard multi-hop KGQA benchmarks and through ablations and diagnostic analyses. The results demonstrate consistent improvements in answer accuracy, evidence coverage, and end-to-end efficiency compared to strong graph- and LLM-based baselines. We further analyze trade-offs between semantic weighting, verifier filtering, and iterative updates, and report practical recommendations for deployment under constrained compute and token budgets.",
+  "doi": "10.1145/3774904.3792459",
+  "arxiv_id": "2603.23512",
+  "openalex_id": null,
+  "s2_id": "a5849638f34e2346e89fe6b82683a22f74ab6fb0",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 6,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T06:01:14.544054Z",
+  "relevance": 0.5417,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "adaptive repair loop knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

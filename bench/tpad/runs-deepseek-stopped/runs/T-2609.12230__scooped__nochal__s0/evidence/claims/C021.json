@@ -1,0 +1,34 @@
+{
+  "id": "C021",
+  "statement": "The appendices of arxiv:2609.12230 contain a preliminary threshold-selection sweep (Table 23) that varies the SapBERT similarity threshold, changing the mean number of context triples per row, and evaluates the BASE model on CG-grounded 1-hop QA by modifying only the inference prompt; it also reports final context-selection statistics (Table 24) including mean context triples before and after filtering.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 40 (Appendix 9.2)",
+      "quote": "Table 23 reports the preliminary threshold-selection sweep used to choose the SapBERT similarity threshold θ for each disease setting.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 40 (Appendix 9.2)",
+      "quote": "For each candidate threshold, we retrieved the corresponding context triples and modified only the inference prompt so that the model could use the retrieved context when answering.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "appendix",
+    "threshold-sweep",
+    "context-selection",
+    "U015"
+  ],
+  "recorded_at": "2026-09-30T05:30:47.338915Z"
+}

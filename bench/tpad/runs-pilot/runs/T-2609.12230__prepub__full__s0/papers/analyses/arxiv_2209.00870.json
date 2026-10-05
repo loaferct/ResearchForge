@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2209.00870",
+  "relevance_tier": "high",
+  "problem": "Answering natural language questions on knowledge graphs (KGQA) remains challenging due to understanding complex questions via multi-hop reasoning; the rich semantics implied in off-the-shelf relation paths between entities is underutilized, while existing efforts mainly exploit entity-related text corpora or KG embeddings as auxiliary information.",
+  "method": "Proposes improving multi-hop KGQA by exploiting relation paths’ hybrid semantics: integrating explicit textual information and implicit KG structural features of relation paths based on a novel rotate-and-scale entity link prediction framework.",
+  "key_assumptions": [
+    "The hybrid semantics (explicit textual and implicit structural) of relation paths contain beneficial supplementary information to characterize candidate target entities.",
+    "The rotate-and-scale framework effectively captures and utilizes this hybrid semantics for link prediction in KGQA."
+  ],
+  "main_contribution": "Extensive experiments on three existing KGQA datasets demonstrate superiority of the method, especially in multi-hop scenarios, and show systematic coordination between questions and relation paths to identify answer entities.",
+  "datasets": [
+    "three existing KGQA datasets (not specified in abstract)"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract (likely Hits@1 or accuracy)"
+  ],
+  "results": "[\"Extensive experiments on three existing KGQA datasets demonstrate the superiority of our method, especially in multi-hop scenarios.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.25,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "The paper focuses on exploiting hybrid semantics of relation paths via a rotate-and-scale entity link prediction framework, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:10:39.212535Z"
+}

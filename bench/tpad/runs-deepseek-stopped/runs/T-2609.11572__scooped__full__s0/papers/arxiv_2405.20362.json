@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2405.20362",
+  "title": "Grounded or Silent: Citation-Faithful Legal Question Answering for Pakistani Law",
+  "authors": [
+    "محمد كاشف إرشاد"
+  ],
+  "year": 2026,
+  "published": "2026-01-01",
+  "venue": "SSRN Electronic Journal",
+  "url": "https://doi.org/10.2139/ssrn.7475238",
+  "pdf_url": null,
+  "abstract": "Legal AI tools are known to hallucinate: audits of commercial legal research products report fabricated or misgrounded authorities in 17–33% of responses (Magesh et al., 2024). Existing legal QA benchmarks cover well-resourced jurisdictions; for Pakistan — a mixed common-law system of 240 million people — no benchmark spans its statutes and case law. We present PakLegalQA, the first citation-grounded question-answering benchmark for Pakistani law: 300 questions over 946 federal statutes (Pakistan Code) and 2,503 reported Lahore High Court judgments (2022–2026), with gold statute sections and neutral citations, an unanswerable subset whose only correct response is a refusal, and a 60-question code-switched Roman-Urdu overlay reflecting how users actually type. Using PakLegalQA we evaluate a deployed, production grounded-or-refuse RAG system and ablations of its retrieval stack against closed-book and vanilla-RAG baselines. The production system attains 74.5% gold-source retrieval — 14.5 points above vanilla dense retrieval, with title-affinity re-ranking and lexical rescues (citation lookup, name matching, deep reading of named judgments) contributing roughly 7 and 9 points respectively — while over-refusing on only 5.3% (Sol) to 0.6% (gpt-4o) of answerable questions. The closed-book baseline refuses just 7 of 84 unanswerable questions, answering the rest from parametric memory — the grounding-discipline gap the benchmark is designed to expose; grounded systems refuse or honestly signal insufficiency on the large majority. A 24-item stratified manual audit finds 87.5% correct answers and zero fabricated citations: the grounded system's failure mode is mis-selection or silence, never invention. We additionally document a query-rewrite-stage hallucination (the rewrite model injecting a wrong-jurisdiction statute), a failure stage named but unmeasured in prior work, and an infrastructure-failure episode that masqueraded as a calibration collapse — motivating positional sanity checks in LLM evaluation harnesses. The benchmark, harness, and corpus manifest are released. AI Assistance Disclosure: This research was conducted and drafted with substantial AI assistance (Anthropic's Claude: experiment tooling, corpus verification scripts, analysis, and prose drafting). All experiments, data, gold labels, and claims were reviewed by the human author, who bears sole responsibility for the content. Preprint v1.1 (4 September 2026), archived on Zenodo: https://doi.org/10.5281/zenodo.22305084. Benchmark, data and code: https://github.com/mkirshad/grounded-or-silent.",
+  "doi": "10.2139/ssrn.7475238",
+  "arxiv_id": "2405.20362",
+  "openalex_id": "W4399316968",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 39,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T05:01:50.065627Z",
+  "relevance": 0.4375,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "legal question answering statutory amendments temporal version retrieval"
+  ],
+  "code_urls": [
+    "https://github.com/mkirshad/grounded-or-silent"
+  ],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

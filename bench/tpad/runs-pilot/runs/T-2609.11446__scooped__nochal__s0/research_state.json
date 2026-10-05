@@ -1,0 +1,224 @@
+{
+  "project": "T-2609.11446__scooped__nochal__s0",
+  "idea": "We aim to improve collaborative inference among a set of diverse models by establishing a unified reliability metric for their confidence scores. The plan is to first apply a model‑specific calibration step, using held‑out validation data, so that each model’s output probabilities reflect true likelihoods. Once calibrated, we will define common thresholds that determine whether a prediction can be accepted immediately, whether a more powerful model should be consulted, or whether multiple model outputs should be combined. By basing decisions on calibrated confidence, the routing policy becomes independent of the particular models or computational budget in use. We will also develop a theoretical link between calibration and the expected selective risk, and evaluate the approach on language and vision benchmarks.",
+  "created_at": "2026-09-30T11:33:01.522663Z",
+  "updated_at": "2026-09-30T11:37:20.439155Z",
+  "status": "running",
+  "dsh_session_id": "session-c057dc03-edd8-4730-82c7-54390b1876d6",
+  "provider": "ollama-cloud",
+  "model": "nemotron-3-super",
+  "phases": [
+    {
+      "name": "formalize",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T11:33:01.524986Z",
+      "finished_at": "2026-09-30T11:36:37.548845Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 13,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "literature",
+      "status": "complete",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": "2026-09-30T11:36:37.549501Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "analysis",
+      "status": "running",
+      "attempts": 1,
+      "started_at": "2026-09-30T11:37:20.439046Z",
+      "finished_at": null,
+      "missing": [
+        "paper analyses for at least 6 of the most relevant papers (have 0); call record_paper_analysis"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "landscape",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "research landscape (call record_landscape)"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "critique",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "critique (call record_critique)",
+        "at least 2 evidence or inference claims (have 0); call record_claim",
+        "at least one claim backed by a verified quote from a retrieved paper"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "gaps",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least one evidence-linked gap (record_gap), or record_no_gap if the evidence supports none"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "modifications",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least 2 modifications (have 0); call record_modification"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "experiments",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least one experiment plan (call record_experiment_plan)"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "report",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    }
+  ],
+  "error": null,
+  "loop_phase": "INVESTIGATE",
+  "current_action": "READ",
+  "current_focus": null,
+  "budget": {
+    "iterations": 2,
+    "tool_calls": 13,
+    "failed_tool_calls": 0,
+    "runtime_failures": 0,
+    "seconds": 258.85,
+    "tokens": 359665
+  },
+  "decisions": [
+    {
+      "iteration": 0,
+      "phase": "INTAKE",
+      "action": "INTAKE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Research idea received.",
+      "evidence": "idea: We aim to improve collaborative inference among a set of diverse models by establishing a unified reliability metric for their confidence scores. The plan is to first apply a model‑specific calibratio",
+      "expected_outcome": "",
+      "outcome": "idea stored in the workspace",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T11:33:01.523211Z"
+    },
+    {
+      "iteration": 1,
+      "phase": "FORMALIZE",
+      "action": "FORMALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been formalized into a testable research question.",
+      "evidence": "0 papers from 0 searches, 0 analyzed, 0 claims (0 verified), 0 open uncertainties",
+      "expected_outcome": "Problem, hypothesis, variables, assumptions and search queries recorded.",
+      "outcome": "+26 papers; +2 searches; +5 uncertainties; idea formalized",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_paper",
+        "record_idea_analysis",
+        "record_uncertainty",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 26,
+        "relevant_papers": 23,
+        "searches": 2,
+        "uncertainties_created": 5,
+        "idea_formalized": 1
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T11:33:01.524596Z"
+    },
+    {
+      "iteration": 2,
+      "phase": "PLAN",
+      "action": "PLAN",
+      "focus": null,
+      "focus_id": null,
+      "reason": "No investigation plan exists yet, so it is unclear what must be determined.",
+      "evidence": "26 papers from 2 searches, 0 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Questions to answer, search topics and initial uncertainties recorded.",
+      "outcome": "+2 uncertainties; investigation plan recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_investigation_plan",
+        "record_uncertainty"
+      ],
+      "state_changes": {
+        "uncertainties_created": 2,
+        "plan_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T11:36:37.554428Z"
+    }
+  ],
+  "no_progress": {},
+  "blocked_actions": [],
+  "critiques": 0,
+  "papers_at_last_critique": 0,
+  "finalize_reason": null,
+  "awaiting_approval": [],
+  "investigation_closed": null,
+  "investigation_closed_at": null,
+  "challenged_refs": [],
+  "research_decision": null,
+  "research_decision_basis": ""
+}

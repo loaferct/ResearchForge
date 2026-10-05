@@ -1,0 +1,39 @@
+{
+  "id": "arxiv:2402.16568",
+  "title": "Two-stage Generative Question Answering on Temporal Knowledge Graph Using Large Language Models",
+  "authors": [
+    "Yifu Gao",
+    "Linbo Qiao",
+    "Zhigang Kan",
+    "Zhihua Wen",
+    "Yongquan He",
+    "Dongsheng Li"
+  ],
+  "year": 2024,
+  "published": "2024-02-26",
+  "venue": "Annual Meeting of the Association for Computational Linguistics",
+  "url": "https://arxiv.org/abs/2402.16568",
+  "pdf_url": "https://arxiv.org/pdf/2402.16568v2",
+  "abstract": "Temporal knowledge graph question answering (TKGQA) poses a significant challenge task, due to the temporal constraints hidden in questions and the answers sought from dynamic structured knowledge. Although large language models (LLMs) have made considerable progress in their reasoning ability over structured data, their application to the TKGQA task is a relatively unexplored area. This paper first proposes a novel generative temporal knowledge graph question answering framework, GenTKGQA, which guides LLMs to answer temporal questions through two phases: Subgraph Retrieval and Answer Generation. First, we exploit LLM's intrinsic knowledge to mine temporal constraints and structural links in the questions without extra training, thus narrowing down the subgraph search space in both temporal and structural dimensions. Next, we design virtual knowledge indicators to fuse the graph neural network signals of the subgraph and the text representations of the LLM in a non-shallow way, which helps the open-source LLM deeply understand the temporal order and structural dependencies among the retrieved facts through instruction tuning. Experimental results on two widely used datasets demonstrate the superiority of our model.",
+  "doi": "10.48550/arxiv.2402.16568",
+  "arxiv_id": "2402.16568",
+  "openalex_id": null,
+  "s2_id": "5309e53a67834dcb2db3ddd75ce5a1128da97d40",
+  "source": "arxiv",
+  "sources": [
+    "arxiv",
+    "semantic_scholar"
+  ],
+  "citation_count": 45,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:04:24.193368Z",
+  "relevance": 0.6,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "instruction tuning LLM knowledge graph question answering subgraph context supervision"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

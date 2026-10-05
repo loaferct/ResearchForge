@@ -1,0 +1,35 @@
+{
+  "id": "C008",
+  "statement": "A key technical risk is ensuring the temporal relevance component is truly retrieval-agnostic and can be applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without requiring modification to their core ranking algorithms, as differences in score distributions and normalization requirements may affect how temporal scores combine with semantic scores.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "To align the temporal score with the numerical range of the semantic score from equation 1, we employ a normalization process. In particular, we subtract from each temporal score, the mean over the temporal scores of all(𝑞,𝑑) pairs,𝜇𝜏 , and divide by the standard deviation over the temporal scores of all(𝑞,𝑑) pairs, 𝜎𝜏 . The normalized temporal score is then scaled to the range of the relevance score by multiplying with standard deviation of semantic scores𝜎𝑠 and adding mean of semantic scores𝜇𝑠 (both computed over the scores of all(𝑞,𝑑) pairs): 𝜏(𝑞𝑡,𝑑𝑡) = 𝜏(𝑞𝑡,𝑑𝑡)− 𝜇𝜏 𝜎𝜏 ×𝜎𝑠+𝜇𝑠",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote not found in retrieved abstract/full text"
+    },
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 5",
+      "quote": "based on a general-purpose dense retriever that uses a dual- encoder architecture, based on the Contriever [7] and a sequence- to-sequence model built on the Fusion-in-Decoder architecture [3] which uses T5-1.1 [15] with a language modeling adaptation.",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote not found in retrieved abstract/full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "technical risk",
+    "retrieval-agnostic",
+    "dense retriever",
+    "sparse retriever",
+    "score normalization"
+  ],
+  "recorded_at": "2026-09-30T10:06:26.913827Z"
+}

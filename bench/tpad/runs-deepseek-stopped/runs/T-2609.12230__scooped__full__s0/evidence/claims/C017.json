@@ -1,0 +1,42 @@
+{
+  "id": "C017",
+  "statement": "The closest work's lower-hop RL stage is GRPO (TRL) applied to Qwen3-14B initialized from a merged SFT LoRA adapter, with full-model updates, 2 epochs and 2 generations per prompt, run on 4xNVIDIA H200 141GB GPUs, which concretely specifies the RL algorithm and compute scale left unresolved in the idea's assumptions.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 21",
+      "quote": "Table 5: GRPO hyperparameters used for RL.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 21",
+      "quote": "Hardware 4×NVIDIA H200, 141GB each",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 21",
+      "quote": "Training epochs 2 Generations per prompt 2 Temperature 0.6",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "RL",
+    "feasibility",
+    "reproducibility"
+  ],
+  "recorded_at": "2026-09-30T05:27:56.815234Z"
+}

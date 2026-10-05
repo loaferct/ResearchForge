@@ -1,0 +1,36 @@
+HTTP Request: GET https://export.arxiv.org/api/query?search_query=all%3Aconfidence+AND+all%3Athreshold+AND+all%3Arouting&start=0&max_results=10&sortBy=relevance "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=confidence+threshold+routing&limit=10&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T11:24:31.506516+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 1, "delay_s": 2.11, "error": "HTTP 429"}
+HTTP Request: GET https://api.crossref.org/works?query.bibliographic=confidence+threshold+routing&rows=10 "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.openalex.org/works?search=confidence+threshold+routing&per-page=10 "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=confidence+threshold+routing&limit=10&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T11:24:34.377220+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 2, "delay_s": 3.4, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=confidence+threshold+routing&limit=10&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T11:24:38.596640+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 3, "delay_s": 6.29, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=confidence+threshold+routing&limit=10&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T11:24:45.746386+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 4, "delay_s": 12.59, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=confidence+threshold+routing&limit=10&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T11:24:59.179751+00:00", "level": "warning", "logger": "researchforge.toolkit", "msg": "source failed", "source": "semantic_scholar", "error": "api.semanticscholar.org failed after 5 attempts (HTTP 429)"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=selective+prediction+calibration&limit=10&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T11:25:06.194041+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 1, "delay_s": 1.7, "error": "HTTP 429"}
+HTTP Request: GET https://export.arxiv.org/api/query?search_query=all%3Aselective+AND+all%3Aprediction+AND+all%3Acalibration&start=0&max_results=10&sortBy=relevance "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.crossref.org/works?query.bibliographic=selective+prediction+calibration&rows=10 "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.openalex.org/works?search=selective+prediction+calibration&per-page=10 "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=selective+prediction+calibration&limit=10&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T11:25:08.701776+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 2, "delay_s": 3.54, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=selective+prediction+calibration&limit=10&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T11:25:13.007089+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 3, "delay_s": 6.7, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=selective+prediction+calibration&limit=10&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T11:25:20.570204+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 4, "delay_s": 12.6, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=selective+prediction+calibration&limit=10&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T11:25:34.071485+00:00", "level": "warning", "logger": "researchforge.toolkit", "msg": "source failed", "source": "semantic_scholar", "error": "api.semanticscholar.org failed after 5 attempts (HTTP 429)"}
+HTTP Request: GET https://api.openalex.org/works?filter=locations.landing_page_url%3Ahttps%3A%2F%2Farxiv.org%2Fabs%2F2605.18796&per-page=1 "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.openalex.org/works?filter=cited_by%3AW7161832508&per-page=10&sort=cited_by_count%3Adesc "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.openalex.org/works?filter=cites%3AW7161832508&per-page=10&sort=cited_by_count%3Adesc "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.openalex.org/works?filter=locations.landing_page_url%3Ahttps%3A%2F%2Farxiv.org%2Fabs%2F2609.30454&per-page=1 "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.openalex.org/works?filter=cited_by%3AW7214588512&per-page=10&sort=cited_by_count%3Adesc "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.openalex.org/works/doi:10.3390/info17020114 "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.openalex.org/works?filter=cited_by%3AW7125691919&per-page=10&sort=cited_by_count%3Adesc "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.openalex.org/works?filter=locations.landing_page_url%3Ahttps%3A%2F%2Farxiv.org%2Fabs%2F2208.12084&per-page=1 "HTTP/1.1 200 OK"
+Tool 'expand_citations' failed: 'Error executing tool expand_citations: arxiv:2208.12084 could not be matched to an OpenAlex work; citation expansion unavailable'
+HTTP Request: GET https://api.openalex.org/works?filter=cited_by%3AW7162510382&per-page=10&sort=cited_by_count%3Adesc "HTTP/1.1 200 OK"

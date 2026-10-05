@@ -1,0 +1,33 @@
+{
+  "paper_id": "doi:10.5121/ijnlc.2020.9101",
+  "relevance_tier": "medium",
+  "problem": "Improving precision in text document retrieval via effective query expansion techniques.",
+  "method": "Compares TF-IDF and BM25 weighting schemes, then expands queries using a comparable corpus (Wikipedia) and word embeddings to boost retrieval precision.",
+  "key_assumptions": [
+    "Word embeddings capture semantic similarity useful for query expansion.",
+    "A comparable corpus like Wikipedia provides relevant expansion terms."
+  ],
+  "main_contribution": "Demonstrates that query expansion using word embeddings yields higher precision than TF-IDF and BM25 baselines.",
+  "datasets": [],
+  "benchmarks": [],
+  "baselines": [
+    "TF-IDF",
+    "BM25"
+  ],
+  "metrics": [
+    "precision"
+  ],
+  "results": "[\"Query expansion with word embeddings achieves higher precision rates and retrieves more accurate documents compared to TF-IDF and BM25 alone.\"]",
+  "limitations": [],
+  "future_work": [],
+  "code_availability": "[]",
+  "relation_to_idea": {
+    "problem_overlap": 0.1,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.1,
+    "conceptual_difference": "The paper focuses on query expansion with embeddings for general IR; our idea introduces a temporal relevance component to adjust rankings based on document version timestamps for QA over versioned regulatory texts.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T10:25:00.429861Z"
+}

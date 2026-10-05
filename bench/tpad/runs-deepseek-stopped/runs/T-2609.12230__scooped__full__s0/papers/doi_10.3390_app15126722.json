@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.3390/app15126722",
+  "title": "DRKG: Faithful and Interpretable Multi-Hop Knowledge Graph Question Answering via LLM-Guided Reasoning Plans",
+  "authors": [
+    "Yan Chen",
+    "Shuai Sun",
+    "Xiaochun Hu"
+  ],
+  "year": 2025,
+  "published": "2025-06-16",
+  "venue": "Applied Sciences",
+  "url": "https://doi.org/10.3390/app15126722",
+  "pdf_url": "https://www.mdpi.com/2076-3417/15/12/6722/pdf?version=1750060396",
+  "abstract": "Multi-Hop Knowledge Graph Question Answering (multi-hop KGQA) aims to obtain answers by analyzing the semantics of natural language questions and performing multi-step reasoning across multiple entities and relations in knowledge graphs. Traditional embedding-based methods map natural language questions and knowledge graphs into vector spaces for answer matching through vector operations. While these approaches have improved model performance, they face two critical challenges: the lack of clear interpretability caused by implicit reasoning mechanisms, and the semantic gap between natural language queries and structured knowledge representations. This study proposes the DRKG (Decomposed Reasoning over Knowledge Graph), a constrained multi-hop reasoning framework based on large language models (LLMs) that introduces explicit reasoning plans as logical boundary controllers. The innovation of the DRKG lies in two key aspects: First, the DRKG generates hop-constrained reasoning plans through semantic parsing based on LLMs, explicitly defining the traversal path length and entity-retrieval logic in knowledge graphs. Second, the DRKG conducts selective retrieval during knowledge graph traversal based on these reasoning plans, ensuring faithfulness to structured knowledge. We evaluate the DRKG on four datasets, and the experimental results demonstrate that the DRKG achieves 1%–5% accuracy improvements over the best baseline models. Additional ablation studies verify the effectiveness of explicit reasoning plans in enhancing interpretability while constraining path divergence. A reliability analysis further examines the impact of different parameters combinations on the DRKG’s performance.",
+  "doi": "10.3390/app15126722",
+  "arxiv_id": null,
+  "openalex_id": "W4411343559",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 5,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T05:05:11.102976Z",
+  "relevance": 0.1897,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "WebQSP ComplexWebQuestions MetaQA benchmark evaluation multi-hop KGQA baselines"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

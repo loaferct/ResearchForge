@@ -1,0 +1,43 @@
+{
+  "id": "C045",
+  "statement": "Two lines of evidence indicate that wrong-version retrieval is not harmless, while also showing the harm is not purely a matter of answer content. Reader models are reported to struggle specifically with answers that are frequently updated, which is the situation created when an amendment changes the operative text. And legal analysis treats anachronistic citation as a characteristic failure of legal RAG, framing it as a defect in what retrieval output lacks rather than a property of a particular technology - so citing a superseded provision is a fault in its own right, not only when it changes the answer.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "models struggle with producing answers that are frequently updated or from uncommon locations",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "RAG-augmented legal AI tends instead to cite real documents in ways that are anachronistic",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "The pathologies are architecture-agnostic: they characterize what retrieval output lacks, not which technology produced it.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "harm",
+    "updated answers",
+    "anachronistic citation",
+    "legal adequacy"
+  ],
+  "recorded_at": "2026-09-30T04:44:13.988319Z"
+}

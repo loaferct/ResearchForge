@@ -1,0 +1,43 @@
+{
+  "paper_id": "arxiv:2603.21440",
+  "relevance_tier": "high",
+  "problem": "KBQA requires accurate multi-hop reasoning, but existing approaches perform sequential reasoning steps guided by predefined pipelines, restricting flexibility and causing error cascades due to isolated reasoning at each step.",
+  "method": "KG-Hopper: an RL framework that trains a compact open reasoning LLM to perform integrated multi-hop KG reasoning in a single inference round, embedding the entire KG traversal and decision process into a unified 'thinking' stage, enabling global reasoning over cross-step dependencies and dynamic path exploration with backtracking.",
+  "key_assumptions": [
+    "Multi-step reasoning can be internalized into a single thinking stage of a reasoning LLM.",
+    "RL over the KG traversal yields better global coherence than fixed pipelines.",
+    "Cross-step dependencies matter, so isolating each step is harmful."
+  ],
+  "main_contribution": "A compact (7B) open RL-trained reasoning LLM that matches or beats larger multi-step systems (up to 70B) and is competitive with GPT-3.5-Turbo/GPT-4o-mini on eight KG reasoning benchmarks, while remaining data-efficient, with public code.",
+  "datasets": [
+    "Eight KG reasoning benchmarks (names not stated in abstract)"
+  ],
+  "benchmarks": [
+    "Eight KG reasoning benchmarks (names not stated in abstract)"
+  ],
+  "baselines": [
+    "Larger multi-step systems up to 70B parameters",
+    "GPT-3.5-Turbo",
+    "GPT-4o-mini"
+  ],
+  "metrics": [
+    "Not stated in abstract (KG reasoning benchmark metrics)"
+  ],
+  "results": "A 7B KG-Hopper consistently outperforms larger multi-step systems up to 70B and is competitive with GPT-3.5-Turbo and GPT-4o-mini, while remaining compact, open and data-efficient.",
+  "limitations": [
+    "Not stated in abstract"
+  ],
+  "future_work": [
+    "Not stated in abstract"
+  ],
+  "code_availability": "Code stated as https://github.com/Wangshuaiia/KG-Hopper in the abstract; repository inspection unavailable in this investigation.",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "KG-Hopper is an RL training framework that removes step isolation by internalizing traversal in the LLM's thinking stage; it does not change the supervision context of individual triples. The idea's third component (RL on lower-hop instances for deeper-hop transfer) is directly comparable, so KG-Hopper is a strong baseline/threat for that component rather than for the context-subgraph component.",
+    "basis": "Problem overlap 0.7: same multi-hop KG reasoning over KGs and the same 'isolated steps are harmful' diagnosis. Method overlap 0.5: RL on LLMs for KG reasoning overlaps with the idea's RL stage, but not with context-enriched triple supervision. Evaluation overlap 0.6: KG reasoning benchmarks overlap but not confirmed KGQA benchmarks."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:16:11.328082Z"
+}

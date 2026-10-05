@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2402.14116",
+  "relevance_tier": "high",
+  "problem": "Lack of evaluation resources for fan-out multi-hop, multi-document reasoning questions that require finding information about a large number of entities, hindering assessment of LLMs' reasoning over inter-document dependencies.",
+  "method": "Introduces FanOutQA, a high-quality dataset of fan-out question-answer pairs with human-annotated decompositions, using English Wikipedia as the knowledge base. Defines three benchmark settings across the dataset and evaluates seven LLMs (GPT-4, LLaMA 2, Claude-2.1, Mixtral-8x7B, etc.) to measure reasoning over inter-document dependencies in long context.",
+  "key_assumptions": [
+    "Fan-out questions require multi-document reasoning and can be effectively evaluated using a Wikipedia-based dataset.",
+    "Human-annotated decompositions aid in assessing reasoning steps."
+  ],
+  "main_contribution": "FanOutQA benchmark dataset and open-source evaluation tools to assess LLM reasoning on complex multi-hop, multi-document questions, revealing that current LLMs still have room for improvement in inter-document dependency reasoning.",
+  "datasets": [
+    "FanOutQA dataset (derived from English Wikipedia)"
+  ],
+  "benchmarks": [
+    "Three benchmark settings on FanOutQA (specific settings not detailed in abstract)"
+  ],
+  "baselines": [
+    "GPT-4, LLaMA 2, Claude-2.1, Mixtral-8x7B, and other LLMs (unspecified count)"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"Contemporary models still have room to improve reasoning over inter-document dependencies in long context.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "\"Open-source tools provided at https://fanoutqa.com\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.2,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "FanOutQA provides a benchmark for evaluating LLM reasoning on fan-out questions, while the idea focuses on training LMs with enriched context subgraphs, adaptive repair loops, and RL transfer to improve multi-hop KGQA performance.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:52:13.471302Z"
+}

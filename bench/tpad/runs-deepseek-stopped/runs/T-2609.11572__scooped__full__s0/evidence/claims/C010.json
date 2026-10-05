@@ -1,0 +1,33 @@
+{
+  "id": "C010",
+  "statement": "Main technical risk: elapsed time between query date and version timestamp is not the legal validity relation. A monotone proximity score selects the temporally nearest version, which may not be the version in force. Prior et al. report that temporal validity must be a hard constraint, so a soft decay term may be technically the wrong signal for the stated legal goal even if it helps on average in non-legal settings.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "smaller differences in time result in a larger score",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 8",
+      "quote": "take into account the temporal validity of a statute as a hard constraint",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "critique",
+  "tags": [
+    "technical-risk",
+    "validity",
+    "mechanism"
+  ],
+  "recorded_at": "2026-09-30T05:15:47.357550Z"
+}

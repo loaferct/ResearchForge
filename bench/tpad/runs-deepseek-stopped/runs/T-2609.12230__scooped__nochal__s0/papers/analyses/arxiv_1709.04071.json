@@ -1,0 +1,38 @@
+{
+  "paper_id": "arxiv:1709.04071",
+  "relevance_tier": "medium",
+  "problem": "Building QA systems that reason over knowledge graphs is hard because question expressions are noisy (typos, pronunciation variation) making entity matching non-trivial, and because many questions require multi-hop logical reasoning over the KG.",
+  "method": "A unified deep learning architecture with a variational (latent-variable) learning algorithm that accounts for entity-linking noise and jointly learns multi-hop reasoning over the knowledge graph, trained end-to-end on question-answer pairs.",
+  "key_assumptions": [
+    "Questions can be noisy (typos, pronunciation variation) yet still resolvable against the KG",
+    "A unified deep architecture can handle entity linking noise and multi-hop reasoning jointly",
+    "Multi-hop reasoning can be learned end-to-end from question-answer pairs alone"
+  ],
+  "main_contribution": "A unified deep architecture with an end-to-end variational learning algorithm that handles noise in question text and learns multi-hop reasoning over a KG simultaneously, plus several new benchmark datasets (multi-hop, paraphrased, spoken).",
+  "datasets": [
+    "an existing multi-hop QA benchmark dataset (not named in abstract)",
+    "new derived benchmarks including multi-hop, paraphrased, and spoken (human voice) questions"
+  ],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [
+    "not stated in abstract (reported as state-of-the-art on the benchmark)"
+  ],
+  "results": "Abstract: \"state-of-the-art performance on a recent benchmark dataset\"; \"very promising results\" on the derived challenging datasets (multi-hop, paraphrased, spoken).",
+  "limitations": [
+    "End-to-end variational model over the KG; no training signal built from the surrounding passage or triple context.",
+    "Introduces a learned latent reasoning path rather than explicit context enrichment, so it does not address what information accompanies a target triple.",
+    "No analysis of how extra context triples help or hurt."
+  ],
+  "future_work": [],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "The paper's remedy for weak supervision is a probabilistic latent variable over reasoning paths, not richer or more coherent input context. It is useful as an 'already explored alternative' baseline: the idea must show that context enrichment buys something a latent-path variational model does not.",
+    "basis": "Problem overlap 0.5: shared multi-hop KG question answering and the observation that supervision is indirect. Method overlap 0.2: variational latent-path learning is disjoint from context-enriched triple supervision and example regeneration. Evaluation overlap 0.3: KGQA accuracy benchmarks, no passage context and no hop-depth transfer analysis."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:07:27.677176Z"
+}

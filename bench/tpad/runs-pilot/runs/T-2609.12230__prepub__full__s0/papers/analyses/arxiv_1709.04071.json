@@ -1,0 +1,41 @@
+{
+  "paper_id": "arxiv:1709.04071",
+  "relevance_tier": "high",
+  "problem": "Building QA systems that learn to reason over knowledge graphs from question-answer pairs alone is challenging due to noisy question expressions and the need for multi-hop logic reasoning over the KG.",
+  "method": "Proposes a unified deep learning architecture and an end-to-end variational learning algorithm that handles noise in questions and learns multi-hop reasoning simultaneously, using a variational method with inverse reasoning-graph embedding and REINFORCE with variance reduction.",
+  "key_assumptions": [
+    "A variational approach can jointly model entity recognition and reasoning over the KG.",
+    "End-to-end learning can handle noise in questions and learn multi-hop reasoning from QA pairs."
+  ],
+  "main_contribution": "A variational reasoning framework for QA over KG that integrates entity recognition and multi-hop reasoning, achieving state-of-the-art performance on benchmarks.",
+  "datasets": [
+    "a recent benchmark dataset in the literature (not named)",
+    "derived benchmark datasets: multi-hop reasoning questions, paraphrased questions, human voice questions"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "Bordes et al.'s QA system, KV-MemNN, Supervised embedding (mentioned in limitations)"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"Our method achieves state-of-the-art performance on a recent benchmark dataset in the literature.\"]",
+  "limitations": [
+    "The benchmark used for evaluation has limitations: all questions are single-hop, no noise on topic entity, generated from limited text templates."
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "The paper uses variational reasoning and REINFORCE for end-to-end QA over KG, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T07:51:26.996723Z"
+}

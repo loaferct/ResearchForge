@@ -1,0 +1,35 @@
+{
+  "id": "U012",
+  "question": "What, if anything, remains as a defensible contribution now that arxiv:2609.12230 already reports the full pipeline with positive results?",
+  "description": "With arxiv:2609.12230 already publishing the full context-augmentation + adaptive repair + repair-before-RL pipeline (and positive results) on two biomedical disease KGs with synthetic multiple-choice QA, the original idea has no novel mechanism left. The remaining candidates are deltas rather than the idea: (i) a token-matched attribution test isolating passage coherence from context volume, (ii) transfer to open-answer, general-domain multi-hop benchmarks (MetaQA/WebQSP/CWQ/2WikiMultiHopQA) rather than synthetic biomedical MCQ, (iii) a rigorous negative/boundary result if context coherence does not survive a matched control, or (iv) dropping the idea and reporting substantial overlap. Which of these is worth pursuing, if any, is a direction decision.",
+  "category": "direction",
+  "importance": "high",
+  "status": "open",
+  "next_action": "REFINE",
+  "possible_actions": [
+    "REFINE",
+    "CHALLENGE",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "The investigation must either identify a genuinely additive delta or record that the direction is fully covered; continuing to experiment on the original framing would only reproduce arxiv:2609.12230.",
+  "resolution": "",
+  "paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2609.10237",
+    "arxiv:2011.01060",
+    "arxiv:2406.13397"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "CHALLENGE",
+  "created_at": "2026-09-30T05:23:12.322649Z",
+  "updated_at": "2026-09-30T05:23:12.322934Z"
+}

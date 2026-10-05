@@ -1,0 +1,36 @@
+{
+  "id": "arxiv:2401.13222",
+  "title": "It's About Time: Incorporating Temporality in Retrieval Augmented Language Models",
+  "authors": [
+    "Anoushka Gade",
+    "Jorjeta Jetcheva"
+  ],
+  "year": 2024,
+  "published": "2024-01-24",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2401.13222",
+  "pdf_url": "https://arxiv.org/pdf/2401.13222v2",
+  "abstract": "The web serves as a global repository of knowledge, used by billions of people to search for information. Ensuring that users receive the most relevant and up-to-date information, especially in the presence of multiple versions of web content from different time points remains a critical challenge for information retrieval. This challenge has recently been compounded by the increased use of question answering tools trained on Wikipedia or web content and powered by large language models (LLMs) which have been found to make up information (or hallucinate), and in addition have been shown to struggle with the temporal dimensions of information. Even Retriever Augmented Language Models (RALMs) which incorporate a document database to reduce LLM hallucination are unable to handle temporal queries correctly. This leads to instances where RALMs respond to queries such as \"Who won the Wimbledon Championship?\", by retrieving document passages related to Wimbledon but without the ability to differentiate between them based on how recent they are. In this paper, we propose and evaluate, TempRALM, a temporally-aware Retriever Augmented Language Model (RALM) with few-shot learning extensions, which takes into account both semantically and temporally relevant documents relative to a given query, rather than relying on semantic similarity alone. We show that our approach results in up to 74% improvement in performance over the baseline RALM model, without requiring model pre-training, recalculating or replacing the RALM document index, or adding other computationally intensive elements.",
+  "doi": null,
+  "arxiv_id": "2401.13222",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T09:42:52.783436Z",
+  "relevance": 0.4,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal relevance retrieval versioned documents"
+  ],
+  "code_urls": [],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": [
+    "abstract (from arxiv) never mentions 'It's About Time'; it may belong to another work"
+  ]
+}

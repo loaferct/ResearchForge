@@ -1,0 +1,36 @@
+{
+  "id": "U038",
+  "question": "Does retrieving a superseded or not-yet-in-force clause version actually cause wrong answers, or do readers recover the correct answer from near-duplicate superseded text?",
+  "description": "The practical force of version contamination depends on whether a reader LLM actually answers incorrectly when given a superseded near-duplicate clause. Because successive versions retain much of their wording, a reader may often still produce the correct answer from the superseded text, in which case contamination is a retrieval-level artifact with little user-visible consequence. The published point-in-time system is consistent with this concern: it reached 1.7% temporal leakage while answering 78.9% of questions correctly, and nothing indicates the converse - how often contaminated retrievals still yield correct answers.",
+  "category": "validity",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "COMPARE",
+    "VERIFY"
+  ],
+  "confidence": 0.55,
+  "confidence_basis": "Verified evidence supports both channels - readers struggle with frequently-updated answers and legal analysis treats anachronistic citation as a defect independent of the answer - but no retrieved work measures the conditional probability of a correct answer after a contaminated retrieval, which plan E009 isolates by intervention.",
+  "rationale": "If contaminated retrievals mostly still produce correct answers, the benchmark measures a retrieval artifact rather than a user-visible harm and the practical-significance claim weakens sharply; plan E004's conditional-correctness analysis is the designed test.",
+  "resolution": "Partially resolved as a decomposition rather than a yes/no. Harm is conditional and splits into two channels that must be measured separately. The content channel operates only where the amendment changed the operative answer and is attenuated by near-duplicate wording, since evidence shows readers struggle specifically with frequently-updated answers yet a point-in-time system reports near-complete temporal compliance alongside 78.9% accuracy, consistent with readers often recovering the answer from superseded text; a contaminated retrieval therefore does not necessarily produce a wrong answer, so the contamination rate is not an error rate. The normative channel operates regardless of content, because legal analysis treats citing a document anachronistically as a defect in what retrieval output lacks, independent of which technology produced it. Plan E009 tests this by substituting versions while holding query, reader, prompt and context length fixed, with content and citation-validity scored separately, and by ablating whether the prompt states the target date to detect reader self-correction.",
+  "paper_ids": [
+    "doi:10.3390/sym18091498",
+    "arxiv:2109.06157",
+    "arxiv:2606.09724",
+    "arxiv:2608.21409"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2109.06157",
+    "arxiv:2606.09724"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T04:43:49.557985Z",
+  "updated_at": "2026-09-30T04:44:16.549665Z"
+}

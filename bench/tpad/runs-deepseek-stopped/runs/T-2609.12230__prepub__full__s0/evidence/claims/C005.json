@@ -1,0 +1,24 @@
+{
+  "id": "C005",
+  "statement": "RL + CoT training over graph query formalisms yields only a +1.7% zero-shot gain on a downstream knowledge-graph QA benchmark, and the demonstrated transfer is cross-formalism (SQL/Cypher), not across reasoning hop depth.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2506.21575",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "The model also demonstrates strong zero-shot generalization, improving performance on downstream tabular QA (TableBench: 8.5%) and knowledge graph QA (CR-LT-KGQA: 1.7%) without any QA-specific supervision.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "critique",
+  "tags": [
+    "rl-transfer",
+    "hop-depth",
+    "H2"
+  ],
+  "recorded_at": "2026-09-30T05:15:00.436040Z"
+}

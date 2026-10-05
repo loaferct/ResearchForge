@@ -1,0 +1,1368 @@
+[[page 1]]
+Not All Memories Age the Same: Autodiscovery of
+Adaptive Decay in Knowledge Graphs
+Mandar Karhade
+mandar.karhade@citingale.com
+Abstract
+Knowledge graphs used for retrieval treat all facts as equally current. Existing tem-
+poral approaches apply uniform decay, using a single forgetting curve regardless of
+knowledge type. We show this is fundamentally misspecified: different knowledge
+types exhibit different temporal dynamics, and the core retrieval problem is not
+latency or throughput butidentifying what is important at query time.
+We propose a hierarchical framework that replaces uniform decay with a continuous
+decay surface parameterized by two orthogonal signals:velocity(how frequently a
+concept is observed) andvolatility(how much the value changes between observa-
+tions, measured via embedding distance). The decay surface is decomposed into
+three learnable levels:domain-levelparameters capture universal patterns,context-
+levelparameters capture setting-dependent variation, andentity-leveladaptation
+personalizes decay to specific subjects. All parameters emerge from data through
+survival analysis on observed value lifetimes, requiring no predefined taxonomies
+or domain expertise.
+We formulate edge lifetime as a survival problem where the event isvalue super-
+session(a meaningfully different value replacing the current one), distinct from
+mere re-observation.
+Experiments on synthetic temporal knowledge graphs demonstrate recovery of
+planted hierarchical parameters (HDBSCAN ARI = 1.0). Validation on 107
+Wikipedia articles and 1,163 patient records from the Synthea clinical EHR simula-
+tor shows that velocity-volatility clusters emerge naturally, align with observable
+persistence patterns, and near-universally exhibit the Lindy effect (Weibull shape
+κ<1 ): older facts are less likely to be superseded, with a single clinically coherent
+exception (chemotherapy drugs, which exhibit aging). Uniform decay performs
+18× worse than no temporal weighting. Heterogeneous decay recovers from this,
+with each hierarchy level contributing measurable improvement.
+1 Introduction
+The central challenge of retrieval from knowledge graphs is determining what is relevant at query
+time. This requires more than semantic matching: the system must also assess whether a retrieved
+edge is still current, and that assessment depends on the nature of the knowledge itself. A genetic test
+result from five years ago may be perfectly current while a blood pressure reading from yesterday
+may already be stale. No single decay rate can accommodate both.
+This problem is compounded by three specific challenges that existing systems fail to address:
+1. Temporal currency depends on knowledge type.A uniform decay function, the standard
+approach in temporal retrieval systems [ 20, 15], applies the same forgetting curve to all edges.
+Consider a clinical knowledge graph queried in March 2025 for a melanoma patient. The graph
+contains a BRAF V600E mutation documented in 2021, a treatment regimen from 2023 since replaced,
+Preprint. Under review.
+arXiv:2604.26970v1  [cs.IR]  22 Apr 2026
+
+[[page 2]]
+a CT scan finding from 2023 since contradicted by disease progression, and the current treatment
+started in 2024. Uniform decay simultaneously suppresses the mutation (still true, penalized for age)
+and retains the scan finding (no longer true, not penalized enough). The failure is not in the decay
+rate but in the assumption that all knowledge ages uniformly.
+2. Infrequent mention does not mean low relevance.In clinical records, some of the most critical
+findings appear rarely. A genetic mutation may be documented once in a patient’s entire history,
+yet it is the single most relevant fact for treatment decisions at any future query time. A blood
+pressure reading appears thousands of times, yet each individual reading is relevant for only hours.
+Systems that use mention frequency as a proxy for importance systematically bury rare but permanent
+knowledge under frequent but transient observations.
+3. Concepts and values have different temporal properties.The concept “blood pressure” is
+always relevant to a patient’s status; it never expires. But a specific blood pressurevalue(120/80
+measured last Tuesday) has a short shelf life. Similarly, the concept “treatment regimen” is always
+important to retrieve, but the specific value (pembrolizumab started in January 2023) becomes stale
+when the treatment changes. A useful information model must separate the enduring relevance of a
+concept from the temporal currency of its value.
+These three challenges motivated the development of a framework that accommodates temporality
+through a learned hierarchy, assigns different shelf lives to different knowledge types, and distin-
+guishes concepts from their values.
+1.1 Existing Approaches and Their Limitations
+Existing temporal approaches fall into two categories. Temporal knowledge graph models (RE-GCN
+[14], TRCL, TiRGN) learn temporal embeddings for link prediction, that is, predicting future facts,
+but do not address retrieval weighting of existing facts. Memory decay systems (MemoryBank
+[20], Generative Agents [15], FOREVER [7]) apply Ebbinghaus-inspired uniform decay, sometimes
+modulated by a static importance score set at storage time. Neither decomposes temporal dynamics
+by knowledge type, and neither learns decay parameters from observed edge behavior.
+1.2 Our Approach
+We address these challenges through two orthogonal signals and a hierarchical model:
+Velocity and volatility.We decompose temporal behavior into two independent measurements.
+Velocitycaptures how frequently a concept is observed: blood pressure is measured daily in intensive
+care, quarterly in outpatient settings, while a genetic test may be performed once in a patient’s lifetime.
+Volatilitycaptures how much the value changes between consecutive observations, measured as
+embedding distance in a shared representation space. Crucially, these are kept orthogonal: volatility is
+not normalized by observation interval, so a concept can be high-velocity but low-volatility (frequently
+measured but stable) or low-velocity but high-volatility (rarely measured but changing each time).
+This decomposition directly addresses challenge 2: velocity reflects observation patterns, not impor-
+tance. A genetic mutation with low velocity and zero volatility receives a long shelf life, while a vital
+sign with high velocity and high volatility receives a short one. Frequency of mention is decoupled
+from temporal relevance.
+Value supersession.We formulate edge lifetime as a survival problem where the event of interest
+isvalue supersession: a new observation with a meaningfully different value, not merely a new
+observation. A blood pressure re-reading of 120/80 following a prior 120/80 is areinforcement
+(confirming the value is still current), not a supersession. A reading of 145/95 following 120/80 is a
+supersession (the old value is now stale). This directly addresses challenge 3: the concept persists
+while the value’s shelf life is determined by when it is superseded.
+Continuous decay surface.Rather than discretizing knowledge into categories (“permanent” versus
+“transient”), we model the shelf lifeτ as a continuous function of velocity and volatility:τ(v,σ) =
+exp(θ0 +θ 1v+θ 2σ+θ 3vσ). Permanence is not a category; it is a position where velocity and
+volatility are both near zero and the function naturally evaluates to a very long shelf life.
+Hierarchical decomposition.The decay surface parameters decompose into multiple learnable
+levels: domain-level (universal patterns across a specialty or knowledge area), context-level (setting-
+2
+
+[[page 3]]
+dependent modulation), and entity-level (adaptation to a specific patient, article, or case). The
+hierarchy is Bayesian: new entities borrow strength from their context, new contexts from the domain
+prior. As data accumulates, lower-level parameters dominate. This directly addresses challenge 1:
+the decay parameters are not assumed but learned from how knowledge actually behaves over time,
+at multiple levels of granularity.
+1.3 Contributions
+1. An information model that separates concept relevance from value currency, using velocity
+(observation frequency) and volatility (value change magnitude) as orthogonal signals, with
+a continuous decay surface replacing uniform decay or discrete taxonomies.
+2. A hierarchical Bayesian survival model where domain, context, and entity-level shelf life
+parameters are learned from observed value lifetimes without domain expertise.
+3. An embedding-based volatility measure that handles numeric, categorical, and free-text
+values uniformly, enabling the framework to operate across domains without type-specific
+preprocessing.
+4. Empirical validation on synthetic data, Wikipedia revision history, and Synthea clinical
+EHR records showing that uniform decay performs 18× worse than no temporal weighting,
+while heterogeneous decay recovers and improves precision. Temporal clusters emerge from
+data and align with domain intuition. The Lindy effect (κ<1 ) holds near-universally (all
+Wikipedia clusters, 9 of 10 Synthea clusters), with the single clinically coherent exception
+(chemotherapy regimens) discovered automatically by the framework.
+2 Related Work
+2.1 Temporal Knowledge Graphs
+Temporal knowledge graph (TKG) models capture the dynamic nature of facts that evolve over
+time. RE-GCN [14] learns evolutional representations via graph convolutional networks on temporal
+snapshots. A comprehensive survey by [3] covers representation learning approaches for TKGs.
+These methods focus onlink prediction(forecasting future facts from historical patterns). Our work
+addresses a complementary problem:retrieval weightingof existing facts at query time. TKG models
+predict what will happen; we score what is still true.
+2.2 Memory Decay in LLM Systems
+MemoryBank [20] applies the Ebbinghaus forgetting curve to conversational memory, modeling
+memory strength as a discrete value that increases with recall and decreases over time. Generative
+Agents [15] score memories by recency× importance× relevance, where importance is static and
+set at creation time. FOREVER [7] applies forgetting curves to continual learning replay scheduling,
+addressing the challenge of defining meaningful “time” for LLMs.
+All of these systems apply uniform or static-importance decay. None decompose temporal dynamics
+into setting-aware, context-dependent, or entity-adapted components. None learn decay parameters
+from observed edge behavior; the decay function is assumed, not fitted.
+2.3 Temporal Information Retrieval
+TCR-QF [10] restores missing temporal context in knowledge graphs during reasoning through query-
+driven feedback. Existing temporal approaches in retrieval-augmented generation apply heuristic
+recency priors, such as half-life decay functions fused with semantic similarity. These approaches
+observe that retrieval pipelines without temporal components risk elevating stale information, but
+apply uniform decay rates regardless of knowledge type.
+Our framework provides a principled, learned alternative where decay parameters are heterogeneous
+(different for different knowledge types) and emerge from survival analysis on observed value
+lifetimes.
+3
+
+[[page 4]]
+2.4 Survival Analysis
+Cox proportional hazards models [ 5] are the standard tool for modeling time-to-event data as a
+function of covariates. Bayesian hierarchical survival models, particularly frailty models [ 11],
+introduce random effects for entity-level variation, directly analogous to our entity-level parameters.
+We bring survival analysis methodology to knowledge graph temporal management. The statistical
+framework is well-established [13]; theapplicationto KG retrieval weighting, with the concept of
+value supersession as the survival event and velocity-volatility as covariates, is novel.
+2.5 Hierarchical Bayesian Models
+Hierarchical Bayesian models [8, 9] are standard in biostatistics for borrowing strength across groups.
+Our contribution is not the Bayesian machinery but its application to temporal KG dynamics, with
+the specific hierarchy (domain→ context→ entity) and the connection between velocity-volatility
+covariates and survival parameters.
+3 Framework
+We present the framework in three parts. Section 3.1 defines the signals and events that the model
+operates on. Section 3.2 describes how knowledge is organized into clusters and hierarchical levels.
+Section 3.3 presents the statistical machinery for estimating shelf life parameters and applying them
+at retrieval time.
+3.1 Definitions
+3.1.1 Preliminaries and Notation
+A temporal knowledge graph G={(s,p,o,t)} consists of edges e= (s,p,o,t) where s is the
+subject,p is the predicate,o is the object, andt is the extraction timestamp. We usee.s,e.p,e.o,e.t
+to denote the components of an edge. We introduce four terms used throughout.
+Predicate( p) is the relationship type, independent of any specific subject. Examples include
+“blood_pressure”, “treatment”, and “BRAF_status”. All edges sharing the same predicate describe
+the same kind of knowledge.
+Concept( c= (s,p) ) is a subject-predicate pair: “Patient A’s blood pressure” or “Patient A’s
+treatment”. A concept is a specific measurement or attribute of a specific entity.
+Value(o) is the object of an edge, representing the specific instantiation of a concept at time t.
+Examples: “120/80”, “pembrolizumab”, “V600E”.
+Shelf life( τ) is the characteristic time until a value becomes stale, that is, until it is likely to be
+superseded by a meaningfully different value. A short shelf life (hours) means the value expires
+quickly; a long shelf life (years) means it remains current indefinitely.
+Predicates and concepts play different roles in the framework. Velocity and volatility are measured
+perconcept(Patient A’s blood pressure has a specific observation frequency and value stability).
+Clustering operates onpredicates(blood_pressure as a type behaves similarly across all patients). The
+hierarchy bridges the two: Level 1 groups predicates by temporal behavior, while Level 3 personalizes
+to individual concepts.
+3.1.2 Velocity and Volatility
+We define two orthogonal signals that characterize the temporal behavior of knowledge.
+Velocityof a conceptc= (s,p)at timetis the rate of new observations per unit time:
+vel(c,t) = |{e∈G:e.s=s,e.p=p,e.t∈[t−∆,t]}|
+∆ (1)
+where ∆ is a lookback window. Velocity reflects the observation cadence of a concept, driven by
+workflow, monitoring protocols, or reporting frequency.
+4
+
+[[page 5]]
+Volatilityof a concept c= (s,p) is the mean embedding distance between consecutive observed
+values:
+vol(c) = 1
+m−1
+m−1X
+i=1
+d
+ 
+ϕ(oi),ϕ(oi+1)
+
+(2)
+whereo1,...,o m are them values observed for conceptc at successive timestamps,ϕ:V→R d
+is an embedding function mapping values of any type (numeric, categorical, free text) to a shared
+vector space, andd(·,·)is a distance metric in the embedding space.
+Crucially, volatility isnotnormalized by observation interval. Doing so would conflate volatility
+with velocity, violating their orthogonality. V olatility measures how much the value changeswhen
+observed; velocity measures how often observations occur. These are independent phenomena.
+3.1.3 Value Supersession
+We model edge lifetime as a survival problem. The event of interest isvalue supersession: the
+appearance of a new observation with a meaningfully different value for the same concept.
+An edgee= (s,p,o,t)is superseded by edgee ′ = (s,p,o′,t′)if:
+t′ >tandd
+ 
+ϕ(o),ϕ(o′)
+
+>ϵ p (3)
+whereϵp is a threshold specific to predicatep, defining what constitutes a “meaningful” change for
+this kind of knowledge. The lifetime of edgeeis thenT e =t′−t.
+This produces three types of observations.Supersedededges have a subsequent observation with
+a meaningfully different value; the lifetime Te is observed exactly.Activeedges have not been
+superseded; the lifetime is right-censored atT +
+e =t now−t .Reinforcededges have a subsequent
+observation with the same value (embedding distance belowϵp); this confirms the edge is still alive
+and resets the observation clock.
+3.2 Structure: Clusters and Hierarchy
+3.2.1 Hierarchical Clustering
+We organize knowledge into a hierarchy of three levels. Level 1 is discovered through unsupervised
+clustering on temporal behavior. Levels 2 and 3 are derived through variance decomposition within
+the clusters established at Level 1.
+Level 1: Domain Clustering.The first structural question is: what kinds of knowledge exist in the
+graph? We answer this by clusteringpredicates(not individual concepts) based on their observed
+temporal behavior, aggregated across all subjects. For each predicate with sufficient observation
+history, we compute a feature vector:
+xp =
+
+vel(p),vol(p), ¯Tp, ρp, ϕ(p)
+
+(4)
+where ¯Tp is the mean observed lifetime for edges with predicatep,ρp is the fraction of re-observations
+that involved a value change, andϕ(p) is the predicate embedding (for cold-start assignment of new
+predicates).
+Predicates with similar temporal profiles cluster together. “Blood pressure” and “heart rate” (both
+high-velocity, high-volatility) land in the same cluster. “BRAF mutation status” and “blood type”
+(both low-velocity, zero-volatility) land in another. We use HDBSCAN [4] and Dirichlet Process
+Gaussian Mixture Models (DPGMM) [1], comparing both in our experiments. No domain labels or
+predefined taxonomies are used; the types emerge from observed behavior. Each discovered cluster
+represents a temporal knowledge type with a characteristic shelf life profile, parameterized byθk.
+Level 2: Context (via Variance Decomposition).Within each domain cluster, the shelf life of a
+specific edge varies depending on the setting in which it was observed. A blood pressure reading has
+5
+
+[[page 6]]
+a shelf life of hours in an ICU but months in an outpatient clinic. The knowledge type is identical;
+the setting modulates how quickly the value becomes stale.
+We capture this variation by decomposing the within-cluster variance into context-level groups.
+Context parameters are drawn from the domain prior:
+θk,c∼N(θ k,σ 2
+contextI)(5)
+Contexts may be predefined (care settings, market segments, jurisdictions) or discovered by grouping
+entities whose edges exhibit similar shelf life deviations from the domain baseline. The variance
+σ2
+context quantifies how much the context shifts the shelf life relative to the domain average.
+Level 3: Entity (via Variance Decomposition).Within each context, individual entities deviate from
+the context baseline. A septic patient in the ICU has blood pressure values that expire in minutes,
+while a stable post-surgical patient in the same ICU has values that last hours. Entity parameters are
+drawn from the context prior:
+θk,c,i∼N(θ k,c,σ 2
+entityI)(6)
+The varianceσ2
+entity quantifies how much individual entities deviate from their context peers. This
+deviation is itself informative: an entity whose values turn over faster than expected may be under
+different conditions, without explicitly modeling those conditions.
+The framework is not fixed at three levels. The Bayesian formulation generalizes to any depth:
+each additional level introduces parameters drawn from the level above, with the same variance
+decomposition and regularization mechanism.
+3.2.2 Cold Start
+The hierarchy naturally handles sparse data by borrowing strength from higher levels. A new entity
+with no history uses its context’s parameters. A new context uses the domain cluster prior. A new
+predicate is assigned to a cluster via a classifier trained on predicate embeddings. As observations
+accumulate, lower-level parameters dominate through Bayesian updating. The transition from
+prior-dominated to data-dominated estimates is smooth and automatic.
+3.3 Estimation and Retrieval
+3.3.1 Decay Surface
+Rather than discretizing velocity and volatility into categories, we model the characteristic shelf life
+τas a continuous function:
+τ(v,σ) = exp
+ 
+θ0 +θ 1v+θ 2σ+θ 3vσ
+
+(7)
+wherev=vel(c) is the velocity and σ=vol(c) is the volatility of the concept. The parameters
+θ= (θ 0,θ 1,θ 2,θ 3) control the surface shape.θ0 sets the baseline log-shelf-life.θ1 andθ2 capture the
+effects of velocity and volatility on shelf life (both signs and magnitudes are learned;θ2 is expected
+to be negative since higher volatility implies shorter shelf life).θ3 captures the interaction between
+the two signals.
+Theθ parameters are what the hierarchy decomposes. At Level 1,θk defines the decay surface for
+clusterk. At Level 2,θk,c shifts the surface for contextc. At Level 3,θk,c,i further adjusts for entity
+i. Permanence is not a special case: an edge with v≈0 andσ≈0 naturally obtains a very largeτ,
+learned from the data.
+3.3.2 Context-Calibrated Floor
+The decay surface can produce arbitrarily smallτ values for high-velocity, high-volatility predicates.
+However, a shelf life shorter than the observation cadence is meaningless: a value cannot be considered
+stale before the next observation could have arrived. For predicates that describe discrete events
+6
+
+[[page 7]]
+rather than persistent states (e.g., “patient received epinephrine” versus “patient’s blood pressure is
+120/80”), the decay surface may estimateτ≈0, producing degenerate shelf lives.
+We address this by imposing a learned floor derived from the context-level observation cadence:
+τeff(k,c,i) = max
+ 
+τ(v,σ|θ k,c,i), τfloor(k,c)
+
+(8)
+whereτfloor(k,c) is the median inter-observation interval for all predicates in clusterk within context
+c. This floor is not a manually chosen parameter. It is computed from the data and reflects the
+operational cadence of the context: how frequently this type of knowledge is re-observed in this
+setting.
+The floor is set at the context level (Level 2) rather than the predicate level because predicates within
+the same clinical panel or treatment regimen share an observation cadence. A lab test ordered as part
+of a comprehensive metabolic panel should not receive a shorter floor just because 13 other tests
+were ordered simultaneously. The context-level cadence correctly captures the rate at which new
+information of this type arrives.
+3.3.3 Survival Distribution
+Given the hierarchical parameters and the context-calibrated floor, the lifetime of edgee belonging to
+entityi, contextc, and domain clusterkis:
+Te∼Weibull
+ 
+τeff(k,c,i), κk
+
+(9)
+whereκk is the shape parameter shared within domain clusterk. The Weibull distribution generalizes
+exponential decay. Whenκk = 1, the hazard is constant (memoryless, equivalent to exponential).
+Whenκk >1 , older values are more likely to change (an aging effect). Whenκk <1 , older values
+are less likely to change (a Lindy effect [18]). Whether knowledge exhibits Lindy-like behavior or
+aging is an empirical question we investigate in Section 5.
+We choose the Weibull family for its interpretable shape parameter and its generalization of exponen-
+tial decay. Empirically, log-normal distributions often provide a better fit to observed edge lifetimes
+(Section 5.5). This is expected: a hierarchical mixture of Weibulls (edges with different entity-levelτ
+values drawn from the same cluster) produces a marginal distribution that approximates log-normal.
+The Weibull parameterization remains preferable becauseκk directly encodes the aging-versus-Lindy
+distinction per cluster, which is a primary quantity of interest.
+The survival distribution is fitted atevery levelof the hierarchy, not only at Level 1. At each level, the
+Weibull parameters are estimated from the edges belonging to that group (cluster, context, or entity),
+with regularization toward the level above. Survival fitting and hierarchical decomposition are not
+separate steps but a single integrated estimation process.
+3.3.4 Likelihood
+The full likelihood over all edges, given parametersΘ ={θ k,c,i,κk}, is:
+L(Θ) =
+Y
+e∈S
+f(Te|Θ e)·
+Y
+e∈A
+S(tnow−te|Θ e)·
+Y
+e∈R
+S(t(e)
+r −te|Θ e)(10)
+whereS is the set of superseded edges,A is the set of active (right-censored) edges,R is the set of
+reinforced edges,f(·)is the Weibull density, andS(·)is the Weibull survival function:
+f(t|τ,κ) = κ
+τ
+t
+τ
+κ−1
+exp
+
+−
+t
+τ
+κ
+(11)
+S(t|τ,κ) = exp
+
+−
+t
+τ
+κ
+(12)
+7
+
+[[page 8]]
+3.3.5 Temporal Retrieval Scoring
+At query time with timestamptq, the retrieval score for edgee combines semantic relevance with
+temporal freshness:
+score(e,q,t q) =sim(e,q) α·S(t q−te|τ(v e,σe), κk(e))β (13)
+where sim(e,q) is the semantic similarity between the edge and the query, andα,β >0 control the
+relative importance of semantic relevance versus temporal freshness. These may be query-dependent:
+a query about current state should weightβ highly, while a query about historical information should
+reduceβ toward zero. The query timestamp tq can be set to any past or present time, enabling
+historical queries over the same immutable knowledge graph.
+4 Inference
+We investigate two inference approaches for learning the hierarchical parameters, comparing their
+recovered parameters and downstream retrieval performance.
+4.1 Bayesian Inference
+The hierarchical model (Equations 5–6) with the likelihood (Equation 10) defines a Bayesian posterior
+over all parameters:
+p(Θ|D)∝L(Θ)·p(Θ)(14)
+whereD is the set of observed edge lifetimes (superseded, active, and reinforced) andp(Θ) is the
+hierarchical prior.
+Priors.We place weakly informative priors on the hyperparameters:
+µ0∼N(0,10·I)(15)
+σ2
+context∼InverseGamma(2,1)(16)
+σ2
+entity∼InverseGamma(2,1)(17)
+κk∼LogNormal(0,1)(18)
+Computation.We use No-U-Turn Sampling (NUTS) via PyMC [ 17] for moderate-scale experiments
+and stochastic variational inference (SVI) when the number of entity-level parameters is large. Both
+handle right-censored observations natively through the survival likelihood.
+Posterior summaries.Point estimates use the posterior mean. Uncertainty in decay parameters
+propagates to retrieval scores through posterior predictive sampling, enabling confidence-aware
+retrieval where uncertain temporal weights can be flagged.
+4.2 Gradient-Based Inference
+As an alternative, we parameterize the decay surface with learnable PyTorch [16] parameters and
+optimize directly for retrieval performance.
+Parameters.The same θk,c,i andκk as the Bayesian model, but treated as free parameters (not
+random variables).
+Loss function.We optimize a temporal retrieval loss. Given a set of temporal queries{(qj,tj,Rj)}
+whereRj is the set of relevant edges at query timetj:
+Lretrieval =−
+X
+j
+NDCG
+ 
+rank(G,qj,tj|Θ),R j
+
+(19)
+8
+
+[[page 9]]
+where the ranking uses Equation 13. Since NDCG [ 12] is not differentiable, we use a smooth
+surrogate (ApproxNDCG [2] or a listwise softmax cross-entropy loss).
+Regularization.To approximate the Bayesian shrinkage, we add L2 penalties that encourage
+lower-level parameters toward higher-level means:
+R(Θ) =λ 1
+X
+k,c
+∥θk,c−θk∥2 +λ 2
+X
+k,c,i
+∥θk,c,i−θk,c∥2 (20)
+4.3 Comparison of Inference Methods
+We compare the two approaches on:
+1. Parameter agreement: Do both methods recover similarθ values on synthetic data with
+known ground truth?
+2. Retrieval performance: Does optimizing directly for retrieval (gradient-based) outperform
+fitting the generative model (Bayesian)?
+3. Uncertainty calibration: Does the Bayesian posterior provide meaningful uncertainty
+estimates?
+4.Computational cost: Wall-clock time for each method as a function of graph size.
+If both converge to similar parameters, this validates the framework’s robustness to inference method.
+If they diverge, the analysis ofwhy(generative versus discriminative bias, regularization effects) is
+itself a finding.
+5 Experiments
+We evaluate the framework on three datasets: a synthetic temporal KG with planted parameters (to
+verify the model recovers known ground truth), Wikipedia revision history (to validate on open-
+domain data with naturally occurring temporal dynamics), and a clinical EHR corpus generated by
+Synthea (to validate on domain-specific data with concrete clinical semantics).
+5.1 Synthetic Temporal Knowledge Graph
+Setup.We generate a synthetic temporal KG spanning 5 simulated years with four planted temporal
+clusters, each with distinct velocity-volatility profiles and decay surface parameters:
+• Permanent facts: τ≈2,981 d, κ= 0.5 (Lindy), velocity≈0.01 , volatility≈0.02 .
+Simulates genetic mutations, demographic facts.
+• Current state: τ≈245 d,κ= 1.2 (aging), velocity≈0.1 , volatility≈0.4 . Simulates
+treatment regimens, employment status.
+• Volatile measurements:τ≈20 d,κ= 1.0 (memoryless), velocity≈0.8 , volatility≈0.7 .
+Simulates vitals, daily labs.
+• Periodic assessments:τ≈90 d,κ= 0.8 (mild Lindy), velocity≈0.03 , volatility≈0.3 .
+Simulates quarterly labs, annual reviews.
+Within each cluster, 3 contexts shift the decay surface parameters (e.g., ICU versus outpatient for
+volatile measurements), and 10–30 entities per context add individual-level variation (σentity = 0.2).
+The resulting KG contains 118,247 edges across 265 entities and 20 predicates, with a 5-year
+observation window during which edges are created, reinforced (re-observed with unchanged value),
+or superseded (re-observed with meaningfully different value).
+Cluster recovery.We cluster at the predicate level (20 predicates, 5 features per predicate) using
+both HDBSCAN and DPGMM (Table 1).
+HDBSCAN achieves perfect recovery, identifying exactly 4 clusters that correspond one-to-one with
+the planted types (silhouette = 0.908). DPGMM over-segments into 8 clusters but achieves strong
+9
+
+[[page 10]]
+Table 1: Cluster recovery on synthetic data (4 planted clusters, 20 predicates).
+Method Clusters Found ARI NMI
+HDBSCAN 41.000 1.000
+DPGMM 8 0.845 0.893
+recovery (ARI = 0.845), splitting the current-state and periodic-assessment clusters which overlap in
+the volatility dimension.
+Parameter recovery.Table 2 compares the planted decay parameters against those recovered by the
+Bayesian (lifelines [6] MLE) and gradient-based (PyTorch) approaches.
+Table 2: Parameter recovery: planted vs. recoveredτ(days) and Weibull shapeκ.
+Planted Bayesian Gradient
+Clusterτ κ τ κ τ 0 κ
+Permanent facts 2981 0.50 3847 0.70 817 0.53
+Current state 245 1.20 98 0.90 73 1.33
+Periodic assess. 90 0.80 163 1.03 86 1.10
+V olatile meas. 20 1.00 4.3 0.81 112 1.09
+The Bayesian approach recovers the correct ordering of τ values across clusters, with permanent
+facts having the longest shelf life (3,847d) and volatile measurements the shortest (4.3d). The
+gradient-based approach recoversτ0 = exp(θ0), the baseline before velocity-volatility covariates,
+which is not directly comparable since the learnedθ1,θ 2,θ 3 coefficients compensate. Both methods
+agree on the key finding: permanent facts exhibit Lindy behavior (κ<1).
+Context separation.The Bayesian model successfully recovers context-level variation within
+clusters. Within the volatile measurements cluster, the ICU context hasτ= 2.4 d versus the outpatient
+context atτ= 25.7 d, a 10× difference matching the planted context offsets. Within current state, the
+aggressive disease context hasτ= 51 d versus stable chronic atτ= 353 d. At the entity level, 201
+fits were estimated, withτranging from 1.9d to 2,620d.
+5.2 Wikipedia Revision History
+Dataset.We constructed a temporal KG from 107 Wikipedia articles spanning diverse domains: stable
+science (DNA, Speed of light), evolving medicine (Melanoma, COVID-19), technology (Bitcoin,
+ChatGPT), geopolitics (Ukraine, NATO), biographies (Einstein, Elon Musk), geography (Tokyo,
+London), and history (Roman Empire, French Revolution).
+For each article, we fetched up to 500 revisions via the MediaWiki API and sampled 50 revisions
+uniformly across the article’s history for content extraction. From each revision’s wikitext, we
+extracted facts from four sources: lead sentences, infobox fields, section summaries, and categories.
+Facts were tracked across revisions to build temporal timelines, yielding a KG of 11,157 edges across
+2,753 predicates with the following characteristics:
+• Supersession rate: 68.2% (7,604 of 11,157 edges were superseded by a later revision)
+• Median lifetime: 99 days
+• Mean velocity: 5.3 observations/day; mean volatility: 0.22
+Emergent clusters.DPGMM discovers 10 clusters from the 2,753 predicates (Table 3). The clusters
+map to interpretable knowledge types without any domain labels.
+The velocity-volatility space cleanly separates knowledge types. Categories and identifiers (cluster
+9: volatility = 0, never superseded, 21-year median lifetime) occupy the origin. Lead sentences and
+evolving content (clusters 6, 8: volatility >0.35 , 48–63 day lifetime) occupy the high-volatility
+region. No predefined taxonomy was used; these types emerged purely from observed temporal
+behavior.
+10
+
+[[page 11]]
+Table 3: Emergent temporal clusters from Wikipedia (DPGMM, 10 clusters). Representative examples
+shown.
+ID InterpretationnV ol. Med. life Sup. rate Example predicates
+9 Permanent metadata 1106 0.00 7820d 0.00 categories, identifiers
+2 Stable structured 190 0.00 3868d 0.00 infobox fields
+5 Slow-changing content 347 0.09 262d 0.61 recognition, formulas
+1 Reference material 1785 0.16 95d 0.67 further reading, refs
+4 Main article content 4051 0.18 80d 0.81 history, see also
+0 Moderately volatile 1175 0.39 41d 0.70 introductions, summaries
+6 Lead sentences 2213 0.37 48d 0.90 lead sentence, bios
+8 Highly volatile 163 1.00 63d 0.56 evolving science, policy
+Ground truth validation.We validate the discovered clusters against the known structure of
+Wikipedia content. Predicate types (category, infobox, section, lead) have empirically distinct
+temporal profiles:
+Table 4: Temporal profiles by Wikipedia predicate type (ground truth).
+Predicate typenV olatility Median life (d) Sup. rate
+Category 535 0.000 7358 0.00
+Infobox field 325 0.087 3650 0.37
+Section summary 8601 0.226 93 0.65
+Lead sentence 1696 0.341 43 0.92
+The unsupervised clusters align with this structure: clusters 9 and 2 (volatility = 0) contain predomi-
+nantly categories and stable infobox fields; cluster 6 (volatility = 0.37) contains predominantly lead
+sentences.
+5.3 Clinical Validation: Synthea EHR Data
+To validate the framework on domain-specific data with concrete clinical semantics, we constructed a
+temporal KG from Synthea, a widely-used synthetic electronic health record generator that produces
+clinically realistic patient records [19]. The dataset contains 1,163 patients with 531,144 timestamped
+observations (vitals, labs), 38,094 conditions (diagnoses), and 56,430 medications, yielding a temporal
+KG of 399,956 edges across 587 predicates.
+DPGMM discovers 10 clusters with clear clinical interpretations (Table 5).
+Table 5: Emergent clusters from clinical EHR data (Synthea, 587 predicates, 399,956 edges). Only
+one cluster (chemotherapy drugs) exhibits aging (κ>1 ); all others exhibit the Lindy effect.∗These
+clusters describe discrete events rather than persistent values; the context-calibrated floor (Sec-
+tion 3.3.2) applies.
+InterpretationnV ol. Med. lifeκExample predicates
+Permanent conditions 7,398 0.01 7,723d 0.26 education level, obesity, prediabetes
+Stable lab panels 815 0.02 324d 0.31 COVID test, influenza panel
+Quality-of-life surveys 22,130 0.19 3,302d 0.53 emotional wellness, safety screening
+Periodic assessments 2,611 0.22 1,731d 0.50 mental health screens, allergy panels
+General vitals 100,368 0.80 371d 0.64 pain severity, respiratory rate, weight
+Core vitals + meds 263,562 0.89 365d 0.62 blood pressure, employment, medications
+V olatile blood counts 803 0.87 1d 0.36 eosinophils, lymphocytes, basophils
+Very volatile labs 2,078 0.96 3d 0.50 neutrophils, weight change
+Acute medications 127 0.98<1d ∗ 0.31 alteplase, epinephrine, captopril
+Chemotherapy drugs 64 1.00<1d ∗ 1.48 paclitaxel, cyclophosphamide, carboplatin
+Three findings from the clinical data strengthen the paper’s claims.
+11
+
+[[page 12]]
+First, the velocity-volatility decomposition separates clinically meaningful categories without domain
+labels. Permanent conditions (education level, chronic diagnoses) cluster at low velocity and low
+volatility with 21-year median shelf life. Acute medications (epinephrine, alteplase) cluster at high
+velocity and high volatility with near-zero shelf life. The framework discovers that a blood pressure
+reading and an obesity diagnosis have fundamentally different temporal dynamics, exactly as a
+clinician would expect.
+Second, the Lindy effect holds in clinical data: 9 of 10 clusters haveκ<1 . The single exception is
+chemotherapy drugs (κ= 1.48 ), which exhibit aging rather than Lindy behavior. This is clinically
+coherent: chemotherapy is administered on fixed schedules, so each dose is more likely to be the last
+than the one before it (treatment courses end). The framework discovers this distinction automatically.
+Third, log-normal outperforms Weibull on AIC for 7 of 10 clusters, consistent with the synthetic and
+Wikipedia findings.
+5.4 Retrieval Evaluation
+We compare temporal retrieval accuracy on the synthetic KG across six conditions (Table 6). For each
+condition, we generate 200 temporal queries at random time points, where ground truth relevance is
+defined as edges that are current (not yet superseded) at query time for the queried concept.
+Table 6: Retrieval comparison on synthetic KG (200 queries). Best per column in bold.
+Method NDCG@5 NDCG@10 MRR P@5 P@10
+No temporal weighting 0.274 0.2650.4570.253 0.248
+Uniform exponential 0.015 0.010 0.035 0.014 0.007
+Uniform half-life 0.015 0.010 0.035 0.014 0.007
+Domain-level (L1) 0.2410.2540.233 0.2560.266
+Domain + context (L1+2) 0.246 0.243 0.268 0.244 0.240
+Full hierarchical (L1+2+3)0.2600.251 0.2680.2630.249
+Uniform decay performs 18× worse than no temporal weighting (NDCG@5: 0.015 vs. 0.274).
+Uniform decay applies the same forgetting rate to all edges, which suppresses permanent facts
+(penalizing them for being old) while insufficiently suppressing stale volatile measurements. This
+confirms the central motivation of the paper: a single decay rate is insufficient for knowledge graphs
+with heterogeneous temporal dynamics.
+Domain-level heterogeneous decay recovers from this failure, achieving precision comparable to or
+exceeding no temporal weighting (P@10: 0.266 vs. 0.248). The full hierarchical model achieves the
+best NDCG@5 (0.260) and P@5 (0.263), demonstrating that each level of the hierarchy contributes
+to retrieval quality.
+5.5 Ablations
+Survival distribution.We compare Weibull, exponential, and log-normal fits per cluster via AIC
+(Table 7).
+Table 7: Distribution comparison by AIC (lower is better). Synthetic KG, per cluster.
+Cluster Exponential Weibull Log-normal Best
+Permanent facts 4320 42794258Log-normal
+Current state 68034 6789966749Log-normal
+Periodic assess. 37084 3708236891Log-normal
+V olatile meas. 565024 552390523644Log-normal
+Log-normal provides the best fit for all clusters, often by a substantial margin (28,746 AIC im-
+provement for volatile measurements). This finding is consistent across all three datasets (synthetic,
+Wikipedia, and Synthea clinical). As discussed in Section 3, this is expected: a hierarchical mixture
+of Weibulls produces a marginal distribution that approximates log-normal.
+12
+
+[[page 13]]
+To verify that the Lindy finding is not an artifact of the Weibull parameterization, we computed the
+log-normal hazard functionh(t) =f(t)/S(t) for each cluster using the fitted log-normal parameters.
+The log-normal hazard is non-monotonic: it rises to a peak and then decreases. For all four clusters,
+the hazard is decreasing beyond the peak (volatile measurements peak at 0.7 days, permanent facts
+at 68 days). This confirms that the Lindy effect is present regardless of distributional choice: under
+log-normal, the decreasing hazard phase dominates for all knowledge types.
+Clustering method.HDBSCAN achieves perfect cluster recovery (ARI = 1.0) on synthetic data,
+while DPGMM achieves ARI = 0.845 with over-segmentation. On Wikipedia data, HDBSCAN
+produces too many fine-grained clusters (390) while DPGMM finds a parsimonious set of 10.
+DPGMM is preferred for real data where the number of clusters is unknown and over-segmentation
+is less harmful than under-segmentation.
+Inference method.Both Bayesian and gradient-based inference recover the Lindy effect for per-
+manent facts (κBayesian = 0.70,κgradient = 0.53, both <1 ). However, the two approaches diverge
+substantially in retrieval performance. On 200 synthetic queries, Bayesian achieves NDCG@10 =
+0.254 while gradient-based achieves 0.045. The top-100 candidate overlap between the two methods
+is near zero, and per-query NDCG correlation is −0.31. The gradient approach finds a different
+parameterization of the decay surface that does not produce equivalent retrieval rankings. This
+indicates that direct survival likelihood fitting (Bayesian) is the appropriate inference method for this
+problem, while discriminative optimization of retrieval loss does not recover the underlying temporal
+structure. The gradient approach remains 17× faster (2.9s vs. 49.4s), but this speed advantage does
+not compensate for the retrieval quality gap.
+Supersession threshold sensitivity.We varied the supersession threshold ϵp across seven values
+(0.1 to 1.0) on synthetic data. Cluster recovery (ARI = 1.0), number of discovered clusters (4), and
+all Weibull shape parameters remain identical across the full range. The framework is insensitive
+to the threshold choice on synthetic data. On real data, ϵp affects which re-observations count as
+supersessions versus reinforcements; a full sensitivity analysis on Wikipedia data is reported in
+Appendix E.
+Shape parameter.The Weibull shape κ is near-universally<1 across clusters with observed supers-
+ession events, in synthetic, Wikipedia, and Synthea clinical data (range: 0.17–0.70 on Wikipedia;
+0.26–0.64 on 9 of 10 Synthea clusters). This indicates a near-universal Lindy effect: knowledge that
+has survived longer is less likely to be superseded. The sole exception is the Synthea chemotherapy
+cluster (κ= 1.48 ), which exhibits aging rather than Lindy behavior, consistent with the fixed-schedule
+nature of cytotoxic regimens. The finding holds under both Weibull and log-normal distributional
+assumptions. We discuss implications in Section 7.
+6 Analysis
+6.1 Emergent Temporal Clusters
+Figure 1 shows the core empirical finding: different knowledge types have fundamentally different
+shelf lives on real Wikipedia data.
+The survival curves (panel a) show four distinct decay regimes:
+1. Categories(green): Structural metadata such as “Oncogenes” or “British scientists.” These
+are effectively permanent, with a flat survival curve at 100% and 0% supersession rate.
+2. Infobox fields(blue): Structured data such as chemical formulas or gene identifiers. Mostly
+stable (median shelf life 3,740 days), with only 40% ever superseded.
+3. Section content(orange): Article body text including history, treatment, and methodology
+sections. Median shelf life of 93 days, with 68% superseded. This is the bulk of Wikipedia
+content.
+4. Lead sentences(red): The opening sentence of each article. The most volatile type: median
+shelf life of 46 days, with 94% superseded. Lead sentences are frequently revised as
+understanding evolves.
+13
+
+[[page 14]]
+0 2 4 6 8 10
+Age (years)
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0Fraction of facts still current
+50%
+(a) How fast do facts become stale?
+Category
+  median=7742d, sup.=0%
+Infobox
+  median=3740d, sup.=40%
+Section
+  median=97d, sup.=68%
+Lead sentence
+  median=46d, sup.=94%
+Infobox Section Lead sentence
+0.5
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+log10(shelf life in days)
+n=130 n=5885 n=1589
+1 day
+1 month
+1 year
+10 years
+(b) Shelf life distribution (superseded facts only)
+Figure 1: Shelf life by knowledge type (Wikipedia, 11,157 edges). (a) Survival curves showing the
+fraction of facts still current as a function of age. Categories never become stale; lead sentences decay
+rapidly. (b) Distribution of observed shelf lives for superseded facts. The four predicate types occupy
+distinct ranges, confirming that knowledge types have heterogeneous temporal dynamics.
+A uniform decay function applied to all four types would simultaneously suppress permanent
+categories (penalizing them for being old) and fail to suppress stale lead sentences (treating them as
+no different from stable infobox fields). This is precisely the failure mode our framework addresses.
+6.2 Shape Parameter and the Lindy Effect
+Table 8 shows the Weibull shape parameterκfor each discovered cluster on Wikipedia data.
+Table 8: Weibull shape parameters by cluster (Wikipedia). All values<1 , indicating universal Lindy
+effect.
+Cluster interpretationκ τ(days)nEffect
+Highly volatile content 0.167 12,059 163 Strong Lindy
+Moderately volatile 0.233 1,467 1,175 Strong Lindy
+Reference material 0.254 2,553 1,785 Strong Lindy
+Slow-changing content 0.262 3,393 347 Strong Lindy
+Main article content 0.329 589 4,051 Moderate Lindy
+Lead sentences 0.353 181 2,213 Moderate Lindy
+Every cluster exhibitsκ<1 . The effect is strongest (κ= 0.167 ) for highly volatile content, which
+may seem counterintuitive: volatile content that has survived is disproportionately likely to continue
+surviving. This is consistent with a selection effect. The volatile facts that persist through many edits
+are the ones that editors have repeatedly validated.
+The shape parameter also discriminates clusters in a way thatτ alone cannot. Clusters with similarτ
+values may have differentκ values, capturing whether they are “young and fragile” (κ closer to 1) or
+“battle-tested and stable” (κcloser to 0).
+6.3 Decay Surface Visualization
+Figure 2 shows the learned decay surfaceτ(v,σ) = exp(θ 0 +θ 1v+θ 2σ+θ 3vσ) for the volatile
+measurements cluster on synthetic data.
+The surface confirms that the log-linear parameterization captures the expected behavior:τ decreases
+with both velocity (θ1 <0 ) and volatility (θ2 <0 ). The interaction termθ3 is small, indicating that
+velocity and volatility contribute approximately independently to shelf life reduction.
+14
+
+[[page 15]]
+0.25 0.50 0.75 1.00 1.25 1.50
+Velocity
+0.2
+0.4
+0.6
+0.8
+1.0Volatility
+Decay Surface: (v, )
+0.25 0.50 0.75 1.00 1.25 1.50
+Velocity
+0.2
+0.4
+0.6
+0.8
+1.0Volatility
+Survival Probability at t = 30 days
+0.18
+0.30
+0.42
+0.54
+0.66
+0.78
+0.90
+1.02
+1.14
+1.26
+log10( ) [days]
+0.00
+0.03
+0.06
+0.09
+0.12
+0.15
+0.18
+0.21
+S(30 days)
+Figure 2: Decay surface for the volatile measurements cluster (synthetic data). The shelf life τ
+decreases smoothly as velocity and volatility increase. No discrete boundaries or categories are
+imposed.
+6.4 Context-Level Variation
+Within the volatile measurements cluster on synthetic data, context-level decay parameters vary by
+an order of magnitude:
+Table 9: Context-levelτ within the volatile measurements cluster (synthetic data). In a healthcare
+setting, these contexts correspond to care settings within the same specialty.
+Contextτ(days)κ
+ICU 2.4 1.20
+Inpatient ward 5.2 1.13
+Outpatient 25.7 0.99
+The ICU context’sτ is 10× shorter than the outpatient context’s, reflecting the intuition that an ICU
+vital reading becomes stale in hours while an outpatient reading is valid for weeks. This variation
+is invisible to a domain-level-only model and would be lost under uniform decay. In a hospital
+deployment, these context parameters would be learned from all patients in each care setting and
+transferred to new patients entering that setting.
+6.5 Entity Deviation as Signal
+At Level 3, entity-level parameters deviate from their context. On the synthetic data, 201 entity-level
+Weibull fits were estimated, withτ ranging from 1.9 to 2,620 days. The deviation of an entity’s τ
+from its context’sτ is itself informative: an entity with faster value turnover than its peers in the same
+context may be under different conditions. In a clinical setting, a patient whose treatment shelf life is
+shorter than others in the same oncology practice may have more aggressive disease, without ever
+explicitly modeling disease aggressiveness.
+While we do not evaluate this signal as a downstream feature in the current work, we note that it
+emerges naturally from the hierarchical framework at no additional cost.
+7 Discussion
+7.1 Hierarchical Adaptive Decay Outperforms Uniform Decay
+A practically significant finding is that uniform decay performs worse than no temporal weighting
+at all. On our synthetic benchmark, uniform decay achieves NDCG@5 of 0.015 versus 0.274 for
+semantic-only retrieval, an 18×difference.
+15
+
+[[page 16]]
+This result has direct implications for deployed systems. MemoryBank [20], Generative Agents [15],
+and FOREVER [7] all apply uniform or near-uniform decay. Our results suggest these systems are
+systematically penalizing stable knowledge (permanent facts pushed down by age) while failing to
+adequately suppress stale volatile information. Any system currently using a single decay rate for all
+knowledge types should be evaluated against a no-decay baseline to determine whether the temporal
+component is helping or hurting.
+7.2 The Lindy Effect in Knowledge Graphs
+Our most consistent empirical finding is that nearly all temporal clusters exhibit Lindy-like behavior
+(κ<1 ): older facts are less likely to be superseded. This holds across synthetic data, Wikipedia (all
+6 fitted clusters,κ range 0.17–0.35), and Synthea clinical data (9 of 10 clusters,κ range 0.26–0.64).
+The single exception (chemotherapy drugs,κ= 1.48 ) reflects the fixed-schedule nature of cytotoxic
+regimens rather than a failure of the framework, and the fact that the framework discovers this
+exception automatically is itself a validation of the approach. This is not a marginal trend but a
+dominant pattern.
+The implication is that Ebbinghaus-based forgetting curves (κ= 1 , constant hazard) are systematically
+miscalibrated for knowledge graphs. Ebbinghaus assumes that a fact’s probability of becoming stale
+is independent of how long it has already survived. The data shows the opposite: facts that have
+survived longer are increasingly likely to continue surviving. The mismatch grows with edge age.
+For a fact that has persisted for 10 years, an Ebbinghaus model overestimates the probability of
+supersession by orders of magnitude compared to a Lindy-calibrated model.
+7.3 Extensibility Beyond Three Levels
+We present a three-level hierarchy (domain, context, entity), but the framework is not tied to this
+specific depth. The Bayesian formulation generalizes to any number of levels. Each additional level
+introduces a new set of parameters drawn from the level above, with the same shrinkage mechanism:
+sparse data at a lower level borrows strength from the level above.
+Practical deployments may require more or fewer levels depending on the domain structure. Consider
+three examples:
+Healthcare.A natural hierarchy might be:specialty type(oncology versus cardiology) → care
+setting(ICU versus outpatient)→ patient subpopulation(aggressive disease versus stable chronic)→
+individual patient. A blood pressure reading has a shelf life of hours in an ICU, months in outpatient
+care, and the individual patient’s stability further modulates this. The specialty defaults can be learned
+from multi-hospital data and bootstrapped to new sites.
+Finance.The hierarchy might be:market segment(equities versus fixed income) → instrument
+class(large-cap tech versus small-cap biotech)→ individual company. A revenue figure for a stable
+utility company has a longer shelf life than the same figure for a pre-revenue startup. Quarterly
+earnings supersede prior values on a predictable cadence, but the volatility of the underlying business
+determines how much the value changes at each supersession.
+Legal.The hierarchy might be:jurisdiction(federal versus state) → area of law(tax code versus
+constitutional law)→ specific statute or ruling. Tax regulations are superseded frequently (high
+volatility), while constitutional principles persist for decades (low volatility). A new ruling may have
+a short shelf life if it is likely to be appealed, or a long one if it establishes settled precedent.
+In each case, the velocity-volatility decomposition applies and the hierarchical prior structure provides
+cold-start behavior at every level. The number of levels is a modeling choice, not a constraint of the
+framework.
+7.4 Deployment and Transferability
+The hierarchical structure has a natural deployment model. Higher-level parameters (domain and
+context) are learned from a training corpus and transferred to new settings without retraining. Lower-
+level parameters (entity) emerge from local data as it accumulates. A cold start at any level borrows
+strength from the level above.
+16
+
+[[page 17]]
+In practice, the training corpus should be scoped to a domain or sector rather than computed globally,
+because different domains have fundamentally different measurement patterns. Parameters learned
+within one domain transfer to new sites in the same domain. A new site can be bootstrapped with
+defaults from similar existing sites, then refine those defaults as local data accumulates through
+Bayesian updating.
+An interesting consequence is that deviations between a site’s learned parameters and the domain
+defaults are themselves informative. A site whose values turn over systematically faster than the
+domain baseline may differ in its operational characteristics, whether that reflects patient acuity in
+healthcare, market volatility in finance, or regulatory activity in legal. While we do not pursue this
+comparative analysis here, the framework naturally produces these signals as a byproduct.
+7.5 Log-Normal vs. Weibull
+In all experiments, log-normal distributions provided a better fit to observed edge lifetimes than
+Weibull (by AIC). We retain the Weibull parameterization because the shape parameterκ directly
+encodes the Lindy-versus-aging distinction, which is a primary quantity of interest. The superiority
+of log-normal is expected: a hierarchical mixture of Weibulls (edges with different entity-level τ
+values drawn from the same cluster) produces a marginal distribution that approximates log-normal.
+Importantly, the log-normal hazard functionh(t) =f(t)/S(t) is non-monotonic: it rises to a peak
+and then decreases. Our analysis confirms that for all clusters, the hazard is in its decreasing phase
+for the majority of the observed lifetime range. This means the Lindy finding (older knowledge is
+less likely to be superseded) is not an artifact of the Weibull parameterization. It holds under the
+better-fitting log-normal model as well.
+A future extension could parameterize the decay surface directly with log-normal parameters (µ,σ )
+rather than Weibull (τ,κ), at the cost of losing the interpretable shape parameter.
+7.6 Generative vs. Discriminative Inference
+The Bayesian (generative) and gradient-based (discriminative) approaches produce qualitatively
+different results. Both recover the Lindy effect (κ<1 for permanent facts), but the gradient approach
+finds a decay surface parameterization that does not produce equivalent retrieval rankings (top-100
+overlap near zero, NDCG correlation−0.31). The Bayesian approach, which directly fits survival
+distributions to observed lifetimes, substantially outperforms gradient-based optimization of retrieval
+loss (NDCG@10: 0.254 vs. 0.045).
+This is consistent with the observation that the temporal structure of knowledge is better captured by
+a generative model of how values age than by a discriminative model optimizing for a downstream
+ranking task. The generative model learns the data-generating process (when do values get super-
+seded?), while the discriminative model optimizes a proxy loss that may not recover the underlying
+temporal dynamics. For this problem, fitting the survival model is both more principled and more
+effective than end-to-end retrieval optimization.
+7.7 Historical Queries
+Because the knowledge graph is an immutable fact store and all temporal weighting is applied at query
+time, the framework naturally supports queries at any past time point. Setting the query timestamp
+to a historical date computes edge ages relative to that date, and the survival function evaluates
+accordingly. Facts created after the query timestamp are excluded; facts superseded after the query
+timestamp are treated as current.
+This enables retrospective analysis (“what was the best available information at time t?”) and
+counterfactual evaluation (“would our system have surfaced the right facts before this event was
+confirmed?”). The knowledge graph itself is never modified; only the query timestamp changes.
+7.8 Limitations
+Supersession detection.The framework requires detecting when a new value meaningfully differs
+from the previous one. For numeric values this is straightforward (threshold on change magnitude).
+17
+
+[[page 18]]
+For free text, we rely on embedding distance, which introduces dependence on the embedding model
+and the thresholdϵp. The sensitivity of the framework to these choices warrants further study.
+Scale of validation.Our Wikipedia experiment uses 107 articles with sampled revisions, and
+the Synthea clinical corpus uses 1,163 synthetic patients. While sufficient to demonstrate cluster
+emergence, the Lindy effect, and cross-domain generality, a full-scale validation on millions of
+Wikipedia articles or on real patient-level EHR data (rather than simulator output) would strengthen
+the retrieval results and test transferability to production settings.
+Retrieval evaluation.Our retrieval comparison uses simulated semantic similarity (exact predicate
+matching). A production evaluation with learned dense retrieval models would better characterize the
+interaction between semantic relevance and temporal weighting.
+Causal claims.We observe that temporal clusters correlate with knowledge types, but we do not
+claim that velocity and volatilitycausecertain decay behaviors. The relationship is correlational and
+mediated by the underlying nature of the knowledge.
+Fixed hierarchy depth.While the framework is extensible to arbitrary depth, we only evaluate three
+levels. The marginal benefit of additional levels, and the data requirements for estimating parameters
+at each level, remain open questions.
+8 Conclusion
+We proposed a hierarchical framework for temporal decay in knowledge graph retrieval that replaces
+uniform decay with a continuous surface parameterized by two orthogonal signals: velocity (concept
+observation frequency) and volatility (value change magnitude between observations). The decay
+surface parameters decompose into learnable hierarchical levels (domain, context, entity), estimated
+from observed value lifetimes via survival analysis without domain expertise or predefined taxonomies.
+The hierarchy is not fixed at three levels; the Bayesian formulation generalizes to any depth appropriate
+to the domain.
+Our experiments reveal three key findings. First, temporal knowledge types emerge naturally from
+data: unsupervised clustering on velocity-volatility profiles discovers interpretable groups that align
+with domain intuition, with perfect recovery on synthetic data (ARI = 1.0), 10 interpretable clusters
+on Wikipedia, and 10 clinically coherent clusters on Synthea EHR data. Second, knowledge near-
+universally exhibits a Lindy effect (κ<1 ): older facts are less likely to be superseded, challenging
+the constant-hazard assumption underlying Ebbinghaus-based memory systems. The framework
+discovers the sole exception (chemotherapy drugs, which exhibit aging) without supervision, demon-
+strating that the mechanism is sensitive to genuine temporal heterogeneity rather than imposing a
+single mode. Third, uniform decay performs 18× worse than no temporal weighting, because it
+simultaneously suppresses permanent facts and fails to suppress stale volatile information.
+Future work includes validation on real patient-level EHR data (rather than Synthea simulator output),
+extension to domain-specific corpora outside healthcare (financial filings, legal documents, scientific
+literature), exploration of log-normal as an alternative survival distribution, and investigation of
+cross-level parameter deviations as a downstream signal for characterizing entities or comparing
+institutions.
+References
+[1] David M Blei and Michael I Jordan. Variational inference for dirichlet process mixtures.
+Bayesian Analysis, 1(1):121–143, 2006.
+[2] Sebastian Bruch, Shuguang Han, Michael Bendersky, and Marc Najork. An analysis of the
+softmax cross entropy loss for learning-to-rank with binary relevance. InProceedings of the
+2019 ACM SIGIR International Conference on Theory of Information Retrieval, pages 75–78,
+2019.
+[3] Borui Cai, Yong Xiang, Longxiang Gao, He Zhang, Yunfeng Li, and Jianxin Li. Temporal
+knowledge graph completion: A survey. InProceedings of the 32nd International Joint
+Conference on Artificial Intelligence (IJCAI), pages 6545–6553, 2023.
+18
+
+[[page 19]]
+[4] Ricardo JGB Campello, Davoud Moulavi, and Jörg Sander. Density-based clustering based on
+hierarchical density estimates. InPacific-Asia Conference on Knowledge Discovery and Data
+Mining, pages 160–172. Springer, 2013.
+[5] David R Cox. Regression models and life-tables.Journal of the Royal Statistical Society: Series
+B (Methodological), 34(2):187–220, 1972.
+[6] Cameron Davidson-Pilon. lifelines: survival analysis in python.Journal of Open Source
+Software, 4(40):1317, 2019.
+[7] Yujie Feng, Hao Wang, Jian Li, Xu Chu, Zhaolu Kang, Yiran Liu, Yasha Wang, Philip S. Yu,
+and Xiao-Ming Wu. Forever: Forgetting curve-inspired memory replay for language model
+continual learning.arXiv preprint arXiv:2601.03938, 2026.
+[8] Andrew Gelman, John B Carlin, Hal S Stern, David B Dunson, Aki Vehtari, and Donald B
+Rubin.Bayesian Data Analysis. Chapman and Hall/CRC, 3rd edition, 2013.
+[9] Andrew Gelman and Jennifer Hill.Data Analysis Using Regression and Multilevel/Hierarchical
+Models. Cambridge University Press, 2006.
+[10] Manzong Huang, Chenyang Bu, Yi He, and Xindong Wu. How to mitigate information loss in
+knowledge graphs for graphrag: Leveraging triple context restoration and query-driven feedback.
+InProceedings of the International Joint Conference on Artificial Intelligence (IJCAI), 2025.
+[11] Joseph G Ibrahim, Ming-Hui Chen, and Debajyoti Sinha.Bayesian Survival Analysis. Springer
+Series in Statistics. Springer, 2001.
+[12] Kalervo Järvelin and Jaana Kekäläinen. Cumulated gain-based evaluation of ir techniques.ACM
+Transactions on Information Systems, 20(4):422–446, 2002.
+[13] David G Kleinbaum and Mitchel Klein.Survival Analysis: A Self-Learning Text. Springer,
+2012.
+[14] Zixuan Li, Xiaolong Jin, Wei Li, Saiping Guan, Jiafeng Guo, Huawei Shen, Yuanzhuo Wang,
+and Xueqi Cheng. Temporal knowledge graph reasoning based on evolutional representation
+learning. InProceedings of the 44th International ACM SIGIR Conference on Research and
+Development in Information Retrieval, pages 408–417, 2021.
+[15] Joon Sung Park, Joseph C O’Brien, Carrie J Cai, Meredith Ringel Morris, Percy Liang, and
+Michael S Bernstein. Generative agents: Interactive simulacra of human behavior. InPro-
+ceedings of the 36th Annual ACM Symposium on User Interface Software and Technology,
+2023.
+[16] Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan,
+Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, et al. Pytorch: An imperative
+style, high-performance deep learning library. InAdvances in Neural Information Processing
+Systems, 2019.
+[17] John Salvatier, Thomas V Wiecki, and Christopher Fonnesbeck. Probabilistic programming in
+python using pymc3.PeerJ Computer Science, 2:e55, 2016.
+[18] Nassim Nicholas Taleb.Antifragile: Things That Gain from Disorder. Random House, 2012.
+[19] Jason Walonoski, Mark Kramer, Joseph Nichols, Andre Quina, Chris Moesel, Dylan Hall,
+Carlton Duffett, Kudakwashe Dube, Thomas Gallagher, and Scott McLachlan. Synthea: An
+approach, method, and software mechanism for generating synthetic patients and the synthetic
+electronic health care record.Journal of the American Medical Informatics Association,
+25(3):230–238, 2018.
+[20] Wanjun Zhong, Lianghong Guo, Qiqi Gao, He Ye, and Yanlin Wang. Memorybank: Enhancing
+large language models with long-term memory.Proceedings of the AAAI Conference on
+Artificial Intelligence, 2024.
+19
+
+[[page 20]]
+Appendix
+A Temporal Retrieval in Practice
+We walk through a concrete example showing how hierarchical temporal decay affects retrieval from
+a clinical knowledge graph. No mathematical background is required to follow this example.
+A.1 The Knowledge Graph
+Consider a knowledge graph for a melanoma patient, containing six facts recorded over time:
+Edge Subject Predicate Value Recorded Shelf life (τ)
+1 Patient A blood_pressure 120/80 Day 100 4 days
+2 Patient A blood_pressure 145/95 Day 104 4 days
+3 Patient A blood_pressure 130/85 Day 108 4 days
+4 Patient A BRAF_status V600E Day 50 3,847 days
+5 Patient A treatment pembrolizumab Day 80 98 days
+6 Patient A treatment nivo+ipi Day 200 98 days
+Table 10: A small clinical knowledge graph. The shelf life (τ) is the characteristic time until a fact
+becomes stale, learned automatically from the data. Blood pressure readings go stale in days. Genetic
+mutations remain fresh for years.
+The shelf life (τ) is not assigned manually. It is learned by the framework from observed patterns:
+• Blood pressure readings are superseded every few days (high velocity, high volatility), so
+the framework learnsτ= 4days.
+• Treatment regimens change every few months (moderate velocity, high volatility), soτ= 98
+days.
+• BRAF mutation status has never changed for any patient in the training data (low velocity,
+zero volatility), soτ= 3,847days, effectively permanent.
+A.2 A Query Arrives
+A clinician queries the system on Day 210:
+“What is Patient A’s current status?”
+The retrieval system must decide which of the six facts to surface, and in what order.
+A.3 Step 1: Semantic Relevance
+First, standard text similarity identifies which facts match the query. All six are somewhat relevant,
+but treatment and blood pressure facts match “current status” more closely than the genetic result:
+Edge Fact Semantic similarity
+5 Treatment: pembrolizumab 0.8
+6 Treatment: nivo+ipi 0.8
+1–3 Blood pressure readings 0.7
+4 BRAF status: V600E 0.5
+At this stage, the system cannot distinguish thecurrenttreatment (nivo+ipi) from theoldtreatment
+(pembrolizumab) because they have identical similarity scores.
+20
+
+[[page 21]]
+A.4 Step 2: Temporal Freshness
+Now the framework applies the temporal weight. For each fact, we ask:given its age and shelf life,
+how likely is this fact to still be current?
+The temporal weight is computed as: freshness=e −(age/τ)κ
+, which outputs a value between 0
+(completely stale) and 1 (perfectly fresh).
+Edge Fact Age (days) Shelf life (τ) Freshness Sim Final score
+6 nivo+ipi 10 98 0.90 0.80.722
+4 BRAF V600E 160 3,847 0.95 0.50.477
+5 pembrolizumab 130 98 0.27 0.8 0.219
+1 BP 120/80 110 4 0.00 0.7 0.000
+2 BP 145/95 106 4 0.00 0.7 0.000
+3 BP 130/85 102 4 0.00 0.7 0.000
+Table 11: Retrieval scoring with hierarchical temporal decay. The final score is semantic similarity×
+temporal freshness. The system correctly surfaces the current treatment (nivo+ipi) and the permanent
+genetic result (BRAF V600E), while suppressing stale blood pressure readings and the old treatment.
+What the system returns:
+1.nivo+ipi(score 0.722): current treatment, 10 days old, high freshness
+2. BRAF V600E(score 0.477): genetic mutation, 160 days old but still fresh because its shelf
+life is 10+ years
+3. pembrolizumab (score 0.219): old treatment, partially decayed
+4. Blood pressure readings (score 0.000): completely stale, suppressed
+A.5 What Uniform Decay Gets Wrong
+A system using a single shelf life for all facts (say,τ= 90days) would produce:
+Edge Fact Uniform freshness Sim Uniform score
+6 nivo+ipi 0.90 0.80.716
+1–3 BP readings 0.31 0.70.218
+5 pembrolizumab 0.24 0.8 0.189
+4 BRAF V600E 0.17 0.5 0.084
+Table 12: Retrieval with uniform decay (τ= 90 days for all facts). The permanent genetic result is
+nearly buried (rank 4). Stale blood pressure readings outrank it.
+Uniform decay makes two errors simultaneously:
+• The BRAF mutation (rank 4, score 0.084) is nearly invisible: a permanent fact penalized for
+being old.
+• Stale blood pressure readings (rank 2, score 0.218) outrank the mutation: 100-day-old vitals
+are treated as more relevant than a genetic fact that is still true.
+Our framework avoids both errors because each fact carries its own shelf life, learned from how that
+typeof knowledge behaves over time.
+A.6 Historical Queries
+The same framework supports queries at past time points. A query at Day 105 (instead of Day 210)
+would compute different ages:
+• Edge 2 (BP 145/95, age = 1 day, freshness≈ 0.83) would rank highly: it was current at that
+time.
+21
+
+[[page 22]]
+• Edge 6 (nivo+ipi) would not appear: it did not exist yet on Day 105.
+• Edge 5 (pembrolizumab, age = 25 days, freshness≈0.78) would be the current treatment.
+The knowledge graph is never modified. Only the query timestamp changes, and the scoring adapts
+accordingly.
+B Hierarchical Variance Decomposition
+The three-level hierarchy (domain, context, entity) is not a taxonomy of knowledge types. It is a
+variance decomposition: each level explains a different source of variation in shelf life for the same
+concept.
+B.1 Example: Blood Pressure
+“Blood pressure” is a single concept that appears across many patients, care settings, and institutions.
+Its shelf life varies enormously depending on the situation:
+Level Source of variation Shelf life Explanation
+Domain Blood pressure in general∼30 days Average across all settings
+Context in ICU∼4 hours Unstable patients, continuous monitoring
+Context in outpatient clinic∼90 days Stable patients, quarterly visits
+Context pre-operative assessment∼1 day Fresh values needed for surgery
+Entity ICU, septic patient∼30 min Values swinging on pressors
+Entity ICU, post-elective, stable∼8 hours Values barely moving
+Table 13: Hierarchical decomposition of blood pressure shelf life. The concept is always the same;
+the shelf life varies because of the care setting (context) and the individual patient’s stability (entity).
+A single shelf life for “blood pressure” would be wrong in every specific situation. The domain-level
+estimate (30 days) is too long for ICU and too short for outpatient. The context-level estimate (4
+hours for ICU) is still too long for the septic patient and too short for the stable post-surgical patient.
+Each level refines the estimate further.
+The shelf life of a specific blood pressure reading is:
+shelf life = domain baseline (how long BP values last in general)
++ context adjustment (how this care setting shifts the baseline)
++ entity deviation (how this patient differs from others in the same setting)
+B.2 Example: BRAF Mutation Status
+For permanent knowledge, the hierarchy collapses. “BRAF mutation status” has essentially the same
+shelf life regardless of context or entity:
+Level Source of variation Shelf life Explanation
+Domain BRAF status in general∼10 years Genetic facts rarely change
+Context in oncology practice∼10 years No meaningful shift
+Context in primary care∼10 years No meaningful shift
+Entity any patient∼10 years No meaningful deviation
+Table 14: Hierarchical decomposition of BRAF mutation shelf life. All three levels agree because
+there is no variance to decompose. The hierarchy naturally collapses to a flat estimate for permanent
+knowledge.
+This is not a failure of the hierarchy. It is the correct behavior: when all sources of variance are near
+zero, the hierarchy adds nothing, and the domain-level estimate is used directly. The framework
+handles permanent and volatile knowledge uniformly through the same mechanism, without special
+cases.
+22
+
+[[page 23]]
+B.3 What the Hierarchy Is Not
+The hierarchy doesnotdecompose the concept into sub-concepts. “Blood pressure” is not split into
+“systolic” and “diastolic” by the hierarchy. It does not create a taxonomy of knowledge types. The
+clustering step (Section 3.2.1) groups predicates with similar temporal behavior (blood pressure
+clusters with heart rate, not with BRAF status). The hierarchy then operateswithineach cluster to
+explain why shelf life varies across settings and entities.
+C Derivations
+C.1 Likelihood with Three Observation Types
+The likelihood function (Equation 10) combines three types of observations. We derive each term.
+For the Weibull distribution with scale parameterτ and shape parameterκ, the density and survival
+functions are:
+f(t|τ,κ) = κ
+τ
+t
+τ
+κ−1
+exp
+
+−
+t
+τ
+κ
+(21)
+S(t|τ,κ) = exp
+
+−
+t
+τ
+κ
+(22)
+Term 1: Superseded edges (S).For an edge superseded at time ts, the lifetime Te =t s−te is
+observed exactly. The contribution to the log-likelihood is:
+ℓsup =
+X
+e∈S
+logf(T e|τ e,κe) =
+X
+e∈S
+
+logκe−logτ e + (κe−1) log Te
+τe
+−
+Te
+τe
+κe
+(23)
+Term 2: Active edges (A).For an edge that has not been superseded, we observe only that it has
+survived at least until now. This is a right-censored observation. The contribution is the log-survival
+function:
+ℓact =
+X
+e∈A
+logS(t now−te|τ e,κe) =
+X
+e∈A
+
+−
+tnow−te
+τe
+κe
+(24)
+Term 3: Reinforced edges (R).A reinforcement at time tr is a re-observation that confirms the value
+has not changed. This provides evidence that the edge survived until at leasttr. The contribution is a
+censored observation at the reinforcement time:
+ℓrein =
+X
+e∈R
+logS(t (e)
+r −te|τ e,κe) =
+X
+e∈R
+"
+−
+ 
+t(e)
+r −te
+τe
+!κe#
+(25)
+An edge with multiple reinforcements contributes one term per reinforcement event. The full
+log-likelihood isℓ=ℓ sup +ℓ act +ℓ rein.
+C.2 Hierarchical Prior
+The domain-level parameters have a weakly informative prior:
+θk∼N(µ 0,Σ 0), µ 0 =0,Σ 0 = 10·I(26)
+Context-level parameters are drawn from the domain prior with learned variance:
+θk,c|θ k∼N(θ k,σ 2
+contextI), σ 2
+context∼InverseGamma(2,1)(27)
+23
+
+[[page 24]]
+Entity-level parameters follow the same pattern:
+θk,c,i|θ k,c∼N(θ k,c,σ 2
+entityI), σ 2
+entity∼InverseGamma(2,1)(28)
+The shape parameter has a log-normal prior ensuring positivity:
+κk∼LogNormal(0,1)(29)
+The full posterior is:
+p(Θ|D)∝exp(ℓ)·
+Y
+k
+p(θk)·p(κ k)·
+Y
+k,c
+p(θk,c|θ k)·
+Y
+k,c,i
+p(θk,c,i|θ k,c)(30)
+This posterior is not available in closed form. We estimate it via maximum likelihood at each level
+with regularization toward the level above, or via MCMC/variational inference for the full Bayesian
+treatment.
+D Experimental Details
+D.1 Synthetic KG Generation
+• 4 planted clusters: permanent facts, current state, volatile measurements, periodic assess-
+ments
+• 3 contexts per cluster with distinct offsets from the cluster baseline
+• 10–30 entities per context with individual noise (σ entity = 0.2)
+• 5 predicates per cluster, 20 predicates total
+• 5-year simulation window with 1-day time step granularity
+• Supersession thresholdϵ= 0.3(embedding distance)
+• Random seed: 42
+• Total edges generated: 118,247
+D.2 Wikipedia Data Collection
+• 107 articles spanning 7 categories: stable science (18), evolving medicine (16), technology
+(18), geopolitics (10), biographies (14), geography/institutions (15), history/culture (16)
+• Up to 500 revisions fetched per article via MediaWiki API
+• 50 revisions sampled uniformly per article for content extraction
+• Facts extracted from: lead sentences, infobox fields, section summaries, categories
+• Total edges: 11,157 across 2,753 predicates
+• Supersession rate: 68.2%
+D.3 Computational Environment
+• All experiments run on a single machine (Apple M-series, 16GB RAM)
+• Python 3.10 with lifelines 0.30.0, scikit-learn 1.7.2, hdbscan 0.8.42, PyTorch 2.11.0
+• Bayesian survival fitting: 49.4s for the full synthetic KG (118K edges)
+• Gradient-based fitting: 2.9s for 500 epochs with batch size 8,192
+• Cluster discovery (DPGMM on 2,753 predicates):<2s
+• Wikipedia data collection:∼3 minutes (rate-limited by API)
+24
+
+[[page 25]]
+Parameter Synthetic Wikipedia
+HDBSCAN min_cluster_size 3 3
+HDBSCAN min_samples 2 2
+DPGMM max_components 10 10
+DPGMM weight_concentration_prior 1.0 1.0
+Gradient learning rate 0.01 –
+Gradient epochs 500 –
+Gradient batch size 8,192 –
+L2 regularization (λcontext) 1.0 –
+L2 regularization (λentity) 1.0 –
+Min. observations for survival fit 5 5
+Min. edges for entity-level fit 10 –
+Retrievalα(semantic exponent) 1.0 1.0
+Retrievalβ(temporal exponent) 1.0 1.0
+Table 15: Hyperparameter settings for synthetic and Wikipedia experiments.
+D.4 Hyperparameters
+E Additional Results
+E.1 Per-Cluster Survival Fits (Wikipedia)
+Clustern τ(days)κSup. rate Best dist. AIC (Weibull / LogNormal)
+Permanent metadata 1,106 – – 0.00 – –
+Stable structured 190 – – 0.00 – –
+Slow-changing 347 3,393 0.262 0.61 LogNormal 2,918 / 2,872
+Reference material 1,785 2,553 0.254 0.67 LogNormal 16,273 / 15,885
+Main content 4,051 589 0.329 0.81 LogNormal 44,101 / 42,865
+Moderately volatile 1,175 1,467 0.233 0.70 LogNormal 10,062 / 9,766
+Lead sentences 2,213 181 0.353 0.90 LogNormal 23,545 / 23,220
+Highly volatile 163 12,059 0.167 0.56 LogNormal 955 / 927
+Table 16: Survival fits per discovered cluster on Wikipedia data. Clusters with 0% supersession
+rate (permanent metadata, stable structured) have no observed events and cannot be fitted. All fitted
+clusters showκ<1(Lindy effect). Log-normal outperforms Weibull on AIC for every cluster.
+E.2 Context-Level Variation (Synthetic)
+Cluster Contextτ(days)κ n
+Current state
+Aggressive disease 51.0 1.24 3,858
+Routine care 147.6 1.22 1,749
+Stable chronic 352.8 1.15 770
+V olatile measurements
+ICU 2.4 1.20 62,074
+Inpatient ward 5.2 1.13 36,887
+Outpatient 25.7 0.99 8,943
+Periodic assessments
+Quarterly monitoring 116.8 1.15 1,703
+Annual review 252.6 1.02 814
+Specialist consult 189.8 1.10 805
+Permanent facts
+Genomic 5,182 0.68 225
+Demographic 2,838 0.72 258
+Established knowledge 4,252 0.71 156
+Table 17: Context-level Weibull fits within each cluster (synthetic data). Within the volatile measure-
+ments cluster, ICU shelf life (2.4 days) is 10× shorter than outpatient (25.7 days). Within current
+state, aggressive disease shelf life (51 days) is 7×shorter than stable chronic (353 days).
+25
+
+[[page 26]]
+E.3 Inference Method Comparison
+Clusterκ(Bayesian)κ(Gradient) Agreement on Lindy? Time (s)
+Permanent facts 0.70 0.53 Yes (<1)
+Current state 0.90 1.33 No
+Periodic assessments 1.03 1.10 Yes (≈1)
+V olatile measurements 0.81 1.09 No
+Total fitting time Bayesian: 49.4s Gradient: 2.9s
+Table 18: Shape parameter comparison between Bayesian and gradient-based inference. Both
+methods agree that permanent facts exhibit the Lindy effect (κ<1 ). The gradient-based approach is
+17×faster.
+26

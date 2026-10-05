@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.1109/tbdata.2024.3489421",
+  "title": "Attention-Based Complex Logical Query on Temporal Knowledge Graph via Graph Neural Network",
+  "authors": [
+    "Luyi Bai",
+    "Lisheng Xu",
+    "Lin Zhu"
+  ],
+  "year": 2024,
+  "published": "2024-10-31",
+  "venue": "IEEE Transactions on Big Data",
+  "url": "https://doi.org/10.1109/tbdata.2024.3489421",
+  "pdf_url": null,
+  "abstract": "Answering complex logical queries on large-scale Knowledge Graphs (KGs) efficiently and accurately has always been crucial for question-answering systems. Recent studies have significantly improved the performance of complex logical queries on massive knowledge graphs by leveraging graph neural networks (GNNs). However, the existing GNN-based methods still have limitations in dealing with long-sequence logical queries. They usually decompose complex queries into multiple independent first-order logical queries, which leads to the inability to optimize globally, and the query accuracy will drop sharply with the increase of query length. In addition, the knowlege in the real world is dynamically changing, but most of the existing methods are more suitable for dealing with static knowledge graphs, and there is still much room for improvement when dealing with logical queries in temporal knowledge graphs. In this paper, we propose a novel Temporal Complex Logical Query (TCLQ) model to achieve temporal logical queries on temporal knowledge graphs. We add time series embedding into GNN, and use multi-layer GRUs to aggregate the node features of previous time and current time, which effectively enhances the time series reasoning ability of the model. In order to solve the problem that the accuracy of logical query model decreases significantly with the increase of query sequence length, we establish a multi-level attention coefficients model to learn and optimize the whole logical queries, thus reducing the error accumulation problem when the queries are decomposed into multiple independent first-order logical queries. We conduct experiments on multiple temporal datasets and demonstrate the effectiveness of TCLQ.",
+  "doi": "10.1109/tbdata.2024.3489421",
+  "arxiv_id": null,
+  "openalex_id": "W4403936883",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 2,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T09:47:10.159720Z",
+  "relevance": 0.1364,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "citations of arxiv:2210.06281"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

@@ -1,0 +1,38 @@
+{
+  "paper_id": "arxiv:2605.16598",
+  "relevance_tier": "high",
+  "problem": "Agentic retrieval for multi-hop QA combined with knowledge graphs introduces significant cost: expensive graph construction at index time and compounding token usage at inference time.",
+  "method": "Introduces Graph Agentic Search over Propositions (GRASP) that optimizes for high accuracy and minimal token usage. GRASP decomposes multi-hop queries into dependency-aware plans, dynamically scales sub-agents according to problem complexity, and uses a three-layer hierarchical graph (entities, propositions, passages) with entity layer for targeted traversal and proposition layer for high-recall passage retrieval via reciprocal-rank voting.",
+  "key_assumptions": [
+    "Decomposing queries into dependency-aware plans enables dynamic sub-agent scaling",
+    "Three-layer hierarchical graph (entities, propositions, passages) improves retrieval efficiency",
+    "Reciprocal-rank voting at proposition layer enhances passage recall"
+  ],
+  "main_contribution": "GRASP achieves highest QA accuracy on MuSiQue and 2WikiMultiHopQA in open retrieval setting while using 40-50% fewer tokens than IRCoT+HippoRAG2, and leads on EM/F1 across datasets in LongBench setting while using 30% fewer tokens than next most accurate method. Introduces success economy metric for efficiency-aware evaluation.",
+  "datasets": [
+    "MuSiQue",
+    "2WikiMultihopQA",
+    "HotpotQA"
+  ],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [
+    "QA accuracy",
+    "EM",
+    "F1",
+    "token usage"
+  ],
+  "results": "GRASP achieves highest QA accuracy in open retrieval setting on MuSiQue and 2Wiki while using 40-50% fewer tokens than IRCoT+HippoRAG2. Leads on EM and F1 across all three datasets in LongBench setting while using 30% fewer tokens than next most accurate method.",
+  "limitations": [],
+  "future_work": [],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "GRASP focuses on agentic retrieval with hierarchical graph search to optimize accuracy and token efficiency, while our idea focuses on enriching triples with local context subgraphs and adaptive repair loops for training. Both aim to improve multi-hop QA efficiency and accuracy but GRASP works on inference-time retrieval while our idea works on training data enrichment.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:49:25.977444Z"
+}

@@ -1,0 +1,27 @@
+{
+  "questions": [
+    "Does any existing work already combine a document retriever's semantic score with a temporal relevance term based on elapsed time to version timestamps (as opposed to hard version validity filtering or knowledge-graph time scoping)?",
+    "Is elapsed time to a version timestamp a valid proxy for legal in-force status, or is the necessary signal validity intervals / effective dates?",
+    "Do existing time-sensitive temporal QA benchmarks (TIQ, statutory-QA benchmarks) already contain overlapping document revisions and time-stamped queries, or must a new benchmark be built?",
+    "Under what query-date regimes does a soft temporal term help versus induce harmful recency bias?",
+    "What is the strongest fair baseline: semantic-only retrieval, hard version filtering, or a recency-boosted retriever?"
+  ],
+  "search_topics": [
+    "time-aware retrieval / temporal relevance ranking",
+    "temporal RAG and temporally-aware retrieval-augmented language models",
+    "temporal information retrieval and time-sensitive query ranking",
+    "legal/statutory question answering with amendments and versions",
+    "temporal validity / effective-date filtering in legal retrieval",
+    "temporal QA benchmarks with implicit time constraints",
+    "recency bias in retrieval and LLM question answering",
+    "document version retrieval and superseded legislation"
+  ],
+  "comparison_targets": [
+    "Semantic-similarity-only retrieval (BM25 and dense bi-encoder) on the same corpus",
+    "Hard temporal validity filtering / version filtering RAG (as in Prior et al. 2026, arxiv:2605.23497)",
+    "TempRALM temporally-aware RALM with few-shot extensions (arxiv:2401.13222)",
+    "GTE-Rank time-aware search engine scoring (doi:10.1016/j.ipm.2015.07.006)",
+    "TimeR4 time-aware retrieval-augmented LLMs for temporal KG QA (doi:10.18653/v1/2024.emnlp-main.394)"
+  ],
+  "recorded_at": "2026-09-30T05:05:30.775341Z"
+}

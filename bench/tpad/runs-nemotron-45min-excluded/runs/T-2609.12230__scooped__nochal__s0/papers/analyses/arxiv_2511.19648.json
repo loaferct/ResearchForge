@@ -1,0 +1,42 @@
+{
+  "paper_id": "arxiv:2511.19648",
+  "relevance_tier": "high",
+  "problem": "Multi-hop question answering over knowledge graphs is computationally challenging due to combinatorial explosion of reasoning paths; LLM inference is expensive and LLM-generated answers often lack verifiable grounding in structured knowledge.",
+  "method": "Two complementary hybrid algorithms: (1) LLM-Guided Planning uses a single LLM call to predict relation sequences executed via breadth-first search, ensuring answers are grounded in the knowledge graph; (2) Embedding-Guided Neural Search eliminates LLM calls by fusing text and graph embeddings through a lightweight 6.7M-parameter edge scorer, achieving over 100× speedup with competitive accuracy. Knowledge distillation compresses planning capability into a 4B-parameter model matching large-model performance at zero API cost.",
+  "key_assumptions": [
+    "Predicting relation sequences via a single LLM call can effectively guide deterministic breadth-first search.",
+    "Fusing text and graph embeddings via a lightweight edge scorer can score edges for neural search.",
+    "Knowledge distillation preserves planning capability in a smaller model."
+  ],
+  "main_contribution": "Demonstrates that grounded reasoning consistently outperforms ungrounded generation on MetaQA, with structured planning being more transferable than direct answer generation, showing that verifiable multi-hop reasoning does not require massive models at inference time with appropriate architectural biases combining symbolic structure and learned representations.",
+  "datasets": [
+    "MetaQA (movies domain)"
+  ],
+  "benchmarks": [
+    "MetaQA"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "micro-F1",
+    "speedup"
+  ],
+  "results": "[\"LLM-Guided Planning: micro-F1 > 0.90; Embedding-Guided Neural Search: >100× speedup with competitive accuracy\"]",
+  "limitations": [
+    "Evaluation conducted on a single domain (movies) with exact entity linking; noisy or incomplete entity linking may require additional robustness mechanisms; MetaQA’s nine relation types are relatively few compared to large-scale knowledge graphs; extension to high-stakes domains such as medicine or finance needed."
+  ],
+  "future_work": [
+    "Adapting the framework to noisy or incomplete entity-linking scenarios; extending evaluation to high-stakes domains such as medicine or finance; exploring further adaptations for verifiable multi-hop reasoning."
+  ],
+  "code_availability": "\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "The paper focuses on efficient and verifiable inference via LLM-Guided Planning and Embedding-Guided Neural Search, while the idea enriches target triples with local context subgraphs from source passages during training, adds an adaptive repair loop for factual reliability, and applies RL transfer from lower-hop QA.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T06:13:26.905365Z"
+}

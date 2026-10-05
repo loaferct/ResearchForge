@@ -1,0 +1,32 @@
+{
+  "id": "U007",
+  "question": "Could the expected accuracy gain from the soft temporal term be an artifact of tuning lambda against gold-version-anchored questions (timestamp label leakage), rather than evidence of genuine temporal ranking skill?",
+  "description": "Benchmark queries are date-anchored near a specific gold version, so a monotone timestamp term partially reveals the label. If the temporal weight lambda is tuned on the same benchmark that is used to report the gain, the result may reflect hyperparameter fitting to gold-version timestamps rather than genuine temporal relevance. This is the single most dangerous way the expected improvement could be manufactured.",
+  "category": "confounder",
+  "importance": "high",
+  "status": "unresolved",
+  "next_action": "VERIFY",
+  "possible_actions": [
+    "CHALLENGE",
+    "PLAN_EXPERIMENT",
+    "VERIFY"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "If this confounder is not excluded by design (held-out tuning, timestamp-shuffled control, no-timestamp baseline), a positive result would not support the hypothesis and the whole contribution would be undermined.",
+  "resolution": "Partially resolved by full-text verification of the two decisive papers, which shows the confounder is real and uncontrolled rather than hypothetical. TempRALM chooses its temporal scaling factor only to 'tune the temporal score's importance relative to the importance of the semantic score', with no reported held-out split or leakage check (p. 4), and it reports recall@1/@5 of the gold passage averaged over 5 runs (p. 6). Prior et al. neither tune a temporal weight nor report a content-blind date ablation; they report LLM-as-a-judge end-answer scores with k=6 retrieval, and their benchmark is synthetic-but-expert-screened (312 of 697 generated pairs accepted, p. 5). Critically, their related-work discussion records that injecting synthetic publication dates while keeping content unchanged systematically promotes more-recent-labeled documents (p. 3), demonstrating that a timestamp term can shift rankings with no content basis. Therefore a soft-term accuracy gain obtained without held-out tuning, a timestamp-shuffled control and a content-blind date baseline cannot be interpreted as genuine temporal ranking skill. The confounder is narrowed to a concrete testable prediction rather than eliminated, so it stays open pending the recorded experiment E001.",
+  "paper_ids": [],
+  "supporting_paper_ids": [
+    "arxiv:2605.23497",
+    "doi:10.18653/v1/2024.findings-naacl.295",
+    "arxiv:2401.13222"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 2,
+  "source": "CRITIQUE",
+  "created_at": "2026-09-30T05:17:06.856021Z",
+  "updated_at": "2026-09-30T05:23:44.020055Z"
+}

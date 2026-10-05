@@ -1,0 +1,37 @@
+{
+  "id": "arxiv:2603.02204",
+  "title": "Partial Causal Structure Learning for Valid Selective Conformal Inference under Interventions",
+  "authors": [
+    "Amir Asiaee",
+    "Kavey Aryan",
+    "James P. Long"
+  ],
+  "year": 2026,
+  "published": "2026-03-02",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2603.02204",
+  "pdf_url": "https://arxiv.org/pdf/2603.02204v2",
+  "abstract": "Selective conformal prediction can yield substantially tighter uncertainty sets when we can identify calibration examples that are exchangeable with the test example. In interventional settings, such as perturbation experiments in genomics, exchangeability often holds only within subsets of interventions that leave a target variable \"unaffected\" (e.g., non-descendants of an intervened node in a causal graph). We study the practical regime where this invariance structure is unknown and must be estimated from data. Our main result quantifies how coverage degrades when the estimated safe calibration set accidentally includes interventions that affect the target, and gives a conservative correction when an upper bound on this error is available. Rather than learning a full causal graph, we learn only the intervention-target relationships needed to choose calibration interventions. We give algorithms for this partial learning task and evaluate them on synthetic structural equation models and Replogle K562 CRISPR-interference data, where the experiments illustrate synthetic gains from selective calibration and finite-sample tradeoffs on real perturbation screens.",
+  "doi": null,
+  "arxiv_id": "2603.02204",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T11:25:06.361795Z",
+  "relevance": 0.3182,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "selective prediction calibration"
+  ],
+  "code_urls": [
+    "https://github.com/AsiaeeLab/selective-conformal-interventions"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

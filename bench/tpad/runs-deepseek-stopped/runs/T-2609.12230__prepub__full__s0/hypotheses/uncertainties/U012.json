@@ -1,0 +1,30 @@
+{
+  "id": "U012",
+  "question": "Should the idea be narrowed to a single well-controlled supervision experiment before adding the repair loop and RL stages?",
+  "description": "The idea bundles three components (context-enriched supervision, adaptive one-hop repair loop, low-hop RL with deep-hop transfer). Given the challenge to H1 and the lack of support for H2, the direction may need to be narrowed to the single best-controlled question: does context-enriched supervision change multi-hop accuracy under matched budget and format, evaluated at the same inference context? The repair loop and RL stage may be premature scope.",
+  "category": "direction",
+  "importance": "high",
+  "status": "open",
+  "next_action": "REFINE",
+  "possible_actions": [
+    "REFINE",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Each added component multiplies compute and confounds attribution; the critique found the core premise weak and the transfer claim unsupported, so running the full pipeline first would risk an uninterpretable result.",
+  "resolution": "",
+  "paper_ids": [
+    "arxiv:2506.21575",
+    "arxiv:2609.10237"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "CRITIQUE",
+  "created_at": "2026-09-30T05:16:37.599191Z",
+  "updated_at": "2026-09-30T05:16:37.599327Z"
+}

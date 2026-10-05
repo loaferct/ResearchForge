@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:1906.04980",
+  "title": "Unsupervised Question Answering by Cloze Translation",
+  "authors": [
+    "Patrick Lewis",
+    "Ludovic Denoyer",
+    "Sebastian Riedel"
+  ],
+  "year": 2019,
+  "published": "2019-01-01",
+  "venue": null,
+  "url": "https://doi.org/10.18653/v1/p19-1484",
+  "pdf_url": "https://www.aclweb.org/anthology/P19-1484.pdf",
+  "abstract": "Obtaining training data for Question Answering (QA) is time-consuming and resourceintensive, and existing QA datasets are only available for limited domains and languages.In this work, we explore to what extent high quality training data is actually required for Extractive QA, and investigate the possibility of unsupervised Extractive QA.We approach this problem by first learning to generate context, question and answer triples in an unsupervised manner, which we then use to synthesize Extractive QA training data automatically.To generate such triples, we first sample random context paragraphs from a large corpus of documents and then random noun phrases or named entity mentions from these paragraphs as answers.Next we convert answers in context to \"fill-in-the-blank\" cloze questions and finally translate them into natural questions.We propose and compare various unsupervised ways to perform cloze-tonatural question translation, including training an unsupervised NMT model using nonaligned corpora of natural questions and cloze questions as well as a rule-based approach.We find that modern QA models can learn to answer human questions surprisingly well using only synthetic training data.We demonstrate that, without using the SQuAD training data at all, our approach achieves 56.4 F1 on SQuAD v1 (64.5 F1 when the answer is a Named entity mention), outperforming early supervised models.",
+  "doi": "10.18653/v1/p19-1484",
+  "arxiv_id": "1906.04980",
+  "openalex_id": "W2963430447",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 137,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T06:50:13.534747Z",
+  "relevance": 0.2222,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "context enriched triple training multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

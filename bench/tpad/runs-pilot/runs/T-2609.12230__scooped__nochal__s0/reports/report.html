@@ -1,0 +1,1263 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ResearchForge report: T-2609.12230__scooped__nochal__s0</title>
+<style>
+:root{--surface:#f1f3f6;--card:#ffffff;--header:#e6e9ed;--ink:#0f1419;--soft:#5a626c;--rule:rgba(15,20,25,.08);--tint:rgba(15,20,25,.06)}
+@font-face{font-family:"Inter";src:url("/static/fonts/inter.woff2") format("woff2");font-weight:100 900}
+@font-face{font-family:"Inter";src:url("/static/fonts/inter-italic.woff2") format("woff2");font-weight:100 900;font-style:italic}
+@font-face{font-family:"IBM Plex Mono";src:url("/static/fonts/ibm-plex-mono-400.woff2") format("woff2");font-weight:400}
+body{font:16px/1.6 Inter,"Segoe UI",Arial,sans-serif;max-width:72ch;margin:2.5rem auto;padding:0 16px;color:var(--ink);background:var(--card)}
+h1,h2,h3{letter-spacing:-.018em;line-height:1.2;font-weight:600} h1{font-size:1.875rem;font-weight:700;letter-spacing:-.025em} h2{font-size:1.25rem;letter-spacing:-.012em;border-top:1px solid var(--rule);padding-top:1.2rem;margin-top:2.4rem}
+a{color:var(--ink);text-decoration-color:rgba(15,20,25,.3);text-underline-offset:.2em} a:hover{text-decoration-color:currentColor} strong{font-weight:600}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:14px;line-height:1.45;display:block;overflow-x:auto;border:1px solid var(--rule)}
+td,th{border-bottom:1px solid var(--rule);padding:.5rem .75rem;vertical-align:top;text-align:left} th{background:var(--header);color:var(--soft);font:500 11px/1.3 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase}
+code,pre{font-family:"IBM Plex Mono",ui-monospace,monospace;background:var(--tint);border-radius:3px;font-size:.85em} pre{padding:.8rem;overflow:auto;line-height:1.4;border-radius:5px}
+blockquote{border-left:3px solid rgba(15,20,25,.6);margin:1rem 0;padding:.5em 0 .5em 1.25em;color:var(--soft);font-style:italic}
+details{margin:1rem 0} summary{cursor:pointer;font-weight:600}
+</style></head><body>
+<h1>ResearchForge Investigation Report</h1>
+<p>Project <code>T-2609.12230__scooped__nochal__s0</code> · model <code>ollama-cloud/nemotron-3-super</code> · status <strong>incomplete</strong></p>
+<blockquote>
+<p>Labels: <strong>[Evidence]</strong> directly supported by a verified quote from a retrieved source; <strong>[Inference]</strong> reasoning derived from cited evidence; <strong>[Hypothesis]</strong> proposed, not validated; <strong>[Assumption]</strong> taken as given without evidence; <strong>[Experimental result]</strong> observed in an executed experiment.</p>
+</blockquote>
+<h2>1. Executive Summary</h2>
+<p><strong>Investigated:</strong> Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model training typically uses isolated head‑relation‑tail triples, depriving the model of the surrounding context that supports multi‑step inference. We propose to enrich each target triple (or path) with additional triples drawn from the same source passage, forming a local context subgraph that is presented together with the primary supervision signal. The model will be fine‑tuned under two regimes: one using only the target triple/path and another that also incorporates the supporting context. To improve the reliability of the base facts, we will introduce an adaptive repair loop that detects one‑hop failures, generates corrective examples, and iteratively refines the model. After this cleaning stage, we will apply reinforcement‑learning‑based optimization on lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.</p>
+<p><strong>Research question:</strong> Does enriching training triples with local context subgraphs and applying an adaptive repair loop improve hit@1 accuracy on multi-hop KGQA (MetaQA) for 2-hop and 3-hop questions compared to training on isolated triples?</p>
+<p><strong>Literature investigated:</strong> 92 papers retrieved from 13 searches (openalex: 32, crossref: 24, arxiv: 23, semantic_scholar: 19); 23 analyzed; 18 rated highly relevant.</p>
+<p><strong>Assessment:</strong> Promising but requires experimental validation. <strong>[Inference]</strong> The idea is novel and addresses a recognized limitation (neighborhood size constraint), but the critical assumptions about local context usefulness, repair loop feasibility, and RL transfer lack empirical support, necessitating experimental validation to determine its effectiveness.</p>
+<p><strong>Closest existing work:</strong> Improving Embedded Knowledge Graph Multi-hop Question Answering by introducing Relational Chain Reasoning (2021) [1]; Biomedical Multi-hop Question Answering Using Knowledge Graph Embeddings and Language Models (2022) [2]; Knowledge Graph Based Retrieval-Augmented Generation for Multi-Hop Question Answering Enhancement (2024) [3]</p>
+<p><strong>Potential overlap:</strong> The idea overlaps with existing LM+KG embedding and RAG approaches in using language models and knowledge graphs for multi-hop QA, sharing the goal of improving reasoning over KGs.</p>
+<p><strong>Potential distinction:</strong> Unlike prior work that focuses on architectural changes (e.g., relational chain reasoning modules) or retrieval-augmented generation, this idea modifies the training data itself by enriching each supervision signal with local context from the same passage and iteratively repairs faulty base facts via an adaptive loop.</p>
+<p><strong>Major risk:</strong> The proposal relies on unverified assumptions: that local context is supportive and not noisy (C003), that an adaptive repair loop can generate effective corrective examples (C004), and that RL optimization on lower-hop QA transfers to higher-hop QA (C005). Without empirical validation, these assumptions may not hold, risking no improvement or performance degradation.</p>
+<p><strong>Research decision:</strong> Insufficient evidence. <strong>[Inference]</strong> Basis: high-importance questions remain unresolved (U001, U002). This describes the state of the evidence, not the absolute value of the idea.</p>
+<p><strong>Investigation:</strong> 11 steps chosen from the research state; 8 uncertainties raised, 2 resolved, 6 still open or unresolved (Section 13, Appendix C).</p>
+<p><strong>Stopped by a safety limit:</strong> Stopping: time budget reached (3600 s). Conclusions below cover only what was recorded before the limit.</p>
+<p><strong>Claim grounding:</strong> 11/11 evidence and inference claims have at least one verified source.</p>
+<p><strong>Incomplete phases:</strong> gaps, modifications, experiments. Sections that depend on them are marked as not recorded.</p>
+<p>This report does not declare the idea novel. Absence of a matching paper in these searches does not establish novelty; see Section 13.</p>
+<h2>2. Original Research Idea</h2>
+<blockquote>
+<p>Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model training typically uses isolated head‑relation‑tail triples, depriving the model of the surrounding context that supports multi‑step inference. We propose to enrich each target triple (or path) with additional triples drawn from the same source passage, forming a local context subgraph that is presented together with the primary supervision signal. The model will be fine‑tuned under two regimes: one using only the target triple/path and another that also incorporates the supporting context. To improve the reliability of the base facts, we will introduce an adaptive repair loop that detects one‑hop failures, generates corrective examples, and iteratively refines the model. After this cleaning stage, we will apply reinforcement‑learning‑based optimization on lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.</p>
+</blockquote>
+<h2>3. Formalized Research Question</h2>
+<p><strong>Research question:</strong> Does enriching training triples with local context subgraphs and applying an adaptive repair loop improve hit@1 accuracy on multi-hop KGQA (MetaQA) for 2-hop and 3-hop questions compared to training on isolated triples?</p>
+<p><strong>Hypothesis:</strong> <strong>[Hypothesis]</strong> Enriching training with local context subgraphs and applying an adaptive repair loop will improve hit@1 accuracy on multi-hop KGQA, especially for higher-hop questions, by providing better factual grounding and contextual reasoning, and the adaptive repair loop will improve the reliability of base facts.</p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Formalization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Problem</td>
+<td>Current language-model training for knowledge graph-based question answering uses isolated head-relation-tail triples, depriving the model of the surrounding context that supports multi-step inference.</td>
+</tr>
+<tr>
+<td>Target domain</td>
+<td>Multi-hop question answering over knowledge graphs using language models</td>
+</tr>
+<tr>
+<td>Proposed method</td>
+<td>Enrich each target triple (or path) with additional triples drawn from the same source passage, forming a local context subgraph that is presented together with the primary supervision signal. Fine-tune the language model under two regimes: (A) using only the target triple/path, and (B) using the target triple/path plus the local context subgraph. Introduce an adaptive repair loop that detects one-hop failures, generates corrective examples, and iteratively refines the model. After this cleaning stage, apply reinforcement-learning-based optimization on lower-hop QA instances and evaluate transfer to deeper multi-hop queries.</td>
+</tr>
+<tr>
+<td>Target system</td>
+<td>Language model-based knowledge graph question answering system (e.g., EmbedKGQA or Rce-KGQA)</td>
+</tr>
+<tr>
+<td>Expected contribution</td>
+<td>A training method that improves multi-hop KGQA performance by leveraging local context and adaptive repair, with analysis of transfer from lower-hop to higher-hop, and a demonstration of improved base fact reliability through the repair loop.</td>
+</tr>
+<tr>
+<td>Independent variables</td>
+<td>Training condition: isolated triples (baseline), Training condition: enriched with local context subgraph, Training condition: enriched + adaptive repair loop, Training condition: enriched + adaptive repair loop + RL optimization</td>
+</tr>
+<tr>
+<td>Dependent variables</td>
+<td>hit@1 accuracy on MetaQA 1-hop, hit@1 accuracy on MetaQA 2-hop, hit@1 accuracy on MetaQA 3-hop</td>
+</tr>
+<tr>
+<td>Controls</td>
+<td>Model architecture (EmbedKGQA or Rce-KGQA), Base knowledge graph (MetaQA KG), Evaluation datasets (MetaQA), Hyperparameters (learning rate, batch size, etc.), Random seeds</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Assumptions</strong></p>
+<ul>
+<li>The local context subgraph from the same passage is supportive and not noisy.</li>
+<li>The adaptive repair loop can generate effective corrective examples for one-hop failures.</li>
+<li>Reinforcement learning optimization on lower-hop QA transfers to higher-hop QA.</li>
+<li>The base language model and KGQA architecture (e.g., EmbedKGQA or Rce-KGQA) are suitable for the proposed enrichment.</li>
+</ul>
+<p><strong>Expected benefits / potential risks</strong></p>
+<ul>
+<li>Benefit: Improved hit@1 accuracy on multi-hop QA</li>
+<li>Benefit: Better factual grounding</li>
+<li>Benefit: Reduced error propagation in multi-hop reasoning</li>
+<li>Risk: The local context subgraph may introduce noise</li>
+<li>Risk: The adaptive repair loop may not converge or may overfit</li>
+<li>Risk: RL optimization may be unstable or fail to transfer</li>
+</ul>
+<p><strong>Ambiguities</strong></p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Resolution</th>
+<th>Resolved by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What evaluation metric to use?</td>
+<td>hit@1 accuracy (based on arxiv:2110.12679 and doi:10.18653/v1/2020.acl-main.412)</td>
+<td>literature</td>
+</tr>
+<tr>
+<td>Which dataset to use for evaluation?</td>
+<td>MetaQA (based on both papers)</td>
+<td>literature</td>
+</tr>
+<tr>
+<td>Which model architecture to use as base?</td>
+<td>EmbedKGQA or Rce-KGQA (based on doi:10.18653/v1/2020.acl-main.412 and arxiv:2110.12679)</td>
+<td>literature</td>
+</tr>
+<tr>
+<td>Which baselines to compare with?</td>
+<td>EmbedKGQA and Rce-KGQA (based on the same papers)</td>
+<td>literature</td>
+</tr>
+<tr>
+<td>What constitutes the 'same source passage' for local context?</td>
+<td>Assumed to be the text passage from which the triple was extracted if the KG is built from text</td>
+<td>assumption</td>
+</tr>
+</tbody>
+</table>
+<h2>4. Existing Research</h2>
+<p>Overlap values are heuristic signals assigned during analysis, not measurements of novelty.</p>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>Relevance</th>
+<th>Method</th>
+<th>Problem / method / evaluation overlap</th>
+<th>Read from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Improving Embedded Knowledge Graph Multi-hop Question Answering by introducing Relational Chain Reasoning (2021) [1]</td>
+<td>high</td>
+<td>Propose Relational Chain based Embedded KGQA (Rce-KGQA) that simultaneously uses explicit relational chain from question (via Siamese network) and implicit relational chain from KG. Architecture includes Answer Filtering Module (AFM) and Relational Chain Reasoning Module (RCRM). Uses RoBERTa for que</td>
+<td>0.9 / 0.5 / 0.8</td>
+<td>full_text</td>
+</tr>
+<tr>
+<td>Exploiting Hybrid Semantics of Relation Paths for Multi-hop Question Answering Over Knowledge Graphs (2022) [4]</td>
+<td>high</td>
+<td>Propose improving multi-hop KGQA by exploiting relation paths' hybrid semantics: integrate explicit textual information and implicit KG structural features of relation paths based on a novel rotate-and-scale entity link prediction framework.</td>
+<td>0.8 / 0.4 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Biomedical Multi-hop Question Answering Using Knowledge Graph Embeddings and Language Models (2022) [2]</td>
+<td>high</td>
+<td>Use language models (RoBERTa/BioBERT) to encode questions, knowledge graph embeddings (ComplEx) to encode entities/relations, and a scoring function that combines embeddings to rank answer entities. Separate models trained for 1-hop, 2-hop, 3-hop questions.</td>
+<td>0.9 / 0.4 / 0.2</td>
+<td>full_text</td>
+</tr>
+<tr>
+<td>LLM-Based Multi-Hop Question Answering with Knowledge Graph Integration in Evolving Environments (2024) [5]</td>
+<td>high</td>
+<td>Introduce Graph Memory-based Editing for Large Language Models (GMeLLo) that merges explicit KG knowledge with LLM linguistic flexibility, using LLMs to convert free-form language into structured queries and fact triples for seamless KG interaction and rapid updates.</td>
+<td>0.8 / 0.4 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Knowledge Editing with Dynamic Knowledge Graphs for Multi-Hop Question Answering (2024) [6]</td>
+<td>high</td>
+<td>Introduce KEDKG, a novel knowledge editing method that leverages a dynamic knowledge graph for MHQA: (1) dynamically construct a knowledge graph to store revised information while resolving knowledge conflicts; (2) employ fine-grained retrieval with entity and relation detector to enhance graph retr</td>
+<td>0.8 / 0.3 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>A Method for Multi-Hop Question Answering on Persian Knowledge Graph (2025) [7]</td>
+<td>high</td>
+<td>Constructed a dataset of 5,600 Persian multi-hop complex questions with decomposed forms based on semantic representation. Trained Persian language models on this dataset and proposed an architecture for answering complex questions using a Persian knowledge graph.</td>
+<td>0.9 / 0.3 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Bridging Dual Knowledge Graphs for Multi-Hop Question Answering in Construction Safety (2025) [8]</td>
+<td>high</td>
+<td>Introduces BifrostRAG, a dual-graph retrieval-augmented generation (RAG) system that models both linguistic relationships and document structure. Supports a hybrid retrieval mechanism combining graph traversal with vector-based semantic search, enabling LLMs to reason over both content and structure</td>
+<td>0.8 / 0.3 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>KG-o1: Enhancing Multi-hop Question Answering in Large Language Models via Knowledge Graph Integration (2025) [9]</td>
+<td>high</td>
+<td>KG-o1, a four-stage approach: (1) filter initial entities and generate complex subgraphs from KG; (2) construct logical paths for subgraphs; (3) use KG to build a dataset with complex extended brainstorming process to train LLMs to imitate long-term reasoning; (4) employ rejection sampling to genera</td>
+<td>0.9 / 0.5 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>CacheRAG: A Semantic Caching System for Retrieval-Augmented Generation in Knowledge Graph Question Answering (2026) [10]</td>
+<td>high</td>
+<td>Propose CacheRAG, a systematic cache-augmented architecture for LLM-based KGQA that transforms stateless planners into continual learners via three design principles: (1) Schema-agnostic user interface with Intermediate Semantic Representation and Backend Adapter; (2) Diversity-optimized cache retri</td>
+<td>0.7 / 0.3 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Temporal knowledge graph question answering via subgraph reasoning (2022) [11]</td>
+<td>high</td>
+<td>Not stated in abstract. Based on title: proposes subgraph reasoning for temporal KGQA.</td>
+<td>0.6 / 0.3 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Knowledge Graph Based Retrieval-Augmented Generation for Multi-Hop Question Answering Enhancement (2024) [3]</td>
+<td>high</td>
+<td>Enhance Graph-based Retrieval-Augmented Generation (Graph RAG) by constructing individual knowledge graphs for each document (entities as nodes, relationships as edges enriched with contextual properties), integrating them into a unified graph capturing cross-document relationships, and utilizing ve</td>
+<td>0.9 / 0.4 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Variational Reasoning for Question Answering With Knowledge Graph (2018) [12]</td>
+<td>high</td>
+<td>Propose a unified deep learning architecture and an end-to-end variational learning algorithm that handles noise in questions and learns multi-hop reasoning simultaneously.</td>
+<td>0.8 / 0.3 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Improving Multi-hop Question Answering over Knowledge Graphs using Knowledge Base Embeddings (2020) [13]</td>
+<td>high</td>
+<td>EmbedKGQA uses a KG embedding module (ComplEx) to generate entity and relation embeddings, a question embedding module to encode the natural language question, and an answer selection module that combines the ComplEx score φ(e_h, e_q, e_a′) with a relation score (intersection of relation sets) via a</td>
+<td>0.9 / 0.4 / 0.3</td>
+<td>full_text</td>
+</tr>
+<tr>
+<td>HotpotQA: A Dataset for Diverse, Explainable Multi-hop Question Answering (2018) [14]</td>
+<td>high</td>
+<td>Introduce HotpotQA, a new dataset with 113k Wikipedia-based question-answer pairs featuring four key features: (1) questions require finding and reasoning over multiple supporting documents; (2) questions are diverse and not constrained to any pre-existing knowledge bases or schemas; (3) sentence-le</td>
+<td>0.7 / 0.2 / 0.4</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>SG-RAG MOT: SubGraph Retrieval Augmented Generation with Merging and Ordering Triplets for Knowledge Graph Multi-hop Question Answering (2025) [15]</td>
+<td>high</td>
+<td>Enhance SG-RAG with an additional Merging and Ordering Triplets (MOT) step: apply hierarchical merging on retrieved subgraphs to decrease redundancy and order triplets using BFS traversal to help LLMs generate more precise answers.</td>
+<td>0.8 / 0.4 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Enriching Subgraph Retrieval with Attribute Values for Complex Question Answering Over Knowledge Graph (2025) [16]</td>
+<td>high</td>
+<td>Not stated in abstract. Based on title: proposes to enrich subgraph retrieval by incorporating attribute values.</td>
+<td>0.6 / 0.3 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Multi-path reasoning for Multi-hop Question Answering over Knowledge Graphs (2022) [17]</td>
+<td>high</td>
+<td>Propose a multi-path reasoning teacher network model based on bidirectional reasoning, adding two sets of bidirectional reasoning answer search paths to improve the accuracy of the intermediate supervision signal generated by the teacher network and reduce its negative effect on the student network.</td>
+<td>0.6 / 0.2 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Knowledge Graph Multi-Hop Question Answering Based on Dependent Syntactic Semantic Augmented Graph Networks (2024) [18]</td>
+<td>high</td>
+<td>Introduce Dependent Syntactic Semantic Augmented Graph Network (DSSAGN) that leverages synergy between syntactic structures and semantic relationships within knowledge graphs to model multi-hop relations and dynamically prioritize syntactic–semantic context.</td>
+<td>0.8 / 0.3 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Unrestricted multi-hop reasoning network for interpretable question answering over knowledge graph (2022) [19]</td>
+<td>medium</td>
+<td>Not stated in abstract. Based on title: proposes an unrestricted multi-hop reasoning network for interpretable KGQA.</td>
+<td>0.7 / 0.3 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>LAMRF: Logic-adaptive multi-source reasoning fusion for multi-hop knowledge graph question answering (2026) [20]</td>
+<td>medium</td>
+<td>Not stated in abstract. Based on title: proposes LAMRF (Logic-adaptive multi-source reasoning fusion) for multi-hop KGQA.</td>
+<td>0.7 / 0.3 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Enhancing relation classification based on GCN Multi-hop Knowledge Graph Question Answering model of knowledge reasoning (2024) [21]</td>
+<td>medium</td>
+<td>Not stated in abstract. Based on title: uses GCN (Graph Convolutional Network) for relation classification in multi-hop KGQA.</td>
+<td>0.6 / 0.2 / 0.1</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Multi-hop Question Answering with Knowledge Graph Embedding in a Similar Semantic Space (2022) [22]</td>
+<td>medium</td>
+<td>Not stated in abstract. Based on title: uses knowledge graph embeddings in a similar semantic space for multi-hop QA.</td>
+<td>0.8 / 0.5 / 0.2</td>
+<td>abstract</td>
+</tr>
+<tr>
+<td>Progressive Planning and Reinforced Reasoning: Large Language Model-Guided Multi-hop Question Answering over Knowledge Graph (2026) [23]</td>
+<td>medium</td>
+<td>Not stated in abstract. Based on title: uses progressive planning and reinforced reasoning, likely involving LLMs for multi-hop KGQA.</td>
+<td>0.7 / 0.4 / 0.2</td>
+<td>abstract</td>
+</tr>
+</tbody>
+</table>
+<details><summary>Full paper analyses</summary>
+
+#### Improving Embedded Knowledge Graph Multi-hop Question Answering by introducing Relational Chain Reasoning (2021) [1]
+
+- **Problem:** Multi-hop KGQA suffers from: (i) absent explicit relational chain order in questions, (ii) incorrectly capturing relational types due to weak supervision, (iii) failing to consider implicit relations due to limited neighborhood size in subgraph retrieval.
+- **Method:** Propose Relational Chain based Embedded KGQA (Rce-KGQA) that simultaneously uses explicit relational chain from question (via Siamese network) and implicit relational chain from KG. Architecture includes Answer Filtering Module (AFM) and Relational Chain Reasoning Module (RCRM). Uses RoBERTa for question encoding and KG embeddings for entity/relation encoding.
+- **Main contribution:** A novel KGQA model that integrates explicit and implicit relational chains, achieving state-of-the-art hit@1 performance on MetaQA, WebQuestionsSP-tiny, and Complex-WebQSP benchmarks, with code publicly available.
+- **Key assumptions:** Explicit relational chain can be extracted from question syntax.; Implicit relational chain exists in KG and can be retrieved via KG embeddings.; Combining explicit and implicit chains improves reasoning.
+- **Datasets / benchmarks:** MetaQA (1-hop, 2-hop, 3-hop), WebQuestionsSP-tiny, Complex-WebQSP, MetaQA, WebQuestionsSP-tiny, Complex-WebQSP
+- **Baselines:** GraftNet, PullNet, EmbedKGQA, NSM+h, NSM+p, NSM
+- **Metrics:** hit@1, hit@5
+- **Results:** ["On MetaQA test set: 1-hop hit@1 ~98.3% (improvement +1.3% over GraftNet/PullNet, +0.8% over EmbedKGQA, +1.1% over NSM+h); 2-hop hit@1 ~99.7% (slightly behind PullNet etc at 99.9%); 3-hop hit@1 ~97.9% (behind baselines at 98.9%)."]
+- **Limitations:** Not explicitly stated in abstract or full text.
+- **Future work:** Not explicitly stated in abstract or full text.
+- **Code availability:** ["Available at https://github.com/albert-jin/Rce-KGQA"]
+- **Relation to idea:** This work integrates explicit and implicit relational chains via specific modules (Siamese network, AFM, RCRM). Our idea enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than architectural chain reasoning. _(basis: not stated)_
+
+#### Exploiting Hybrid Semantics of Relation Paths for Multi-hop Question Answering Over Knowledge Graphs (2022) [4]
+
+- **Problem:** Answering natural language questions on knowledge graphs remains challenging due to understanding complex questions via multi-hop reasoning; previous efforts exploit entity-related text or KG embeddings but overlook rich semantics in off-the-shelf relation paths.
+- **Method:** Propose improving multi-hop KGQA by exploiting relation paths' hybrid semantics: integrate explicit textual information and implicit KG structural features of relation paths based on a novel rotate-and-scale entity link prediction framework.
+- **Main contribution:** A method that exploits hybrid semantics of relation paths to improve multi-hop KGQA, demonstrating superiority on three existing KGQA datasets, especially in multi-hop scenarios, with systematical coordination between questions and relation paths.
+- **Key assumptions:** Relation paths contain hybrid semantics (explicit textual and implicit structural) that can improve multi-hop KGQA.; The rotate-and-scale entity link prediction framework effectively integrates these semantics.
+- **Datasets / benchmarks:** Three existing KGQA datasets (unspecified), Three existing KGQA datasets (unspecified)
+- **Baselines:** Not stated in abstract.
+- **Metrics:** Not stated in abstract; likely accuracy or hit@1
+- **Results:** ["Extensive experiments on three existing KGQA datasets demonstrate the superiority of our method, especially in multi-hop scenarios."]
+- **Limitations:** Not stated in abstract.
+- **Future work:** Not stated in abstract.
+- **Code availability:** ["Not stated in abstract."]
+- **Relation to idea:** This work exploits hybrid semantics of relation paths via a rotate-and-scale entity link prediction framework. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than relation path semantics. _(basis: not stated)_
+
+#### Biomedical Multi-hop Question Answering Using Knowledge Graph Embeddings and Language Models (2022) [2]
+
+- **Problem:** Biomedical multi-hop question answering over knowledge graphs suffers from missing links; need to integrate language models with knowledge graph embeddings to improve answer relevance.
+- **Method:** Use language models (RoBERTa/BioBERT) to encode questions, knowledge graph embeddings (ComplEx) to encode entities/relations, and a scoring function that combines embeddings to rank answer entities. Separate models trained for 1-hop, 2-hop, 3-hop questions.
+- **Main contribution:** An integrated system that combines language models with knowledge graph embeddings for biomedical multi-hop question answering, demonstrating encouraging hits@10 results on a newly created Hetionet QA dataset.
+- **Key assumptions:** Knowledge graph embeddings can capture missing links and semantic similarity.; Language models provide contextual understanding of natural language questions.
+- **Datasets / benchmarks:** Hetionet knowledge graph, Hetionet multi-hop biomedical question-answering dataset (1-hop, 2-hop, 3-hop partitions), None stated; evaluated on self-created Hetionet QA dataset
+- **Baselines:** RoBERTa + ComplEx, BioBERT + ComplEx
+- **Metrics:** Hits@10, Adjusted arithmetic mean rank, Adjusted arithmetic mean rank index
+- **Results:** ["Hits@10: 1-hop RoBERTa+ComplEx 0.7709, BioBERT+ComplEx 0.7421; 2-hop 0.7705, 0.9158; 3-hop 0.8506, 0.7687."]
+- **Limitations:** Not stated in abstract or full text.
+- **Future work:** Not stated in abstract or full text.
+- **Code availability:** ["Not stated in abstract or full text."]
+- **Relation to idea:** The proposed work enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, whereas this paper focuses on combining language model and knowledge graph embeddings without explicit context subgraph enrichment or repair mechanism. _(basis: not stated)_
+
+#### LLM-Based Multi-Hop Question Answering with Knowledge Graph Integration in Evolving Environments (2024) [5]
+
+- **Problem:** Existing knowledge editing methods for LLMs struggle with multi-hop questions requiring accurate fact identification and sequential logical reasoning, especially after numerous fact updates.
+- **Method:** Introduce Graph Memory-based Editing for Large Language Models (GMeLLo) that merges explicit KG knowledge with LLM linguistic flexibility, using LLMs to convert free-form language into structured queries and fact triples for seamless KG interaction and rapid updates.
+- **Main contribution:** GMeLLo, a straightforward and effective method that significantly surpasses current SOTA knowledge editing methods on the multi-hop QA benchmark MQuAKE, especially with extensive knowledge edits.
+- **Key assumptions:** LLMs can effectively convert free-form language into structured queries and fact triples for KG interaction.; Merging KG knowledge with LLM flexibility improves multi-hop reasoning after knowledge edits.
+- **Datasets / benchmarks:** MQuAKE benchmark (multi-hop question answering), MQuAKE
+- **Baselines:** Current SOTA knowledge editing methods (unspecified)
+- **Metrics:** Not specified in abstract; likely accuracy or exact match
+- **Results:** ["GMeLLo significantly surpasses current SOTA knowledge editing methods in multi-hop QA benchmark MQuAKE, especially in scenarios with extensive knowledge edits."]
+- **Limitations:** Not stated in abstract.
+- **Future work:** Not stated in abstract.
+- **Code availability:** ["Not stated in abstract."]
+- **Relation to idea:** This work focuses on knowledge editing for LLMs using KG integration to handle multi-hop questions after updates. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting training data enrichment and iterative correction rather than knowledge editing mechanisms. _(basis: not stated)_
+
+#### Knowledge Editing with Dynamic Knowledge Graphs for Multi-Hop Question Answering (2024) [6]
+
+- **Problem:** Multi-hop question answering poses a significant challenge for LLMs due to extensive knowledge demands; knowledge editing aims to modify LLMs to incorporate specific knowledge but current solutions struggle with knowledge conflicts, inaccurate retrieval, and overlook secondary editing issues that introduce noise.
+- **Method:** Introduce KEDKG, a novel knowledge editing method that leverages a dynamic knowledge graph for MHQA: (1) dynamically construct a knowledge graph to store revised information while resolving knowledge conflicts; (2) employ fine-grained retrieval with entity and relation detector to enhance graph retrieval accuracy for LLM generation.
+- **Main contribution:** KEDKG, a knowledge editing method leveraging dynamic knowledge graphs, surpasses previous SOTA models on benchmarks, delivering more accurate and reliable answers in dynamic information environments.
+- **Key assumptions:** Dynamic knowledge graph construction can store revised information and resolve conflicts.; Fine-grained retrieval with entity and relation detector improves graph retrieval accuracy for LLM generation.
+- **Datasets / benchmarks:** Benchmarks (unspecified), Benchmarks (unspecified)
+- **Baselines:** Previous state-of-the-art knowledge editing models (unspecified)
+- **Metrics:** Not stated in abstract; likely accuracy or exact match
+- **Results:** ["Experimental results on benchmarks show that KEDKG surpasses previous state-of-the-art models, delivering more accurate and reliable answers in environments with dynamic information."]
+- **Limitations:** Not stated in abstract.
+- **Future work:** Not stated in abstract.
+- **Code availability:** ["Not stated in abstract."]
+- **Relation to idea:** This work focuses on knowledge editing via dynamic knowledge graphs to address MHQA challenges. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting training data enrichment and iterative correction rather than knowledge editing mechanisms. _(basis: not stated)_
+
+#### A Method for Multi-Hop Question Answering on Persian Knowledge Graph (2025) [7]
+
+- **Problem:** Multi-hop complex question answering in Persian suffers from challenges in accurately understanding and transforming questions into semantically equivalent SPARQL queries for precise answer retrieval from knowledge graphs.
+- **Method:** Constructed a dataset of 5,600 Persian multi-hop complex questions with decomposed forms based on semantic representation. Trained Persian language models on this dataset and proposed an architecture for answering complex questions using a Persian knowledge graph.
+- **Main contribution:** A Persian multi-hop KGQA dataset and architecture that achieve 12.57% F1-score and 12.06% accuracy improvements over the best comparable method on the PeCoQ dataset.
+- **Key assumptions:** Decomposing multi-hop questions into simpler components aids semantic parsing.; Persian language models can effectively capture question semantics for KGQA.
+- **Datasets / benchmarks:** Persian multi-hop complex question dataset (5,600 questions), PeCoQ evaluation dataset, PeCoQ
+- **Baselines:** Best comparable method (not specified)
+- **Metrics:** F1-score, accuracy
+- **Results:** ["Improvement of 12.57% in F1-score and 12.06% in accuracy over the best comparable method."]
+- **Limitations:** Not stated in abstract or available text.
+- **Future work:** Not stated in abstract or available text.
+- **Code availability:** ["Not stated in abstract or available text."]
+- **Relation to idea:** This work focuses on question decomposition and Persian language models for Persian KGQA. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting general KGQA with language models and knowledge graph embeddings. _(basis: not stated)_
+
+#### Bridging Dual Knowledge Graphs for Multi-Hop Question Answering in Construction Safety (2025) [8]
+
+- **Problem:** Information retrieval and question answering from safety regulations are essential for automated construction compliance checking but are hindered by linguistic and structural complexity of regulatory text. Many queries are multi-hop, requiring synthesis across interlinked clauses.
+- **Method:** Introduces BifrostRAG, a dual-graph retrieval-augmented generation (RAG) system that models both linguistic relationships and document structure. Supports a hybrid retrieval mechanism combining graph traversal with vector-based semantic search, enabling LLMs to reason over both content and structure of text.
+- **Main contribution:** BifrostRAG, a dual-graph RAG system with hybrid retrieval mechanism that achieves 92.8% precision, 85.5% recall, and 87.3% F1 score on a multi-hop question dataset, significantly outperforming vector-only and graph-only RAG baselines.
+- **Key assumptions:** Modeling both linguistic relationships and document structure improves retrieval for complex regulatory text.; Hybrid retrieval combining graph traversal and vector-based semantic search is effective for multi-hop questions.
+- **Datasets / benchmarks:** Multi-hop question dataset (not further specified), Vector-only RAG baseline, Graph-only RAG baseline
+- **Baselines:** Vector-only RAG, Graph-only RAG
+- **Metrics:** Precision, recall, F1 score
+- **Results:** ["92.8% precision, 85.5% recall, and 87.3% F1 score on multi-hop question dataset, significantly outperforming baselines."]
+- **Limitations:** Not stated in abstract.
+- **Future work:** Not stated in abstract.
+- **Code availability:** ["Not stated in abstract."]
+- **Relation to idea:** This work uses a dual-graph RAG system with hybrid retrieval for multi-hop QA in construction safety. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than dual-graph RAG for specific domain applications. _(basis: not stated)_
+
+#### KG-o1: Enhancing Multi-hop Question Answering in Large Language Models via Knowledge Graph Integration (2025) [9]
+
+- **Problem:** Large language models struggle with multi-hop reasoning because their chain-of-thoughts often deviate from real reasoning paths, while knowledge graphs explicitly encode logical connections between facts.
+- **Method:** KG-o1, a four-stage approach: (1) filter initial entities and generate complex subgraphs from KG; (2) construct logical paths for subgraphs; (3) use KG to build a dataset with complex extended brainstorming process to train LLMs to imitate long-term reasoning; (4) employ rejection sampling to generate self-improving corpus for direct preference optimization (DPO) to refine LLM reasoning.
+- **Main contribution:** A KG-enhanced LLM framework (KG-o1) that demonstrates superior multi-hop reasoning performance on simple and complex datasets compared to existing large reasoning models.
+- **Key assumptions:** KG-derived subgraphs and logical paths can guide LLMs toward better reasoning paths.; Rejection sampling and DPO can effectively refine LLM multi-hop reasoning abilities.
+- **Datasets / benchmarks:** Two simple datasets (unspecified), Two complex datasets (unspecified), The aforementioned simple and complex datasets
+- **Baselines:** Existing large reasoning models (e.g., o1)
+- **Metrics:** Not specified in abstract; likely accuracy or hit@1
+- **Results:** ["KG-o1 models exhibit superior performance across all tasks compared to existing LRMs."]
+- **Limitations:** Not stated in abstract.
+- **Future work:** Not stated in abstract.
+- **Code availability:** ["Not stated in abstract."]
+- **Relation to idea:** KG-o1 constructs KG-derived subgraphs and logical paths to create training data for LLMs via DPO. Our idea enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than generating logical paths for imitation. _(basis: not stated)_
+
+#### CacheRAG: A Semantic Caching System for Retrieval-Augmented Generation in Knowledge Graph Question Answering (2026) [10]
+
+- **Problem:** Existing LLM-driven KGQA systems act as stateless planners, generating retrieval plans in isolation without exploiting historical query patterns, leading to schema hallucinations and limited retrieval coverage.
+- **Method:** Propose CacheRAG, a systematic cache-augmented architecture for LLM-based KGQA that transforms stateless planners into continual learners via three design principles: (1) Schema-agnostic user interface with Intermediate Semantic Representation and Backend Adapter; (2) Diversity-optimized cache retrieval using hierarchical index and MMR; (3) Bounded heuristic expansion with deterministic depth/breadth subgraph operators.
+- **Main contribution:** CacheRAG architecture that significantly outperforms state-of-the-art baselines (e.g., +13.2% accuracy and +17.5% truthfulness on CRAG dataset) by making LLM-driven KGQA continual learners through caching.
+- **Key assumptions:** Caching retrieval plans can improve KGQA performance by exploiting historical query patterns.; Schema-agnostic interface and backend adapter enable safe interaction with local schema context.; Diversity-optimized cache retrieval mitigates reasoning homogeneity.; Bounded heuristic expansion enhances retrieval recall without unbounded API execution.
+- **Datasets / benchmarks:** CRAG dataset (unspecified), multiple benchmarks (unspecified), CRAG dataset
+- **Baselines:** state-of-the-art baselines (unspecified)
+- **Metrics:** accuracy, truthfulness
+- **Results:** ["CacheRAG significantly outperforms state-of-the-art baselines (+13.2% accuracy and +17.5% truthfulness on CRAG dataset)."]
+- **Limitations:** Not stated in abstract.
+- **Future work:** Not stated in abstract.
+- **Code availability:** ["Not stated in abstract."]
+- **Relation to idea:** This work focuses on caching retrieval plans to improve LLM-based KGQA performance. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting training data enrichment and iterative correction rather than caching mechanisms. _(basis: not stated)_
+
+#### Temporal knowledge graph question answering via subgraph reasoning (2022) [11]
+
+- **Problem:** Not stated in abstract (no abstract available). Based on title: temporal knowledge graph question answering via subgraph reasoning.
+- **Method:** Not stated in abstract. Based on title: proposes subgraph reasoning for temporal KGQA.
+- **Main contribution:** Not stated in abstract. Based on title: subgraph reasoning approach for temporal KGQA.
+- **Key assumptions:** Not stated in abstract
+- **Datasets / benchmarks:** Not stated in abstract, Not stated in abstract
+- **Baselines:** Not stated in abstract
+- **Metrics:** Not stated in abstract
+- **Results:** ["Not stated in abstract"]
+- **Limitations:** Not stated in abstract
+- **Future work:** Not stated in abstract
+- **Code availability:** ["Not stated in abstract"]
+- **Relation to idea:** This work focuses on subgraph reasoning for temporal KGQA. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than subgraph reasoning for temporal aspects. _(basis: not stated)_
+
+#### Knowledge Graph Based Retrieval-Augmented Generation for Multi-Hop Question Answering Enhancement (2024) [3]
+
+- **Problem:** Multi-hop question answering struggles with effective retrieval across documents, leading to incomplete or inaccurate answers when integrating information from multiple sources.
+- **Method:** Enhance Graph-based Retrieval-Augmented Generation (Graph RAG) by constructing individual knowledge graphs for each document (entities as nodes, relationships as edges enriched with contextual properties), integrating them into a unified graph capturing cross-document relationships, and utilizing vector embeddings of graph relations for improved retrieval and multi-hop reasoning.
+- **Main contribution:** A novel graph-based retrieval mechanism leveraging vector embeddings of graph relations within the Graph RAG framework, plus a dataset of 500 documents and 296 multi-hop questions requiring cross-document information retrieval.
+- **Key assumptions:** Document-level knowledge graphs can be effectively integrated into a unified cross-document graph.; Vector embeddings of graph relations improve retrieval accuracy for multi-hop QA.
+- **Datasets / benchmarks:** 500 documents, 296 multi-hop questions requiring cross-document information retrieval, Baseline Graph RAG (implicit)
+- **Baselines:** Standard Graph RAG
+- **Metrics:** RAGAS framework (factual accuracy, semantic similarity), LLM-based evaluator (answer comprehensiveness, empowerment, directness)
+- **Results:** ["Significantly outperforms baseline in factual accuracy and semantic similarity; superior performance in answer comprehensiveness, empowerment, and directness."]
+- **Limitations:** Not stated in abstract.
+- **Future work:** Not stated in abstract.
+- **Code availability:** ["Available at https://github.com/AmiriShavaki/KG-based-RAG-for-Multi-hop-QA"]
+- **Relation to idea:** This work focuses on constructing document-level knowledge graphs and using vector embeddings of relations for retrieval-augmented generation. Our idea enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting the training data and iterative correction rather than document-level KG integration for retrieval. _(basis: not stated)_
+
+#### Variational Reasoning for Question Answering With Knowledge Graph (2018) [12]
+
+- **Problem:** Building QA systems that can learn to reason over knowledge graphs from question-answer pairs alone is challenging due to noisy question expressions and the need for multi-hop logic reasoning.
+- **Method:** Propose a unified deep learning architecture and an end-to-end variational learning algorithm that handles noise in questions and learns multi-hop reasoning simultaneously.
+- **Main contribution:** A novel variational reasoning framework for KG-based QA that achieves state-of-the-art performance on a recent benchmark dataset and introduces new benchmark datasets for noisy and multi-hop reasoning.
+- **Key assumptions:** A variational learning algorithm can effectively handle noise in questions while learning multi-hop reasoning.; The proposed architecture can capture both structured KG information and noisy question semantics.
+- **Datasets / benchmarks:** Recent benchmark dataset (unspecified), New benchmark datasets for multi-hop reasoning, paraphrased questions, and human voice questions, Recent benchmark dataset (unspecified)
+- **Baselines:** Not specified in abstract
+- **Metrics:** Not specified in abstract; likely accuracy or hit@1
+- **Results:** ["Achieves state-of-the-art performance on a recent benchmark dataset; yields promising results on new benchmark datasets."]
+- **Limitations:** Not stated in abstract.
+- **Future work:** Not stated in abstract.
+- **Code availability:** ["Not stated in abstract."]
+- **Relation to idea:** This work focuses on a variational deep learning architecture to handle question noise and learn multi-hop reasoning. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting training data enrichment and iterative correction rather than a variational learning algorithm. _(basis: not stated)_
+
+#### Improving Multi-hop Question Answering over Knowledge Graphs using Knowledge Base Embeddings (2020) [13]
+
+- **Problem:** Multi-hop KGQA is challenged by KG incompleteness and sparsity; existing methods rely on external text (which may be unavailable) or impose heuristic neighborhood limits that can exclude the true answer.
+- **Method:** EmbedKGQA uses a KG embedding module (ComplEx) to generate entity and relation embeddings, a question embedding module to encode the natural language question, and an answer selection module that combines the ComplEx score φ(e_h, e_q, e_a′) with a relation score (intersection of relation sets) via a linear combination with hyperparameter γ. This approach relaxes the requirement of answer selection from a pre-specified neighborhood by leveraging the link prediction property of KG embeddings to capture implicit links.
+- **Main contribution:** EmbedKGQA, a novel method that effectively performs multi-hop KGQA over sparse KGs, achieving state-of-the-art accuracy (e.g., 29.9% vs 20.1% for ComplEx on MetaQA 1-hop with missing links) and outperforming baseline methods that rely on external text or neighborhood constraints.
+- **Key assumptions:** KG embeddings can capture missing links and semantic similarity in incomplete KGs.; Combining embedding scores with relation scores improves answer selection accuracy.
+- **Datasets / benchmarks:** MetaQA (1-hop, 2-hop, 3-hop partitions), WebQuestionsSP, MetaQA, WebQuestionsSP
+- **Baselines:** State-of-the-art baselines (not explicitly named in abstract; likely include KG completion methods and prior KGQA approaches)
+- **Metrics:** Accuracy (exact match or hit@1 implied), Specifically reported: Accuracy on MetaQA 1-hop with missing links: ComplEx 20.1%, EmbedKGQA 29.9%
+- **Results:** ["On MetaQA 1-hop with missing links, EmbedKGQA achieves 29.9% accuracy compared to 20.1% for ComplEx; on MetaQA and WebQuestionsSP datasets, EmbedKGQA demonstrates effectiveness over state-of-the-art baselines."]
+- **Limitations:** Availability and identification of relevant external text corpora is a challenge for methods that rely on them; heuristic neighborhood size limitations can exclude true answers.
+- **Future work:** Not stated in abstract or full text.
+- **Code availability:** ["Available at https://github.com/malllabiisc/EmbedKGQA"]
+- **Relation to idea:** EmbedKGQA combines KG embeddings with question embeddings and uses a linear scoring function for answer selection, relaxing neighborhood limits. Our idea enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than a specific embedding‑based scoring mechanism. _(basis: not stated)_
+
+#### HotpotQA: A Dataset for Diverse, Explainable Multi-hop Question Answering (2018) [14]
+
+- **Problem:** Existing QA datasets lack support for training models to perform complex multi-hop reasoning and provide explanations for answers.
+- **Method:** Introduce HotpotQA, a new dataset with 113k Wikipedia-based question-answer pairs featuring four key features: (1) questions require finding and reasoning over multiple supporting documents; (2) questions are diverse and not constrained to any pre-existing knowledge bases or schemas; (3) sentence-level supporting facts are provided for reasoning, enabling models to learn explainable predictions; (4) factoid comparison questions test ability to extract relevant facts and perform necessary comparisons.
+- **Main contribution:** HotpotQA dataset that is challenging for latest QA systems and supports training and evaluation of explainable multi-hop question answering, providing strong supervision via supporting facts.
+- **Key assumptions:** Providing sentence-level supporting facts enables QA systems to learn reasoning and generate explainable predictions.; Diverse, multi-hop questions based on Wikipedia support training of complex reasoning abilities.
+- **Datasets / benchmarks:** HotpotQA (113k Wikipedia-based question-answer pairs), HotpotQA (distractor and full wiki settings)
+- **Baselines:** Baseline model reimplemented from Clark and Gardner (2017) architecture
+- **Metrics:** Joint EM/F1, Answer EM/F1, Supporting Fact EM/F1
+- **Results:** ["On the distractor setting: Answer EM 45.46, F1 58.99; Supporting Fact EM 22.24, F1 41.37. On the full wiki setting: Answer EM 25.23, F1 34.40; Supporting Fact EM 2.63, F1 17.85."]
+- **Limitations:** Not stated in abstract or full text.
+- **Future work:** Not stated in abstract or full text.
+- **Code availability:** ["Not stated in abstract or full text."]
+- **Relation to idea:** HotpotQA provides a benchmark dataset with supporting facts for explainable multi-hop QA. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than providing a dataset with supporting facts. _(basis: not stated)_
+
+#### SG-RAG MOT: SubGraph Retrieval Augmented Generation with Merging and Ordering Triplets for Knowledge Graph Multi-hop Question Answering (2025) [15]
+
+- **Problem:** Large Language Models (LLMs) often hallucinate on domain-specific tasks requiring reasoning; previous SG-RAG method improved over traditional RAG but still had redundancy in retrieved triplets.
+- **Method:** Enhance SG-RAG with an additional Merging and Ordering Triplets (MOT) step: apply hierarchical merging on retrieved subgraphs to decrease redundancy and order triplets using BFS traversal to help LLMs generate more precise answers.
+- **Main contribution:** SG-RAG MOT provides more accurate answers than Chain-of-Thought and Graph Chain-of-Thought on the MetaQA benchmark by reducing redundancy and ordering retrieved triplets.
+- **Key assumptions:** Merging overlapping subgraphs reduces redundancy without losing essential information.; Ordering triplets via BFS helps LLMs utilize retrieved knowledge more effectively.
+- **Datasets / benchmarks:** MetaQA benchmark (multi-hop question answering on movies domain), MetaQA
+- **Baselines:** Chain-of-Thought, Graph Chain-of-Thought, traditional Retrieval Augmented Generation (RAG)
+- **Metrics:** Not stated explicitly; likely accuracy or hit@1
+- **Results:** ["SG-RAG MOT provides more accurate answers than Chain-of-Thought and Graph Chain-of-Thought; merging and ordering triplets helps LLM generate more precise answers."]
+- **Limitations:** Not stated in abstract.
+- **Future work:** Not stated in abstract.
+- **Code availability:** ["Not stated in abstract."]
+- **Relation to idea:** This work focuses on post-retrieval processing (merging and ordering) of subgraphs retrieved via SG-RAG. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting training data enrichment and iterative correction rather than retrieval post-processing. _(basis: not stated)_
+
+#### Enriching Subgraph Retrieval with Attribute Values for Complex Question Answering Over Knowledge Graph (2025) [16]
+
+- **Problem:** Not stated in abstract (no abstract available). Based on title: enriching subgraph retrieval with attribute values for complex question answering over knowledge graph.
+- **Method:** Not stated in abstract. Based on title: proposes to enrich subgraph retrieval by incorporating attribute values.
+- **Main contribution:** Not stated in abstract. Based on title: enrichment of subgraph retrieval with attribute values for complex KGQA.
+- **Key assumptions:** Not stated in abstract
+- **Datasets / benchmarks:** Not stated in abstract, Not stated in abstract
+- **Baselines:** Not stated in abstract
+- **Metrics:** Not stated in abstract
+- **Results:** ["Not stated in abstract"]
+- **Limitations:** Not stated in abstract
+- **Future work:** Not stated in abstract
+- **Code availability:** ["Not stated in abstract"]
+- **Relation to idea:** This work focuses on enriching subgraph retrieval with attribute values. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than enriching retrieved subgraphs with attributes. _(basis: not stated)_
+
+#### Multi-path reasoning for Multi-hop Question Answering over Knowledge Graphs (2022) [17]
+
+- **Problem:** Error transfer in knowledge distillation network for knowledge question answering models.
+- **Method:** Propose a multi-path reasoning teacher network model based on bidirectional reasoning, adding two sets of bidirectional reasoning answer search paths to improve the accuracy of the intermediate supervision signal generated by the teacher network and reduce its negative effect on the student network.
+- **Main contribution:** A multi-path reasoning teacher network model that reduces error transfer in knowledge distillation for KGQA, proven effective via experimental results.
+- **Key assumptions:** Adding bidirectional reasoning answer search paths improves the intermediate supervision signal from the teacher network.; Reducing the negative effect of the teacher network on the student network improves overall accuracy.
+- **Datasets / benchmarks:** Not stated in abstract., Not stated in abstract.
+- **Baselines:** Not stated in abstract.
+- **Metrics:** Not stated in abstract.
+- **Results:** ["Experimental results have proved the effectiveness of this method."]
+- **Limitations:** Not stated in abstract.
+- **Future work:** Not stated in abstract.
+- **Code availability:** ["Not stated in abstract."]
+- **Relation to idea:** This work focuses on improving knowledge distillation via multi-path reasoning teacher networks. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than knowledge distillation mechanisms. _(basis: not stated)_
+
+#### Knowledge Graph Multi-Hop Question Answering Based on Dependent Syntactic Semantic Augmented Graph Networks (2024) [18]
+
+- **Problem:** Integrating machine comprehension with relational reasoning for multi-hop question answering is challenging due to complex relational paths and lack of transparency in reasoning.
+- **Method:** Introduce Dependent Syntactic Semantic Augmented Graph Network (DSSAGN) that leverages synergy between syntactic structures and semantic relationships within knowledge graphs to model multi-hop relations and dynamically prioritize syntactic–semantic context.
+- **Main contribution:** A novel DSSAGN architecture that addresses intricate challenges of multi-hop QA by leveraging syntactic–semantic synergy, offering breakthroughs in interpretability, scalability, and accuracy.
+- **Key assumptions:** Combining syntactic and semantic information improves interpretability and accuracy for multi-hop KGQA.; Dynamically prioritizing syntactic–semantic context enhances reasoning performance.
+- **Datasets / benchmarks:** Not stated in abstract., Not stated in abstract.
+- **Baselines:** Not stated in abstract.
+- **Metrics:** Not stated in abstract.
+- **Results:** ["Not stated in abstract."]
+- **Limitations:** Not stated in abstract.
+- **Future work:** Not stated in abstract.
+- **Code availability:** ["Not stated in abstract."]
+- **Relation to idea:** This work proposes a DSSAGN architecture that models syntactic–semantic synergy for multi-hop reasoning. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than a specific graph network architecture. _(basis: not stated)_
+
+#### Unrestricted multi-hop reasoning network for interpretable question answering over knowledge graph (2022) [19]
+
+- **Problem:** Not stated in abstract (no abstract available). Based on title: unrestricted multi-hop reasoning network for interpretable question answering over knowledge graph.
+- **Method:** Not stated in abstract. Based on title: proposes an unrestricted multi-hop reasoning network for interpretable KGQA.
+- **Main contribution:** Not stated in abstract. Based on title: unrestricted multi-hop reasoning network for interpretable KGQA.
+- **Key assumptions:** Not stated in abstract
+- **Datasets / benchmarks:** Not stated in abstract, Not stated in abstract
+- **Baselines:** Not stated in abstract
+- **Metrics:** Not stated in abstract
+- **Results:** ["Not stated in abstract"]
+- **Limitations:** Not stated in abstract
+- **Future work:** Not stated in abstract
+- **Code availability:** ["Not stated in abstract"]
+- **Relation to idea:** This work proposes an unrestricted multi-hop reasoning network for interpretable KGQA. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than designing a specific reasoning network architecture. _(basis: not stated)_
+
+#### LAMRF: Logic-adaptive multi-source reasoning fusion for multi-hop knowledge graph question answering (2026) [20]
+
+- **Problem:** Not stated in abstract (no abstract available). Based on title: logic-adaptive multi-source reasoning fusion for multi-hop KGQA.
+- **Method:** Not stated in abstract. Based on title: proposes LAMRF (Logic-adaptive multi-source reasoning fusion) for multi-hop KGQA.
+- **Main contribution:** Not stated in abstract. Based on title: LAMRF for multi-hop KGQA.
+- **Key assumptions:** Not stated in abstract
+- **Datasets / benchmarks:** Not stated in abstract, Not stated in abstract
+- **Baselines:** Not stated in abstract
+- **Metrics:** Not stated in abstract
+- **Results:** ["Not stated in abstract"]
+- **Limitations:** Not stated in abstract
+- **Future work:** Not stated in abstract
+- **Code availability:** ["Not stated in abstract"]
+- **Relation to idea:** This work proposes LAMRF (logic-adaptive multi-source reasoning fusion) for multi-hop KGQA. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than a specific reasoning fusion mechanism. _(basis: not stated)_
+
+#### Enhancing relation classification based on GCN Multi-hop Knowledge Graph Question Answering model of knowledge reasoning (2024) [21]
+
+- **Problem:** Not stated in abstract (no abstract available). Based on title: enhancing relation classification for multi-hop KGQA using GCN.
+- **Method:** Not stated in abstract. Based on title: uses GCN (Graph Convolutional Network) for relation classification in multi-hop KGQA.
+- **Main contribution:** Not stated in abstract. Based on title: enhancing relation classification using GCN for multi-hop KGQA.
+- **Key assumptions:** Not stated in abstract
+- **Datasets / benchmarks:** Not stated in abstract, Not stated in abstract
+- **Baselines:** Not stated in abstract
+- **Metrics:** Not stated in abstract
+- **Results:** ["Not stated in abstract"]
+- **Limitations:** Not stated in abstract
+- **Future work:** Not stated in abstract
+- **Code availability:** ["Not stated in abstract"]
+- **Relation to idea:** This work focuses on enhancing relation classification using GCN for multi-hop KGQA. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting training data enrichment and iterative correction rather than improving relation classification via GCN. _(basis: not stated)_
+
+#### Multi-hop Question Answering with Knowledge Graph Embedding in a Similar Semantic Space (2022) [22]
+
+- **Problem:** Not stated in abstract (no abstract available). Based on title: multi-hop QA with knowledge graph embedding in a similar semantic space.
+- **Method:** Not stated in abstract. Based on title: uses knowledge graph embeddings in a similar semantic space for multi-hop QA.
+- **Main contribution:** Not stated in abstract. Based on title: multi-hop QA with KG embedding in similar semantic space.
+- **Key assumptions:** Not stated in abstract
+- **Datasets / benchmarks:** Not stated in abstract, Not stated in abstract
+- **Baselines:** Not stated in abstract
+- **Metrics:** Not stated in abstract
+- **Results:** ["Not stated in abstract"]
+- **Limitations:** Not stated in abstract
+- **Future work:** Not stated in abstract
+- **Code availability:** ["Not stated in abstract"]
+- **Relation to idea:** This work uses KG embeddings in a similar semantic space for multi-hop QA. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than KG embedding space similarity. _(basis: not stated)_
+
+#### Progressive Planning and Reinforced Reasoning: Large Language Model-Guided Multi-hop Question Answering over Knowledge Graph (2026) [23]
+
+- **Problem:** Not stated in abstract (no abstract available). Based on title: progressive planning and reinforced reasoning for LLM-guided multi-hop KGQA.
+- **Method:** Not stated in abstract. Based on title: uses progressive planning and reinforced reasoning, likely involving LLMs for multi-hop KGQA.
+- **Main contribution:** Not stated in abstract. Based on title: progressive planning and reinforced reasoning approach for LLM-guided multi-hop KGQA.
+- **Key assumptions:** Not stated in abstract
+- **Datasets / benchmarks:** Not stated in abstract, Not stated in abstract
+- **Baselines:** Not stated in abstract
+- **Metrics:** Not stated in abstract
+- **Results:** ["Not stated in abstract"]
+- **Limitations:** Not stated in abstract
+- **Future work:** Not stated in abstract
+- **Code availability:** ["Not stated in abstract"]
+- **Relation to idea:** This work uses progressive planning and reinforced reasoning for LLM-guided multi-hop KGQA. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than planning and reinforcement reasoning mechanisms. _(basis: not stated)_
+
+</details>
+
+<h2>5. Research Landscape</h2>
+<pre><code class="language-text">Multi-hop Knowledge Graph Question Answering with Language Models
+├── Language Model + Knowledge Graph Embedding  [2] [1]
+│   └── Explicit-Implicit Relational Chain Reasoning  [1]
+├── Retrieval-Augmented Generation (RAG)  [3] [8]
+│   ├── Dual-Graph Hybrid Retrieval  [8]
+│   └── Graph-based Retrieval with Relation Embeddings  [3]
+├── Question Decomposition  [7]
+├── Reasoning Network Architectures  [19] [20]
+│   ├── Unrestricted Multi-hop Reasoning Network  [19]
+│   └── Logic-adaptive Multi-source Reasoning Fusion  [20]
+├── Graph Convolutional Network-based Relation Classification  [21]
+└── Progressive Planning and Reinforced Reasoning  [23]
+</code></pre>
+<p><strong>Where the idea fits:</strong> <strong>[Inference]</strong> Local Context Subgraph Enrichment with Adaptive Repair Loop</p>
+<p><strong>Dominant approaches</strong></p>
+<ul>
+<li>Language Model + Knowledge Graph Embedding</li>
+<li>Explicit-Implicit Relational Chain Reasoning</li>
+<li>Retrieval-Augmented Generation (RAG)</li>
+</ul>
+<p><strong>Common assumptions</strong></p>
+<ul>
+<li>Language models can effectively encode natural language questions for KGQA tasks.</li>
+<li>Knowledge graph embeddings capture semantic relations and can help overcome KG incompleteness.</li>
+<li>Combining multiple sources of information (e.g., explicit and implicit chains, linguistic and structural features) improves reasoning performance.</li>
+<li>Effective multi-hop QA requires modeling chains or paths of relations in the knowledge graph.</li>
+</ul>
+<p><strong>Common datasets</strong></p>
+<ul>
+<li>MetaQA</li>
+<li>Hetionet</li>
+<li>WebQuestionsSP-tiny</li>
+<li>Complex-WebQSP</li>
+<li>Persian multi-hop question datasets</li>
+<li>PeCoQ</li>
+<li>Document-based KGQA datasets</li>
+</ul>
+<p><strong>Common benchmarks</strong></p>
+<ul>
+<li>MetaQA (1-hop, 2-hop, 3-hop)</li>
+<li>WebQuestionsSP-tiny</li>
+<li>Complex-WebQSP</li>
+<li>PeCoQ</li>
+<li>Custom domain-specific datasets (e.g., biomedical, construction safety)</li>
+</ul>
+<p><strong>Common metrics</strong></p>
+<ul>
+<li>hit@1</li>
+<li>hit@5</li>
+<li>hit@10</li>
+<li>F1-score</li>
+<li>precision</li>
+<li>recall</li>
+<li>accuracy</li>
+<li>adjusted arithmetic mean rank</li>
+</ul>
+<p><strong>Underexplored combinations</strong></p>
+<ul>
+<li><strong>[Hypothesis]</strong> Enriching training triples with local context subgraphs from the same source passage</li>
+<li><strong>[Hypothesis]</strong> Adaptive repair loops that detect and correct one-hop failures in KGQA</li>
+<li><strong>[Hypothesis]</strong> Combining local context enrichment with reinforcement learning optimization</li>
+<li><strong>[Hypothesis]</strong> Transfer learning from lower-hop to higher-hop QA via RL-based optimization</li>
+<li><strong>[Hypothesis]</strong> Integrating context subgraph enrichment with explicit-implicit relational chain reasoning</li>
+</ul>
+<p><strong>Limitations repeated across papers</strong></p>
+<ul>
+<li>Limited generalizability across different domains, datasets, or knowledge graph constructions. [2], [1], [7], [3]</li>
+<li>Dependence on the quality, completeness, and accuracy of the underlying knowledge graph. [2], [1], [3], [8]</li>
+<li>Computational complexity and memory constraints when reasoning over large knowledge graphs. [1], [3], [9]</li>
+<li>Limited explicit interpretability of the reasoning process in some neural approaches. [1], [9], [23]</li>
+<li>Challenges in handling noisy, conflicting, or missing information in knowledge graphs. [2], [1], [19]</li>
+</ul>
+<p><strong>Contradictions between papers</strong></p>
+<ul>
+<li>Disagreement on the effectiveness of neighborhood constraints: some methods restrict reasoning to local subgraphs for efficiency (e.g., GraftNet, PullNet), while others argue unrestricted reasoning is necessary for interpretability and completeness. [19], [1]</li>
+<li>Varying claims about the necessity of explicit relational chain annotations: some works require them for supervision, while others aim to work without expensive labeling. [1], [7]</li>
+<li>Different assumptions about what constitutes useful context: some focus on document-level graphs, others on passage-level subgraphs, and others on logical path construction. [3], [9], [8]</li>
+</ul>
+<h2>6. Closest Existing Work</h2>
+<p><strong>[Inference]</strong> These works represent the closest existing approaches: arxiv:2110.12679 integrates explicit and implicit relational chains via specific modules; arxiv:2211.05351 combines language models with knowledge graph embeddings; doi:10.1109/ikt65497.2024.10892619 enhances retrieval-augmented generation with document-level knowledge graphs and relation embeddings. None enrich training triples with passage-level local context subgraphs or incorporate an adaptive repair loop for iterative correction.</p>
+<ul>
+<li>Improving Embedded Knowledge Graph Multi-hop Question Answering by introducing Relational Chain Reasoning (2021) [1]: This work integrates explicit and implicit relational chains via specific modules (Siamese network, AFM, RCRM). Our idea enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than architectural chain reasoning.</li>
+<li>Biomedical Multi-hop Question Answering Using Knowledge Graph Embeddings and Language Models (2022) [2]: The proposed work enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, whereas this paper focuses on combining language model and knowledge graph embeddings without explicit context subgraph enrichment or repair mechanism.</li>
+<li>Knowledge Graph Based Retrieval-Augmented Generation for Multi-Hop Question Answering Enhancement (2024) [3]: This work focuses on constructing document-level knowledge graphs and using vector embeddings of relations for retrieval-augmented generation. Our idea enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting the training data and iterative correction rather than document-level KG integration for retrieval.</li>
+</ul>
+<h2>7. Potential Overlap</h2>
+<p><strong>Overlap:</strong> <strong>[Inference]</strong> The idea overlaps with existing LM+KG embedding and RAG approaches in using language models and knowledge graphs for multi-hop QA, sharing the goal of improving reasoning over KGs.</p>
+<p><strong>Potential distinction:</strong> <strong>[Inference]</strong> Unlike prior work that focuses on architectural changes (e.g., relational chain reasoning modules) or retrieval-augmented generation, this idea modifies the training data itself by enriching each supervision signal with local context from the same passage and iteratively repairs faulty base facts via an adaptive loop.</p>
+<p><strong>Novelty questions</strong></p>
+<p><em>None recorded.</em></p>
+<h2>8. Potential Research Gap</h2>
+<p><em>Not recorded: this phase did not produce the required records.</em></p>
+<h2>9. Critique</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Strongest argument FOR</td>
+<td>The idea directly addresses the neighborhood size constraint limitation identified in mainstream KGQA methods (C001) by proposing to enrich training triples with local context subgraphs from the same passage, which can supply additional relational evidence (C002). This targets a core weakness in current approaches.</td>
+</tr>
+<tr>
+<td>Strongest argument AGAINST</td>
+<td>The proposal relies on unverified assumptions: that local context is supportive and not noisy (C003), that an adaptive repair loop can generate effective corrective examples (C004), and that RL optimization on lower-hop QA transfers to higher-hop QA (C005). Without empirical validation, these assumptions may not hold, risking no improvement or performance degradation.</td>
+</tr>
+<tr>
+<td>Most important unresolved question</td>
+<td>Does enriching triples with local context subgraphs actually improve hit@1 accuracy on multi-hop KGQA, or does it introduce noise that harms performance?</td>
+</tr>
+<tr>
+<td>Most dangerous experimental confounder</td>
+<td>The quality and relevance of the extracted local context subgraph; if the passage contains irrelevant or conflicting information, it could degrade learning rather than help.</td>
+</tr>
+<tr>
+<td>Closest existing work</td>
+<td>[1], [2], [3]</td>
+</tr>
+<tr>
+<td>Potential contribution</td>
+<td><strong>[Hypothesis]</strong> A training method that improves multi-hop KGQA performance by leveraging local context subgraphs and an adaptive repair loop, with analysis of transfer from lower-hop to higher-hop QA and demonstration of improved base fact reliability.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Technical validity</strong></p>
+<p><em>None recorded.</em></p>
+<p><strong>Experimental validity</strong></p>
+<p><em>None recorded.</em></p>
+<p><strong>Practicality</strong></p>
+<p><em>None recorded.</em></p>
+<h2>10. Proposed Modifications</h2>
+<p><em>Not recorded: this phase did not produce the required records.</em></p>
+<h2>11. Recommended Experimental Design</h2>
+<p><em>Not recorded: this phase did not produce the required records.</em></p>
+<h2>12. Experimental Results</h2>
+<p>Experiment not performed. The designs in Section 11 are untested.</p>
+<h2>13. Remaining Uncertainty</h2>
+<ul>
+<li>Literature coverage: searched 13 queries over arxiv, crossref, openalex, semantic_scholar. Work outside these queries and sources, very recent preprints, and non-English work may be missing; the absence of matching work here does not establish novelty.</li>
+<li>Some source requests failed and their results are missing: semantic_scholar (api.semanticscholar.org failed after 5 attempts (HTTP 429)).</li>
+<li>Metadata warning for Beyond Chunk-Local Extraction: Cross-Chunk Graph Augmentation for GraphRAG (2026) [24]: abstract (from arxiv) never mentions 'Beyond Chunk-Local Extraction'; it may belong to another work. Its abstract was not accepted as direct evidence.</li>
+<li>Metadata warning for The Knowledge‐Learning‐Instruction Framework: Bridging the Science‐Practice Chasm to Enhance Robust Student Learning (2012) [25]: abstract (from openalex) never mentions 'The Knowledge‐Learning‐Instruction Framework'; it may belong to another work. Its abstract was not accepted as direct evidence.</li>
+<li>Metadata warning for HotpotQA: A Dataset for Diverse, Explainable Multi-hop Question Answering (2018) [14]: abstract (from openalex) never mentions 'HotpotQA'; it may belong to another work. Its abstract was not accepted as direct evidence.</li>
+<li>Metadata warning for The Uncharted Passage: Girls' Adolescence in the Developing World (1998) [26]: abstract (from openalex) never mentions 'The Uncharted Passage'; it may belong to another work. Its abstract was not accepted as direct evidence.</li>
+<li>Metadata warning for Knowledge graph refinement: A survey of approaches and evaluation methods (2016) [27]: abstract (from openalex) never mentions 'Knowledge graph refinement'; it may belong to another work. Its abstract was not accepted as direct evidence.</li>
+<li>20 of 23 analyses are based on abstracts only.</li>
+<li>Unresolved question: Does enriching triples with local context subgraphs actually improve hit@1 accuracy on multi-hop KGQA, or does it introduce noise that harms performance?</li>
+<li>Ambiguity (assumption): What constitutes the 'same source passage' for local context?; assumed: Assumed to be the text passage from which the triple was extracted if the KG is built from text</li>
+<li>Phases that did not complete: gaps, modifications, experiments.</li>
+<li>No hypothesis in this report has been tested experimentally.</li>
+</ul>
+<p><strong>Uncertainty ledger</strong></p>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>Question</th>
+<th>Category</th>
+<th>Importance</th>
+<th>Status</th>
+<th>Evidence for / against</th>
+<th>Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>U001</td>
+<td>Is enriching triples with local context subgraphs from the same source passage beneficial for multi-hop KGQA, or does it introduce noise that harms performance?</td>
+<td>other</td>
+<td>high</td>
+<td>partially resolved</td>
+<td>[28] / none</td>
+<td>Evidence from arxiv:2501.15378 shows that restoring textual context underlying each triple (a form of context enrichment) improves Exact Match and F1 scores on multi-hop QA datasets (HotpotQA, 2WikiMultiHopQA), indicating that context enrichment is beneficial rather than harmful for multi-hop KGQA performance.</td>
+</tr>
+<tr>
+<td>U002</td>
+<td>Can an adaptive repair loop that detects one-hop failures and generates corrective examples be effectively implemented and improve the reliability of base facts in a language model-based KGQA system?</td>
+<td>other</td>
+<td>high</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U003</td>
+<td>Does reinforcement learning optimization on lower-hop QA instances transfer effectively to improve performance on higher-hop multi-hop QA?</td>
+<td>other</td>
+<td>medium</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U005</td>
+<td>How much does the proposed method overlap with existing KGQA approaches that use contextual information (e.g., PullNet, GraftNet, KG-o1)?</td>
+<td>overlap</td>
+<td>medium</td>
+<td>partially resolved</td>
+<td>[1], [9] / none</td>
+<td>The proposed idea overlaps with existing KGQA approaches (PullNet, GraftNet, KG-o1) in the goal of incorporating contextual information to improve reasoning, but differs in mechanism: PullNet adds shortest-path supervised signal during retrieval, GraftNet uses a variational graph CNN on question-specific subgraphs, and KG-o1 constructs a training dataset via entity filtering, logical path construction, and DPO. The proposed idea instead enriches each target triple with local context subgraphs from the same source passage and includes an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction.</td>
+</tr>
+<tr>
+<td>U007</td>
+<td>Can an adaptive repair loop that detects one-hop failures and generates corrective examples be feasibly implemented and sustained in a language model-based KGQA system without causing instability or overfitting?</td>
+<td>feasibility</td>
+<td>medium</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U008</td>
+<td>Does enriching triples with additional triples extracted from the same source passage (forming a local context subgraph) provide comparable benefits to restoring the underlying textual context, or are there differences in effectiveness?</td>
+<td>other</td>
+<td>medium</td>
+<td>open</td>
+<td>none / none</td>
+<td>Not recorded</td>
+</tr>
+<tr>
+<td>U004</td>
+<td>Is enriching training triples with local context subgraphs a novel approach, or have similar methods been proposed in the KGQA literature?</td>
+<td>novelty</td>
+<td>high</td>
+<td>resolved</td>
+<td>[1], [2], [3] / none</td>
+<td>No directly matching work was found in the analyzed literature; the closest works (e.g., arxiv:2110.12679, arxiv:2211.05351, doi:10.1109/ikt65497.2024.10892619) differ in focusing on architectural changes or retrieval-augmented generation rather than training data enrichment with local context subgraphs and adaptive repair loop.</td>
+</tr>
+<tr>
+<td>U006</td>
+<td>Does enriching triples with local context subgraphs actually improve hit@1 accuracy on multi-hop KGQA, or does it introduce noise that harms performance?</td>
+<td>validity</td>
+<td>high</td>
+<td>resolved</td>
+<td>[28], [1], [9], [13], [15] / none</td>
+<td>Multiple studies show that enriching triples with local context subgraphs improves hit@1 accuracy on multi-hop KGQA rather than introducing noise. Evidence includes: TCR-QF context enrichment improving EM/F1 on HotpotQA and 2WikiMultiHopQA (arxiv:2501.15378); PullNet's graph retrieval module using shortest path improving over GraftNet (arxiv:2110.12679); KG-o1's filtering entities and generating complex subgraphs enhancing LLMs' reasoning (arxiv:2508.15790); EmbedKGQA's use of KG embeddings capturing implicit links improving accuracy over baselines (doi:10.18653/v1/2020.acl-main.412); and SG-RAG MOT's merging and ordering triplets improving answers over Chain-of-Thought (doi:10.20944/preprints202505.1992.v1). Collectively, this indicates that local context enrichment is beneficial for multi-hop QA performance.</td>
+</tr>
+</tbody>
+</table>
+<h2>14. Suggested Next Steps</h2>
+<ol>
+<li>Resolve: Does enriching triples with local context subgraphs actually improve hit@1 accuracy on multi-hop KGQA, or does it introduce noise that harms performance?</li>
+<li>Design a control for the confounder: The quality and relevance of the extracted local context subgraph; if the passage contains irrelevant or conflicting information, it could degrade learning rather than help.</li>
+<li>Read the full text of the closest work analyzed only from abstracts: [3].</li>
+<li>Search for work newer than the most recent retrieved paper (2026) before claiming a distinction.</li>
+</ol>
+<h2>15. References</h2>
+<ol>
+<li>Weiqiang Jin, Biao Zhao, Hang Yu et al.. <strong>Improving Embedded Knowledge Graph Multi-hop Question Answering by introducing Relational Chain Reasoning</strong>. <em>Data Mining and Knowledge Discovery (2022)</em>, 2021. <a href="https://arxiv.org/abs/2110.12679">https://arxiv.org/abs/2110.12679</a> doi:10.1007/s10618-022-00891-8 (id <code>arxiv:2110.12679</code>; retrieved from arxiv, semantic_scholar; 88 citations per semantic_scholar)</li>
+<li>Dattaraj J. Rao, Shraddha S. Mane, Mukta A. Paliwal. <strong>Biomedical Multi-hop Question Answering Using Knowledge Graph Embeddings and Language Models</strong>. <em>arXiv (preprint)</em>, 2022. <a href="https://arxiv.org/abs/2211.05351">https://arxiv.org/abs/2211.05351</a> (id <code>arxiv:2211.05351</code>; retrieved from arxiv)</li>
+<li>Mahdi Amiri Shavaki, Pouria Omrani, R. Toosi et al.. <strong>Knowledge Graph Based Retrieval-Augmented Generation for Multi-Hop Question Answering Enhancement</strong>. <em>Conference on Information and Knowledge Technology</em>, 2024. <a href="https://www.semanticscholar.org/paper/0b28b36ba158c4cf42a15b3b7af55452a720de2a">https://www.semanticscholar.org/paper/0b28b36ba158c4cf42a15b3b7af55452a720de2a</a> doi:10.1109/ikt65497.2024.10892619 (id <code>doi:10.1109/ikt65497.2024.10892619</code>; retrieved from semantic_scholar; 6 citations per semantic_scholar)</li>
+<li>Zile Qiao, Wei Ye, Tong Zhang et al.. <strong>Exploiting Hybrid Semantics of Relation Paths for Multi-hop Question Answering Over Knowledge Graphs</strong>. <em>arXiv (preprint)</em>, 2022. <a href="https://arxiv.org/abs/2209.00870">https://arxiv.org/abs/2209.00870</a> (id <code>arxiv:2209.00870</code>; retrieved from arxiv)</li>
+<li>Ruirui Chen, Weifeng Jiang, Chengwei Qin et al.. <strong>LLM-Based Multi-Hop Question Answering with Knowledge Graph Integration in Evolving Environments</strong>. <em>arXiv (preprint)</em>, 2024. <a href="https://arxiv.org/abs/2408.15903">https://arxiv.org/abs/2408.15903</a> (id <code>arxiv:2408.15903</code>; retrieved from arxiv)</li>
+<li>Yifan Lu, Yigeng Zhou, Jing Li et al.. <strong>Knowledge Editing with Dynamic Knowledge Graphs for Multi-Hop Question Answering</strong>. <em>arXiv (preprint)</em>, 2024. <a href="https://arxiv.org/abs/2412.13782">https://arxiv.org/abs/2412.13782</a> (id <code>arxiv:2412.13782</code>; retrieved from arxiv)</li>
+<li>Arash Ghafouri, Mahdi Firouzmandi, Hasan Naderi. <strong>A Method for Multi-Hop Question Answering on Persian Knowledge Graph</strong>. <em>arXiv.org</em>, 2025. <a href="https://arxiv.org/abs/2501.16350">https://arxiv.org/abs/2501.16350</a> (id <code>arxiv:2501.16350</code>; retrieved from arxiv, semantic_scholar; 0 citations per semantic_scholar)</li>
+<li>Yuxin Zhang, Xi Wang, Mo Hu et al.. <strong>Bridging Dual Knowledge Graphs for Multi-Hop Question Answering in Construction Safety</strong>. <em>Automation in Construction, Volume 183, March 2026, 106794</em>, 2025. <a href="https://arxiv.org/abs/2507.13625">https://arxiv.org/abs/2507.13625</a> doi:10.1016/j.autcon.2026.106794 (id <code>arxiv:2507.13625</code>; retrieved from arxiv, semantic_scholar; 10 citations per semantic_scholar)</li>
+<li>Nan Wang, Yong-Qi Fan, Yansha Zhu et al.. <strong>KG-o1: Enhancing Multi-hop Question Answering in Large Language Models via Knowledge Graph Integration</strong>. <em>arXiv.org</em>, 2025. <a href="https://www.semanticscholar.org/paper/f5adc0d4b36ca900a7db0abd74e39e825607613c">https://www.semanticscholar.org/paper/f5adc0d4b36ca900a7db0abd74e39e825607613c</a> doi:10.48550/arxiv.2508.15790 (id <code>arxiv:2508.15790</code>; retrieved from semantic_scholar; 10 citations per semantic_scholar)</li>
+<li>Yushi Sun, Lei Chen. <strong>CacheRAG: A Semantic Caching System for Retrieval-Augmented Generation in Knowledge Graph Question Answering</strong>. <em>arXiv.org</em>, 2026. <a href="https://arxiv.org/abs/2604.26176">https://arxiv.org/abs/2604.26176</a> doi:10.48550/arxiv.2604.26176 (id <code>arxiv:2604.26176</code>; retrieved from arxiv, semantic_scholar; 0 citations per semantic_scholar)</li>
+<li>Ziyang Chen, Xiang Zhao, Jinzhi Liao et al.. <strong>Temporal knowledge graph question answering via subgraph reasoning</strong>. <em>Knowledge-Based Systems</em>, 2022. <a href="https://doi.org/10.1016/j.knosys.2022.109134">https://doi.org/10.1016/j.knosys.2022.109134</a> (id <code>doi:10.1016/j.knosys.2022.109134</code>; retrieved from crossref; 51 citations per crossref)</li>
+<li>Yuyu Zhang, Hanjun Dai, Zornitsa Kozareva et al.. <strong>Variational Reasoning for Question Answering With Knowledge Graph</strong>. <em>Proceedings of the AAAI Conference on Artificial Intelligence</em>, 2018. <a href="https://doi.org/10.1609/aaai.v32i1.12057">https://doi.org/10.1609/aaai.v32i1.12057</a> (id <code>doi:10.1609/aaai.v32i1.12057</code>; retrieved from openalex; 396 citations per openalex)</li>
+<li>Apoorv Saxena, Aditay Tripathi, Partha Talukdar. <strong>Improving Multi-hop Question Answering over Knowledge Graphs using Knowledge Base Embeddings</strong>. 2020. <a href="https://doi.org/10.18653/v1/2020.acl-main.412">https://doi.org/10.18653/v1/2020.acl-main.412</a> (id <code>doi:10.18653/v1/2020.acl-main.412</code>; retrieved from openalex; 512 citations per openalex)</li>
+<li>Zhilin Yang, Peng Qi, Saizheng Zhang et al.. <strong>HotpotQA: A Dataset for Diverse, Explainable Multi-hop Question Answering</strong>. 2018. <a href="https://doi.org/10.18653/v1/d18-1259">https://doi.org/10.18653/v1/d18-1259</a> (id <code>doi:10.18653/v1/d18-1259</code>; retrieved from openalex; 1770 citations per openalex)</li>
+<li>Ahmmad O. M. Saleh, Gokhan Tur, Yucel Saygin. <strong>SG-RAG MOT: SubGraph Retrieval Augmented Generation with Merging and Ordering Triplets for Knowledge Graph Multi-hop Question Answering</strong>. 2025. <a href="https://doi.org/10.20944/preprints202505.1992.v1">https://doi.org/10.20944/preprints202505.1992.v1</a> (id <code>doi:10.20944/preprints202505.1992.v1</code>; retrieved from crossref; 0 citations per crossref)</li>
+<li>Myeongheon Jeon, Kyuhwan Yeom, Jongwon Park et al.. <strong>Enriching Subgraph Retrieval with Attribute Values for Complex Question Answering Over Knowledge Graph</strong>. <em>Knowledge-Based Systems</em>, 2025. <a href="https://doi.org/10.2139/ssrn.5146217">https://doi.org/10.2139/ssrn.5146217</a> (id <code>doi:10.2139/ssrn.5146217</code>; retrieved from crossref; 0 citations per crossref)</li>
+<li>Lv Yana, Xutong Qin, Xiuli Du et al.. <strong>Multi-path reasoning for Multi-hop Question Answering over Knowledge Graphs</strong>. 2022. <a href="https://doi.org/10.22541/au.165426315.58267165/v1">https://doi.org/10.22541/au.165426315.58267165/v1</a> (id <code>doi:10.22541/au.165426315.58267165/v1</code>; retrieved from crossref; 0 citations per crossref)</li>
+<li>Songtao Cai, Qicheng Ma, Yupeng Hou et al.. <strong>Knowledge Graph Multi-Hop Question Answering Based on Dependent Syntactic Semantic Augmented Graph Networks</strong>. <em>Electronics</em>, 2024. <a href="https://doi.org/10.3390/electronics13081436">https://doi.org/10.3390/electronics13081436</a> (id <code>doi:10.3390/electronics13081436</code>; retrieved from crossref; 4 citations per crossref)</li>
+<li>Xin Bi, Haojie Nie, Xiyu Zhang et al.. <strong>Unrestricted multi-hop reasoning network for interpretable question answering over knowledge graph</strong>. <em>Knowledge-Based Systems</em>, 2022. <a href="https://doi.org/10.1016/j.knosys.2022.108515">https://doi.org/10.1016/j.knosys.2022.108515</a> (id <code>doi:10.1016/j.knosys.2022.108515</code>; retrieved from crossref; 35 citations per crossref)</li>
+<li>Yuke Tang, Yongjun Jing, Xu Chen et al.. <strong>LAMRF: Logic-adaptive multi-source reasoning fusion for multi-hop knowledge graph question answering</strong>. <em>Knowledge-Based Systems</em>, 2026. <a href="https://doi.org/10.1016/j.knosys.2026.115902">https://doi.org/10.1016/j.knosys.2026.115902</a> (id <code>doi:10.1016/j.knosys.2026.115902</code>; retrieved from crossref; 0 citations per crossref)</li>
+<li>Ying Wang, Guangyu Zhou, Kunli Zhang et al.. <strong>Enhancing relation classification based on GCN Multi-hop Knowledge Graph Question Answering model of knowledge reasoning</strong>. <em>2024 International Conference on Asian Language Processing (IALP)</em>, 2024. <a href="https://doi.org/10.1109/ialp63756.2024.10661134">https://doi.org/10.1109/ialp63756.2024.10661134</a> (id <code>doi:10.1109/ialp63756.2024.10661134</code>; retrieved from crossref; 0 citations per crossref)</li>
+<li>Fengying Li, Mingdong Chen, Rongsheng Dong. <strong>Multi-hop Question Answering with Knowledge Graph Embedding in a Similar Semantic Space</strong>. <em>2022 International Joint Conference on Neural Networks (IJCNN)</em>, 2022. <a href="https://doi.org/10.1109/ijcnn55064.2022.9892550">https://doi.org/10.1109/ijcnn55064.2022.9892550</a> (id <code>doi:10.1109/ijcnn55064.2022.9892550</code>; retrieved from crossref; 5 citations per crossref)</li>
+<li>Xiang Li, Runhai Jiao, Ruifan Li et al.. <strong>Progressive Planning and Reinforced Reasoning: Large Language Model-Guided Multi-hop Question Answering over Knowledge Graph</strong>. <em>Findings of the Association for Computational Linguistics: ACL 2026</em>, 2026. <a href="https://doi.org/10.18653/v1/2026.findings-acl.1147">https://doi.org/10.18653/v1/2026.findings-acl.1147</a> (id <code>doi:10.18653/v1/2026.findings-acl.1147</code>; retrieved from crossref; 0 citations per crossref)</li>
+<li>Jiaming Zhang, Yibo Zhao, Jing Yu et al.. <strong>Beyond Chunk-Local Extraction: Cross-Chunk Graph Augmentation for GraphRAG</strong>. <em>arXiv (preprint)</em>, 2026. <a href="https://arxiv.org/abs/2605.28004">https://arxiv.org/abs/2605.28004</a> (id <code>arxiv:2605.28004</code>; retrieved from arxiv)</li>
+<li>Kenneth R. Koedinger, Albert T. Corbett, Charles A. Perfetti. <strong>The Knowledge‐Learning‐Instruction Framework: Bridging the Science‐Practice Chasm to Enhance Robust Student Learning</strong>. <em>Cognitive Science</em>, 2012. <a href="https://doi.org/10.1111/j.1551-6709.2012.01245.x">https://doi.org/10.1111/j.1551-6709.2012.01245.x</a> (id <code>doi:10.1111/j.1551-6709.2012.01245.x</code>; retrieved from openalex; 771 citations per openalex)</li>
+<li>Barbara Mensch, Judith C. Bruce, Margaret Eleanor Greene. <strong>The Uncharted Passage: Girls' Adolescence in the Developing World</strong>. <em>Population Council eBooks</em>, 1998. <a href="https://doi.org/10.31899/pgy11.1008">https://doi.org/10.31899/pgy11.1008</a> (id <code>doi:10.31899/pgy11.1008</code>; retrieved from openalex; 289 citations per openalex)</li>
+<li>Heiko Paulheim. <strong>Knowledge graph refinement: A survey of approaches and evaluation methods</strong>. <em>Semantic Web</em>, 2016. <a href="https://doi.org/10.3233/sw-160218">https://doi.org/10.3233/sw-160218</a> (id <code>doi:10.3233/sw-160218</code>; retrieved from openalex; 1233 citations per openalex)</li>
+<li>Manzong Huang, Chenyang Bu, Yi He et al.. <strong>How to Mitigate Information Loss in Knowledge Graphs for GraphRAG: Leveraging Triple Context Restoration and Query-Driven Feedback</strong>. <em>arXiv (preprint)</em>, 2025. <a href="https://arxiv.org/abs/2501.15378">https://arxiv.org/abs/2501.15378</a> (id <code>arxiv:2501.15378</code>; retrieved from arxiv)</li>
+</ol>
+<details><summary>Other retrieved papers (not cited in this report)</summary>
+
+- CAM: Question Answering on Entity-Centric Videos with Continuous Extraction and Adaptive Querying (2026) <https://arxiv.org/abs/2609.06504> `arxiv:2609.06504`
+- LLM-KGMQA: Large Language Model-Augmented Multi-Hop Question-Answering System based on Knowledge Graph in Medical Field (2024) <https://doi.org/10.21203/rs.3.rs-4721418/v1> `doi:10.21203/rs.3.rs-4721418/v1`
+- Multi-Hop Financial Knowledge Question-Answering Model Based on Knowledge Graph (2024) <https://doi.org/10.1109/icaice63571.2024.10864319> `doi:10.1109/icaice63571.2024.10864319`
+- Evaluating Knowledge Graph-Enhanced Context for Multiple-Choice Question Answering (2025) <https://doi.org/10.1109/ickg66886.2025.00020> `doi:10.1109/ickg66886.2025.00020`
+- Semantic Parsing via Staged Query Graph Generation: Question Answering with Knowledge Base (2015) <https://doi.org/10.3115/v1/p15-1128> `doi:10.3115/v1/p15-1128`
+- A Storage-Retrieval Gap in Parametric Knowledge Graph Memory (2026) <https://arxiv.org/abs/2608.25489> `arxiv:2608.25489`
+- Hybrid Graph Neural Network and Large Language Model Framework for Robust Knowledge Graph Question Answering via Retrieval-Augmented Generation (2026) <https://www.semanticscholar.org/paper/625a1cefe499a2cde59e0c643cf98650c92b0822> `doi:10.22214/ijraset.2026.82233`
+- SPIMP-RAG: structure-prior injected message passing for low-budget triple retrieval in LLM-based knowledge graph question answering (2026) <https://www.semanticscholar.org/paper/ff04b0d4d20f9a338f43630429e36631cc77ef5f> `doi:10.1007/s44443-026-00999-7`
+- Harnessing Large Language Models for Knowledge Graph Question Answering via Adaptive Multi-Aspect Retrieval-Augmentation (2025) <https://www.semanticscholar.org/paper/2bbcf9638bb779d4ca2bff3b4fbf52ffc9225c83> `arxiv:2412.18537`
+- GRASP: Graph Agentic Search over Propositions for Multi-hop Question Answering (2026) <https://arxiv.org/abs/2605.16598> `arxiv:2605.16598`
+- DAMR: Efficient and Adaptive Context-Aware Knowledge Graph Question Answering with LLM-Guided MCTS (2025) <https://www.semanticscholar.org/paper/0a3dc3ae3ff4e9300c303675bed01f3732f9d249> `arxiv:2508.00719`
+- PaGLR: A path-aware GNN-LLM framework for evidence-grounded multi-hop knowledge graph question answering (2026) <https://www.semanticscholar.org/paper/58751dcdd5279b27b1b6438640398e9e706a4f72> `doi:10.1007/s44443-026-00763-x`
+- nlp_enjoyers at TextGraphs-17 Shared Task: Text-Graph Representations for Knowledge Graph Question Answering using all-MPNet (2024) <https://www.semanticscholar.org/paper/a07fa854df72a5ff0733805e9b2ae4705060109d> `doi:10.18653/v1/2024.textgraphs-1.10`
+- StepChain GraphRAG: Reasoning Over Knowledge Graphs for Multi-Hop Question Answering (2025) <https://arxiv.org/abs/2510.02827> `arxiv:2510.02827`
+- KGCaRe: Explainable Complex Conditional Question Answering using Automatic Knowledge Graph Construction and Context Retrieval with LLMs (2026) <https://arxiv.org/abs/2608.09779> `arxiv:2608.09779`
+- Knowledge-based question answering using graph neural networks and contextual language representations (2026) <https://doi.org/10.1038/s41598-025-33854-2> `doi:10.1038/s41598-025-33854-2`
+- Knowledge-Augmented Language Model Prompting for Zero-Shot Knowledge Graph Question Answering (2023) <https://doi.org/10.18653/v1/2023.nlrse-1.7> `doi:10.18653/v1/2023.nlrse-1.7`
+- Knowledge Graph Prompting for Multi-Document Question Answering (2023) <https://arxiv.org/abs/2308.11730> `arxiv:2308.11730`
+- Controlled Evaluation of Graph and Multimodal Augmentation in RAG for Document Question Answering (2026) <https://arxiv.org/abs/2607.16604> `arxiv:2607.16604`
+- BYOKG-RAG: Multi-Strategy Graph Retrieval for Knowledge Graph Question Answering (2025) <https://www.semanticscholar.org/paper/7659a9e23031671a51c702c337d94d7c70d0ed25> `arxiv:2507.04127`
+- KG-CQR: Leveraging Structured Relation Representations in Knowledge Graphs for Contextual Query Retrieval (2025) <https://arxiv.org/abs/2508.20417> `arxiv:2508.20417`
+- Debate over Mixed-knowledge: A Robust Multi-Agent Reasoning Framework for Incomplete Knowledge Graph Question Answering (2025) <https://arxiv.org/abs/2511.12208> `arxiv:2511.12208`
+- Dynamic Subgraph Reasoning of Knowledge Base Question Answering Based on Multi-Task Learning (2024) <https://doi.org/10.2139/ssrn.4757418> `doi:10.2139/ssrn.4757418`
+- Enhancing In-Context Learning of Large Language Models for Knowledge Graph Reasoning via Rule-and-Reinforce Selected Triples (2025) <https://www.semanticscholar.org/paper/45379c1e4b52c39928d0bad77e764bfd2636278f> `doi:10.3390/app15031088`
+- A Survey on Knowledge Graphs: Representation, Acquisition, and Applications (2021) <https://doi.org/10.1109/tnnls.2021.3070843> `arxiv:2002.00388`
+- LingShu: A Large-Scale Symptom-Centric Contextualized Knowledge Graph Bridging Traditional Chinese Medicine and Modern Biomedicine (2026) <https://arxiv.org/abs/2608.20402> `arxiv:2608.20402`
+- Large Language Models for Intelligent Data Stewardship in Enterprises: Architectures, Provenance, and Evidence-Mapped Governance (2024) <https://www.semanticscholar.org/paper/cd78bb8f74690b2dd8b14de2c6177846f84881c3> `doi:10.15680/ijctece.2024.0701007`
+- Hierarchical Graph Network for Multi-hop Question Answering (2020) <https://doi.org/10.18653/v1/2020.emnlp-main.710> `doi:10.18653/v1/2020.emnlp-main.710`
+- K-BERT: Enabling Language Representation with Knowledge Graph (2020) <https://doi.org/10.1609/aaai.v34i03.5681> `doi:10.1609/aaai.v34i03.5681`
+- Modeling Historical Relevant and Local Frequency Context for Representation-Based Temporal Knowledge Graph Forecasting (2024) <https://www.semanticscholar.org/paper/1197bc5c47d5614a6c95b3be7b2ac22fcc2507b2> `doi:10.18653/v1/2024.findings-emnlp.451`
+- Contextualized Attention-Based Knowledge Transfer for Spoken Conversational Question Answering (2021) <https://doi.org/10.21437/interspeech.2021-110> `doi:10.21437/interspeech.2021-110`
+- TSMixerE: Entity Context-Aware Method for Static Knowledge Graph Completion (2025) <https://www.semanticscholar.org/paper/8cf77b7406ea727705189deb7066f2775dc86cb4> `doi:10.32604/cmc.2025.071777`
+- Training-Free Hybrid Evidence Retrieval for Question Answering: Dynamic Fusion of Knowledge-Graph Triples and Dense Text Embeddings (2025) <https://doi.org/10.5753/sbbd.2025.247297> `doi:10.5753/sbbd.2025.247297`
+- Dense Passage Retrieval for Open-Domain Question Answering (2020) <https://doi.org/10.18653/v1/2020.emnlp-main.550> `arxiv:2004.04906`
+- Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering (2021) <https://doi.org/10.18653/v1/2021.eacl-main.74> `arxiv:2007.01282`
+- QuAC: Question Answering in Context (2018) <https://doi.org/10.18653/v1/d18-1241> `doi:10.18653/v1/d18-1241`
+- Efficiently Embedding Dynamic Knowledge Graphs (2019) <https://arxiv.org/abs/1910.06708> `arxiv:1910.06708`
+- Large Language Models Meet Knowledge Graphs to Answer Factoid Questions (2023) <https://arxiv.org/abs/2310.02166> `arxiv:2310.02166`
+- Knowledge Graph Completion with Relation-Aware Anchor Enhancement (2025) <https://www.semanticscholar.org/paper/a650e6e4b29eaf1d103f0ae1c402b38ca9bcc0fd> `arxiv:2504.06129`
+- Knowledge Graphs (2021) <https://doi.org/10.1145/3447772> `arxiv:2003.02320`
+- Gated Self-Matching Networks for Reading Comprehension and Question Answering (2017) <https://doi.org/10.18653/v1/p17-1018> `doi:10.18653/v1/p17-1018`
+- Embedding Entities and Relations for Learning and Inference in Knowledge Bases (2014) <http://arxiv.org/abs/1412.6575> `arxiv:1412.6575`
+- A question-entailment approach to question answering (2019) <https://doi.org/10.1186/s12859-019-3119-4> `arxiv:1901.08079`
+- Zero-resource Hallucination Detection for Text Generation via Graph-based Contextual Knowledge Triples Modeling (2024) <https://arxiv.org/abs/2409.11283> `arxiv:2409.11283`
+- ConeE: Global and local context-enhanced embedding for inductive knowledge graph completion (2024) <https://www.semanticscholar.org/paper/a9bfb9ab236553768782f2b90a69c5625f033186> `doi:10.1016/j.eswa.2023.123116`
+- Beyond alignment: Discovering cross-graph triples for knowledge graph integration (2026) <https://doi.org/10.1016/j.knosys.2026.116572> `doi:10.1016/j.knosys.2026.116572`
+- Representing Knowledge Graph Triples through Siamese Line Graph Sampling (2024) <https://doi.org/10.1109/ijcnn60899.2024.10651186> `doi:10.1109/ijcnn60899.2024.10651186`
+- Extracting triples from Vietnamese text to create knowledge graph (2020) <https://doi.org/10.1109/kse50997.2020.9287471> `doi:10.1109/kse50997.2020.9287471`
+- An overview of the BIOASQ large-scale biomedical semantic indexing and question answering competition (2015) <https://doi.org/10.1186/s12859-015-0564-6> `doi:10.1186/s12859-015-0564-6`
+- Toward Crowdsourced Knowledge Graph Construction: Interleaving Collection and Verification of Triples (2022) <https://doi.org/10.5220/0010902700003116> `doi:10.5220/0010902700003116`
+- AI-Assisted Pipeline for Dynamic Generation of Trustworthy Health Supplement Content at Scale (2018) <http://arxiv.org/abs/1810.04805> `arxiv:1810.04805`
+- Question-Answering enhanced by Knowledge Graphs (2024) <https://doi.org/10.59350/3ar10-pfb19> `doi:10.59350/3ar10-pfb19`
+- HybridRAG: Integrating Knowledge Graphs and Vector Retrieval Augmented Generation for Efficient Information Extraction (2024) <https://doi.org/10.1145/3677052.3698671> `arxiv:2408.04948`
+- Generation-Augmented Retrieval for Open-Domain Question Answering (2021) <https://doi.org/10.18653/v1/2021.acl-long.316> `doi:10.18653/v1/2021.acl-long.316`
+- A Comprehensive Survey on Automatic Knowledge Graph Construction (2023) <https://doi.org/10.1145/3618295> `doi:10.1145/3618295`
+- Explainable Reasoning over Knowledge Graphs for Recommendation (2019) <https://doi.org/10.1609/aaai.v33i01.33015329> `doi:10.1609/aaai.v33i01.33015329`
+- Knowledge Graphs: Opportunities and Challenges (2023) <https://doi.org/10.1007/s10462-023-10465-9> `doi:10.1007/s10462-023-10465-9`
+- Gradient-based learning applied to document recognition (1998) <https://doi.org/10.1109/5.726791> `doi:10.1109/5.726791`
+- Building machines that learn and think like people (2016) <https://doi.org/10.1017/s0140525x16001837> `arxiv:1604.00289`
+- Modeling Relational Data with Graph Convolutional Networks (2018) <https://doi.org/10.1007/978-3-319-93417-4_38> `arxiv:1703.06103`
+- A Glimpse of the First Eight Months of the COVID-19 Literature on Microsoft Academic Graph: Themes, Citation Contexts, and Uncertainties (2020) <https://doi.org/10.3389/frma.2020.607286> `arxiv:2009.08374`
+- YAGO2: A spatially and temporally enhanced knowledge base from Wikipedia (2012) <https://doi.org/10.1016/j.artint.2012.06.001> `doi:10.1016/j.artint.2012.06.001`
+- Industry-scale knowledge graphs (2019) <https://doi.org/10.1145/3331166> `doi:10.1145/3331166`
+- Question-Answering Using Semantic Relation Triples (1999) <https://doi.org/10.6028/nist.sp.500-246.qa-clresearch2> `doi:10.6028/nist.sp.500-246.qa-clresearch2`
+
+</details>
+
+<h2>Appendix A. Evidence Ledger</h2>
+<h3>[Evidence] claims (7)</h3>
+<ul>
+<li><strong>[Evidence]</strong> Subgraph Neighborhood Con (indicating the neighborhood size constraint that limits mainstream KGQA methods from capturing implicit relational chains). <em>(claim C001, confidence: high)</em></li>
+<li>[1], p. 4 (direct support, verified) "Subgraph Neighborhood Con"</li>
+<li><strong>[Evidence]</strong> The Triple Context Restoration and Query-driven Feedback (TCR-QF) framework, which reconstructs the textual context underlying each triple to mitigate information loss, achieves a 29.1% improvement in Exact Match and a 15.5% improvement in F1 over state-of-the-art GraphRAG competitors on five benchmark question-answering datasets including multi-hop reasoning datasets. <em>(claim C007, confidence: high)</em></li>
+<li>[28], p. 1 (direct support, verified) "Experiments on five benchmark question-answering datasets substantiate the effectiveness of TCR-QF in KG and LLM integration, where it achieves a 29.1% improvement in Exact Match and a 15.5% improvement in F1 over its state-of-the-art GraphRAG competitors."</li>
+<li><strong>[Evidence]</strong> The Triple Context Restoration and Query-driven Feedback (TCR-QF) framework, which reconstructs the textual context underlying each triple to mitigate information loss, achieves a 29.1% improvement in Exact Match and a 15.5% improvement in F1 over state-of-the-art GraphRAG competitors on five benchmark question-answering datasets including multi-hop reasoning datasets (HotpotQA, 2WikiMultiHopQA). <em>(claim C008, confidence: high)</em></li>
+<li>[28], p. 1 (direct support, verified) "Experiments on five benchmark question-answering datasets substantiate the effectiveness of TCR-QF in KG and LLM integration, where it achieves a 29.1% improvement in Exact Match and a 15.5% improvement in F1 over its state-of-the-art GraphRAG competitors."</li>
+<li><strong>[Evidence]</strong> On the 2WikiMultiHopQA dataset, the TCR-QF method achieves an EM score of 0.598, which is an absolute increase of 0.259 over Naive RAG's EM score of 0.339, representing a 76.4% relative improvement in Exact Match score for multi-hop question answering. <em>(claim C009, confidence: high)</em></li>
+<li>[28], p. 5 (direct support, verified) "On the 2WikiMultiHopQA dataset, TCR-QF achieves an EM score of 0.598, which is an absolute increase of 0.259 over Naive RAG’s EM score of 0.339—a relative improvement of approximately 76.4%."</li>
+<li><strong>[Evidence]</strong> PullNet improves GraftNet on the retrieval subgraph by introducing the graph retrieval module which utilizes shortest path from the topic entity to answer as the additional supervised signal. <em>(claim C010, confidence: high)</em></li>
+<li>[1], p. 22 (direct support, verified) "PullNet [10] improves GraftNet on the retrieval subgraph by introducing the graph retrieval module which utilizes shortest path from the topic entity to answer as the additional supervised signal."</li>
+<li><strong>[Evidence]</strong> GraftNet [21] is a question description-based semantic sub-graph driving method that uses a variational graph CNN to perform QA tasks over question-specific subgraphs containing KG facts, entities and discourses from textual corpora. <em>(claim C011, confidence: high)</em></li>
+<li>[1], p. 22 (direct support, verified) "GraftNet [21] is a question description-based semantic sub-graph driving method that uses a variational graph CNN to perform QA tasks over question-specific subgraphs containing KG facts, entities and discourses from textual corpora."</li>
+<li><strong>[Evidence]</strong> KG-o1, a four-stage approach that integrates KGs to enhance the multi-hop reasoning abilities of LLMs. We first filter out initial entities and generate complex subgraphs. Secondly, we construct logical paths for subgraphs and then use knowledge graphs to build a dataset with a complex and extended brainstorming process, which trains LLMs to imitate long-term reasoning. Finally, we employ rejection sampling to generate a self-improving corpus for direct preference optimization (DPO), further refining the LLMs’ reasoning abilities. <em>(claim C012, confidence: high)</em></li>
+<li>[9], p. 1 (direct support, verified) "We first filter out initial entities and generate complex subgraphs. Secondly, we construct logical paths for subgraphs and then use knowledge graphs to build a dataset with a complex and extended brainstorming process, which trains LLMs to imitate long-term reasoning. Finally, we employ rejection sampling to generate a self-improving corpus for direct preference optimization (DPO), further refining the LLMs’ reasoning abilities."</li>
+</ul>
+<h3>[Inference] claims (4)</h3>
+<ul>
+<li><strong>[Inference]</strong> Enriching training triples with local context subgraphs from the same passage can provide additional relational information that mitigates the neighborhood size constraint limitation. <em>(claim C002, confidence: medium)</em></li>
+<li>[1], p. 4 (indirect support, verified) "Subgraph Neighborhood Con"</li>
+<li><strong>[Inference]</strong> Our idea of enriching each target triple with local context subgraphs from the same passage overlaps with PullNet's goal of incorporating more contextual information for reasoning, but differs in that PullNet introduces a graph retrieval module using shortest path as supervised signal during retrieval, whereas our idea modifies the training data itself by adding context triples before fine-tuning. <em>(claim C013, confidence: medium)</em></li>
+<li>[1], p. 22 (indirect support, verified) "PullNet [10] improves GraftNet on the retrieval subgraph by introducing the graph retrieval module which utilizes shortest path from the topic entity to answer as the additional supervised signal."</li>
+<li>[28], p. 1 (indirect support, unverified)</li>
+<li><strong>[Inference]</strong> Our idea of enriching training triples with local context subgraphs overlaps with GraftNet's use of question-specific subgraphs containing KG facts and textual discourses, but differs in that GraftNet relies on a variational graph CNN architecture to process those subgraphs, whereas our idea focuses on enriching the supervision signal (triples) with contextual triples from the same source passage before model training. <em>(claim C014, confidence: medium)</em></li>
+<li>[1], p. 22 (indirect support, verified) "GraftNet [21] is a question description-based semantic sub-graph driving method that uses a variational graph CNN to perform QA tasks over question-speciﬁc subgraphs containing KG facts, entities and discourses from textual corpora."</li>
+<li><strong>[Inference]</strong> Our idea of enriching each target triple with local context subgraphs from the same passage shares with KG-o1 the motivation to augment LLMs with richer contextual information from knowledge graphs, but differs in that KG-o1 constructs a dataset via filtering entities, constructing logical paths, and using rejection sampling and DPO to train LLMs to imitate long-term reasoning, whereas our idea enriches individual training triples with passage-level context and includes an adaptive repair loop for one-hop failures. <em>(claim C015, confidence: medium)</em></li>
+<li>[9], p. 1 (indirect support, verified) "We first filter out initial entities and generate complex subgraphs. Secondly, we construct logical paths for subgraphs and then use knowledge graphs to build a dataset with a complex and extended brainstorming process, which trains LLMs to imitate long-term reasoning. Finally, we employ rejection sampling to generate a self-improving corpus for direct preference optimization (DPO), further refining the LLMs’ reasoning abilities."</li>
+</ul>
+<h3>[Assumption] claims (4)</h3>
+<ul>
+<li><strong>[Assumption]</strong> The local context subgraph from the same passage is supportive and not noisy. <em>(claim C003, confidence: medium)</em></li>
+<li><strong>[Assumption]</strong> The adaptive repair loop can generate effective corrective examples for one-hop failures. <em>(claim C004, confidence: medium)</em></li>
+<li><strong>[Assumption]</strong> Reinforcement learning optimization on lower-hop QA transfers to higher-hop QA. <em>(claim C005, confidence: medium)</em></li>
+<li><strong>[Assumption]</strong> The base language model and KGQA architecture (e.g., EmbedKGQA or Rce-KGQA) are suitable for the proposed enrichment. <em>(claim C006, confidence: medium)</em></li>
+</ul>
+<h2>Appendix B. Search Log</h2>
+<table>
+<thead>
+<tr>
+<th>Query</th>
+<th>Sources (status: results)</th>
+<th>Papers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>multi-hop question answering knowledge graph language model</td>
+<td>arxiv (ok: 5), openalex (ok: 5), semantic_scholar (error: 0), crossref (ok: 5)</td>
+<td>15</td>
+</tr>
+<tr>
+<td>knowledge graph multi-hop question answering dataset</td>
+<td>arxiv (ok: 5), openalex (ok: 5), semantic_scholar (ok: 5), crossref (ok: 5)</td>
+<td>17</td>
+</tr>
+<tr>
+<td>local context subgraph knowledge graph question answering</td>
+<td>arxiv (ok: 3), openalex (ok: 5), semantic_scholar (error: 0), crossref (ok: 5)</td>
+<td>12</td>
+</tr>
+<tr>
+<td>local context subgraph training triples knowledge graph question answering</td>
+<td>arxiv (ok: 0), openalex (ok: 5), semantic_scholar (ok: 5), crossref (ok: 5)</td>
+<td>14</td>
+</tr>
+<tr>
+<td>contextualized triples knowledge graph question answering</td>
+<td>arxiv (ok: 5), openalex (ok: 5), semantic_scholar (error: 0), crossref (ok: 5)</td>
+<td>13</td>
+</tr>
+<tr>
+<td>passage context knowledge graph question answering</td>
+<td>arxiv (ok: 5), openalex (ok: 5), semantic_scholar (error: 0), crossref (ok: 5)</td>
+<td>11</td>
+</tr>
+<tr>
+<td>contextualized triple training knowledge graph question answering</td>
+<td>arxiv (ok: 0), openalex (ok: 5), semantic_scholar (error: 0), crossref (ok: 5)</td>
+<td>7</td>
+</tr>
+<tr>
+<td>passage context enrichment knowledge graph question answering</td>
+<td>arxiv (ok: 0), openalex (ok: 5), semantic_scholar (ok: 5), crossref (ok: 5)</td>
+<td>11</td>
+</tr>
+<tr>
+<td>local passage context triples knowledge graph</td>
+<td>arxiv (ok: 0), openalex (ok: 5), semantic_scholar (ok: 5), crossref (ok: 5)</td>
+<td>14</td>
+</tr>
+<tr>
+<td>triple context enrichment knowledge graph question answering training</td>
+<td>arxiv (ok: 0), openalex (ok: 5), semantic_scholar (error: 0), crossref (ok: 5)</td>
+<td>7</td>
+</tr>
+<tr>
+<td>subgraph enrichment knowledge graph question answering training</td>
+<td>arxiv (ok: 3), openalex (ok: 5), semantic_scholar (error: 0), crossref (ok: 5)</td>
+<td>12</td>
+</tr>
+<tr>
+<td>contextual triples knowledge graph question answering training</td>
+<td>arxiv (ok: 0), openalex (ok: 5), semantic_scholar (error: 0), crossref (ok: 5)</td>
+<td>9</td>
+</tr>
+<tr>
+<td>context enrichment harmful knowledge graph question answering</td>
+<td>arxiv (ok: 0), openalex (ok: 5), semantic_scholar (error: 0), crossref (ok: 5)</td>
+<td>7</td>
+</tr>
+</tbody>
+</table>
+<h2>Appendix C. Investigation Log</h2>
+<p>Each step was chosen by the ResearchForge controller from the recorded research state.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Phase</th>
+<th>Action</th>
+<th>Why</th>
+<th>Alternatives considered</th>
+<th>Outcome</th>
+<th>Information gain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>INTAKE</td>
+<td>INTAKE</td>
+<td>Research idea received.</td>
+<td>none</td>
+<td>idea stored in the workspace</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>1</td>
+<td>FORMALIZE</td>
+<td>FORMALIZE</td>
+<td>The idea has not been formalized into a testable research question.</td>
+<td>none</td>
+<td>+33 papers; +3 searches; +3 uncertainties; idea formalized</td>
+<td>3</td>
+</tr>
+<tr>
+<td>2</td>
+<td>PLAN</td>
+<td>PLAN</td>
+<td>No investigation plan exists yet, so it is unclear what must be determined.</td>
+<td>none</td>
+<td>+4 uncertainties; investigation plan recorded</td>
+<td>1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>INVESTIGATE</td>
+<td>READ</td>
+<td>Retrieved papers have not been analyzed enough to judge overlap.</td>
+<td>none</td>
+<td>+5 analyses</td>
+<td>2.5</td>
+</tr>
+<tr>
+<td>4</td>
+<td>INVESTIGATE</td>
+<td>READ</td>
+<td>Retrieved papers have not been analyzed enough to judge overlap.</td>
+<td>none</td>
+<td>+6 analyses</td>
+<td>3</td>
+</tr>
+<tr>
+<td>5</td>
+<td>SYNTHESIZE</td>
+<td>SYNTHESIZE</td>
+<td>Analyses exist but the field has not been mapped.</td>
+<td>none</td>
+<td>landscape recorded</td>
+<td>1</td>
+</tr>
+<tr>
+<td>6</td>
+<td>CRITIQUE</td>
+<td>CRITIQUE</td>
+<td>The idea has not been challenged yet.</td>
+<td>none</td>
+<td>+6 claims; +2 verified claims; +1 resolved uncertainties; critique recorded; uncertainties updated: U004</td>
+<td>5</td>
+</tr>
+<tr>
+<td>7</td>
+<td>UNCERTAINTY</td>
+<td>SEARCH (U006: Does enriching triples with local context subgraphs actually improve hit@1)</td>
+<td>Most valuable next step for high-importance validity question U006: score 1.62 = importance 3 x expected gain 0.6 x relevance 0.9 x evidence deficiency 1 / cost 1. Next best: SEARCH on U001 (1.08).</td>
+<td>SEARCH U001 (1.08); SEARCH U002 (1.08)</td>
+<td>+25 papers; +3 searches; +1 claims; +1 verified claims; +1 uncertainties; uncertainties updated: U006</td>
+<td>3</td>
+</tr>
+<tr>
+<td>8</td>
+<td>UNCERTAINTY</td>
+<td>SEARCH (U001: Is enriching triples with local context subgraphs from the same source pas)</td>
+<td>Most valuable next step for high-importance other question U001: score 1.44 = importance 3 x expected gain 0.8 x relevance 0.6 x evidence deficiency 1 / cost 1. Next best: SEARCH on U002 (1.44).</td>
+<td>SEARCH U002 (1.44); SEARCH U007 (1.12)</td>
+<td>+34 papers; +7 searches; +2 claims; +2 verified claims; uncertainties updated: U001</td>
+<td>4</td>
+</tr>
+<tr>
+<td>9</td>
+<td>UNCERTAINTY</td>
+<td>COMPARE (U005: How much does the proposed method overlap with existing KGQA approaches th)</td>
+<td>Most valuable next step for medium-importance overlap question U005: score 0.8 = importance 2 x expected gain 0.6 x relevance 1 x evidence deficiency 1 / cost 1.5. Next best: READ on U005 (0.778).</td>
+<td>READ U005 (0.778); READ U007 (0.545)</td>
+<td>+6 claims; +6 verified claims; uncertainties updated: U005</td>
+<td>6</td>
+</tr>
+<tr>
+<td>10</td>
+<td>UNCERTAINTY</td>
+<td>READ (U007: Can an adaptive repair loop that detects one-hop failures and generates co)</td>
+<td>Most valuable next step for medium-importance feasibility question U007: score 0.545 = importance 2 x expected gain 0.778 x relevance 0.7 x evidence deficiency 1 / cost 2. Next best: VERIFY on U006 (0.454).</td>
+<td>VERIFY U006 (0.454); READ U006 (0.441)</td>
+<td>+6 analyses</td>
+<td>3</td>
+</tr>
+<tr>
+<td>11</td>
+<td>UNCERTAINTY</td>
+<td>READ (U006: Does enriching triples with local context subgraphs actually improve hit@1)</td>
+<td>Most valuable next step for high-importance validity question U006: score 0.472 = importance 3 x expected gain 0.833 x relevance 0.9 x evidence deficiency 0.42 / cost 2. Next best: VERIFY on U006 (0.454).</td>
+<td>VERIFY U006 (0.454); READ U005 (0.35)</td>
+<td>+6 analyses; +1 resolved uncertainties; uncertainties updated: U006</td>
+<td>5</td>
+</tr>
+<tr>
+<td>12</td>
+<td>FINALIZE</td>
+<td>FINALIZE</td>
+<td>Stopping: time budget reached (3600 s).</td>
+<td>none</td>
+<td>finalizing</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+</body></html>

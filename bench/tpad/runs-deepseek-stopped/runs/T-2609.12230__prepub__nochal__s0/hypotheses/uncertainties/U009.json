@@ -1,0 +1,34 @@
+{
+  "id": "U009",
+  "question": "Does any retrieved work train a model on supervision examples that contain multiple co-occurring/co-passage triples (rather than a single triple, a path, or an inference-time retrieved subgraph), which would directly pre-empt the idea's central mechanism?",
+  "description": "Retrieved subgraph works (DrKGC, GNN-RAG, GRAG, SG-RAG MOT, UniKGQA) retrieve context at inference or fine-tune with a retrieved subgraph prompt. The distinguishing feature of the idea is that the context is attached to each *training supervision signal* and derived from the *source passage*. No retrieved paper was found that both (a) trains on multiple co-occurring triples per example and (b) uses passage provenance to select them; this needs a targeted search and comparison.",
+  "category": "overlap",
+  "importance": "high",
+  "status": "open",
+  "next_action": "COMPARE",
+  "possible_actions": [
+    "COMPARE",
+    "SEARCH",
+    "READ",
+    "CHALLENGE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "This determines whether the context-enriched-supervision component is genuinely uncovered or an incremental re-description of subgraph-conditioned fine-tuning (DrKGC).",
+  "resolution": "",
+  "paper_ids": [
+    "arxiv:2506.00708",
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "doi:10.20944/preprints202505.1992.v1",
+    "arxiv:2212.00959"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "INVESTIGATE",
+  "created_at": "2026-09-30T05:17:51.038907Z",
+  "updated_at": "2026-09-30T05:17:51.039164Z"
+}

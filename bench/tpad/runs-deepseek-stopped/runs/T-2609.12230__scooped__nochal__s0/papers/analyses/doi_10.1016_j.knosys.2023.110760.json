@@ -1,0 +1,34 @@
+{
+  "paper_id": "doi:10.1016/j.knosys.2023.110760",
+  "relevance_tier": "low",
+  "problem": "not stated in abstract (no abstract available from the indexed sources); title indicates question answering via multi-hop path reasoning over a knowledge graph.",
+  "method": "not stated in abstract (no abstract available from the indexed sources). Title indicates path-based multi-hop KG reasoning trained with adversarial reinforcement learning.",
+  "key_assumptions": [
+    "not stated in abstract (no abstract available from the indexed sources)"
+  ],
+  "main_contribution": "not stated in abstract (no abstract available from the indexed sources; title indicates path-based multi-hop reasoning via adversarial reinforcement learning).",
+  "datasets": [
+    "not stated in abstract (no abstract available from the indexed sources)"
+  ],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [
+    "not stated in abstract (no abstract available from the indexed sources)"
+  ],
+  "results": "not stated in abstract (no abstract available from the indexed sources).",
+  "limitations": [
+    "Only title/venue metadata could be retrieved; findings are unverified.",
+    "Adversarial RL over paths is a different mechanism from context-enriched supervision."
+  ],
+  "future_work": [],
+  "code_availability": "not stated in abstract (no abstract available from the indexed sources)",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.35,
+    "evaluation_overlap": 0.1,
+    "conceptual_difference": "Unknown without the text. The idea proposes training the LM on text sequences of triples, whereas this is a graph-path RL method; if the paper already reports transfer across hop depths it would directly threaten the idea's transfer claim, so it needs to be read in a later step.",
+    "basis": "Problem overlap 0.4 based on title alone (multi-hop KG reasoning for QA). Method overlap 0.35 based on title alone (path-based RL overlaps both the idea's path supervision and its RL stage). Evaluation overlap 0.1 (unknown). Title-only heuristics; weak signals."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:07:42.774927Z"
+}

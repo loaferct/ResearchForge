@@ -1,0 +1,37 @@
+{
+  "id": "doi:10.1007/s10791-024-09435-8",
+  "title": "Injecting the score of the first-stage retriever as text improves BERT-based re-rankers",
+  "authors": [
+    "Arian Askari",
+    "Amin Abolghasemi",
+    "Gabriella Pasi",
+    "Wessel Kraaij",
+    "Suzan Verberne"
+  ],
+  "year": 2024,
+  "published": "2024-06-26",
+  "venue": "Discover Computing",
+  "url": "https://doi.org/10.1007/s10791-024-09435-8",
+  "pdf_url": null,
+  "abstract": "Abstract In this paper we propose a novel approach for combining first-stage lexical retrieval models and Transformer-based re-rankers: we inject the relevance score of the lexical model as a token into the input of the cross-encoder re-ranker. It was shown in prior work that interpolation between the relevance score of lexical and Bidirectional Encoder Representations from Transformers (BERT) based re-rankers may not consistently result in higher effectiveness. Our idea is motivated by the finding that BERT models can capture numeric information. We compare several representations of the Best Match 25 (BM25) and Dense Passage Retrieval (DPR) scores and inject them as text in the input of four different cross-encoders. Since knowledge distillation, i.e., teacher-student training, proved to be highly effective for cross-encoder re-rankers, we additionally analyze the effect of injecting the relevance score into the student model while training the model by three larger teacher models. Evaluation on the MSMARCO Passage collection and the TREC DL collections shows that the proposed method significantly improves over all cross-encoder re-rankers as well as the common interpolation methods. We show that the improvement is consistent for all query types. We also find an improvement in exact matching capabilities over both the first-stage rankers and the cross-encoders. Our findings indicate that cross-encoder re-rankers can efficiently be improved without additional computational burden or extra steps in the pipeline by adding the output of the first-stage ranker to the model input. This effect is robust for different models and query types.",
+  "doi": "10.1007/s10791-024-09435-8",
+  "arxiv_id": null,
+  "openalex_id": "W4400046281",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 7,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T09:39:34.961624Z",
+  "relevance": 0.1333,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "retriever agnostic temporal relevance"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

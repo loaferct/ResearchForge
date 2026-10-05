@@ -1,0 +1,43 @@
+{
+  "id": "C022",
+  "statement": "U011 is answered in favour of degeneracy under clean metadata: when per-clause in-force intervals are complete and the as-of date is correctly extracted, hard filtering already solves version selection, so a soft interval-aware score can only match it, not beat it. The surviving scope for a soft interval-aware term is therefore the regime where the filter's inputs are unreliable - incomplete, unofficial or conflicting effective dates, and as-of dates that must be inferred from query text - where a graded interval-membership score degrades gracefully instead of hard-excluding or hard-admitting a version. That scope is realistic given that even the published hard-filter system depended on an unofficial data source and a regex date extractor.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 8",
+      "quote": "While RAG solved the retrieval problem",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 3",
+      "quote": "Germany does not provide a public, legally authoritative database of historical consolidated statutes in machine-readable form",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 8",
+      "quote": "what is retrieved (the correct timeframe) matters more than how it is retrieved",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "degeneracy",
+    "scope",
+    "robustness",
+    "U011"
+  ],
+  "recorded_at": "2026-09-30T05:26:37.018419Z"
+}

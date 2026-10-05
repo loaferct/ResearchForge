@@ -1,0 +1,34 @@
+{
+  "id": "doi:10.18653/v1/2020.acl-main.499",
+  "title": "Logic-Guided Data Augmentation and Regularization for Consistent Question Answering",
+  "authors": [
+    "Akari Asai",
+    "Hannaneh Hajishirzi"
+  ],
+  "year": 2020,
+  "published": "2020-01-01",
+  "venue": null,
+  "url": "https://doi.org/10.18653/v1/2020.acl-main.499",
+  "pdf_url": "https://www.aclweb.org/anthology/2020.acl-main.499.pdf",
+  "abstract": "Many natural language questions require qualitative, quantitative or logical comparisons between two entities or events.This paper addresses the problem of improving the accuracy and consistency of responses to comparison questions by integrating logic rules and neural models.Our method leverages logical and linguistic knowledge to augment labeled training data and then uses a consistency-based regularizer to train the model.Improving the global consistency of predictions, our approach achieves large improvements over previous methods in a variety of question answering (QA) tasks including multiple-choice qualitative reasoning, cause-effect reasoning, and extractive machine reading comprehension.In particular, our method significantly improves the performance of RoBERTa-based models by 1-5% across datasets.We advance state of the art by around 5-8% on WIQA and QuaRel and reduce consistency violations by 58% on HotpotQA.We further demonstrate that our approach can learn effectively from limited data. 1 Q: The ceramic vase was less flexible than the plastic ball so it was A: more breakable Q: The ceramic vase was more flexible than the plastic ball so it was A: less breakable Q: If it is silent, does the outer ear collect less sound waves?A: more [positive causal relationship] Q: If the outer ear collect less sound waves, is less sound being detected?A: more [positive causal relationship] Q: If it is silent, is less sound being detected?A: more [positive causal relationship]",
+  "doi": "10.18653/v1/2020.acl-main.499",
+  "arxiv_id": null,
+  "openalex_id": "W3035438620",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 60,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T06:11:44.384721Z",
+  "relevance": 0.2941,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "data augmentation multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

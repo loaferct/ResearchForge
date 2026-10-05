@@ -1,0 +1,1273 @@
+[[page 1]]
+Re3: Learning to Balance Relevance & Recency for Temporal
+Information Retrieval
+Jiawei Cao
+cjwyv@mail.ustc.edu.cn
+University of Science and Technology
+of China
+China
+Jie Ouyang
+ouyang_jie@mail.ustc.edu.cn
+University of Science and Technology
+of China
+China
+Zhaomeng Zhou
+zhouzhm@mail.ustc.edu.cn
+University of Science and Technology
+of China
+China
+Mingyue Cheng
+mycheng@ustc.edu.cn
+University of Science and Technology
+of China
+China
+Yupeng Li
+liyupeng@mail.ustc.edu.cn
+University of Science and Technology
+of China
+China
+Jiaxian Yan
+jiaxianyan@mail.ustc.edu.cn
+University of Science and Technology
+of China
+China
+Qi Liu
+qiliuql@ustc.edu.cn
+University of Science and Technology
+of China
+China
+cjwyv@mail.ustc.edu.cn
+ABSTRACT
+Temporal Information Retrieval (TIR) is a critical yet unresolved
+task for modern search systems, retrieving documents that not only
+satisfy a query’s information need but also adhere to its temporal
+constraints. This task is shaped by two challenges:Relevance, ensur-
+ing alignment with the query’s explicit temporal requirements, and
+Recency, selecting the freshest document among multiple versions.
+Existing methods often address the two challenges in isolation,
+relying on brittle heuristics that fail in scenarios where temporal
+requirements and staleness resistance are intertwined. To address
+this gap, we introduce Re2Bench, a benchmark specifically designed
+to disentangle and evaluate Relevance, Recency, and their hybrid
+combination. Building on this foundation, we propose Re3, a unified
+and lightweight framework that dynamically balances semantic and
+temporal information through a query-aware gating mechanism.
+On Re2Bench, Re3 achieves state-of-the-art results, leading in R@1
+across all three subsets. Ablation studies with backbone sensitivity
+tests confirm robustness, showing strong generalization across di-
+verse encoders and real-world settings. This work provides both a
+generalizable solution and a principled evaluation suite, advancing
+the development of temporally aware retrieval systems. Re3 and
+Re2Bench are available online.1
+1https://anonymous.4open.science/r/Re3-0C5A
+Permission to make digital or hard copies of all or part of this work for personal or
+classroom use is granted without fee provided that copies are not made or distributed
+for profit or commercial advantage and that copies bear this notice and the full citation
+on the first page. Copyrights for components of this work owned by others than the
+author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or
+republish, to post on servers or to redistribute to lists, requires prior specific permission
+and/or a fee. Request permissions from permissions@acm.org.
+Conference acronym ’XX, June 03–05, 2018, Woodstock, NY
+© 2018 Copyright held by the owner/author(s). Publication rights licensed to ACM.
+ACM ISBN 978-1-4503-XXXX-X/2018/06. . . $15.00
+https://doi.org/XXXXXXX.XXXXXXX
+KEYWORDS
+Temporal Information Retrieval, Dense Retrieval, Semantic-Temporal
+Fusion
+ACM Reference Format:
+Jiawei Cao, Jie Ouyang, Zhaomeng Zhou, Mingyue Cheng, Yupeng Li, Jiaxian
+Yan, and Qi Liu. 2018. Re3: Learning to Balance Relevance & Recency for Tem-
+poral Information Retrieval. In Proceedings of Make sure to enter the correct
+conference title from your rights confirmation email (Conference acronym ’XX).
+ACM, New York, NY, USA, 12 pages. https://doi.org/XXXXXXX.XXXXXXX
+1 INTRODUCTION
+Driven by the rapid expansion of digital data, Information Retrieval
+(IR) has emerged as a central pillar of modern information systems,
+responsible for efficiently retrieving the most relevant document
+from a large document collection to answer user queries. Early IR
+approaches were dominated by sparse retrieval methods such as
+TF–IDF and BM25 [32, 33], which rank documents based on exact
+lexical overlap and term statistics but often fail to capture deeper se-
+mantic relationships. The advent of Transformer-based pre-trained
+language models [19, 38] and their retrieval-oriented embedding
+variants, such as ANCE [46] and other recent models [42, 43, 45],
+has led to substantial advances on standard benchmarks such as MS
+MARCO [4] and Natural Questions [22, 23]. These techniques, when
+applied to IR as dense retrieval models, have demonstrated stronger
+performance than traditional sparse retrieval approaches [8].
+Despite the success in modeling semantic relationships between
+queries and documents, dense retrieval models often struggle with
+queries that involve temporal constraints [44]. This limitation has
+motivated the study of Temporal Information Retrieval (TIR), a line
+of research rooted in early work on temporal understanding [2, 28]
+and later formalized in benchmarks [16, 17]. TIR aims to improve
+retrieval accuracy for time-sensitive queries by enhancing temporal
+understanding capabilities of retrievers. Early research modeled
+arXiv:2509.01306v1  [cs.IR]  1 Sep 2025
+
+[[page 2]]
+Conference acronym ’XX, June 03–05, 2018, Woodstock, NY Cao et al.
+Query：“In which location did film director Lotte Reiniger reside in 1935?”
+Correct Doc：“In 1935, Reiniger worked with film-maker Visconti in Rome. “
+Confused Doc： “ In 1938, Reiniger worked with film-maker Jean Renoir in Paris. “
+Scenario 1-Relevance
+Query：“How would you characterize Battle Creek's weather on 2025-8-1?”
+Correct Doc：“Weather report for Battle Creek on  August 1st 2025 says 83°F”
+Correct  Document Time:   2025-07-19
+Confused Doc：“Madison's daily forecast for 2025-8-3 at 83°F.” 
+Confused Document Time: 2025-07-15
+Scenario 2-Recency
+Scenario 3-Hybrid
+Query：“How many students return to Salmond College for a second year?”
+Correct Doc：“The college provides students with 20-30 returning for a second year.”
+Correct Document Time:   2024-10-01
+Confused Doc：“The college provides students with 40-50 returning for a 2nd year.” 
+Confused Document Time: 2024-09-01
+Figure 1: Examples in three scenarios of TIR.
+TIR through simple timestamp annotations [ 6, 31], while recent
+efforts explore richer formulations such as dynamically evolving
+evidence [20] and freshness-aware retrieval augmentation [41].
+However, real-world TIR scenarios extend far beyond the scope
+of previous work. As illustrated in Figure 1, we formalize three
+representative scenarios, each illustrating a distinct aspect of TIR.
+In Scenario 1-Relevance, the query asks for residence of some-
+one in a specific year, and a document is deemed relevant only
+if it satisfies this temporal requirement. This corresponds to the
+challenge of queries with explicit temporal requirements, where the
+retriever must align time information of documents with temporal
+requirement of the query. We refer to this challenge as Relevance.
+Another example is Scenario 2-Recency, where the query asks
+how many students would return to Salmond College for a sec-
+ond year, and the retrieved candidates contain multiple versions
+of similar statements, while they published at different times. This
+corresponds to the challenge of staleness resistance, which means
+the retriever must identify and return the most appropriate ver-
+sion, typically the freshest, while remaining sensitive to semantic
+relevance [30, 35]. We refer to this challenge as Recency.
+At the same time, in real-world applications, hybrid cases fre-
+quently arise where both Relevance and Recency are critical. For
+example, a weather-forecast query may target a specific valid date,
+yet the corpus often contains multiple editions issued at different
+times. As illustrated in Scenario 3-Hybrid, addressing such cases
+requires the document’s clue time to match the query’s temporal
+requirements while selecting the most up-to-date version [20, 41].
+Although recent studies have attempted to incorporate temporal
+information into retrieval [ 1, 12, 13, 34], they often address sin-
+gle challenges in TIR through task-specific heuristics, resulting in
+inconsistent performance across diverse scenarios.
+To overcome these limitations, we introduce Relevance & Re-
+cency Retrieval(Re3), a universal, plug-and-play, and lightweight
+framework for TIR. Re3 comprises three modular components: Time
+Extraction, Time Encoding and Time Enhancement. This design
+enables retrievers to effectively handle Relevance, Recency, and
+Hybrid scenarios without extensive architectural changes. To rig-
+orously evaluate TIR models, we construct the Relevance & Re-
+cency Benchmark(Re2Bench), comprising Re2-Rel from TSQA-
+Human [ 6] for temporal requirement alignment, Re2-Rec from
+HoH [30] for staleness resistance, andRe2-Hyb, a newly built NOAA-
+based [26, 27] dataset integrating two challenges.
+On Re2Bench, Re3 leads R@1 in all scenarios(0.920 on Re2-Rel,
+0.649 on Re2-Rec, 0.742 on Re2-Hyb), while keeping temporal dis-
+persion competitive in the hybrid setting. In general, a learnable
+gate that balances semantic and temporal information yields more
+reliable retrieval than optimizing either alone.
+In summary, our contributions are as follows:
+• We refine the formulation of TIR by identifying two core chal-
+lenges, Relevance and Recency, and formalizing three representa-
+tive scenarios. Building on this, we constructRe2Bench: Relevance
+& Recency Benchmark, a three-subset evaluation suite covering
+all the scenarios, and we introduce two new metrics: TimeVar@K
+for relevance and MFG@K for recency.
+• We propose Re3: Relevance & Recency Retrieval , a novel and mod-
+ular framework that can be seamlessly integrated with exist-
+ing dense retrievers. Re3 tackles the dual challenges of TIR by
+combining time extraction, multi-frequency time encoding, and
+query-aware semantic–temporal fusion.
+• Extensive experiments show that Re3 achieves state-of-the-art
+results on all subsets of Re 2Bench, while maintaining robust
+performance across diverse encoders, indicating strong general-
+ization and practical applicability in real-world TIR.
+2 RELATED WORK
+2.1 Benchmarking Temporal-Aware Retrieval
+Temporal Information Retrieval (TIR) demands benchmarks that
+capture both temporal requirement alignment (Relevance) and stale-
+ness resistance (Recency). Early efforts such as NTCIR Temporalia
+(NTCIR-11/12) [16, 17] and the TREC Temporal Summarization
+Track [3, 7] evaluated temporal relevance ranking in news corpora
+but could not disentangle these two challenges. Later datasets inher-
+ited this separation: TSQA [6] targets explicit temporal constraints
+(Relevance), while HoH [30] emphasizes recency via historical doc-
+ument versions, making it difficult to assess trade-offs [15, 25, 36].
+Beyond corpus design, a parallel line of work studies temporal
+query intent, profiling or classifying when temporal evidence is re-
+quired [14, 18]. This line is further operationalized in Temporalia’s
+TQIC subtask [16], which complements TIR evaluations but does
+not jointly assess alignment and freshness. We introduce Re2Bench,
+comprising three scenarios—pure Relevance, pure Recency, and
+hybrid—that enable both isolated and joint evaluation.
+2.2 Modeling Temporality in Dense Retrieval
+Classical IR systems rely on sparse retrievers like TF–IDF [33] and
+BM25 [32], which match terms exactly and fail to capture tem-
+porality. Earlier time-aware ranking integrated temporal priors
+
+[[page 3]]
+Re3: Learning to Balance Relevance & Recency for Temporal Information Retrieval Conference acronym ’XX, June 03–05, 2018, Woodstock, NY
+or evidence into probabilistic models, e.g., time-based language
+models [24], recency-sensitive ranking for web search [10], and es-
+timation methods for ranking recent information [11]. The shift to
+dense retrieval with pre-trained language models encodes queries
+and documents into a shared embedding space, improving semantic
+relevance [19, 21, 46] but ignoring temporal information essential
+in TIR. Recent time-aware dense retrievers fall into two camps: (i)
+feature-engineering, e.g., TempRetriever [1], which embeds times-
+tamps directly but risks over-coupling semantic and temporal fea-
+tures; and (ii) heuristic-fusion, e.g., TSM [13] and TempRALM [12],
+which separate representations and fuse them via fixed rules, limit-
+ing adaptivity to query needs and hurting hybrid performance. In
+contrast to these methods, Re3 instead uses a learnable, query-aware
+gating mechanism to adaptively balance semantic and temporal
+information during re-ranking, yielding robust, generalizable gains
+across diverse temporal retrieval scenarios.
+3 PRELIMINARY
+3.1 Problem Definition
+We formally define Temporal Information Retrieval (TIR) as follows.
+A query is a tuple𝑄 =(𝑐𝑞,𝑡𝑞), where𝑐𝑞 denotes the query content
+and𝑡𝑞 specifies its temporal requirement (e.g., a time point or range),
+hereafter referred to as thequery time. A document is represented as
+a tuple𝐷 =(𝑐𝑑,𝑡𝑐,𝑡𝑑), where𝑐𝑑 denotes content of the document,
+𝑡𝑐 captures the time information expressed in the content, hereafter
+referred to as theclue time. And𝑡𝑑 denotes the publication or update
+time of the document, reflecting its freshness.
+Intuitively, a Temporal Information Retrieval (TIR) task aims to
+identify, from a large document collection, the document that best
+answers a given query while ensuring that the retrieved content
+satisfies the query’s temporal constraints. Formally, given a query
+𝑄 and a document collection𝐷★, the TIR task is to produce a ranked
+list of documents by computing a retrieval score𝑆(𝑄,𝐷) for each
+𝐷∈ 𝐷★ and sorting them in descending order based on 𝑆(𝑄,𝐷).
+The score should jointly reflect the semantic match between 𝑐𝑞
+and𝑐𝑑 as well as the constraints arising from the query’s temporal
+requirement and the need for staleness resistance.
+3.2 Core Challenges: Relevance & Recency
+An effective TIR retriever must address two intertwined challenges:
+Relevance. For queries with an explicit temporal requirement𝑡𝑞,
+the retriever should select documents whose clue time𝑡𝑐 satisfies
+this requirement. We define Align(𝑡𝑞,𝑡𝑐) as a temporal alignment
+function that quantifies the proximity between𝑡𝑞 and𝑡𝑐. This func-
+tion serves as a relevance-oriented feature for the retriever, guiding
+it to better align a document’s clue time with the query’s tempo-
+ral requirement. Neglecting this alignment can lead to returning
+semantically relevant yet temporally mismatched results.
+Recency. When multiple versions of a semantically similar doc-
+ument are available over time, the retriever must identify the most
+appropriate version, while guarding against indiscriminate recency
+bias. We defineFresh(𝑡𝑑,𝑡 ref) as a freshness function that decreases
+as Δ(𝑡ref,𝑡𝑑) increases, where𝑡ref is a reference time determined
+by the scenario. This function serves as a recency-oriented feature
+for the retriever, enabling it to identify the freshest version among
+semantically similar documents. This captures the retriever’s ability
+to prefer timely documents while avoiding staleness.
+4 RE 3: RELEV ANCE & RECENCY RETRIEV AL
+Existing TIR methods often address single challenge, either Rele-
+vance or Recency, fail to adapt heterogeneous scenarios where both
+challenges exist in varying degrees. Such specialization leads to
+suboptimal performance when the retrieval task spans all scenarios.
+To bridge this gap, we propose Re3, a framework designed to
+balance semantic relevance and time constraints in TIR. Re3 adopts
+a modular coarse-to-fine pipeline consisting of three components:
+Time Extraction, Time Encoding and Time Enhancement.
+Given a query–document pair(𝑄,𝐷), Re3 jointly computes a
+semantic score Scoresem and a temporal scoreScoretime. Consistent
+with the formulation in Section 3, Scoretime operationalizes the
+combination of Align(𝑡𝑞,𝑡𝑐) and Fresh(𝑡𝑑,𝑡 ref(𝑄)); we instantiate
+the overall combination with a learnable soft-gating mechanism:
+Scorefinal =𝜎(𝛼) Scoresem+  1−𝜎(𝛼) Scoretime. (1)
+This formulation decouples semantic and temporal modeling during
+representation learning, while enabling the model to dynamically
+balance the two during re-ranking.
+4.1 Retrieval Strategy
+We first perform semantic pre-retrieval for efficiency and recall,
+and then apply temporal re-ranking to realize the formal objective.
+Step 1: Semantic pre-retrieval. Given𝑄 =(𝑐𝑞,𝑡𝑞) and𝐷 =(𝑐𝑑,𝑡𝑐,𝑡𝑑),
+we obtain semantic embeddings using𝐸(·), where𝐸 denotes the se-
+mantic encoder instantiated as the BGE-M3 model [5]. The semantic
+similarity is then computed as
+Scoresem(𝑄,𝐷) = cos 𝐸(𝑐𝑞),𝐸(𝑐𝑑), (2)
+An ANN index returns top-𝐾 candidates (default𝐾=50), preserving
+recall while bounding temporal understanding cost.
+Step 2: Temporal re-ranking. On the candidate pool, we compute
+temporal features for Align(𝑡𝑞,𝑡𝑐) and Fresh(𝑡𝑑,𝑡 ref), feed them to
+a temporal scorer to obtain Scoretime, and combine with Scoresem
+through a learnable gate. Prioritizing documents by the most recent
+𝑡𝑑 disregards the query’s temporal constraint 𝑡𝑞, while focusing
+exclusively on𝑡𝑞 neglects the evolution of document versions over
+time. Our re-ranking strategy aims to balance both factors.
+4.2 Time Extraction
+To support TIR, we first extract explicit timestamps from free text
+for both queries and documents [39, 40]. Given an input𝑥∈{𝑐𝑞,𝑐𝑑},
+the module predicts the most likely(year, month, day) associated
+with its content, later mapped to𝑡𝑞,𝑡𝑐, or𝑡𝑑.
+4.2.1 Architecture. As in Figure 2(a), we adopt an encoder(BGE-
+M3 [5]) whose [CLS] embedding feeds five parallel linear heads
+to classify, from coarse to fine: century, decade, year, month, and
+day. A separate binary head predicts whether a valid year exists,
+improving robustness on non-temporal inputs. The decomposition
+narrows the search space and stabilizes fine-grained predictions.
+4.2.2 Training. We jointly supervise all heads using cross-entropy
+losses on a corpus generated via an LLM-based pipeline, in which
+each sentence is annotated with gold (year,month,day). Loss weights
+
+[[page 4]]
+Conference acronym ’XX, June 03–05, 2018, Woodstock, NY Cao et al.
+(b) Time Encoding
+(c) Time Enhancement (d) Overall Framework Structure
+(a) Time Extraction
+Doc
+CLS Embedding
+Year
+Month
+Day
+Century Head
+Decade Head
+Year Head
+Month Head
+Day Head
+Classification Heads
+Encoder
+∆𝒕 = 𝑻𝒊𝒎𝒆𝑨 − 𝑻𝒊𝒎𝒆𝑩
+𝐅𝐨𝐮𝐫𝐢𝐞𝐫 𝐓𝐫𝐚𝐧𝐬𝐟𝐨𝐫𝐦
+𝒆𝟎 𝒆𝟏 𝒆𝟐 𝒆𝟑 … … … … … 𝒆𝒅−𝟏
+The weather in NY on 2025.8.1 is sunny.
+Doc Time: 2025.7.15
+What is the weather in New York 
+on August 1st, 2025?
+𝑽𝒆𝒄𝒕𝒐𝒓𝒅𝒐𝒄 𝑽𝒆𝒄𝒕𝒐𝒓𝒒𝒖𝒆𝒓𝒚𝑹𝒆𝒍 = 𝐹𝑜𝑢𝑟( 𝑡𝑞−𝑡𝑐 ) 𝑹𝒆𝒄 = 𝐹𝑜𝑢𝑟(| 𝑡𝑜𝑑𝑎𝑦 − 𝑡𝑑|)
+𝐌𝐨𝐝𝐮𝐥𝐞 𝟏 𝐌𝐨𝐝𝐮𝐥𝐞 𝟐
+𝑭𝒊𝒏𝒂𝒍 𝑺𝒄𝒐𝒓𝒆
+𝐌𝐨𝐝𝐮𝐥𝐞 𝟑
+The weather in NY on 2025.8.1 is sunny.
+Doc Time: 2025.7.15
+1
+The weather in NY on 2025.8.1 is cloudy.
+Doc Time: 2025.7.10
+2
+…………
+Rank
+𝑣𝑒𝑐𝑡𝑜𝑟
+𝑅𝑒𝑙𝑒𝑣𝑎𝑛𝑐𝑒
+𝑅𝑒𝑐𝑒𝑛𝑐𝑦
+𝐬𝐜𝐨𝐫𝐞𝐟𝐢𝐧𝐚𝐥
+𝑫𝒐𝒄 Query
+𝐄𝐦𝐛𝐞𝐝𝐝𝐢𝐧𝐠 𝐄𝐦𝐛𝐞𝐝𝐝𝐢𝐧𝐠
+Document Collection
+Query
+What is the weather in New York 
+on August 1st, 2025?
+Correct Document
+The weather in NY on 2025.8.1 is sunny.
+Figure 2: Overview of Re3. (a) Time Extraction: normalize temporal information from queries and documents; (b) Time Encoding:
+map relative time gaps to multi-frequency vectors; (c) Time Enhancement: fuse temporal and semantic features into time-aware
+scores; (d) Overall: a coarse-to-fine pipeline retrieving candidates by semantics and re-ranking them with temporal scores to
+satisfy constraints and select the most appropriate versions.
+are assigned according to head importance, with coarse-grained
+fields slightly up-weighted to better guide the learning.
+4.2.3 Inference and integration. At inference, the predicted triple
+(𝑦,𝑚,𝑑) is cached and assigned to 𝑡𝑞,𝑡𝑐, or𝑡𝑑 depending on the
+source; the year-existence head yields a missingness flag used down-
+stream. This explicit extraction pipeline supports efficient batch
+processing and modular integration with the next Time Encoding
+stage, where timestamps are converted to continuous representa-
+tions.
+4.3 Time Encoding
+We convert time information into vectors, so that temporal evidence
+can be fused with Scoresem in a lightweight and interpretable way.
+Absolute timestamps (𝑡𝑞,𝑡𝑐,𝑡𝑑) are non-linearly mapped by text
+encoders; subtracting their embeddings is ill-posed. We therefore
+(i) compute gaps in time space, then (ii) map each scalar gap to
+a vector via multi-frequency sinusoidal features. This preserves
+scale/periodicity and keeps the encoder modular.
+We use absolute differences in days:
+Δrel = min𝜏∈𝑡𝑐
+𝑡𝑞−𝜏
+, Δrec =
+𝑡ref(𝑄)− 𝑡𝑑
+, (3)
+Let the embedding dimension be𝑑 and𝐿 =𝑑/2. Define a geo-
+metric set of periods𝑓𝑖 = 3 2𝑖/𝑑 for𝑖 = 0,...,𝐿 − 1.
+For any gap Δ∈{ Δrel, Δrec}, we encode
+eΔ[2𝑖] = sin
+ Δ
+𝑓𝑖
+
+, eΔ[2𝑖+ 1] = cos
+ Δ
+𝑓𝑖
+
+,𝑖 = 0,...,𝐿 − 1. (4)
+We denote 𝚽rel = eΔrel and 𝚽rec = eΔrec. (Handling of missing
+timestamps and binary availability flags is deferred to Section 4.4.)
+4.4 Time Enhancement Module
+We fuse semantics and time by projecting each document into a
+time-aware representation and then measuring its affinity to the
+query. The design (i) exploits both relevance and recency encodings
+and (ii) remains robust to missing timestamps.
+4.4.1 Inputs. Given a query–document pair𝑄 =(𝑐𝑞,𝑡𝑞) and𝐷 =
+(𝑐𝑑,𝑡𝑐,𝑡𝑑), let e𝑞 = 𝐸(𝑐𝑞) and e𝑑 = 𝐸(𝑐𝑑) denote semantic em-
+beddings. From Sec. 4.3, obtain two time encodings: 𝚽rel from the
+relevance gap Δrel, and 𝚽rec from the recency gapΔrec. Define miss-
+ing indicators𝑚rel,𝑚 rec∈{ 0, 1}, where 1 means the corresponding
+timestamp is missing. When missing, the Fourier vector is replaced
+by a learnable missing embedding:
+𝚽★
+rel =
+(
+𝚽rel, 𝑚 rel = 0,
+𝝓rel
+miss, 𝑚 rel = 1, 𝚽★
+rec =
+(
+𝚽rec, 𝑚 rec = 0,
+𝝓rec
+miss, 𝑚 rec = 1.
+
+[[page 5]]
+Re3: Learning to Balance Relevance & Recency for Temporal Information Retrieval Conference acronym ’XX, June 03–05, 2018, Woodstock, NY
+4.4.2 Time-aware document projection. A lightweight MLP maps
+the document’s semantic vector e𝑑 augmented with temporal fea-
+tures and missing flags into a time-enhanced document representa-
+tionee𝑑∈ R𝑑 (same dimension as e𝑞):
+ee𝑑 = MLP  e𝑑 ⊕ 𝚽★
+rel ⊕ 𝚽★
+rec ⊕ 𝑚rel ⊕ 𝑚rec
+. (5)
+The time-only branches naturally down -weight when the corre-
+sponding information is missing (via 𝝓miss and the indicators).
+4.4.3 Scoring. We compute the semantic score using the original
+representations of the query and document, and the time-aware
+score using the enhanced document vector that incorporates tem-
+poral features and contextual cues, providing a balanced evaluation
+of both semantic relevance and temporal alignment:
+Scoresem(𝑄,𝐷) = sim e𝑞, e𝑑
+, (6)
+Scoretime(𝑄,𝐷) = sim e𝑞,ee𝑑
+, (7)
+where sim(·,·) denotes cosine similarity (or dot product). The final
+score uses a learnable soft gate:
+Scorefinal =𝜎(𝛼) Scoresem+  1−𝜎(𝛼) Scoretime. (8)
+4.4.4 Efficiency. The projection in (5) is applied only to the top-𝐾
+candidates from pre-retrieval and is fully vectorizable; the overhead
+is negligible compared with embedding computation.
+5 RE 2BENCH: RELEV ANCE & RECENCY
+BENCHMARK
+Existing IR benchmarks rarely test a model’s ability to handle both
+temporal requirement and staleness resistance across the three
+scenarios. Datasets exist for isolated aspects of TIR, such as time-
+constrained QA for Relevance[6] and historical-version verification
+for Recency[30]. However, they require additional processing before
+they can serve as reliable testbeds for TIR. Moreover, standard IR
+metrics such as R@K and MRR fail to capture the trade-off between
+semantic matching and temporal constraints.
+To address these gaps, we construct Re2Bench, a comprehensive
+benchmark for TIR. Re 2Bench comprises three scenario-specific
+subsets and introduces two novel evaluation metrics that explicitly
+quantify a model’s capacity to resolve temporal constraints. This
+benchmark provides the first standardized ground for evaluating
+TIR models in all three scenarios.
+5.1 Scenario Design
+To separately and jointly assess Align(𝑡𝑞,𝑡𝑐) and Fresh(𝑡𝑑,𝑡 ref),
+Re2Bench is partitioned into three subsets, each corresponding to
+a canonical TIR scenario defined in Section 3.
+Table 1: Scenarios in TIR given available timestamps.
+Scenario A vailable timestamps Objective
+Re2-Rel 𝑡𝑞,𝑡𝑐 Temporal alignment
+Re2-Rec 𝑡𝑑 Staleness resistance
+Re2-Hyb 𝑡𝑞,𝑡𝑐,𝑡𝑑 Joint optimization
+Re2-Rel evaluates Align(𝑡𝑞,𝑡𝑐) in isolation. Each query includes a
+concrete temporal constraint𝑡𝑞 and each document in the document
+collection contains a clue time𝑡𝑐, while document time𝑡𝑑 is absent.
+The retriever under evaluation must return correct document whose
+content is semantically relevant and whose𝑡𝑐 best aligns with𝑡𝑞.
+Re2-Rec evaluates Fresh(𝑡𝑑,𝑡 ref) in isolation. Queries have no
+temporal requirements, but candidate documents appear in multiple
+versions with distinct publication times 𝑡𝑑. As there is no time
+information in𝑐𝑞, we set𝑡ref(𝑄) = “today”, and the retriever under
+evaluation must identify the freshest semantically relevant version.
+Re2-Hyb jointly evaluates Align(𝑡𝑞,𝑡𝑐) and Fresh(𝑡𝑑,𝑡 ref). Given
+queries specifying𝑡𝑞 and documents annotated with𝑡𝑐 and𝑡𝑑, the
+retriever must identify semantically relevant documents that both
+match𝑡𝑞 in𝑡𝑐 and represent the freshest valid version relative to
+𝑡ref(𝑄) = 𝑡𝑞, ensuring that results satisfy explicit temporal con-
+straints while remaining up to date within the candidate set.
+5.2 Dataset Statistics and Properties
+Table 2 summarizes coverage of each subset in Re 2Bench. Each
+subset is built to invoke one of the scenarios:
+Table 2: Statistics of the Re 2Bench datasets.
+Subset Queries Docs CDR(per query)
+Re2-Rel 8,062 20,155 5
+Re2-Rec 11,972 49,601 2–4
+Re2-Hyb 9,847 49,312 5
+Re2-Rel (TSQA-Human). Derived from the human-annotated split
+of Time-Sensitive-QA, which contains queries with explicit tem-
+poral constraints 𝑡𝑞 [6]. For each query, we identify the correct
+document as𝑡𝑐 exactly matches𝑡𝑞. Additionally, documents with
+𝑡𝑐 near𝑡𝑞 and describing the same underlying information are col-
+lected, thereby increasing the challenge of Scenario 1 by introducing
+confused documents with temporally similar but incorrect time.
+Re2-Rec (HoH). Derived from the HoH dataset [30], which con-
+tains multiple historical versions of documents that contain the
+same underlying information. For each query, we construct a can-
+didate set comprising the correct document (the freshest, with the
+most recent𝑡𝑑) and two to four older, semantically equivalent ver-
+sions. This design increases the challenge of Scenario 2 by requiring
+the retriever to identify the freshest valid version while disregarding
+semantically identical but temporally outdated candidates.
+Re2-Hyb (NOAA). Constructed from NOAA weather forecast
+archives [26, 27], where predictions for a given target date𝑡𝑞 are pe-
+riodically updated. For each target city and date, we collect multiple
+forecast records with different generation dates𝑡𝑑. As illustrated
+in Figure 3, the original structured information (generation date,
+forecast target date, location, temperature, and weather description)
+is transformed into natural language queries and documents using
+GPT [29] via carefully designed prompts. The correct document is
+defined as the latest forecast whose 𝑡𝑐 matches both the query’s
+target date and location. Confusing documents include those with
+the same𝑡𝑐 but earlier𝑡𝑑 (outdated forecasts), as well as those with
+mismatched𝑡𝑐/𝑡𝑞 that remain semantically similar. The prompt
+further ensures that the query wording is noticeably different from
+the correct document text to avoid lexical overlap.
+
+[[page 6]]
+Conference acronym ’XX, June 03–05, 2018, Woodstock, NY Cao et al.
+Data Source: NOAA
+Forecast City: Mobile
+Forecast Date: 2025-07-25
+Record-1  on 2025-07-19
+temperature: " 92°F " ,
+weather:   "Showers And Thunderstorms 
+Likely"
+Record-2 on 2025-07-22
+temperature:   "89°F " ,
+weather:   "Chance Showers And 
+Thunderstorms then Showers And 
+Thunderstorms "
+Record-3 on 2025-07-24
+temperature:   "89°F " ,
+weather: " Showers And Thunderstorms"
+……
+Prompt
+You are given multiple weather forecast
+ records for different cities and dates from 
+NOAA. Each record includes… 
+Identify the correct document: it must be the 
+latest generated record with forecast target 
+date and location…
+Mark other records as confused documents… 
+Formulate a query that naturally asks for the 
+information in the correct document, ensuring 
+the wording is noticeably different from the 
+document text…
+What is the temperature in 
+Mobile on August 1st, 2025?
+Query
+Correct Document
+On 2025.8.1, Mobile will be 89°F.
+Document Time: 2025-07-24
+Confused Document
+Mobile will be 92°F  on 2025.8.1.
+Document Time: 2025-07-19
+Confused Document
+On 2025.8.4, Mobile will be 92°F.
+Document Time: 2025-07-26
+Figure 3: Generation process of Re 2-Hyb from NOAA weather forecast data.
+Here, CDR (Confusing Document Ratio) denotes the average num-
+ber of confusing documents associated with each query; a higher
+CDR indicates a more complex retrieval environment. This distri-
+bution provides both large-scale evaluation for recency-focused
+scenarios and fine-grained, high-difficulty settings for relevance
+and hybrid scenarios, enabling a comprehensive assessment.
+5.3 Evaluation Metrics
+While standard IR metrics such as Recall@K and MRR are widely
+used to measure semantic matching quality, they fail to capture the
+trade-off between semantic alignment and temporal understanding
+that is central to TIR [37]. To explicitly assess a model’s ability to
+address two challenges, we introduce two diagnostic metrics.
+TimeVar@K (lower is better). For scenarios requiring temporal
+requirement satisfaction (Re2-Rel and Re2-Hyb), this metric mea-
+sures the dispersion of𝑡𝑐 relative to the𝑡𝑞 within the top-𝐾 results.
+For each query𝑖, we compute the squared temporal deviations of
+the top-𝐾 retrieved documents and average over queries:
+TimeVar@K = 1
+𝑁
+𝑁∑︁
+𝑖=1
+1
+𝐾
+𝐾∑︁
+𝑗=1
+ 𝑡(𝑖)
+𝑞 −𝑡(𝑖,𝑗)
+𝑐
+2, (9)
+where𝑡(𝑖)
+𝑞 is the query time and𝑡(𝑖,𝑗)
+𝑐 is the clue time of the 𝑗-th
+retrieved document. Lower values indicate that retrieved documents
+are more temporally consistent with the query constraint.
+MFG@K (Mean Freshness Gap, lower is better). For scenarios
+requiring freshness (Re2-Rec and Re2-Hyb), this metric measures
+the average publication-time lag from the freshest valid document:
+MFG@K = 1
+𝑁
+𝑁∑︁
+𝑖=1
+1
+𝐾
+𝐾∑︁
+𝑗=1
+ 𝑡∗
+𝑖−𝑡𝑖,𝑗
+, (10)
+where𝑡∗
+𝑖 is the publication time of the freshest valid document for
+query𝑖 and𝑡𝑖,𝑗 is that of the𝑗-th retrieved document. Lower values
+reflect better staleness resistance.
+When evaluating Relevance, the clue time𝑡𝑐 of retrieved docu-
+ments are often very close, and alignment to𝑡𝑞 requires highlight-
+ing small deviations; the use of squared deviations amplifies these
+differences, making it easier to detect temporal inconsistency. In
+contrast, for Recency, publication times𝑡𝑑 for semantically equiva-
+lent documents change less frequently and differ more stably across
+versions, so the mean gap is sufficient to characterize freshness
+differences without exaggerating noise.
+Table 3: Metric applicability across the three scenarios.
+Metric Re 2-Rel Re 2-Rec Re 2-Hyb
+Recall@1 / Recall@5 ✓ ✓ ✓
+MRR ✓ ✓ ✓
+TimeVar@K ✓ ✓
+MFG@K ✓ ✓
+6 EXPERIMENTS
+To verify whether Re3 can effectively address the TIR tasks and
+adapt to all three scenarios in Re2Bench, we conduct comprehensive
+evaluations against several established baselines. The experiments
+are organized as follows: we first describe the setup, then present the
+main results, followed by ablation studies and sensitivity analysis.
+6.1 Setup
+Datasets and scenarios. We use three Re2Bench subsets from Sec-
+tion 5: Re2-Rel (TSQA-Human), Re2-Rec (HoH), and Re2-Hyb (NOAA).
+In Re2-Rec we set𝑡ref(𝑄) = “today”, since queries have no explicit
+temporal constraint and the goal is to select the freshest valid ver-
+sion; in Re2-Hyb we set𝑡ref(𝑄) =𝑡𝑞, as queries specify a target time
+𝑡𝑞 and the task is to select the most recent document version with
+respect to that target, ensuring that retrieval accuracy accounts for
+both semantic relevance and the appropriate temporal alignment.
+
+[[page 7]]
+Re3: Learning to Balance Relevance & Recency for Temporal Information Retrieval Conference acronym ’XX, June 03–05, 2018, Woodstock, NY
+Table 4: Comparison of model performance across the three scenarios. ( 𝐾 = 5)
+Model Scenario 1 (Re2-Rel) Scenario 2 (Re 2-Rec) Scenario 3 (Re 2-Hyb)
+R@1 R@5 MRR TimeVar@5 R@1 R@5 MRR MFG@5 R@1 R@5 MRR TimeVar@5 MFG@5
+BGE-M3 0.705 0.943 0.801 2.171 0.380 0.853 0.609 4.369 0.109 0.376 0.255 2.015 2.303
+tempRALM 0.915 0.993 0.953 1.228 0.600 0.857 0.768 4.726 0.455 0.895 0.636 1.598 0.798
+TempRetriever 0.913 0.997 0.952 0.881 0.372 0.829 0.591 4.162 0.565 0.969 0.736 1.407 0.570
+TSM 0.857 0.983 0.914 1.306 0.588 0.827 0.572 4.399 0.571 0.943 0.768 1.806 1.620
+Re3 0.920 0.998 0.957 1.485 0.649 0.768 0.707 4.640 0.742 0.971 0.836 0.994 1.943
+6.1.1 Baselines and instantiation. We evaluate four representative
+baselines under a unified pipeline (same ANN pre-retrieval, top-
+𝐾=50 candidate pool, identical train/dev/test splits and tokeniza-
+tion). When training is required, we use the same supervision as Re3
+on the re-ranking pool; otherwise we keep the official pretraining.
+To ensure fair comparison across methods, all candidate sets
+are generated using the same pretrained encoder backbone. (BGE-
+M3[5]); the baselines are BGE-M3 (semantic-only), tempRALM[12],
+TempRetriever [1], and TSM [13].
+• BGE-M3 (semantic-only) [5]: an embedding retriever ranking by
+semantic similarity without temporal modeling. To avoid bias
+in Scenario 2 and 3, we append a lightweight timestamp tag
+(“(proposed on YYYY-MM-DD)”) only for this baseline so that its
+encoder can see document times; other methods use their official
+time modeling on the same candidate pool.
+• TempRetriever [1]: a recency-aware retriever that either concate-
+nates temporal tags to text ( tag mode) or stacks explicit time
+features with semantic embeddings (fs mode).
+• tempRALM [12]: A recency-specialized retriever performing can-
+didate re-ranking based on freshness priors.
+• TSM [13]: a fusion variant that employs BGE-M3 to indepen-
+dently encode both semantics and time-text, then fuses the out-
+puts via z-score normalization for balanced weighting.
+6.1.2 Pipeline. All methods adopt a pipeline: pre-retrieval to a
+candidate pool (default top-𝐾=50), followed by method-specific
+re-ranking. Re3 computes two gaps Δrel and Δrec, encodes them
+with Fourier features, produces Scoretime, and combines it with
+Scoresem via a query-conditioned gate (Section 4).
+6.1.3 Metrics. We report R@1/5 and MRR, plus two diagnostics
+from Section 5.3 with𝐾=5: TimeVar@5 (lower is better; temporal
+alignment tightness) and MFG@5 (lower is better; freshness gap).
+6.2 Main Results
+Table 4 presents the experiment results on the three subsets of
+Re2Bench, revealing three main observations.
+Scenario 1 (Re2-Rel): aligning to the query time without overfitting.
+Re3 attains the best R@1/R@5/MRR (0.920/0.998/0.957), indicating
+precise alignment to the query’s temporal constraint while preserv-
+ing semantic coverage. TempRetriever yields the lowest TimeVar@5
+(0.881), i.e., extremely tight top-𝐾 concentration around the target
+time. While low variance is desirable, being overly “narrow” can
+overfit to a single axis (time) and reduce tolerance to semantic ambi-
+guity. Re3’s slightly higher TimeVar@5 (1.485) reflects a calibrated
+use of temporal information rather than an aggressive collapse, a
+pattern that will matter in Hybrid.
+Scenario 2 (Re2-Rec): when recency dominates, restraint pays off
+at the top rank. The recency-specialized tempRALM leads on MRR
+and R@5 (0.768 and 0.857), which is expected given its hard-coded,
+greedy recency prior; it consistently boosts newer items across the
+candidate list, benefiting average reciprocal rank and top-𝐾 recall.
+In contrast, Re3 delivers the highest R@1 (0.649). This shows that,
+even in a recency-dominant setting, Re3 preserves enough semantic
+discrimination to put the truly correct document first more often,
+instead of broadly lifting many recent (but not always correct)
+candidates. This “measured” behavior stems from the adaptive gate
+learned by Re3: it increases the temporal influence when helpful, but
+avoids overwhelming semantics. The same restraint that forgoes a
+few wins on MRR in S2 becomes a decisive advantage once queries
+require both semantic matching and recency in S3.
+Scenario 3 (Re 2-Hyb): balancing both axes wins. Re3 achieves the
+state-of-the-art R@1/R@5/MRR (0.742/0.971/0.836) and the lowest
+TimeVar@5 (0.994), showing it simultaneously honors the query’s
+temporal constraint and ranks the appropriate (often freshest) ver-
+sion. TempRetriever attains the lowest MFG@5 (0.570), confirming
+its strong freshness bias, but its accuracy lags, evidencing that a
+rigid recency push is insufficient once semantic alignment is also
+required. Overall, the soft-gated combination in Re3 learns when
+to trust semantics and when to emphasize time, yielding superior
+accuracy in the mixed regime.
+The baselines follow a specialist strategy: models optimized for
+a single axis perform strongly in the corresponding scenario—e.g.,
+tempRALM and TempRetriever lead in Scenario 2 (Rec) on R@5
+(0.857, 0.829) and MRR (0.768, 0.591), while TempRetriever attains
+the lowest TimeVar@5 (0.881) in Scenario 1 (Rel). However, such
+advantages are brittle and do not transfer when both challenges
+co-occur. By contrast, Re3 functions as a generalist: it maintains
+top-1 performance in Scenario 1 across all accuracy metrics (R@1
+= 0.920, R@5 = 0.998, MRR = 0.957), remains competitive under
+strong recency pressure in Scenario 2 (R@1 = 0.649, highest among
+all), and translates this calibrated balance into the strongest overall
+performance in Scenario 3, where it leads on all three accuracy met-
+rics (R@1 = 0.742, R@5 = 0.971, MRR = 0.836) while also achieving
+the lowest TimeVar@5 (0.994).
+Across Re2Bench, adaptively balancing Relevance and Recency
+yields more robust and generalizable performance than optimiz-
+ing for either alone. The advantages of specialist baselines arise
+from hard-coded biases toward a single dimension, which account
+
+[[page 8]]
+Conference acronym ’XX, June 03–05, 2018, Woodstock, NY Cao et al.
+for their localized strengths as well as their pronounced perfor-
+mance drop in the Hybrid setting. In contrast, Re3’s adaptive gating
+mechanism avoids overfitting to one axis, maintains high semantic
+precision at the top rank, and scales effectively to realistic scenarios
+where both Relevance and Recency must be satisfied (Table 4).
+6.3 Ablation Analysis
+6.3.1 Time extraction. In many TIR settings, queries and docu-
+ments may contain explicit temporal expressions, but without an
+explicit extraction step, this information cannot be reliably utilized
+for relevance–recency understanding. Our time extraction mod-
+ule aims to identify the precise(year, month, day) associated with
+query content (𝑡𝑞) and document clues (𝑡𝑐), enabling accurate com-
+putation of ∆rel and ∆rec. To validate its necessity and precision, we
+evaluate this module on the Re2-Rel and Re2-Hyb subsets, as these
+subsets contain explicit temporal expressions in both the query
+and document content, matching the intended usage scenario of
+this module. In these subsets, the clue time (𝑡𝑐) and document time
+(𝑡𝑑) are already explicitly marked as timestamps, enabling direct
+supervision of extraction accuracy.
+Table 5: Performance of the time extraction module across
+different scenarios.
+Evaluation Group YearAcc MonthAcc DayAcc EM
+Rel-Question 0.987 — — 0.987
+Rel-Clue 0.989 — — 0.989
+Hyb-Question 0.965 0.962 0.958 0.952
+Hyb-Clue 0.971 0.968 0.965 0.960
+The near-ceiling YearAcc in Re2-Rel (0.987/0.989 for Question/-
+Clue) shows that the coarse-to-fine classifier reliably anchors the
+temporal scope before re-ranking, which is essential for computing
+Δrel without cascading errors. In Re 2-Hyb, month/day accuracy
+above 0.96 (EM 0.952–0.960) demonstrates that the module is pre-
+cise enough for day-level alignment in forecasting-style queries,
+where even a one-day mismatch changes the correct target. Overall,
+the extractor produces high-quality timestamps, ensuring that Δrel
+and Δrec are informative rather than noisy in downstream scoring.
+6.3.2 Gating and fusion. Balancing semantic similarity (Scoresem)
+and temporal restraints (Scoretime) is not trivial: a fixed weight risks
+over-emphasizing one factor while ignoring the other, especially
+across heterogeneous scenarios. Our gating and fusion mechanism
+introduces a learnable parameter𝛼 to adaptively combine the two
+scores on a per-query basis. To verify the importance of this adap-
+tive weighting, we conduct an ablation by removing the gate (“w/o
+𝛼”) and instead summing the two scores with equal weight. The
+results show that removing the learnable gate (“w/o𝛼”) degrades
+performance markedly, especially in Hybrid, confirming the neces-
+sity of adaptive weighting between Scoresem and Scoretime.
+In Re2-Rec, R@1 drops from 0.649 to 0.364 and MRR from 0.707
+to 0.497, reflecting that a fixed, ungated mixture strategy either
+over-weights recency or semantics depending on the query, but
+cannot adapt per-query. The effect is most pronounced in Re2-Hyb,
+where R@1 falls by 0.474 (0.742 to 0.268) and MRR by 0.402, while
+Table 6: Ablation on the gating and fusion mechanism.
+Scenario Setting R@1 MRR TimeVar@5 / MFG@5
+Re2-Rel w/o𝛼 0.917 0.954 1.520
+Re3 (full) 0.920 0.957 1.485
+Re2-Rec w/o𝛼 0.364 0.497 5.196
+Re3 (full) 0.649 0.707 4.460
+Re2-Hyb w/o𝛼 0.268 0.434 1.483 / 2.127
+Re3 (full) 0.742 0.836 0.994 / 1.943
+TimeVar@5/MFG@5 also worsen (0.994/1.943 to 1.483/2.127). Even
+in Re2-Rel, the small yet consistent declines (R@1: 0.920 to 0.917;
+MRR: 0.957 to 0.954) and higher TimeVar@5 (1.485 to 1.520) indicate
+that soft gating helps avoid over-greedy alignment and maintains
+a better semantic–temporal equilibrium. These trends substantiate
+the core claim that learning the per-query gate 𝛼 is crucial for
+robustness across scenarios.
+6.3.3 Time encoding. Time information can be encoded in various
+ways. Beyond our proposed multi-frequency Fourier encoding, al-
+ternatives include: (i) using a pretrained language model to directly
+encode timestamp into a semantic vector of the same dimension
+as text embeddings, or (ii) repeating the raw scalar time gap and
+feeding it directly into the model. To assess the necessity of our
+time encoding module and its delta-then-encode design, we per-
+form an ablation in which Fourier features are replaced by these
+alternatives (BGE-Diff / Scalar-Repeat). Results indicate that such
+replacements degrade both temporal alignment (Re2-Rel) and stale-
+ness resistance (Re2-Hyb), thereby validating the effectiveness of
+the multi-frequency design (Table 7).
+Table 7: Ablation on time encoding. Higher is better for all
+metrics.
+Scenario Setting R@1 R@5 MRR
+Re2-Rel
+BGE-Diff 0.707 0.946 0.801
+Scalar-Repeat 0.545 0.937 0.700
+Re3 (full) 0.920 0.998 0.957
+Re2-Rec
+BGE-Diff 0.351 0.476 0.427
+Scalar-Repeat 0.445 0.594 0.525
+Re3 (full) 0.649 0.768 0.707
+Re2-Hyb
+BGE-Diff 0.326 0.612 0.514
+Scalar-Repeat 0.284 0.548 0.472
+Re3 (full) 0.742 0.971 0.836
+In Re2-Rel, removing Fourier features reduces R@1 from 0.920
+(full) to 0.707 (BGE-Diff) and 0.545 (Scalar-Repeat), indicating that
+(i) subtracting embedding vectors to approximate temporal distance
+is ill-posed, and (ii) repeating raw scalars fails to capture complex
+temporal patterns. In Re2-Rec, performance losses remain substan-
+tial, with R@1 decreasing from 0.649 to 0.351 and 0.445, suggesting
+that freshness also benefits from multi-scale encoding rather than
+a single linear adjustment. In Re 2-Hyb, the combined challenge
+
+[[page 9]]
+Re3: Learning to Balance Relevance & Recency for Temporal Information Retrieval Conference acronym ’XX, June 03–05, 2018, Woodstock, NY
+further widens these gaps, with R@1 dropping from 0.742 to 0.326
+and 0.284, and MRR falling from 0.836 to 0.514 and 0.472. These
+results support our motivation that delta-then-encode with multi-
+frequency sinusoids effectively captures both short- and long-range
+effects needed to balance Δrel and Δrec.
+6.3.4 Missing timestamps. In real-world TIR scenarios, document
+timestamps (𝑡𝑐,𝑡𝑑) may be missing or noisy due to incomplete meta-
+data or extraction errors. A naive strategy such as replacing miss-
+ing values with zero vectors risks introducing misleading temporal
+information, which can harm ranking performance. Our missing-
+aware time encoding handles this by (i) replacing missing Fourier
+features 𝚽rel / 𝚽rec with learnable embeddings 𝝓rel
+miss / 𝝓rec
+miss, and
+(ii) explicitly passing binary missingness indicators(𝑚rel,𝑚 rec) to
+the fusion module. To validate its effect, we disable this mechanism
+(“Missing-aware OFF”) and compare against the full Re3.
+Table 8: Ablation on missing-aware time encoding.
+Scenario Setting R@1 R@5 MRR
+Re2-Rel Missing-aware OFF 0.918 0.998 0.956
+Re3 (full) 0.920 0.998 0.957
+Re2-Rec Missing-aware OFF 0.405 0.859 0.623
+Re3 (full) 0.649 0.768 0.707
+Re2-Hyb Missing-aware OFF 0.742 0.971 0.836
+Re3 (full) 0.742 0.971 0.836
+In Re2-Rec, disabling missing-aware processing reduces R@1
+from 0.649 to 0.405 and MRR from 0.707 to 0.623, showing that
+naive defaults (e.g., zero vectors) mislead the temporal scorer when
+𝑡𝑑 is absent or noisy. The slight increase in R@5 (0.768 to 0.859)
+suggests the unguided model pushes more “recent-looking” can-
+didates into the top-5 but misorders the truly correct one—hence
+the R@1 and MRR drop—highlighting the importance of explicit
+missing embeddings and flags. In Scenario 1, the effect is minimal
+(0.920 to 0.918), as expected when ∆rec is unused. In Scenario 3,
+the equality of metrics across settings reflects that timestamps are
+effectively complete; here robustness mechanisms remain dormant
+without adding overhead.
+6.4 Sensitivity Analysis
+Our retriever is designed to be a lightweight, plug-and-play re-
+triever. In previous experiments, we used the widely adopted BGE-
+M3 [5] as the semantic backbone𝐸(·). To verify that Re3 can work
+effectively with a broad range of pre-trained language models, we
+perform a sensitivity analysis by swapping the semantic encoder
+while keeping the rest of the retrieval pipeline fixed. This allows
+us to assess whether the proposed temporal modules and gating
+mechanism remain effective across heterogeneous backbones.
+Protocol. We replace the encoder𝐸(·) used for computingScoresem
+and encoding contents with three alternatives:BERT-base-uncased [9],
+BGE-large-en-v1.5 [45], and E5-large-v2 [43]. For each backbone,
+we rebuild the ANN index andretrain only the temporal scorer using
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0R@1
+0.920
+0.540
+0.785 0.826
+Re²-Rel: R@1
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0MRR
+0.957
+0.685
+0.863 0.890
+Re²-Rel: MRR
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0R@1
+0.649
+0.455
+0.656 0.653
+Re²-Rec: R@1
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0MRR
+0.707
+0.480
+0.717 0.713
+Re²-Rec: MRR
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0R@1
+0.742
+0.461
+0.572
+0.518
+Re²-Hyb: R@1
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0MRR
+0.836
+0.584
+0.760
+0.624
+Re²-Hyb: MRR
+BGE-m3
+BERT-base-uncased
+BGE-large-en-v1.5
+E5-large-v2
+Figure 4: Performance comparison of embedding backbones
+across Re2Bench, reporting both R@1 and MRR.
+identical hyperparameters; the time encoding and gating compo-
+nents are kept unchanged. Pre-retrieval, candidate pool size (𝐾=50),
+and training protocol are identical to the default setting.
+Figure 4 reports R@1 and MRR for all three Re2Bench scenarios
+under different backbones. Replacing 𝐸(·) with a new backbone
+changes absolute performance in line with the backbone’s intrinsic
+quality: stronger encoders improve all scores. Yet Re3 consistently
+tracks these shifts without exhibiting additional degradation. This
+behavior confirms that Scoretime is decoupled from encoder inter-
+nals and relies solely on (∆rel, ∆rec) and Scoresem, allowing the
+method to adapt naturally to different embedding spaces. Across all
+backbones, Re3 maintains stable improvements in every scenario,
+with the largest absolute gains on Re2-Hyb, where both Relevance
+and Recency must be jointly optimized. Furthermore, the re-ranking
+overhead remains unaffected by the backbone choice, since time
+encoding and the MLP scorer operate only on the top-𝐾 candidates,
+ensuring stable latency.
+These results demonstrate that Re3 functions as a lightweight,
+drop-in temporal re-ranking framework: it can be integrated with
+diverse semantic backbones without architectural modifications,
+preserves the expected performance scaling with encoder qual-
+ity, and consistently improves results across all scenarios. This
+backbone-agnostic property makes Re3 well-suited for deployment
+in heterogeneous real-world retrieval systems.
+
+[[page 10]]
+Conference acronym ’XX, June 03–05, 2018, Woodstock, NY Cao et al.
+7 CONCLUSION
+Temporal Information Retrieval (TIR) seeks to retrieve documents
+that are both semantically relevant to a query and temporally ap-
+propriate with respect to its constraints. This entails balancing
+two intertwined challenges: Relevance, which requires aligning the
+document’s content time with the query’s temporal requirement,
+and Recency, which calls for selecting the most appropriate—often
+freshest—version among multiple temporally staggered candidates.
+While each challenge has been examined independently, existing
+methods rarely address them in a unified and adaptive manner.
+This work formalizes these dual challenges and presents Re 3,
+a unified framework that decouples semantic and temporal mod-
+eling while learning to combine them adaptively. Re 3 integrates
+Fourier-based multi-scale time encoding, missing-aware processing,
+and a learnable gating mechanism to achieve per-query balancing
+between the two challenges. We further contribute Re 2Bench, a
+benchmark comprising three subsets, each targeting Relevance, Re-
+cency, or their hybrid combination. We also propose two diagnostic
+metrics: TimeVar@K for Relevance and MFG@K for Recency.
+Experiments on Re2Bench show that adaptive gating is critical
+in hybrid scenarios where fixed-weight fusion underperforms, that
+missing-aware encoding enhances robustness when timestamps
+are incomplete, and that multi-frequencydelta-then-encode features
+outperform naive scalar encoding and simple embedding subtrac-
+tion, highlighting the importance of explicitly modeling temporal
+gaps at multiple scales.
+Nevertheless, several limitations remain. The method assumes
+explicit or reliably extractable timestamps, which may not hold in
+all settings. Evaluation is limited to three subsets, leaving gener-
+alization to areas such as scientific literature or social media for
+future work. Additionally, while re-ranking incurs minimal cost
+for small candidate pools, latency may grow at very large 𝐾. Fu-
+ture directions include relaxing timestamp assumptions, optimizing
+for low-latency retrieval, expanding Re2Bench to broader domains
+and tasks, and extending Re3 toward generative and multimodal
+temporal retrieval.
+ETHICAL CONSIDERATIONS
+The proposed Re 3 framework is designed to enhance Temporal
+Information Retrieval (TIR) by adaptively balancing recency and
+relevance. While the objective is to improve retrieval accuracy and
+efficiency, deploying such a system in real-world contexts may
+entail societal and ethical risks. The following paragraphs outline
+key concerns and possible mitigation strategies.
+Information Bias and Amplification of Inequity. By leveraging a
+learnable gating mechanism to balance recency and relevance, the
+framework may inadvertently reflect or reinforce biases present
+in the training data. For example, if recency correlates with a lim-
+ited set of dominant sources, the model could disproportionately
+prioritize these sources, thereby marginalizing alternative view-
+points. Should these sources be systematically biased, the frame-
+work could further amplify such biases, potentially affecting public
+discourse and information equity. To mitigate this risk, bias audits
+should be conducted prior to deployment, including evaluation on
+diverse, representative, and multi-source datasets. Furthermore, in-
+terpretability tools can help reveal how the model allocates weight
+between recency and relevance, facilitating the identification and
+correction of systematic bias.
+Privacy Risks in Time-Sensitive Data. Although the Re 2Bench
+dataset is derived from publicly available sources, applications in-
+volving private datasets containing sensitive time-linked personal
+information (e.g., location histories, health records) could pose sig-
+nificant privacy risks. Unauthorized access or malicious exploitation
+of such systems might result in privacy breaches. These risks can
+be reduced by adhering to relevant data protection regulations (e.g.,
+GDPR, CCPA) and incorporating safeguards such as anonymization,
+de-identification, and differential privacy. A formal Privacy Impact
+Assessment is strongly recommended prior to deployment.
+Effects on Information Integrity. While prioritizing fresher infor-
+mation can be advantageous, excessive emphasis on recency may
+reduce exposure to more comprehensive or authoritative sources.
+For instance, a recent but superficial news update could be ranked
+above an older, more rigorous scientific work, potentially impair-
+ing user understanding of a topic. This issue can be addressed by
+allowing users to adjust the recency–relevance balance according
+to their needs. In rapidly evolving contexts (e.g., news, weather),
+higher recency weight may be desirable, whereas research-oriented
+settings may warrant prioritizing relevance and depth.
+By addressing these considerations, the Re3 framework can be
+deployed in a manner that enhances retrieval performance while
+safeguarding fairness, privacy, and informational integrity.
+
+[[page 11]]
+Re3: Learning to Balance Relevance & Recency for Temporal Information Retrieval Conference acronym ’XX, June 03–05, 2018, Woodstock, NY
+REFERENCES
+[1] Abdelrahman Abdallah, Bhawna Piryani, Jonas Wallat, Avishek Anand, and Adam
+Jatowt. 2025. TempRetriever: Fusion-based Temporal Dense Passage Retrieval
+for Time-Sensitive Questions. arXiv preprint arXiv:2502.21024 (2025). https:
+//arxiv.org/abs/2502.21024
+[2] James F. Allen. 1983. Maintaining knowledge about temporal intervals. Commun.
+ACM 26, 11 (1983), 832–843. doi:10.1145/182.358434
+[3] Javed Aslam, Matthew Ekstrand-Abueg, Richard McCreadie, Virgil Pavlu, and
+Tetsuya Sakai. 2015. TREC 2015 Temporal Summarization Track Overview. In
+Proceedings of the Twenty-Fourth Text REtrieval Conference (TREC 2015) . National
+Institute of Standards and Technology (NIST), Gaithersburg, MD, USA. https:
+//trec.nist.gov/pubs/trec24/papers/Overview-TS.pdf
+[4] Payal Bajaj, Daniel Campos, Nick Craswell, Li Deng, Jianfeng Gao, Xiaodong
+Liu, Rangan Majumder, Andrew McNamara, Bhaskar Mitra, Tri Nguyen, Mir
+Rosenberg, Xia Song, Alina Stoica, Saurabh Tiwary, and Tong Wang. 2016. MS
+MARCO: A Human Generated Machine Reading Comprehension Dataset. arXiv
+preprint arXiv:1611.09268 (2016). https://doi.org/10.48550/arXiv.1611.09268
+[5] Jianlv Chen, Shitao Xiao, Peitian Zhang, Kun Luo, Defu Lian, and Zheng Liu.
+2024. BGE M3-Embedding: Multi-Lingual, Multi-Functionality, Multi-Granularity
+Text Embeddings Through Self-Knowledge Distillation. arXiv:2402.03216 [cs.CL]
+[6] Wenhu Chen, Xinyi Wang, and William Yang Wang. 2021. A Dataset for
+Answering Time-Sensitive Questions. arXiv preprint arXiv:2108.06314 (2021).
+https://arxiv.org/abs/2108.06314
+[7] Charles L. A. Clarke, Nick Craswell, and Ian Soboroff. 2009.Overview of the TREC
+2009 Web Track. Technical Report NIST Special Publication 500-278. National
+Institute of Standards and Technology (NIST), Gaithersburg, MD, USA. https:
+//trec.nist.gov/pubs/trec18/papers/WEB09.OVERVIEW.pdf
+[8] Jeremy R. Cole, Aditi Chaudhary, Bhuwan Dhingra, and Partha Talukdar. 2023.
+Salient Span Masking for Temporal Understanding. In Proceedings of the 17th
+Conference of the European Chapter of the Association for Computational Linguistics.
+Association for Computational Linguistics, Dubrovnik, Croatia, 3052–3060.
+[9] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2018. BERT:
+Pre-training of Deep Bidirectional Transformers for Language Understanding.
+arXiv preprint arXiv:1810.04805 (2018).
+[10] Anlei Dong, Yi Chang, Zhaohui Zheng, Gilad Mishne, Jing Bai, Ruiqiang Zhang,
+Karolina Buchner, Ciya Liao, and Fernando Diaz. 2010. Towards Recency Ranking
+in Web Search. In Proceedings of the 3rd ACM International Conference on Web
+Search and Data Mining (WSDM) . 11–20. doi:10.1145/1718487.1718490
+[11] Miles Efron and Gene Golovchinsky. 2011. Estimation Methods for Ranking
+Recent Information. In Proceedings of the 34th International ACM SIGIR Conference
+on Research and Development in Information Retrieval (SIGIR) . 495–504. doi:10.
+1145/2009916.2009984
+[12] Anoushka Gade, Jorjeta G Jetcheva, and Hardi Trivedi. 2025. It’s About Time:
+Incorporating Temporality in Retrieval Augmented Language Models. In 2025
+IEEE Conference on Artificial Intelligence (CAI) . IEEE, 75–82.
+[13] SeungYoon Han, Taeho Hwang, Sukmin Cho, Soyeong Jeong, Hoyun Song, Huije
+Lee, and Jong C Park. 2025. Temporal Information Retrieval via Time-Specifier
+Model Merging. arXiv preprint arXiv:2507.06782 (2025).
+[14] Mohammed Hasanuzzaman, Sriparna Saha, Gaël Dias, and Stéphane Ferrari. 2015.
+Understanding Temporal Query Intent. In Proceedings of the 38th International
+ACM SIGIR Conference on Research and Development in Information Retrieval
+(SIGIR). 1031–1034. doi:10.1145/2766462.2767792
+[15] Raghav Jain, Daivik Sojitra, Arkadeep Acharya, Sriparna Saha, Adam Jatowt,
+and Sandipan Dandapat. 2023. Do Language Models Have a Common Sense
+regarding Time? Revisiting Temporal Commonsense Reasoning in the Era of
+Large Language Models. In Proceedings of the 2023 Conference on Empirical Meth-
+ods in Natural Language Processing . Association for Computational Linguistics,
+Singapore, 6750–6774.
+[16] Hideo Joho, Adam Jatowt, and Roi Blanco. 2014. NTCIR temporalia: a test
+collection for temporal information access research. In Proceedings of the 23rd
+International Conference on World Wide Web. 845–850.
+[17] Hideo Joho, Adam Jatowt, Roi Blanco, Haitao Yu, and Shuhei Yamamoto. 2016.
+Building test collections for evaluating temporal IR. In Proceedings of the 39th
+International ACM SIGIR conference on Research and Development in Information
+Retrieval. 677–680.
+[18] Rosie Jones and Fernando Diaz. 2007. Temporal Profiles of Queries. ACM
+Transactions on Information Systems 25, 3 (2007), 14. doi:10.1145/1247715.1247720
+[19] Vladimir Karpukhin, Barlas Oguz, Sewon Min, Ledell Wu, Sergey Edunov, Danqi
+Chen, and Wen-tau Yih. 2020. Dense Passage Retrieval for Open-Domain Ques-
+tion Answering. In Proceedings of the 2020 Conference on Empirical Methods in
+Natural Language Processing (EMNLP). Association for Computational Linguistics,
+6769–6781. https://aclanthology.org/2020.emnlp-main.550/
+[20] Jungo Kasai, Keisuke Sakaguchi, yoichi takahashi, Ronan Le Bras, Akari Asai,
+Xinyan Velocity Yu, Dragomir Radev, Noah A. Smith, Yejin Choi, and Kentaro
+Inui. 2023. RealTime QA: What’s the Answer Right Now?. In Thirty-seventh
+Conference on Neural Information Processing Systems Datasets and Benchmarks
+Track. https://openreview.net/forum?id=HfKOIPCvsv
+[21] Omar Khattab and Matei Zaharia. 2020. ColBERT: Efficient and Effective Passage
+Search via Contextualized Late Interaction over BERT. In Proceedings of the 43rd
+International ACM SIGIR Conference on Research and Development in Information
+Retrieval (SIGIR). 39–48. doi:10.1145/3397271.3401075
+[22] Tom Kwiatkowski, Jennimaria Palomaki, Olivia Redfield, Michael Collins, Ankur
+Parikh, Chris Alberti, Danielle Epstein, Illia Polosukhin, Jacob Devlin, Kenton
+Lee, et al. 2019. Natural questions: a benchmark for question answering research.
+Transactions of the Association for Computational Linguistics 7 (2019), 453–466.
+[23] Mingda Li, Xinyu Li, Yifan Chen, Wenfeng Xuan, and Weinan Zhang. 2024. Un-
+raveling and Mitigating Retriever Inconsistencies in Retrieval-Augmented Large
+Language Models. In Findings of the Association for Computational Linguistics:
+ACL 2024. Association for Computational Linguistics, Bangkok, Thailand and
+Virtual Meeting, 4833–4850.
+[24] Xiaoyan Li and W. Bruce Croft. 2003. Time-based Language Models. In Pro-
+ceedings of the 12th ACM International Conference on Information and Knowledge
+Management (CIKM). 469–475. doi:10.1145/956863.956951
+[25] Zefang Liu and Yinzhu Quan. 2025. Retrieval of Temporal Event Sequences
+from Textual Descriptions. In Proceedings of the 4th International Workshop on
+Knowledge-Augmented Methods for Natural Language Processing . Association for
+Computational Linguistics, Albuquerque, New Mexico, USA, 37–49.
+[26] National Weather Service. 2024. National Weather Service API Web Service
+Documentation. https://www.weather.gov/documentation/services-web-api.
+Accessed 2025-08-11.
+[27] NOAA National Centers for Environmental Information. 2020. National Digi-
+tal Forecast Database (NDFD). https://www.ncei.noaa.gov/products/weather-
+climate-models/national-digital-forecast-database. Accessed 2025-08-11.
+[28] Ryan Ong, Jiahao Sun, OvidiuS, erban, and Yi-Ke Guo. 2023. TKGQA dataset: Using
+question answering to guide and validate the evolution of temporal knowledge
+graph. Data 8, 3 (2023), 61.
+[29] OpenAI, Josh Achiam, Steven Adler, and Sandhini et al. Agarwal. 2023. GPT-4
+Technical Report. arXiv preprint arXiv:2303.08774 (2023). https://arxiv.org/abs/
+2303.08774
+[30] Jie Ouyang, Tingyue Pan, Mingyue Cheng, Ruiran Yan, Yucong Luo, Jiaying
+Lin, and Qi Liu. 2025. Hoh: A dynamic benchmark for evaluating the impact
+of outdated information on retrieval-augmented generation. arXiv preprint
+arXiv:2503.04800 (2025).
+[31] Bhawna Piryani, Adam Jatowt, Avishek Anand, Jonas Wallat, Abdelrahman
+Abdallah, et al. 2025. It’s High Time: A Survey of Temporal Information Retrieval
+and Question Answering. arXiv preprint arXiv:2505.20243 (2025). https://arxiv.
+org/abs/2505.20243
+[32] Stephen Robertson, Hugo Zaragoza, et al . 2009. The probabilistic relevance
+framework: BM25 and beyond. Foundations and Trends® in Information Retrieval
+3, 4 (2009), 333–389.
+[33] Gerard Salton and Christopher Buckley. 1988. Term-weighting approaches in
+automatic text retrieval. Information processing & management 24, 5 (1988),
+513–523.
+[34] Zhang Siyue, Xue Yuxiang, Zhang Yiming, Wu Xiaobao, Luu Anh Tuan, and
+Zhao Chen. 2024. MRAG: A Modular Retrieval Framework for Time-Sensitive
+Question Answering. arXiv preprint arXiv:2412.15540 (2024).
+[35] Andrey Styskin, Fedor Romanenko, Fedor Vorobyev, and Pavel Serdyukov. 2024.
+Recency Ranking by Diversification of Result Set. arXiv preprint arXiv:2401.14595
+(2024). https://arxiv.org/abs/2401.14595
+[36] Adam Trischler, Tong Wang, Xingdi Yuan, Justin Harris, Alessandro Sordoni,
+Philip Bachman, and Kaheer Suleman. 2016. Newsqa: A machine comprehension
+dataset. arXiv preprint arXiv:1611.09830 (2016).
+[37] Naushad UzZaman, Hector Llorens, Leon Derczynski, James Allen, Marc Verha-
+gen, and James Pustejovsky. 2013. SemEval-2013 Task 1: TempEval-3: Evaluat-
+ing Time Expressions, Events, and Temporal Relations. In Second Joint Con-
+ference on Lexical and Computational Semantics (*SEM), Volume 2: Proceed-
+ings of the Seventh International Workshop on Semantic Evaluation (SemEval
+2013). Association for Computational Linguistics, Atlanta, Georgia, USA, 1–9.
+https://aclanthology.org/S13-2001
+[38] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+Aidan N. Gomez, Łukasz Kaiser, and Illia Polosukhin. 2017. Attention Is All
+You Need. In Advances in Neural Information Processing Systems (NeurIPS 2017) ,
+Vol. 30. Curran Associates, Inc., 5998–6008. https://proceedings.neurips.cc/paper/
+2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html
+[39] Marc Verhagen, Robert Gaizauskas, Frank Schilder, Mark Hepple, Graham Katz,
+and James Pustejovsky. 2007. Semeval-2007 task 15: Tempeval temporal relation
+identification. In Proceedings of the fourth international workshop on semantic
+evaluations (SemEval-2007). 75–80.
+[40] Marc Verhagen, Roser Sauri, Tommaso Caselli, and James Pustejovsky. 2010.
+SemEval-2010 Task 13: TempEval-2. In Proceedings of the 5th international work-
+shop on semantic evaluation . 57–62.
+[41] Tu Vu, Mohit Iyyer, Xuezhi Wang, Noah Constant, Jason Wei, Denny Zhou,
+et al. 2024. FreshLLMs: Refreshing Large Language Models with Search En-
+gine Augmentation. In Findings of the Association for Computational Linguis-
+tics: ACL 2024. Association for Computational Linguistics, 13697–13720. https:
+
+[[page 12]]
+Conference acronym ’XX, June 03–05, 2018, Woodstock, NY Cao et al.
+//aclanthology.org/2024.findings-acl.813.pdf
+[42] Jiahao Wang, Mingyue Cheng, Qingyang Mao, Qi Liu, Feiyang Xu, Xin Li, and
+Enhong Chen. 2024. Tabletime: Reformulating time series classification as zero-
+shot table understanding via large language models. arXiv e-prints (2024), arXiv–
+2411.
+[43] Liang Wang, Nan Yang, Xiaolong Huang, Binxing Jiao, Linjun Yang, Daxin Jiang,
+Rangan Majumder, and Furu Wei. 2022. Text Embeddings by Weakly-Supervised
+Contrastive Pre-training. arXiv preprint arXiv:2212.03533 (2022).
+[44] Feifan Wu, Lingyuan Liu, Wentao He, Ziqi Liu, Zhiqiang Zhang, Haofen Wang,
+and Meng Wang. 2024. Time-Sensitive Retrieval-Augmented Generation for
+Question Answering. In Proceedings of the 33rd ACM International Conference on
+Information and Knowledge Management . ACM, New York, NY, USA, 2544–2553.
+doi:10.1145/3627673.3679800
+[45] Shitao Xiao, Zheng Liu, Peitian Zhang, and Niklas Muennighoff. 2023.
+C-Pack: Packaged Resources To Advance General Chinese Embedding.
+arXiv:2309.07597 [cs.CL]
+[46] Lee Xiong, Chenyan Xiong, Ye Li, Kwok-Fung Tang, Jialin Liu, Paul Bennett,
+Junaid Ahmed, and Arnold Overwijk. 2021. Approximate nearest neighbor
+negative contrastive learning for dense text retrieval. In International Conference
+on Learning Representations. https://openreview.net/forum?id=zeFrfgyZln
+Received 20 February 2007; revised 12 March 2009; accepted 5 June 2009

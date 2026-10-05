@@ -1,0 +1,23 @@
+{
+  "id": "D002",
+  "direction": "Narrow the contribution to the regime where validity metadata is unreliable. Keep the retrieval-agnostic temporal re-ranking wrapper, but recast its temporal term as a graded interval-membership score and evaluate it primarily as robust degradation relative to a hard in-force filter: under clean metadata the two should match, while under missing, conflicting or unofficial effective dates and inferred as-of dates the graded score should retain higher version-selection accuracy. The evaluation remains leakage-controlled with per-regime reporting and version-selection accuracy as the primary metric.",
+  "hypothesis": "Under incomplete, unofficial or noisy per-clause in-force dates and query as-of dates that must be inferred, a graded interval-membership temporal re-ranking score retains higher version-selection accuracy and answer accuracy than a hard in-force filter, while matching the hard filter under clean metadata; the comparison is decided by a metadata-noise crossover point rather than by an overall average.",
+  "rationale": "The evidence forces a narrower scope rather than a new mechanism. Prior et al. state that as-of-date filtering plus retrieval 'solved the retrieval problem' and that the correct timeframe matters more than the retrieval method (C020, C022), so with clean per-clause intervals a soft interval-aware score can at best match the published hard filter, and claiming superiority would be unsupported. At the same time the same paper shows the hard filter's inputs are fragile in practice: historical consolidated statutes with in-force dates came from an unofficial private source because no authoritative machine-readable database exists (C021), and the as-of date is obtained by a regex over the question (p. 6). This locates the only evidence-supported niche where the soft interval-aware variant can be genuinely distinct - degraded or uncertain validity metadata - which is now gap G005. Refining scope rather than rejecting is warranted because the underlying problem remains real and unsolved for that regime, because the retrieval-agnostic wrapper is cheap (C001) and because version-selection accuracy under noisy metadata is entirely unmeasured; but the contribution must be stated as robustness with a crossover point, not as an across-the-board improvement over hard filtering. The original monotone elapsed-time hypothesis is not revived: elapsed time is still the wrong signal (U002, C010), and the temporal term remains interval-based.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": "D001",
+  "research_question": "Under incomplete, unofficial or noisy per-clause validity metadata and as-of dates that must be inferred from query text, does a graded interval-membership temporal re-ranking component preserve version-selection accuracy and answer accuracy better than a hard in-force filter, and at what level of metadata noise do the two cross over?",
+  "confidence": "medium",
+  "modification_id": "M001",
+  "paper_ids": [
+    "arxiv:2605.23497",
+    "arxiv:2401.13222",
+    "doi:10.1080/08839514.2026.2626097"
+  ],
+  "uncertainty_ids": [
+    "U011",
+    "U002",
+    "U007",
+    "U017"
+  ],
+  "recorded_at": "2026-09-30T05:27:12.576595Z"
+}

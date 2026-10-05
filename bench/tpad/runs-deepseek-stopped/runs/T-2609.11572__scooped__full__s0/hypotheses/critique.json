@@ -1,0 +1,181 @@
+{
+  "strongest_for": "The problem is real and documented: amendment-driven post-cutoff staleness and recency bias cause severe degradation in statutory QA, and retrieving the version valid at the query date substantially improves answers (C002, C004; arxiv:2605.23497). A training-free temporal re-ranking component is demonstrably effective in another domain (up to +74%; C001; arxiv:2401.13222), and no retrieved work reports retrieval-layer version-selection accuracy for legal amendment retrieval (C007), so a careful, per-regime domain study with an explicit soft-versus-hard comparison would address a genuine measurement gap even if the mechanism is not new.",
+  "strongest_against": "The core mechanism is pre-empted: TempRALM already adds an elapsed-time temporal term to a retriever's semantic score, is explicitly retrieval-agnostic, and needs no re-indexing (C001, C005; arxiv:2401.13222), and it already masks future-dated passages (C003), which is the 'not-yet-in-force' half of the problem. In the target legal setting, the strongest retrieved evidence concludes that temporal validity must be a hard constraint and that the retrieved timeframe matters more than the retrieval method (C002, C010; arxiv:2605.23497). Combined with the fact that monotone elapsed-time proximity is not the legal validity relation (C008, C010), the headline hypothesis is arguably contradicted by the nearest legal evidence, leaving only an implementation-level and domain-transfer difference.",
+  "most_important_unresolved_question": "Can a soft elapsed-time temporal term beat, complement, or at least not harm hard version/validity-interval filtering on the same amended-regulatory corpus, retriever and query set - measured by version-selection accuracy and answer accuracy - when the temporal weight lambda is tuned without access to gold-version labels (U004, U007)?",
+  "most_dangerous_confounder": "Gold-version label leakage through the timestamp: every benchmark question is date-anchored near a specific gold version, so a monotone timestamp term gives a shortcut that lambda tuning can exploit, inflating accuracy without temporal reasoning; aggregate metrics over current and historical regimes can further mask opposite effects (C011; arxiv:2605.23497, doi:10.18653/v1/2024.findings-naacl.295).",
+  "closest_paper_ids": [
+    "arxiv:2401.13222",
+    "arxiv:2605.23497",
+    "doi:10.1080/08839514.2026.2626097"
+  ],
+  "closest_work_explanation": "arxiv:2401.13222 (TempRALM) is the closest by mechanism: semantic score plus elapsed-time temporal score, retrieval-agnostic, no re-indexing (method overlap 0.95). arxiv:2605.23497 is the closest by problem and evaluation: time-sensitive statutory QA over amended provisions with an as-of-date version filter, a 312-item benchmark and LLM-as-judge scoring (problem overlap 0.95, evaluation overlap 0.85). doi:10.1080/08839514.2026.2626097 (TaxFlow) is the closest deployed legal system, applying temporal validity filtering over amended Indian tax law (problem overlap 0.9).",
+  "potential_contribution": "Not the mechanism. Remaining defensible contributions: (1) a head-to-head evaluation of soft elapsed-time re-ranking versus hard validity-interval filtering (and interval-aware hybrid variants) on identical corpora, retrievers and queries, reported per query-date regime with a leakage-free tuning protocol; (2) a clause-level benchmark of partially overlapping successive revisions with per-passage version timestamps and retrieval-layer version-selection metrics, which no retrieved resource provides (C004, C007; arxiv:2605.23497, doi:10.1145/3589335.3651895); (3) cross-retriever validation of the wrapper (BM25 plus several dense encoders) under matched budgets, testing TempRALM's untested retrieval-agnosticism claim.",
+  "overlap_summary": "Problem overlap is very high with statutory/legal temporal QA (arxiv:2605.23497, doi:10.1080/08839514.2026.2626097) and high with temporally versioned open-domain QA (arxiv:2401.13222, doi:10.1145/3589335.3651895). Method overlap is very high with TempRALM (0.95) because the proposed score = semantic similarity + elapsed-time temporal term, added without re-indexing, is its published formulation (C001, C005). Evaluation overlap is high with arxiv:2605.23497 (0.85) for the statutory setting and moderate with TIQ-style benchmarks (0.45).",
+  "distinction_summary": "Genuine distinctions are narrow: (a) the target setting is amended statutes with dense overlap across successive versions, whereas TempRALM targets web/Wikipedia versions and TIQ targets implicit-time multi-source snippets; (b) the framing is selecting the version in force at the query date, not the most recent version, and includes historically anchored queries that expose recency bias; (c) the claimed contribution includes a clause-level overlapping-revision benchmark and cross-retriever validation that the retrieved work does not provide. However, (b) is not realized by a monotone elapsed-time term (C008, C010), so the distinction is currently aspirational rather than realized by the proposed mechanism.",
+  "novelty": [
+    {
+      "question": "Has essentially the same idea already been proposed?",
+      "finding": "The proposed retrieval-agnostic, training-free semantic + elapsed-time temporal scoring wrapper is essentially TempRALM's published Eq. 4-5, including its explicit claim to extend any numeric-similarity retriever without re-indexing. This is not a merely similar approach; it is the same mechanism.",
+      "severity": "high",
+      "claim_ids": [
+        "C001",
+        "C005"
+      ],
+      "paper_ids": [
+        "arxiv:2401.13222"
+      ]
+    },
+    {
+      "question": "Is the legal/regulatory domain still an unexplored application of the mechanism?",
+      "finding": "The target setting already has a benchmark and a hard-constraint solution (Prior et al., 312 German statutory QA pairs; TaxFlow for Indian tax law), so the domain transfer is into an occupied rather than empty space.",
+      "severity": "high",
+      "claim_ids": [
+        "C002",
+        "C004"
+      ],
+      "paper_ids": [
+        "arxiv:2605.23497",
+        "doi:10.1080/08839514.2026.2626097"
+      ]
+    },
+    {
+      "question": "Is the difference only implementation-level?",
+      "finding": "The difference between the proposed method and existing work is implementation-level (continuous soft decay versus discrete interval filtering), not conceptual. Soft proximity was already evaluated in a non-legal domain, and hard filtering was already evaluated in the legal domain; the missing piece is a controlled comparison, not a new idea.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C008",
+        "C010"
+      ],
+      "paper_ids": [
+        "arxiv:2401.13222",
+        "arxiv:2605.23497"
+      ]
+    }
+  ],
+  "technical_validity": [
+    {
+      "question": "Is the proposed mechanism technically valid for its stated legal goal?",
+      "finding": "Elapsed-time decay is monotone in |t_q - t_v|, but legal applicability is determined by validity intervals. A version can be temporally nearest yet not in force, and a correct old version can be far in time. The proposed signal is therefore not a valid proxy for the property being optimized (which version governs the query date).",
+      "severity": "high",
+      "claim_ids": [
+        "C008",
+        "C010"
+      ],
+      "paper_ids": [
+        "arxiv:2401.13222",
+        "arxiv:2605.23497"
+      ]
+    },
+    {
+      "question": "Which part of the stated failure mode is still unaddressed?",
+      "finding": "The 'not-yet-in-force passage' failure mode the idea implicitly targets is already handled in existing work by masking future-dated passages, reducing the technical space left for a new contribution.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C003"
+      ],
+      "paper_ids": [
+        "arxiv:2401.13222"
+      ]
+    },
+    {
+      "question": "Are the required temporal inputs available and reliable?",
+      "finding": "The mechanism presupposes per-passage version timestamps and per-query target dates. Both are assumed, not verified: real corpora may lack clause-level timestamps and query dates may need inference, which would inject noise into the very signal being relied on.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C006"
+      ],
+      "paper_ids": [
+        "arxiv:2605.23497"
+      ]
+    }
+  ],
+  "experimental_validity": [
+    {
+      "question": "What confounder could produce the claimed result without the mechanism being responsible?",
+      "finding": "Because benchmark questions are date-anchored near their gold version, a monotone timestamp term is partially label-revealing. Tuning lambda on the same benchmark risks fitting the gold-version timestamp rather than solving retrieval, so an accuracy gain would not be evidence for the hypothesis.",
+      "severity": "high",
+      "claim_ids": [
+        "C011"
+      ],
+      "paper_ids": [
+        "arxiv:2605.23497"
+      ]
+    },
+    {
+      "question": "Are the baselines strong and are budgets matched?",
+      "finding": "The comparison set must include a hard validity-interval filter and semantic-only retrieval under matched budgets, and must report retrieval-layer version-selection accuracy. No retrieved work reports such retrieval metrics for legal amendment retrieval, so a result could look novel simply because no baseline was measured.",
+      "severity": "high",
+      "claim_ids": [
+        "C002",
+        "C007"
+      ],
+      "paper_ids": [
+        "arxiv:2605.23497",
+        "arxiv:2401.13222"
+      ]
+    },
+    {
+      "question": "Does the metric design hide regime-dependent effects?",
+      "finding": "Aggregate answer accuracy mixes current-version and historical-version questions whose expected optimal temporal weight points in opposite directions; a single aggregate number can show no effect while both regimes change substantially, or show a gain driven by one regime.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C011"
+      ],
+      "paper_ids": [
+        "arxiv:2605.23497"
+      ]
+    },
+    {
+      "question": "Is the planned benchmark's construct valid enough to support the claim?",
+      "finding": "The only version-aware statutory benchmark is 312 synthetic, LLM-generated and expert-validated German pairs. Building a new benchmark from the same recipe reproduces its construct-validity weakness, and its size limits statistical power for per-regime analysis.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C004",
+        "C011"
+      ],
+      "paper_ids": [
+        "arxiv:2605.23497"
+      ]
+    }
+  ],
+  "practicality": [
+    {
+      "question": "Is the approach practically feasible and attractive to adopt?",
+      "finding": "The wrapper is genuinely cheap: it adds a scalar term to existing scores, needs no retraining or re-indexing, and is therefore easy to deploy and to port across retrievers.",
+      "severity": "low",
+      "claim_ids": [
+        "C001"
+      ],
+      "paper_ids": [
+        "arxiv:2401.13222"
+      ]
+    },
+    {
+      "question": "Which method would a practitioner actually deploy?",
+      "finding": "If hard version filtering already solves the legal case and is simpler to reason about and audit, a tune-one-hyperparameter soft score offers little practical advantage; practitioners with reliable validity metadata would choose the filter, and those without it cannot compute either.",
+      "severity": "high",
+      "claim_ids": [
+        "C002",
+        "C010"
+      ],
+      "paper_ids": [
+        "arxiv:2605.23497",
+        "doi:10.1080/08839514.2026.2626097"
+      ]
+    },
+    {
+      "question": "What does deployment require beyond the ranking change?",
+      "finding": "Deployment at scale depends on clause-level version metadata and reliable date extraction, both of which are assumed here and only demonstrated by a regex extractor in one jurisdiction.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C006"
+      ],
+      "paper_ids": [
+        "arxiv:2605.23497"
+      ]
+    }
+  ],
+  "overall_status": "substantial_overlap",
+  "status_rationale": "The central mechanism is already published (TempRALM) and the target legal problem already has a benchmark and a hard-filter solution that the strongest retrieved evidence judges superior in kind. The idea's remaining novelty is domain transfer, a benchmark, and an evaluation comparison - not a new method. Because the headline hypothesis is at best unverified and at worst contradicted by the nearest legal evidence, and because a serious confounder (label leakage) could manufacture the expected gain, 'promising_needs_validation' would overstate the case. It is not 'weak_or_flawed' either: the problem is real, the evaluation gap is genuine, and a reframed contribution could still be valuable.",
+  "recorded_at": "2026-09-30T05:17:06.827959Z"
+}

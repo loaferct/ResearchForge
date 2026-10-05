@@ -1,0 +1,407 @@
+{
+  "project": "T-2609.11572__scooped__full__s0",
+  "idea": "The reliability of open‑domain question answering drops sharply when source texts are continuously amended, as in statutes, policies, or regulations. In such settings each new amendment supersedes earlier clauses while retaining much of the original wording, creating a dense semantic overlap across successive versions. Existing time‑aware retrieval techniques treat each version as an isolated snapshot and therefore cannot distinguish which revision best matches a time‑specific query. We propose to develop a retrieval‑agnostic framework that enriches any standard document retriever with a temporal relevance component: the rank of a candidate passage will be adjusted according to the elapsed time between the query’s target date and the passage’s version timestamp, while still leveraging its semantic similarity to the query. To evaluate the approach, we will construct a benchmark comprising regulatory documents with overlapping revisions and time‑stamped queries, measuring how well the combined temporal‑semantic ranking improves answer accuracy.",
+  "created_at": "2026-09-30T08:56:25.286350Z",
+  "updated_at": "2026-09-30T10:09:40.231606Z",
+  "status": "incomplete",
+  "dsh_session_id": "session-558d9c8e-f0c7-43fe-b28e-248270f9b4d4",
+  "provider": "ollama-cloud",
+  "model": "nemotron-3-super",
+  "phases": [
+    {
+      "name": "formalize",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T08:56:25.288785Z",
+      "finished_at": "2026-09-30T09:09:50.470306Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 21,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "literature",
+      "status": "complete",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": "2026-09-30T09:09:50.470964Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "analysis",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T09:11:28.633006Z",
+      "finished_at": "2026-09-30T09:18:21.282978Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 21,
+      "failed_tool_calls": 2
+    },
+    {
+      "name": "landscape",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T09:18:21.293603Z",
+      "finished_at": "2026-09-30T09:19:44.449293Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 2,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "critique",
+      "status": "complete",
+      "attempts": 4,
+      "started_at": "2026-09-30T09:19:44.460062Z",
+      "finished_at": "2026-09-30T09:39:14.617735Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 154,
+      "failed_tool_calls": 11
+    },
+    {
+      "name": "gaps",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T09:56:40.527209Z",
+      "finished_at": "2026-09-30T10:09:40.178254Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 45,
+      "failed_tool_calls": 6
+    },
+    {
+      "name": "modifications",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T09:56:40.527229Z",
+      "finished_at": "2026-09-30T10:09:40.178344Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 45,
+      "failed_tool_calls": 6
+    },
+    {
+      "name": "experiments",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least one experiment plan (call record_experiment_plan)"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "report",
+      "status": "complete",
+      "attempts": 0,
+      "started_at": "2026-09-30T10:09:40.205544Z",
+      "finished_at": "2026-09-30T10:09:40.231601Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    }
+  ],
+  "error": null,
+  "loop_phase": "FINALIZE",
+  "current_action": "FINALIZE",
+  "current_focus": null,
+  "budget": {
+    "iterations": 8,
+    "tool_calls": 243,
+    "failed_tool_calls": 19,
+    "runtime_failures": 0,
+    "seconds": 3773.93,
+    "tokens": 28539871
+  },
+  "decisions": [
+    {
+      "iteration": 0,
+      "phase": "INTAKE",
+      "action": "INTAKE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Research idea received.",
+      "evidence": "idea: The reliability of open‑domain question answering drops sharply when source texts are continuously amended, as in statutes, policies, or regulations. In such settings each new amendment supersedes ear",
+      "expected_outcome": "",
+      "outcome": "idea stored in the workspace",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T08:56:25.286954Z"
+    },
+    {
+      "iteration": 1,
+      "phase": "FORMALIZE",
+      "action": "FORMALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been formalized into a testable research question.",
+      "evidence": "0 papers from 0 searches, 0 analyzed, 0 claims (0 verified), 0 open uncertainties",
+      "expected_outcome": "Problem, hypothesis, variables, assumptions and search queries recorded.",
+      "outcome": "+26 papers; +2 searches; +2 uncertainties; idea formalized",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "get_research_state",
+        "record_idea_analysis",
+        "record_uncertainty",
+        "search_paper_text",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 26,
+        "relevant_papers": 16,
+        "searches": 2,
+        "uncertainties_created": 2,
+        "idea_formalized": 1
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T08:56:25.288368Z"
+    },
+    {
+      "iteration": 2,
+      "phase": "PLAN",
+      "action": "PLAN",
+      "focus": null,
+      "focus_id": null,
+      "reason": "No investigation plan exists yet, so it is unclear what must be determined.",
+      "evidence": "26 papers from 2 searches, 0 analyzed, 0 claims (0 verified), 2 open uncertainties",
+      "expected_outcome": "Questions to answer, search topics and initial uncertainties recorded.",
+      "outcome": "+3 uncertainties; investigation plan recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_investigation_plan",
+        "record_uncertainty"
+      ],
+      "state_changes": {
+        "uncertainties_created": 3,
+        "plan_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:09:50.476157Z"
+    },
+    {
+      "iteration": 3,
+      "phase": "INVESTIGATE",
+      "action": "READ",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Retrieved papers have not been analyzed enough to judge overlap.",
+      "evidence": "26 papers from 2 searches, 0 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Structured analyses of the most relevant papers.",
+      "outcome": "+6 analyses",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "list_papers",
+        "record_paper_analysis",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "analyses": 6
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:11:28.628648Z"
+    },
+    {
+      "iteration": 4,
+      "phase": "SYNTHESIZE",
+      "action": "SYNTHESIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Analyses exist but the field has not been mapped.",
+      "evidence": "26 papers from 2 searches, 6 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "A landscape placing the idea among approaches.",
+      "outcome": "landscape recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_records",
+        "record_landscape"
+      ],
+      "state_changes": {
+        "landscape_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:18:21.289228Z"
+    },
+    {
+      "iteration": 5,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been challenged yet.",
+      "evidence": "26 papers from 2 searches, 6 analyzed, 2 claims (1 verified), 5 open uncertainties",
+      "expected_outcome": "Strongest objections recorded as critique and uncertainties.",
+      "outcome": "+4 claims; +3 verified claims; +1 resolved uncertainties; critique recorded; uncertainties updated: U001, U002, U003, U004, U005",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_paper",
+        "record_claim",
+        "record_critique",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 4,
+        "verified_claims": 3,
+        "uncertainties_resolved": 1,
+        "critique_recorded": 1
+      },
+      "info_gain": 6.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:30:04.873571Z"
+    },
+    {
+      "iteration": 6,
+      "phase": "CHALLENGE",
+      "action": "CHALLENGE",
+      "focus": "U006: Does published work contradict the current assessment: The proposed idea may differ in the specific formulation of the temporal relevance score (e.g., weighting scheme, handling of retroactive amendments) and benchmark construction (focus on real-world versus synthetic regulatory texts), but these distinctions are not yet fully specified.?",
+      "focus_id": "U006",
+      "reason": "The critique's assessment has not been challenged yet (U006); look for published work that contradicts it before investing in anything that builds on it.",
+      "evidence": "26 papers from 2 searches, 6 analyzed, 6 claims (4 verified), 5 open uncertainties",
+      "expected_outcome": "Evidence that confirms, weakens or refutes the assessment (U006).",
+      "outcome": "+66 papers; +3 searches; +2 claims; +1 verified claims; +1 resolved uncertainties; uncertainties updated: U006",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_research_state",
+        "record_challenge_result",
+        "record_claim",
+        "search_paper_text",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 66,
+        "relevant_papers": 11,
+        "searches": 3,
+        "claims": 2,
+        "verified_claims": 1,
+        "uncertainties_resolved": 1
+      },
+      "info_gain": 5.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:39:14.625024Z"
+    },
+    {
+      "iteration": 7,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "66 papers arrived since the last critique.",
+      "evidence": "92 papers from 5 searches, 6 analyzed, 8 claims (5 verified), 4 open uncertainties",
+      "expected_outcome": "Critique revised against the new evidence.",
+      "outcome": "+1 claims; +1 verified claims; critique recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_claim",
+        "record_critique",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "claims": 1,
+        "verified_claims": 1,
+        "critique_recorded": 1
+      },
+      "info_gain": 2.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:46:10.501952Z"
+    },
+    {
+      "iteration": 8,
+      "phase": "REFINE",
+      "action": "REFINE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The findings have not yet been turned into gaps, modifications and a direction decision.",
+      "evidence": "92 papers from 5 searches, 6 analyzed, 9 claims (6 verified), 4 open uncertainties",
+      "expected_outcome": "Evidence-linked gaps, 2-5 modifications and a recorded direction decision.",
+      "outcome": "+2 gaps; +3 modifications; +1 directions",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_direction",
+        "record_gap",
+        "record_modification",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "gaps": 2,
+        "modifications": 3,
+        "directions": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T09:56:40.518841Z"
+    },
+    {
+      "iteration": 9,
+      "phase": "FINALIZE",
+      "action": "FINALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Stopping: time budget reached (3600 s).",
+      "evidence": "92 papers from 5 searches, 6 analyzed, 9 claims (6 verified), 7 open uncertainties",
+      "expected_outcome": "Report what was established and what remains open.",
+      "outcome": "finalizing",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:09:40.187217Z"
+    }
+  ],
+  "no_progress": {},
+  "blocked_actions": [],
+  "critiques": 2,
+  "papers_at_last_critique": 92,
+  "finalize_reason": "Stopping: time budget reached (3600 s).",
+  "awaiting_approval": [],
+  "investigation_closed": null,
+  "investigation_closed_at": null,
+  "challenged_refs": [
+    "critique",
+    "G001",
+    "G002",
+    "D001"
+  ],
+  "research_decision": "ALREADY_WELL_EXPLORED",
+  "research_decision_basis": "the direction was rejected or the critique found substantial overlap with existing work"
+}

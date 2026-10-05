@@ -1,0 +1,30 @@
+{
+  "id": "U018",
+  "question": "Is the optimal context size or similarity threshold hop-depth dependent, i.e. does the best configuration for 1-hop questions differ from the best for 3-5-hop questions?",
+  "description": "The closest work chose its context-similarity thresholds by maximizing 1-hop accuracy, but the idea's central claim concerns 3-5-hop performance (H4). If the context size or precision that is optimal for one-hop questions differs from the optimum for deeper-hop questions, then the published configuration may be mis-tuned for the deeper-hop claim, and a single global threshold would be the wrong design. No retrieved paper reports a per-hop-depth context-size optimum.",
+  "category": "validity",
+  "importance": "medium",
+  "status": "open",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "VERIFY",
+    "READ"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "If the optimum shifts with depth, then the closest work's 1-hop-tuned threshold may understate or overstate deeper-hop gains, and the idea's H1/H4 become conditional on depth-specific context selection rather than on context presence; this changes what the dose-response experiment must measure and how the result is stated.",
+  "resolution": "",
+  "paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T05:27:56.918004Z",
+  "updated_at": "2026-09-30T05:27:56.918208Z"
+}

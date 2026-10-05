@@ -1,0 +1,39 @@
+{
+  "id": "arxiv:2505.09246",
+  "title": "Autofocus Retrieval: An Effective Pipeline for Multi-Hop Question Answering With Semi-Structured Knowledge",
+  "authors": [
+    "Derian Boer",
+    "Stephen Roth",
+    "Stefan Kramer"
+  ],
+  "year": 2025,
+  "published": "2025-05-14",
+  "venue": "Trans. Mach. Learn. Res.",
+  "url": "https://www.semanticscholar.org/paper/6bda496fbcdd3447227a25f61bebd978f0f7c3e7",
+  "pdf_url": null,
+  "abstract": "In many real-world settings, machine learning models and interactive systems have access to both structured knowledge, e.g., knowledge graphs or tables, and unstructured content, e.g., natural language documents. Yet, most rely on either. Semi-Structured Knowledge Bases (SKBs) bridge this gap by linking unstructured content to nodes within structured data. In this work, we present Autofocus-Retriever (AF-Retriever), a modular framework for SKB-based, multi-hop question answering. It combines structural and textual retrieval through novel integration steps and optimizations, achieving the best zero- and one-shot results across all three STaRK QA benchmarks, which span diverse domains and evaluation metrics. AF-Retriever's average first-hit rate surpasses the second-best method by 32.1%. Its performance is driven by (1) leveraging exchangeable large language models (LLMs) to extract entity attributes and relational constraints for both parsing and reranking the top-k answers, (2) vector similarity search for ranking both extracted entities and final answers, (3) a novel incremental scope expansion procedure that prepares for the reranking on a configurable amount of suitable candidates that fulfill the given constraints the most, and (4) a hybrid retrieval strategy that reduces error susceptibility. In summary, while constantly adjusting the focus like an optical autofocus, AF-Retriever delivers a configurable amount of answer candidates in four constraint-driven retrieval steps, which are then supplemented and ranked through four additional processing steps. An ablation study and a detailed error analysis, including a comparison of three different LLM reranking strategies, provide component-level insights. The source code is available at https://github.com/kramerlab/AF-Retriever .",
+  "doi": null,
+  "arxiv_id": "2505.09246",
+  "openalex_id": null,
+  "s2_id": "6bda496fbcdd3447227a25f61bebd978f0f7c3e7",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 2,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T07:33:26.243234Z",
+  "relevance": 0.75,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "\"one-hop\" multi-hop question answering"
+  ],
+  "code_urls": [
+    "https://github.com/kramerlab/AF-Retriever"
+  ],
+  "has_full_text": true,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": [
+    "abstract (from semantic_scholar) never mentions 'Autofocus Retrieval'; it may belong to another work"
+  ]
+}

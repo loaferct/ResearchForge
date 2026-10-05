@@ -1,0 +1,43 @@
+{
+  "paper_id": "doi:10.18653/v1/2020.emnlp-main.99",
+  "relevance_tier": "medium",
+  "problem": "Existing work that augments QA models with external knowledge such as knowledge graphs either struggles to model multi-hop relations efficiently or lacks transparency into the model's prediction rationale.",
+  "method": "MHGRN (multi-hop graph relation network): a knowledge-aware approach that equips pretrained language models with a multi-hop relational reasoning module performing multi-hop, multi-relational reasoning over subgraphs extracted from external knowledge graphs. The module unifies path-based reasoning methods and graph neural networks for interpretability and scalability.",
+  "key_assumptions": [
+    "A relevant subgraph can be extracted from the external KG for each question.",
+    "Multi-hop, multi-relational reasoning over that subgraph improves a pretrained LM's QA.",
+    "Path-based reasoning and GNNs can be unified without loss of scalability or interpretability."
+  ],
+  "main_contribution": "A multi-hop relational reasoning module over extracted KG subgraphs that unifies path-based reasoning and GNNs, improving interpretability and scalability, with effectiveness shown on CommonsenseQA and OpenbookQA.",
+  "datasets": [
+    "CommonsenseQA",
+    "OpenbookQA"
+  ],
+  "benchmarks": [
+    "CommonsenseQA",
+    "OpenbookQA"
+  ],
+  "baselines": [
+    "Not stated in abstract"
+  ],
+  "metrics": [
+    "Not stated in abstract (QA accuracy)"
+  ],
+  "results": "Effectiveness and scalability shown empirically on CommonsenseQA and OpenbookQA, with case studies interpreting behaviour.",
+  "limitations": [
+    "Not stated in abstract"
+  ],
+  "future_work": [
+    "Not stated in abstract"
+  ],
+  "code_availability": "Code for experiments released (per abstract footnote); no repository URL recorded in this record and GitHub tools unavailable in this investigation.",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.45,
+    "evaluation_overlap": 0.15,
+    "conceptual_difference": "MHGRN adds a relational reasoning module that consumes an extracted KG subgraph at inference; it does not change training supervision to include co-passage context, and has no repair loop or RL. It is evidence that subgraph context helps knowledge-aware QA, which supports the idea's premise, but the mechanism and benchmarks are distinct.",
+    "basis": "Problem overlap 0.5: knowledge-aware multi-hop reasoning but commonsense QA rather than KGQA over Freebase. Method overlap 0.45: reasoning over KG subgraphs with a pretrained LM is adjacent, but the module is architectural and inference-time. Evaluation overlap 0.15: CommonsenseQA/OpenbookQA differ from MetaQA/WebQSP/CWQ."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:17:19.115608Z"
+}

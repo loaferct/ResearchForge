@@ -1,0 +1,38 @@
+{
+  "id": "doi:10.18653/v1/2022.acl-long.295",
+  "title": "SimKGC: Simple Contrastive Knowledge Graph Completion with Pre-trained Language Models",
+  "authors": [
+    "Liang Wang",
+    "Wei Zhao",
+    "Zhuoyu Wei",
+    "Jingming Liu"
+  ],
+  "year": 2022,
+  "published": "2022-01-01",
+  "venue": "Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+  "url": "https://doi.org/10.18653/v1/2022.acl-long.295",
+  "pdf_url": null,
+  "abstract": "Knowledge graph completion (KGC) aims to reason over known facts and infer the missing links. Text-based methods such as KGBERT (Yao et al., 2019) learn entity representations from natural language descriptions, and have the potential for inductive KGC. However, the performance of text-based methods still largely lag behind graph embedding-based methods like TransE (Bordes et al., 2013) and RotatE (Sun et al., 2019b). In this paper, we identify that the key issue is efficient contrastive learning. To improve the learning efficiency, we introduce three types of negatives: in-batch negatives, pre-batch negatives, and self-negatives which act as a simple form of hard negatives. Combined with InfoNCE loss, our proposed model SimKGC can substantially outperform embedding-based methods on several benchmark datasets. In terms of mean reciprocal rank (MRR), we advance the state-of-the-art by +19% on WN18RR, +6.8% on the Wikidata5M transductive setting, and +22% on the Wikidata5M inductive setting. Thorough analyses are conducted to gain insights into each component. Our code is available at https://github.com/intfloat/SimKGC .",
+  "doi": "10.18653/v1/2022.acl-long.295",
+  "arxiv_id": null,
+  "openalex_id": "W4226142803",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 261,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T04:59:35.859601Z",
+  "relevance": 0.3182,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering knowledge graph triple context subgraph language model fine-tuning"
+  ],
+  "code_urls": [
+    "https://github.com/intfloat/SimKGC"
+  ],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

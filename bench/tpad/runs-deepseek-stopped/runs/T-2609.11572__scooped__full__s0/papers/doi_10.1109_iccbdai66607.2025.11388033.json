@@ -1,0 +1,39 @@
+{
+  "id": "doi:10.1109/iccbdai66607.2025.11388033",
+  "title": "Beyond Flat Retrieval: Towards Dynamic Graph-Augmented Generation for Complex Question Answering",
+  "authors": [
+    "Yaxin Shang",
+    "Huayun Tang",
+    "Lanlan Gao",
+    "Chen Jia",
+    "Zhaoxun Lin"
+  ],
+  "year": 2025,
+  "published": "2025-11-21",
+  "venue": "2025 IEEE 6th International Conference on Computer, Big Data, Artificial Intelligence (ICCBD+AI)",
+  "url": "https://www.semanticscholar.org/paper/6e1ec4be8f7112660c019a2be353c374ef1596bb",
+  "pdf_url": null,
+  "abstract": "Retrieval-Augmented Generation (RAG) has emerged as a mainstream paradigm for grounding large language models (LLMs) with external knowledge. However, conventional RAG systems suffer from two fundamental limitations: (i) they treat documents as isolated bags of sentences, disregarding the rich relational structures between documents; and (ii) they struggle to perform effective multi-hop reasoning over temporally evolving facts. To address these issues, this paper presents improved GraphRAG, a plug-and-play framework that augments LLM reasoning capabilities through a dynamic, hierarchical, and path-aware graph-structured memory. The framework comprises two core components: (1) a time-aware relation graph, in which edge weights decay exponentially over time to capture the temporal dynamics of knowledge; and (2) a hierarchical community graph that clusters entities into a multi-level taxonomy, forming semantically coherent hierarchical representations. Building on this, we design a dual-retrieval mechanism: a semantics-enhanced retriever that integrates dense vector representations with graph structural priors, and a path-guided retriever that performs beam search over relational sequences to identify multi-hop reasoning chains. Extensive experiments on five open-domain QA benchmarks—Natural Questions, TriviaQA, HotpotQA, WikiHop, and Musique—demonstrate that improved GraphRAG achieves an exact match accuracy of 82.7% on multi-hop questions, surpassing vanilla RAG by 24.4% and outperforming HybridRAG by 6.1%. .",
+  "doi": "10.1109/iccbdai66607.2025.11388033",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "6e1ec4be8f7112660c019a2be353c374ef1596bb",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 1,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:07:46.354100Z",
+  "relevance": 0.2826,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "TimeR4 time-aware retrieval augmented LLM temporal knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": [
+    "abstract (from semantic_scholar) never mentions 'Beyond Flat Retrieval'; it may belong to another work"
+  ]
+}

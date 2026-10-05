@@ -1,0 +1,39 @@
+{
+  "paper_id": "doi:10.18653/v1/2020.emnlp-main.710",
+  "relevance_tier": "high",
+  "problem": "Existing multi-hop QA models struggle to effectively aggregate evidence from scattered texts across multiple documents; many approaches decompose the task into single-hop sub-problems, losing the ability to jointly model subtasks such as paragraph selection, supporting facts extraction, and answer prediction.",
+  "method": "Hierarchical Graph Network (HGN) constructs a hierarchical graph with nodes at different granularities (question, paragraph, sentence, entity), encodes them with pretrained contextual encoders (e.g., RoBERTa), performs graph reasoning via GNN, and jointly predicts paragraph selection, supporting facts, entity, and answer span via multi-task prediction.",
+  "key_assumptions": [
+    "Not explicitly stated in the paper."
+  ],
+  "main_contribution": "HGN achieves state-of-the-art performance on HotpotQA Distractor and Fullwiki settings, outperforming prior work by significant margins (e.g., joint EM/F1 47.11/74.21 in Distractor, 37.17/60.74 in Fullwiki) by weaving heterogeneous nodes into a unified graph and enabling joint multi-task reasoning.",
+  "datasets": [
+    "HotpotQA (Distractor and Fullwiki settings)"
+  ],
+  "benchmarks": [
+    "HotpotQA"
+  ],
+  "baselines": [
+    "TPReasoner, Baseline Model, QFE, MUPPET, Graph Recur. Retriever, DFGN, EPS, SAE, Longformer⋆, ETC-large⋆, RoBERTa-large, ALBERT-xxlarge-v2"
+  ],
+  "metrics": [
+    "Exact Match (EM) and F1 score for answer prediction and supporting facts; joint EM/F1"
+  ],
+  "results": "HGN (RoBERTa-large) achieves joint EM/F1 47.11/74.21 on HotpotQA Distractor (Δ+2.44/1.48 over prior SOTA) and 37.17/60.74 on Fullwiki.",
+  "limitations": [
+    "Not explicitly stated; handling very long documents may require sliding-window chunking or larger transformer backbones."
+  ],
+  "future_work": [
+    "Investigate interaction and joint training between HGN and paragraph retriever for performance improvement."
+  ],
+  "code_availability": "https://github.com/yuwfan/HGN",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.7,
+    "conceptual_difference": "Both aim to improve multi-hop QA: HGN uses hierarchical graph reasoning at inference time to jointly model subtasks, while the idea enriches training triples with local context subgraphs from the same passage and uses an adaptive repair loop to generate corrective examples from one‑hop failures followed by RL lower‑hop transfer. Overlap in using graph structures and reasoning; differences in stage (inference vs training), mechanism (hierarchical GNN with multi‑task prediction vs training data enrichment + failure‑driven RL), and additional components (adaptive repair loop, RL transfer) in the idea.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T09:39:27.263630Z"
+}

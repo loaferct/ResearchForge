@@ -1,0 +1,46 @@
+{
+  "paper_id": "arxiv:2101.03737",
+  "relevance_tier": "high",
+  "problem": "Multi-hop KBQA suffers from missing supervision at intermediate reasoning steps. Models receive feedback only from the final answer, making learning unstable or ineffective, and a correct answer can be reached by a spurious relation path.",
+  "method": "Teacher-student approach. The student network finds answer entities; the teacher network learns intermediate entity distributions using both forward and backward reasoning to produce more reliable intermediate supervision signals and alleviate spurious reasoning. Backward reasoning is what makes the teacher's intermediate signals more reliable.",
+  "key_assumptions": [
+    "Question-answer pairs are available but ground-truth relation paths are not (as stated for KGQA in GNN-RAG, and consistent here).",
+    "Intermediate entity distributions can be learned by a teacher without explicit path labels.",
+    "Bidirectional reasoning produces less spurious intermediate supervision than forward-only reasoning.",
+    "A question-specific subgraph containing the answer can be constructed (coverage 94.9% WebQSP, 79.3% CWQ, ~99-100% MetaQA per Table 1 statistics quoted in text)."
+  ],
+  "main_contribution": "Shown, to the authors' knowledge, as the first explicit learning of intermediate supervision signals with a teacher-student framework for multi-hop KBQA, with bidirectional (forward+backward) reasoning for more reliable intermediate signals; effective especially when training data is limited.",
+  "datasets": [
+    "MetaQA (1-hop, 2-hop, 3-hop; >400k questions)",
+    "WebQuestionsSP (WebQSP; 4737 questions, up to 2-hop over Freebase)",
+    "Complex WebQuestions 1.1 (CWQ; up to 4-hop)"
+  ],
+  "benchmarks": [
+    "MetaQA",
+    "WebQSP",
+    "CWQ"
+  ],
+  "baselines": [
+    "Not extracted from the passages retrieved; the abstract claims effectiveness on three benchmark datasets"
+  ],
+  "metrics": [
+    "Not confirmed from the passages retrieved; the paper reports standard multi-hop KBQA final-answer evaluation on three benchmark datasets"
+  ],
+  "results": "Reports effectiveness on the KBQA task on three benchmark datasets, especially in cases lacking training data.",
+  "limitations": [
+    "Not stated in abstract (no limitations section was located in the extracted outline)"
+  ],
+  "future_work": [
+    "Not stated in abstract"
+  ],
+  "code_availability": "No code URL recorded for this paper; GitHub tools unavailable in this investigation. The paper is the NSM (Neural State Machine) teacher-student work.",
+  "relation_to_idea": {
+    "problem_overlap": 0.85,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.9,
+    "conceptual_difference": "NSM addresses *where the supervisory signal comes from* by learning intermediate entity distributions, keeping the input triple/path structure unchanged. The idea addresses *what context accompanies a given supervision signal* by adding co-passage triples. NSM's motivation (spurious paths caused by absent intermediate supervision) is closely aligned with the idea's stated reliability concern, but its mechanism (teacher-student bidirectional reasoning) is different from context-subgraph enrichment and from a one-hop error repair loop.",
+    "basis": "Problem overlap 0.85: same multi-hop KGQA setting, same spurious-intermediate-reasoning concern, same lack of intermediate supervision. Method overlap 0.4: intermediate supervision learning is a different intervention from enriching the input with co-passage context. Evaluation overlap 0.9: identical benchmark suite (MetaQA/WebQSP/CWQ)."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:16:11.319117Z"
+}

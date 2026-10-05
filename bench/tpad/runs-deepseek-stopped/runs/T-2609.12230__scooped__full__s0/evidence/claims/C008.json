@@ -1,0 +1,24 @@
+{
+  "id": "C008",
+  "statement": "Taken as given without evidence: that a matched-example/matched-gradient-step (and ideally matched-token) comparison between CG-grounded and KG-grounded supervision is achievable in practice, and that a ~14B SFT + multi-round LLM-judge repair + RL pipeline can be run within the investigation's compute budget. Neither is demonstrated by any retrieved paper.",
+  "kind": "assumption",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 30",
+      "quote": "Although our work shows that context-augmented KG supervision, adaptive repair, and repaired RL initialization can improve multi-hop QA, several constraints remain and motivate future extensions. First, the QA datasets used for SFT, repair, RL, and evaluation are synthetically generated.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "assumption",
+    "feasibility",
+    "budget"
+  ],
+  "recorded_at": "2026-09-30T05:12:53.299060Z"
+}

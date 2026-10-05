@@ -1,0 +1,2411 @@
+[[page 1]]
+111
+A Survey on Multi-hop Question Answering and Generation
+VAIBHAV MAVI,New York University, United States of America
+ANUBHAV JANGRA*,Indian Institute of Technology Patna, India
+ADAM JATOWT, University of Innsbruck, Austria
+The problem of Question Answering (QA) has attracted significant research interest for long. Its relevance
+to language understanding and knowledge retrieval tasks, along with the simple setting makes the task of
+QA crucial for strong AI systems. Recent success on simple QA tasks has shifted the focus to more complex
+settings. Among these, Multi-Hop QA (MHQA) is one of the most researched tasks over the recent years.
+The ability to answer multi-hop questions and perform multi step reasoning can significantly improve the
+utility of NLP systems. Consequently, the field has seen a sudden surge with high quality datasets, models and
+evaluation strategies. The notion of ‘multiple hops’ is somewhat abstract which results in a large variety of
+tasks that require multi-hop reasoning. This implies that different datasets and models differ significantly
+which makes the field challenging to generalize and survey. This work aims to provide a general and formal
+definition of MHQA task, and organize and summarize existing MHQA frameworks. We also outline the best
+methods to create MHQA datasets. The paper provides a systematic and thorough introduction as well as the
+structuring of the existing attempts to this highly interesting, yet quite challenging task.
+CCS Concepts: • Information systems→ Question answering; Content analysis and feature selection.
+Additional Key Words and Phrases: question answering, multi-hop question answering, information retrieval,
+neural networks
+ACM Reference Format:
+Vaibhav Mavi, Anubhav Jangra*, and Adam Jatowt. 2018. A Survey on Multi-hop Question Answering and
+Generation. J. ACM 37, 4, Article 111 (August 2018), 45 pages. https://doi.org/10.1145/1122445.1122456
+1 INTRODUCTION
+One of the ultimate goals of AI is to impart the ability to ‘think’ to machines. In order to achieve this,
+several tasks have been proposed that require an agent to do some reasoning to get to the goal. One
+such example is the task of Question Answering (QA) where given a question and some relevant
+context, the goal is to predict the correct answer. The task of QA provides a quantifiable way to
+evaluate an NLP system’s capability of language understanding and reasoning [58, 113, 115]. The
+more traditional work focuses on performing this reasoning over a single context [91, 113, 127, 157].
+Due to recent advancements in Deep Learning techniques [83], the machines have become able to
+successfully beat human performance on datasets like SQUAD 2.0 [116].
+However, the success in simple QA is only a step towards the goal of MHQA. Furthermore,
+Min et al. [101] and Qiu et al. [113] observe that questions in existing single hop QA datasets are
+answerable without much reasoning, by retrieving a small set of sentences. Moreover, multi-step
+*Work done while the author was at Google Research.
+Authors’ addresses: Vaibhav Mavi, vaibhavg152@gmail.com, New York University, New York, United States of America;
+Anubhav Jangra*, anubhav0603@gmail.com, Indian Institute of Technology Patna, Patna, Bihar, India; Adam Jatowt,
+Deparment of Computer Science, University of Innsbruck, Innsbruck, Austria, jatowt@acm.org.
+Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee
+provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and
+the full citation on the first page. Copyrights for components of this work owned by others than ACM must be honored.
+Abstracting with credit is permitted. To copy otherwise, or republish, to post on servers or to redistribute to lists, requires
+prior specific permission and/or a fee. Request permissions from permissions@acm.org.
+© 2018 Association for Computing Machinery.
+0004-5411/2018/8-ART111 $15.00
+https://doi.org/10.1145/1122445.1122456
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+arXiv:2204.09140v1  [cs.CL]  19 Apr 2022
+
+[[page 2]]
+111:2 Trovato and Tobin, et al.
+reasoning is required by the models to answer complex questions (refer to Table 1). Humans
+can easily perform these multi-step reasoning in their everyday tasks, yet this is still a difficult
+task for machines. An agent can be said to perform multi-step reasoning if it reaches one or
+more intermediate conclusions before concluding the final answer and each of the intermediate
+conclusions serves as a necessary premise for the next one. This sequence of intermediate and the
+final conclusions is called a reasoning chain.
+♂
+Available Context - B's father is C and her mother is A
+C
+♀
+A
+B
+is father of is mother of
+?
+Deduction - B is the daughter of A.
+Question - Who is the daughter of A?
+Fig. 1. Example of multi-hop Reasoning.
+It is important to note that the inability of AI systems to perform multiple steps of reasoning can
+be severely limiting, significantly reducing their usability. For instance, say a user is interested in
+knowing more about ‘the daughter of A’ and the only relevant information available in this context
+is ‘B’s father is C and her mother is A’. In this case, the AI system has to first infer that B is female
+and her mother is A. The system will then have to use commonsense reasoning to conclude that B
+is the entity of interest and then retrieve the required information (refer to Fig. 1 for visual aid). It
+can be somewhat surprising that something that seems trivial to humans, will fatally confuse the
+current AI systems. Therefore, we argue that multi-step reasoning is a crucial challenge and solving
+it can be a giant leap towards the goal of AI. The task of Multi-Hop Question Answering (MHQA)
+serves as an appropriate benchmark task for evaluating an agent’s ability to perform multi-step
+reasoning. The goal is to predict the correct answer to a question that requires multiple reasoning
+‘hops’ across given contexts (text, table, knowledge graph etc).
+Apart from the scientific significance noted above, the task of MHQA has various practical
+applications. Queries given to current web search systems can often require multi-hop reasoning to
+reach the relevant documents. User satisfaction when using such systems can be greatly improved by
+utilizing multi-hop reasoning models. Furthermore, conversations between humans and agents can
+be smoother and more informative if the latter can handle complex questions such as ones requiring
+multiple reasoning steps for finding the answer. Answering multi-hop question requires systems to
+aggregate information over multiple contexts. Therefore, techniques that are successful for MHQA
+can be incorporated to tasks such as sentence fusion [ 47, 158] and abstractive summarization
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 3]]
+A Survey on Multi-hop Question Answering and Generation 111:3
+[84, 104], event occurrence time prediction [155], as well as multi-document summarization [ 6,
+50, 56, 94] or timeline summarization [ 48, 136, 172, 177] that require information aggregation
+over multiple documents. Additionally, all applications of QA such as information extraction (IE),
+entailment can be immensely benefited by multi-hop reasoning abilities [11].
+Kumar et al. [79] argue that MHQA is a challenging task to an extent that they quantify the
+difficulty of a question as the number of inference steps (or hops) required to answer the question.
+This illustrates the direct utility of MHQA for the task of Difficulty controllable Question Generation
+(DQG) [44] that has various applications including curriculum-learning based methods for QA
+systems [80] and designing school exams of certain difficulty levels [120].
+Another problem closely related to MHQA consists of generating clarifying questions for conver-
+sational QA (chatbots) [138, 178]. In this setting, the original question/query can be ambiguous and
+hence more information is needed to disambiguate it. The model is supposed to generate a clarifying
+question in natural language, asking the user for the missing information. This can be considered as
+another task involving multi-step reasoning and can be greatly helped by improvements in MHQA.
+Recently, a variety of datasets and techniques have been proposed for MHQA, including ones
+designed for MHQA over Knowledge Bases and Knowledge Graphs as well as those designed for
+QA over tables and text. A substantial number of recent works have focused on the task of MHQA
+and contributed to significant advancements. High quality datasets [ 21, 71, 72, 77, 97, 159, 173]
+have encouraged better models to be proposed which in turn have achieved impressive accuracy
+on these benchmarks. There has been a significant research in the recent years to solve the task. A
+variety of methods model the task as performing inference over static or dynamic graphs to find
+the reasoning paths [14, 15, 30, 34, 40, 61, 113, 128, 142, 179, 181]. A number of works have also
+attempted to decompose the multi-hop questions into single hop questions or generate follow-up
+questions based on the retrieved information [14, 95, 102, 138, 181].
+Table 1. Examples of various types of multi-hop questions.
+Type of question Question Answer
+Bridge Entity-based
+(temporal entity)
+Who was the president of United States
+in the year in which Mike Tyson
+declared his retirement?
+George W. Bush
+Bridge Entity-based
+(geographical entity)
+What is the national bird of the nation
+that has a negative carbon footprint? The Raven
+Bridge Entity-based
+(named entity)
+What is the birth place of the tennis
+player who has won the most grand slams? Manacor, Spain
+Intersection Who is the only person to win
+an olympic medal and a Nobel prize? Philip John Noel-Baker
+Comparison Which country has won more
+soccer world cups - Argentina or Brazil? Brazil
+Commonsense Reasoning
+If A prefers fruits over meat,
+when given an option of apple and
+chicken sandwich, what will A prefer?
+Apple
+Due to the surge in the attention received by the task over the last 4 years, we believe that the
+community would benefit from an extensive survey encompassing all the significant recent works
+in MHQA. In this work, we closely cover up 51 works from top venues including but not limited to
+EMNLP, ACL, NAACL, TACL, AAAI, EACL, SIGIR, ICLR, COLING, CoRR etc. published from 2016
+to 2021.
+The research community has already several surveys in the field of question-answering, such as for
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 4]]
+111:4 Trovato and Tobin, et al.
+single-hop QA [2, 12, 33, 60, 103, 132], open-domain QA [184], medical QA [68, 88] etc. The surveys
+that are most relevant to MHQA are the ones focused on QA over knowledge bases [32, 43, 82] and
+visual QA [88, 135, 164]. However, these can be considered as sub-domains of the more general
+formulation of MHQA field that this manuscript aims to survey. Since the existing works go a long
+way in summarizing their intended domains, we choose to exclude Visual MHQA and MHQA over
+Knowledge Bases and Knowledge Graphs from the scope of this work.
+We observe that despite the impressive accuracy of recent models on MHQA benchmarks, a
+significant number of works have been skeptical of whether these models are actually able to
+perform multi-step reasoning in order to answer the multi-hop questions. Several works [17, 62, 63,
+66, 100, 141, 144, 146, 151] conduct experiments and prove that a significant portion of the accuracy
+can be ascribed to pattern matching and single step reasoning (also termed as shortcut reasoning).
+This points the community towards new challenges and future directions for research in MHQA.
+Above all, it is fair to say that despite the inspiring progress made so far, the task of MHQA is still
+a long way from being solved.
+One of the promising directions is the task of explainable MHQA, a particular setting of MHQA
+that requires the model to output the correct reasoning chain (or equivalently, some kind of
+representation of the reasoning chain) along with the correct answer. This increases the model’s
+accountability and interpretability to the end user since the model now has to also explain how it
+reached the answer. Interpretability of the AI systems is crucial for their wide adoption for most
+high-stake applications such as finance, law and healthcare [3, 4, 10, 49, 122]. Consequently, more
+recent works [18, 42, 62, 66, 173] have focused on this setting. Yang et al. [173] have also argued
+that training the model to output reasoning chain can also help in training to predict the correct
+answer as it serves as an auxiliary task to MHQA. Tu et al. [146] find that using the reasoning chain
+as a supervision signal during training improves the performance on adversarial examples as well.
+The contributions of this manuscript can be summarized as:
+• To the best of our knowledge, our work is the first to survey the recent works in the domain
+of MHQA.
+• To the best of our knowledge, we are first to provide a formal definition for MHQA that is
+general enough to encompass existing variants of the task and also to promote new variants.
+• We propose a taxonomy of the existing works in MHQA that allows to systematically organize
+and structure the current works.
+• We provide a concise set of data annotation guidelines that existing works have adopted and
+found beneficial.
+• We propose candidate future directions for continuing MHQA research.
+The remainder of this paper is structured as follows: Section 2 aims to formalize the task of
+MHQA in a way that encompasses all existing and possible future variants. Section 3 describes
+existing MHQA datasets, their creation techniques, critiques and challenges1. Section 5 formally
+describes a taxonomy for existing methods and Section 4 discusses these methods in detail. Section
+6 discusses the standard evaluation metrics along with additional evaluation methods specifically
+designed for evaluating multi-step reasoning/retrieval Section 8 then summarizes these insights
+and critiques to propose promising directions for future research in MHQA.
+2 MULTI-HOP QUESTION ANSWERING TASK
+Formally defining the task of multi-hop question answering is not straightforward, since the
+definition of a hop is ambiguous in itself. For instance, in the context of open-domain QA on text
+1We discuss the datasets before methods as doing so provides on overview of the existing variants of the tasks which would
+be helpful to understand the intuition behind the proposed architectures.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 5]]
+A Survey on Multi-hop Question Answering and Generation 111:5
+documents, a hop could signify reasoning across different documents [173] whereas for QA over
+long documents, reasoning across different sections or paragraphs is a hop [138]. To the best of
+our knowledge, existing works do not provide a general definition of the task that encompasses
+its different variants. We argue that in order to systematically tackle the problem, and to obtain a
+good understanding of the progress in MHQA, it is crucial to first have a general definition.
+We attribute the generality of the MHQG by keeping the notion of a context abstract. Depending
+on the task, a context can be any single independent piece of information: a sentence, a document,
+an image or an entity in a knowledge graph. Keeping this in mind, we formally define the task of
+multi-hop question answering as:
+Let C denote the set of all contexts,S denote the set of all questions andA denote the set of
+all possible answers. Given a question𝑞∈S and a set of related contexts,𝐶⊆ C, the task is to
+approximate a function𝑓 :S× C𝑛↦→A∪{ Φ}, that satisfies:
+𝑓(𝑞,𝐶) =
+(
+𝑎∈A ∃ 𝑃𝑞 ={𝑝1,··· ,𝑝𝑘}⊆ 𝐶,𝑘 > 1 & 𝑃𝑞|=(𝑎𝑎𝑛𝑠𝑤𝑒𝑟𝑠𝑞 )
+Φ 𝑜𝑡ℎ𝑒𝑟𝑤𝑖𝑠𝑒 (1)
+𝑤ℎ𝑒𝑟𝑒 |= represents entailment, and Φ is the output when𝑞 is unanswerable using C2.
+Given a question𝑞 and a set of contexts𝐶,𝑓 returns an answer𝑎 that answers𝑞 by using a subset
+of ‘gold’ supporting contexts𝑃 from𝐶. The number of gold supporting contexts𝑘 is restricted to
+be more than 1 to ensure that the question is not solvable using a single hop (𝑘 = 1 reduces the
+task to traditional QA).
+This definition provides an inkling to the two sub-problems required to solve the QA task:
+Information Retrieval (IR) and Reading Comprehension (RC). Typically,𝑓 can be decomposed into
+(IR)𝑔 :S× C𝑛↦→ C𝑘 and (RC)ℎ :S× C𝑘↦→A∪{ Φ}, for some𝑘∈ Z, 𝑘 > 1 such that:
+𝑔(𝑞,𝐶) =𝑃𝑞 (2)
+where𝑃𝑞⊆𝐶 is the set of contexts relevant to𝑞.
+ℎ(𝑞,𝑃𝑞) =
+(
+𝑎 𝑃 𝑞|=(𝑎𝑎𝑛𝑠𝑤𝑒𝑟𝑠𝑞 )
+Φ 𝑜𝑡ℎ𝑒𝑟𝑤𝑖𝑠𝑒 𝑎𝑛𝑑 (3)
+𝑓(𝑞,𝐶) =ℎ(𝑞,𝑔(𝑞,𝐶)) (4)
+Reasoning chain: A reasoning chain for a question 𝑃′
+𝑞 ={𝑝′
+𝑞,𝑖}𝑘
+𝑖=1 is defined as an ordered
+permutation of the set𝑃𝑞 defined above, such that:
+∀𝑗, 1≤ 𝑗 <𝑘, 𝑝′
+𝑞,𝑗− →𝑝′
+𝑞,𝑗+1 represents the𝑗𝑡ℎ reasoning step and
+𝑝′
+𝑞,𝑘− →𝑎 is the𝑘𝑡ℎ reasoning step.
+It is important to note that the granularity of what constitutes a reasoning chain can also be smaller
+than that of the contexts. For example, when the granularity of a context is passage, the reasoning
+chain may consist of particular sentences or particular entities belonging to those passages.
+Hop: Each reasoning step of the reasoning chain can be termed as a hop. Furthermore, some
+commonsense knowledge might additionally be required to perform a reasoning step from one
+context (i.e., a document, table, etc.) to another. In that case, the commonsense reasoning can
+also be considered as a hop. The definition provided here does not consider reasoning hops over
+2In case of multiple correct answers to𝑞, Eq. 1 allows𝑓 to output any𝑎 that answers𝑞, which is the case for datasets like
+SQuAD [115, 116]. However, some applications may require𝑓 to output all correct answers [99] when multiple correct
+answers exist.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 6]]
+111:6 Trovato and Tobin, et al.
+external/commonsense knowledge although it can be accommodated by allowing 𝑃𝑞⊆ 𝐶∪𝑄,
+where𝑄 is the external/commonsense knowledge base. However, we omit this for simplicity.
+As mentioned in the introduction, many recent works focus on explainable MHQA to ensure
+the accountability and interpretability of the models while answering multi-hop questions. Formally,
+explainable MHQA is the setting of MHQA that requires𝑓 to output the reasoning chain𝑃′
+𝑞 (as an
+explanation for the answer) along with the answer,𝑎. The set of ’facts’ in the reasoning chain are
+often referred to as supporting facts ([173]).
+The given definition is generic and can be extended to accommodate multiple variations of
+MHQA, some of which are listed below. Note that the given list is not comprehensive and the
+proposed definition of MHQA may be extended with new variations.
+• MHQA via fact composition:𝐶𝑖 represents independent facts.
+• MHQA over long documents: QA over long documents can be considered multi-hop if the
+question requires the model to aggregate information across different sections, passages or
+sentences of the same document [ 71, 138]. Here, each𝐶𝑖 is a section/passage in the same
+document.
+• MHQA over multiple text documents: Each𝐶𝑖 is an independent document.
+• Multiple choice MHQA: For each question, there is a small set of possible answers given
+beforehand. Thus,A in Eq. 1 is dependent on𝑞,A =A(𝑞).
+• Open Domain vs Closed Domain MHQA: In the open domain setting, the set of contexts
+relevant to the question,𝐶 spans the entire corpus i.e.,𝐶 = C whereas in the closed domain
+setting,𝐶, the input to the model along with the question𝑞, is a small subset of C and may
+be different for each question i.e.,𝐶 =𝐶𝑞⊂ C. The closed domain setting guarantees that𝐶𝑞
+is sufficient to answer𝑞 and might also contain noisy irrelevant passages. It is important to
+note that the distinction between open-domain and closed-domain is regardless of the sizes
+of𝐶, C, but is determined by the input of the task - whether each question is provided with
+a specific subset of sufficient contexts or not. As we will see in Section 4, the open-domain
+setting can be reduced to closed-domain by performing a preliminary retrieval over C.
+• MHQA over Knowledge Bases/Knowledge Graphs: 3 C is a Knowledge Base (KB) or a
+Knowledge Graph (KG) with𝐶𝑖 representing a triplet or a graph node.
+• Visual MHQA:4 C is a set of images and/or videos (or equivalently, sequence of images).
+• Conversational QA with clarifying questions: Conversational QA can be regarded as an
+MHQA problem if answering the question requires the model to ask follow-up questions
+to the user. In this task, the user asks a question and the model tries to answer it based on
+some context. If the model cannot find the information necessary to answer the question,
+it generates a follow-up question for the user and enquires the missing information. Here,
+each follow-up question can be considered as a retrieval hop and figuring out the missing
+information can be regarded as a reasoning hop [138].
+• Temporal MHQA:𝐶𝑖 represents diverse temporal contexts such as time periods’ denoting
+bursts in the temporal distribution of relevant documents, question’s time scope, time periods
+indicated by temporal expressions extracted from documents’ contents [152, 153], or inferred
+time of past events [155].
+3For the scope of this paper, we do not consider QA over KB or KG since these have been extensively covered by Fu et al.
+[43], Lan et al. [82].
+4For the scope of this paper, we only consider text based QA.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 7]]
+A Survey on Multi-hop Question Answering and Generation 111:7
+3 DATASETS
+The previous section highlighted the different forms of the task which implies the existence of
+multiple datasets that are unique and equally significant, and are suited to different variants of the
+problem. In this section we aim to briefly summarize existing datasets and provide their comparison.
+This section details on the process of dataset creation, their statistics, and comparison with existing
+datasets, and is followed by our critique of these datasets. We believe that it makes sense to start
+the discussion with existing datasets as this will provide necessary context and intuition of the
+data for the following subsections devoted to methods which operate on top of these datasets.
+3.1 Dataset creation
+3.1.1 Challenges: Creating a dataset for multi-hop question answering is more challenging than
+for a traditional (i.e., single hop) QA setup. The major challenges include:
+• Contexts used for questions should form a valid and unambiguous reasoning chain. This
+implies that a context used for a particular question should have some information overlap
+or some kind of entailment relation with at least one of the other contexts present in the
+expected reasoning chain [173].
+• Since the questions should require reasoning over multiple contexts, the process of question
+generation itself needs to somehow encapsulate information across those particular contexts.
+• The creation process needs to ensure that the question can not be answered by using a
+different single context. For instance, the question "Who was the president of United States in
+the year in which World War II began? " requires two contexts containing "World War II began
+in 1939." and "Franklin D. Roosevelt was the president of United States in 1939. " However, there
+may be a separate context containing "Franklin D. Roosevelt, president of United States at the
+start of World War II, was unwilling to... ". This challenge is more prevalent in the setting of
+Open Domain QA.
+Therefore, it becomes crucial to look at the methods adopted during creation of existing datasets,
+along with their advantages and, drawbacks and possible ways to mitigate these. In general, the
+dataset creation task involves 3 major steps:
+(1) Generating reasoning chains
+(2) Question generation by crowd-sourcing
+(3) Automatic/manual filtering
+3.1.2 Reasoning chain candidates. Methods for coming up with reasoning chains are highly
+task and domain specific and thus, differ significantly for each dataset. Thus, we look at a few
+datasets individually.
+(i) HotpotQA [173]: HotpotQA contains only 2-hop questions formed using the first passages
+of documents from the English Wikipedia dump5. Two passages are chosen as a reasoning
+chain (termed candidate passage pair ) if:
+• There exists an hyperlink from the first document to the second. The entity which forms the
+hyperlink is termed as the bridge entity and the questions are termed as bridge questions.
+• The entities for those passages belong to the same category (eg: Michael Jordan and Kobe
+Bryant). These are specifically sampled from 42 manually created lists. Such pairs are used
+for creating comparison questions.
+(ii) HybridQA [21]: In HybridQA, the definition of a context can be either a passage or a table.
+It is argued that using a table as context avoids the ambiguity of the questions that could arise
+when using texts. To ensure at least two hops, the questions are restricted to have reasoning
+5https://en.wikipedia.org/
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 8]]
+111:8 Trovato and Tobin, et al.
+chains containing at least one table and one text document. The tables are filtered from the
+set of tables released in WikiTables [9], and the Wikipedia hyperlinks present in the cells of
+the table are used to retrieve relevant passages. At most 12 sentences of the first passage of
+each Wikipedia page are treated as the passages.
+(iii) QAngaroo datasets [159] - WikiHop and MedHop: These datasets construct a bipartite
+graph using a knowledge base with relation triplets and then perform a breadth first traversal
+on it to get valid multi-hop reasoning chains. The bipartite graph has entities from the KB on
+one side and the documents from the corpus on the other with the edges denoting whether
+the entity is present in the document. The subject entity𝑠 in a triplet(𝑠,𝑟,𝑜) is chosen as the
+starting point for the traversal and all the entities that have the same type as that of𝑜 are
+the end points. All the intermediate end-points in a path are treated as the possible answer
+candidates and all the documents traversed to reach the answer entity are the reasoning
+chain candidates. To avoid ambiguous questions, any𝑜′ such that∃(𝑠,𝑟,𝑜 ′)∈ 𝐾𝐵 is ignored
+during the traversal. Generated candidate chains and QA pairs are further filtered manually.
+(iv) NarrativeQA [77]: The dataset is for answering multi-hop questions on long stories. To
+ensure that the questions are indeed multi-hop and answering requires non localized reason-
+ing, the annotators are asked to form questions using human-generated summaries of the
+stories. The stories are collected from books from Project Gutenberg6, while movie scripts
+are scraped from the web.
+(v) OpenBookQA [97]: OpenBookQA requires question answering on the scientific domain
+using a book (in simpler words, a collection) of scientific facts along-with a broad common
+knowledge (large open-domain scientific sentences). The book and common knowledge are the
+two contexts required to answer the questions in OpenBookQA. Book is collected by filtering
+a subset of WorldTree corpus identified by Jansen et al. [64] where the common knowledge is
+collected from a collection of 14M scientific facts across Wikipedia, ConceptNet and other
+scientific corpor.
+(vi) QASC [21]: QASC is also a dataset for two-hop QA using scientific facts. The process of
+generating reasoning chains is very similar to that of OpenBookQA. The two contexts of
+the reasoning chain are chosen from a set of good quality seed facts and a large corpus of
+auxiliary facts, respectively.
+(vii) MultiRC [71]: The purpose of this dataset is to create a multi-domain multi-hop questions.
+Documents across various domains are selected from multiple datasets. Here, the multiple
+contexts are part of the same passage and the task of candidate reasoning chain generation is
+left to the annotators; each document is given to the annotators and they are asked to form
+valid multi-hop reasoning questions.
+3.1.3 Question generation: Generating multi-hop QA pairs requires accumulation of informa-
+tion across different contexts which itself is an unsolved problem [ 54, 63, 72, 79, 102, 107, 119,
+137, 176]. As discussed above, Welbl et al. [159] automatically generates questions using existing
+KBs where WikiData and DrugBank [163] are used as the knowledge bases, and Wikipedia and
+Medline7 are used as the document corpus. However, the question and answer types in the two
+datasets are highly constrained, owing to the creation technique. For instance, the only question
+type in the MedHop dataset is of the kind(𝑑𝑟𝑢𝑔 1,𝑖𝑛𝑡𝑒𝑟𝑎𝑐𝑡𝑠 _𝑤𝑖𝑡ℎ, ?), where in the WikiHop dataset
+we have(𝑖𝑡𝑒𝑚 1,𝑝𝑟𝑜𝑝𝑒𝑟𝑡𝑦, ?). Therefore, automatic generation using KBs is argued to result in
+datasets limited by the incompleteness of entity relations and schema of the KB used [173, 179].
+6https://www.gutenberg.org/
+7https://www.nlm.nih.gov/medline/medline_overview.html
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 9]]
+A Survey on Multi-hop Question Answering and Generation 111:9
+Furthermore, automating the generation of free-form text questions is known to be a challenging
+task and requires substantial training data [45, 102, 106].
+Consequently, recent datasets propose that the question creation step should be done using
+human-intelligence. Since the task is not very straight-forward even for humans, existing works
+have added comprehensive guidelines for creating questions. These annotation guidelines follow a
+common pattern, with slight nuances, irrespective of the task. We aim to summarize the annotation
+guidelines used by various datasets and hope that this could serve as a reference for the relevant
+future endeavours. Based on the techniques adopted by the existing datasets, the common annotation
+instructions and best-practices include:
+i To ensure that the questions require multi-hop reasoning:
+• Give examples of both positive and negative instances of what the task requires.
+• Break down the question generation task into simpler steps to prevent mistakes.
+• Use rule-based techniques to provide in-the-loop friendly hints and prevent the annotators
+from submitting trivial incorrect samples.
+• Use simple single-step IR or PLM (Pre-trained Language Models) based techniques to check
+if the question submitted is answerable using a single context only.
+• Ask annotators to submit the reasoning chain along with the question and answer.
+• Ask a different set of annotators to answer the questions using only a single context.
+• Ask a different set of annotators if the question requires multiple contexts to be answered.
+ii To ensure that the questions are answerable:
+• Ask the annotator to also provide the answer to the question.
+• Prohibit the use of negation words in answer choices that can trivially fool baselines.
+• Ask for questions with very specific answers.
+• Ask a different set of annotators to answer the question and discard questions with signifi-
+cant error rates.
+iii To ensure that the questions and answers are formed well:
+• Restrict the annotators to experts/native speakers of the intended language of the dataset.
+• Ask different set of annotators to verify if the questions are grammatically well-formed.
+• Place a limit on the length of the answer.
+• Randomly shuffle answer choices to avoid biases.
+iv To ensure that the questions are challenging to answer :
+• Prohibit the annotator from copying spans of text from the input contexts.
+• Ask the annotators to make the questions challenging.
+• Ask the annotators to create confusing and irrelevant incorrect answer choices.
+• Ask the annotators to consider high-level relations between entities, events rather than
+localized relations.
+However, crowd-sourced datasets also have severe limitations. Dua et al . [36] argue that these
+datasets usually only present a partial picture of the underlying data distribution and are marred
+by numerous biases, such as annotator bias [46], label bias [37, 55], survivorship bias [100, 146],
+and ascertainment bias [67]. Furthermore, absence of adversarial contexts during training time
+allows the models to learn shortcuts in reasoning and perform the task without doing multi-hop
+reasoning.
+3.1.4 Post-processing: The above-mentioned practices and instructions can not preclude all
+human errors. Thus, a further manual or rule-based automatic screening is generally done to get
+rid of these errors. For instance, Chen et al. [21] remove a question if 1) the answer cannot be found
+from either table or passage, 2) the answer is longer than 20 tokens, and 3) if the answer passage is
+easily retrieved using a single hop of TF-IDF retrieval. Khot et al. [72], Mihaylov et al. [97] remove
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 10]]
+111:10 Trovato and Tobin, et al.
+questions that the annotators are unable to answer correctly. Khashabi et al. [71] remove a question
+if the annotators are able to answer it using only a single context. Welbl et al. [159] aim to resolve
+the candidate frequency imbalance by sub-sampling the dataset to ensure that questions having
+any particular answer candidate constitute not more than 0.1% of the dataset, and also by omitting
+articles that are about the United States. They tackle the issue of document-answer correlation
+by discarding the questions having any commonly occurring pair of a document and candidate
+answer.
+3.2 Existing datasets: statistics, comparisons and examples
+Comparison of the popular datasets used for MHQA is shown in Table 2. Some of these datasets
+have multiple settings which we describe below:
+(i) HotpotQA test set has two settings i) Full-wiki setting which is open domain with the set of
+contexts being the first passages of all Wikipedia pages, and ii) Distractor setting which is
+closed domain with a set of 10 passages (2 gold + 8 distractors) provided with each question.
+The 8 distractors are collected by using TF-IDF retriever with the question as the query.
+The dataset also evaluates an auxiliary tasks of predicting supporting facts. These are the
+sentences in the gold passages which were used by the annotator to create the question. Since
+many of the comparison questions in the dataset are of yes/no type, many models also use
+the answer type prediction as an auxiliary task. This involves a 3-way classification of the
+answer being ’yes’/’no’/the extracted span.
+The train set of HotpotQA is split into easy/medium/hard. Easy subset predominantly consists
+of single-hop answerable questions (over 70%) whereas distinction between medium and
+hard questions is determined by training multiple baselines and testing the answerability of
+the questions. Although the dev and test set contain only the hard questions, authors show
+that the easy questions are also useful while training the model.
+(ii) QAngaroo datasets contain a masked version along with the original unmasked dataset
+for avoiding the candidate frequency imbalance. For instance, in the MedHop dataset, some
+drugs (such as Aspirin) interact with more drugs than others (such as Isotretinoin), which
+can lead to candidate frequency imbalance. To mitigate this, any candidate expression is
+randomly replaced by a unique placeholder token (e.g. “Mumbai is the most populous city in
+MASK7). It is argued that doing this removes the answer frequency cues and also removes
+statistical correlations between frequent answer strings and relevant contexts.
+(iii) NarrativeQA question-answer pairs are created using the summaries of movies or books
+whereas the model is asked to answer the question based on the original story (referred to as
+the story version). Another somewhat less challenging task of answering questions by directly
+using the summaries, referred to as the summary version is also provided.
+3.3 Critiques and challenges
+Even with carefully designed datasets it remains to be doubtful whether the datasets in fact require
+the model to perform multi-step reasoning to conclude the answer. Min et al. [100] show that the
+questions formed by compositions of two contexts (as used by many datasets) are not the same as
+they do not generalize well to multi-hop questions generated in typical use cases. Consequently,
+there have been multiple insightful methodologies proposed to test this aspect.
+Chen and Durrett [17] design two baseline models to predict the sentence containing the answer
+and constrain them to score each sentence from each context independently without looking at
+other sentences. Thus, the models should ideally perform poorly when trying to answer multi-hop
+questions. However, the performance of these baselines is overwhelmingly close to the SOTA than
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 11]]
+A Survey on Multi-hop Question Answering and Generation 111:11
+Table 2. Comparison of MHQA datasets.C represents the set of all contexts present in the dataset whereas
+𝐶 represents the set of contexts for a single question. In OD (Open Domain setting),𝐶 = C.
+Context
+granularity |C| Size #hops | C | Question Source Context
+source Domain Ans. type
+HotpotQA Passage |Wikipedia| 112,779 1/2/3 10 / OD𝑎 Wikipedia Wikipedia Generic Span
+HybridQA Table, Tables: 13k 69611 2/3 1 table Wikitables, Wikitables, Generic SpanPassage Passages: 293k passages Wikipedia Wikipedia
+NarrativeQA Sentence Books: 783
+Movies: 789 46765 - 1 story Multiple𝑏 Multiple Fiction Generative
+MultiRC Sentence 871 9872 2.37 1 passage Multiple𝑐 Multiple Generic MCQ
+|A| : 5.44
+Medhop Passage Medline 2508 - OD Drugbank Medline Medicine MCQ
+|A| : 8.9
+Wikihop Passage |Wikipedia| 51318 - OD Wikidata Wikipedia Generic MCQ
+|A| :19.8
+QASC Sentence Core: 928
+Aux: 7672 9980 2 OD Core: WorldTree
+Aux: [8] WorldTree Science MCQ
+|A| : 8
+OpenBookQA Sentence Core: 1326
+Aux: 6000 5947 2 OD WorldTree WorldTree Science MCQ
+|A| : 4
+𝑎10 for distractor setting and OD for Full-wiki setting
+𝑏 Summary: Wikipedia; Stories: Gutenberg; Movies: http://www.imsdb.com/, http://www.dailyscript.com/, http://www.
+awesomefilm.com/
+𝑐 News: CNN, WSJ, NYT; Wikipedia; Articles on society, law and justice; Articles on history and anthropology; Elementary
+school science books; Stories: Gutenberg project, MCTest; Movies: CMU movie summary corpus
+to a random classifier. This is observed more so for multiple choice MHQA datasets (WikiHop
+and a multi-choice modification of HotpotQA) than for a span-based MHQA dataset (HotpotQA).
+Furthermore, a no-context baseline that predicts the answer only be looking at answer candidates
+performs almost as good as the baselines defined above even when the number of candidates is
+increased significantly (refer to figure 3 in Chen and Durrett [17]). Thus, it is argued that multiple
+choice questions are easier to hack while testing and less helpful while training when compared to
+the span based questions.
+Min et al. [100] train a single-paragraph BERT model [70] that achieves comparable performance
+to the state-of-the-art on the distractor setting, while it lags behind on the open-domain setting
+indicating that the open-domain setting is more challenging for a single-hop model and is worthy
+of future study. To further verify the hypothesis that the distractor setting is majorly single-hop
+solvable, human evaluation is performed. Specifically humans achieve accuracy of 87.37 F1 when
+using all the ten input paragraphs and 82.06 when one of the gold paragraphs is missing. In
+order to improve the quality of these distractors, an adversarial set of distractors is collected by
+training a single-hop BERT model and picking the top scoring incorrect paragraphs. Although, the
+performance of the single-hop model drops significantly, it is recovered after fine-tuning the model
+on these distractors.
+Another possible way to improve the quality of distractors is to add a large number of such
+distractors. However, it is observed that even with 500 distractors, the single hop model performance
+is still significant. For the open domain setting, the performance goes down significantly indicating
+the challenging nature of open-domain MHQA.
+On manual analysis of single-hop solvable questions, it is found that 35% of the questions in the
+HotpotQA dataset are solvable only by matching the entity type. These questions would require
+multi-hop reasoning in the open-domain setting. However, other 26% of the questions are single-
+hop solvable even in the open-domain setting. These are questions whose answers can be derived
+by finding an entity that uniquely satisfies two properties (intersection-type questions) but a unique
+answer can also be found by using only one of these properties. Another 8% of the questions are
+non-compositional single-hop and only the remaining 27% require multi-hop reasoning.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 12]]
+111:12 Trovato and Tobin, et al.
+Similarly, Min et al. [102] split the HotpotQA dev set into single-hop solvable (3426) and single-
+hop non-solvable (3979) questions.
+Das et al. [28] make a similar conclusion by observing that 1184 (20%) of the question have the
+answer span mentioned in both of the supporting passages and the answer can be extracted by
+only considering one of them.
+Xiong et al. [167] conduct an experiment that compares a QA model that has access to all the
+supporting passages in HotpotQA, to another model that has access only to the answer (or the
+second hop) passage and observe that the model with full access only gives a marginal improvement
+from 49.43 EM to 50.96 EM.
+Trivedi et al. [145] find that more than 60% of the dev questions in MultiRC have at least one
+adjacent relevant sentence pair making the multi-hop reasoning very easy.
+Information 
+Retrieval
+Module
+Reasoning
+Module
+Answering 
+Module
+Information 
+Retrieval
+Module
+Reasoning
+Module
+Answering 
+Module
+(a) Type-I:𝑅𝑒𝑡𝑟𝐼𝑡𝑟 ->𝑅𝑒𝑎𝑠𝐼𝑡𝑟 ->𝐴𝑛𝑠 (b) Type-II:(𝑅𝑒𝑡𝑟 ->𝑅𝑒𝑎𝑠)𝐼𝑡𝑟 ->𝐴𝑛𝑠
+Information 
+Retrieval
+Module
+Reasoning
+Module
+Answering 
+Module
+Information 
+Retrieval
+Module
+Reasoning
+Module
+Answering 
+Module
+(c) Type-III:𝑅𝑒𝑡𝑟𝐼𝑡𝑟 ->(𝑅𝑒𝑎𝑠->𝐴𝑛𝑠)𝐼𝑡𝑟 (d) Type-IV:(𝑅𝑒𝑡𝑟 ->𝑅𝑒𝑎𝑠->𝐴𝑛𝑠)𝐼𝑡𝑟
+Fig. 2. The four types of architectures used for MHQA. A self loop at a module indicates that that
+module is independent of the succeeding modules whereas an incoming connection from a succeeding
+module represents some kind of feedback from that block. a) The IR and reasoning modules perform multiple
+hops independent of each other as well as of the answering module. b) At each hop, the IR module sends
+its output to the reasoning module which then gives feedback to the IR module. Answering module then
+predicts the answer in a single step. c) IR module first iteratively retrieves all the relevant documents for all
+the hops. The reasoning module performs a hop and sends the output to the answering module. Answering
+module either answers the question or sends feedback to the reasoning module asking for another hop of
+reasoning. d) At each hop, the IR module sends its output to the reasoning module which further sends its
+output to the answering module. The answering module either predicts a final answer or provides feedback
+to the IR module indicating that some required information is missing.
+4 OVERVIEW OF METHODS
+As discussed in Section 2, a large number of works divide the task of MHQA into two steps, a retrieval
+(IR) step that extracts all the relevant contexts from the corpus and a reading comprehension (MRC)
+step that reads the resulting contexts to find the answer. In general, the existing works have three
+basic units - Retriever, Reasoner (or Reader) and Answer Predictor8. A coarse level classification of
+methods can be how these units interact with each other. One way is to complete the task of the
+previous unit before moving to the next one and the other is to perform two or three of the tasks
+in a single iteration and repeat it for the corresponding hops. Thus, there are four possibilities that
+8Although initial works have a single module for reasoning as well as answer prediction, more recent works recommend
+further segregating these two as different modules. Therefore, we consider these as separate modules in our discussion.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 13]]
+A Survey on Multi-hop Question Answering and Generation 111:13
+arise by considering the multi-step nature of the retrieval and reasoning modules. These four types
+of models are shown in Figure 2.
+A few models retrieve important sentences or entities from the contexts as an intermediate step
+for reasoning. Since the granularity of the context is sentences for some datasets like MultiRC and
+OpenBookQA, it can be difficult to determine what constitutes reasoning and what constitutes
+retrieving. To avoid such confusion, we refer back to our definition of the task in Section 2. If the
+granularity of the output of a step is the same as the granularity of the context, we refer to that step
+as part of the retrieval process. If the granularity is lower then we call it as reasoning. Since most of
+the existing works focus extensively on the first two units, we begin by describing the techniques
+used for these units, first, sequentially and then, iteratively. We then describe the answer prediction
+module followed by some auxiliary tasks in practice.
+Open 
+domain 
+Input
+(Set of all 
+contexts)
+One
+Pass
+Iterative
+Retrieved 
+Contexts 
+/
+Closed 
+domain Input
+Re-ranking
+Module
+Preliminary retrieval Final retrieval
+Reading 
+Comprehension 
+Module
+Filtered
+Contexts
+Concatenation
+Fig. 3. Retrieval Module. The process of retrieval can be decomposed into two steps: a) Preliminary retrieval
+which is a quick and high recall step to retrieve all the relevant context from the set of all contexts in the
+open domain setting. It can be performed either as a single pass or iteratively. b) Final retrieval which is a
+more thorough step to filter out all the irrelevant contexts. Because of a smaller number of input contexts,
+more complex re-ranking models can be used at this step. Some models directly pass the concatenation of
+the input documents to the reasoning module. Note that the closed domain setting of MHQA eliminates the
+need for preliminary retrieval.
+4.1 Retrieval
+The retrieval step is a bottleneck when the set of available contexts for a question is large and
+it becomes a particularly challenging task in case of Open Domain QA. Intuitively, multi-hop
+retrieval is significantly more challenging than a single-step retrieval since any retrieval error in
+a hop is accumulated with each subsequent hop of retrieval and leads to a well known problem
+of semantic drift [170]. Das et al. [28] verify the hypothesis by running a simple BM25 on ’easy’
+and ’hard’ subsets of HotpotQA (which contain predominantly single-hop and multi-hop questions
+respectively) to find that the accuracy drops from 53.7% on the easy subset to 25.9% on the hard
+subset. Similarly, Feldman and El-Yaniv [41] run a TF-IDF retriever and find that although, it
+succeeds in retrieving at least one of the gold passage within top 32 passages for more than 90%
+questions, it often fails at retrieving both the gold passages.
+The existing methods for retrieval can be broadly classified into two categories as shown in
+Figure 3, open domain retrieval where the model has to search through the entire context setC,
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 14]]
+111:14 Trovato and Tobin, et al.
+and closed domain retrieval where the model is provided with a smaller set of relevant (and noisy)
+contexts𝐶⊂C along with the question𝑞. Most of the techniques working in the open domain
+setting use a two step strategy where the first step (referred as preliminary retrieval) is a fast and
+high recall filtering to get an initial set of relevant contexts. The second step (referred as final
+retrieval) is then basically reduced to the closed domain setting where more complex techniques
+can be used to further remove the noisy contexts.
+4.1.1 Preliminary Retrieval. The first step of the open domain retrieval (referred to preliminary
+retrieval from hereon) can be a single shot retrieval as done in single hop question answering i.e.,
+the model attempts to extract all the relevant contexts in a single retrieval step. We further classify
+this step into two categories, one step and iterative retrieval.
+Single-pass approach - (2 works) Intuitively, this strategy works well for the 2-hop case where
+the candidate answers are provided. For more than two hops, the query to ranking algorithms such
+as BM25 could miss the information necessary to capture the terms relevant to the intermediate
+hop. Similarly, if the candidate answers are not provided, this strategy would not capture the second
+hop well [34]. To validate this hypothesis, [34, 41] use a simple BM25 with the original question as
+the query to evaluate the second hop paragraph recall on HotpotQA and find that the results are
+poor.
+• Yadav et al. [169] create multiple queries by appending the question with each candidate
+answers. BM25 is used on these queries to extract top𝑛(= 20) contexts (sentences in case of
+the MultiRC dataset).
+• Chen et al. [21] parse the passages linked to each cell in the given table and retrieve all the
+cells relevant to the question.
+Iterative approach - (9 works) Most of the existing techniques, therefore, use a multi-step
+retrieval. These methods can be further classified into two subcategories:
+Using entity links/hyperlinks : Das et al . [28] argue that query reformulation methods do not
+necessarily use the information about entities present in the evidence as they might not be the most
+frequent/ salient terms in it. Many existing works use entity mentions in the first hop retrieval to
+find Wikipedia passages with titles containing any of these entities. This is an efficient technique
+since the entities can be extracted as part of the pre-processing step. This technique is particularly
+effective for HotpotQA since the creation process of the HotpotQA uses the Wikipedia paragraph
+for a bridge entity as the second hop context. However, this also indicates a bias of dataset design
+when building models [ 40]. Trying to imitate (or benefit from the knowledge of) the creation
+process of some dataset while building the models for this dataset can improve accuracy on that
+dataset but is not guaranteed to perform well on the other datasets. Das et al . [28] also suggest
+not to use off-the-shelf entity linker as they are usually trained on Wikipedia and can lead to data
+leakage.
+• Das et al. [28] use BM25 for the first hop retrieval and then retrieve Wikipedia paragraphs for
+each mentioned entity. Since HotpotQA is known to contain both single-hop and multi-hop
+questions, a self-link is added for each entity retrieved in the first hop to deal with single hop
+questions.
+• Xiong et al. [167] use a Hybrid TF-IDF + BM25 for the first hop retrieval to get 10 documents.
+Span prediction and external entity linking is used to get the bridge entities from the first
+hop passages. A supervised re-ranker gives top 10 entities and Wikipedia passages for these
+entities are used as the second hop passages. A span loss is added for predicting answer
+passage title entities as an auxiliary task.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 15]]
+A Survey on Multi-hop Question Answering and Generation 111:15
+• Ding et al. [34], Fang et al. [40] retrieve Wikipedia passages whose titles contain an entity
+mentioned in the question as the first hop passages. Hyperlinks from these passages are used
+to get the second hop passages.
+• Shao et al. [129] extract key words and match them with the paragraphs title and select top
+𝑁1 paragraph with best TF-IDF scores. Apart from these, top𝑁2 paragraphs with best TF-IDF
+scores are added. For the second hop, add all the paragraphs having hyperlinks from and
+hyperlinks to the first hop paragraphs.
+Query reformulation: Hidden space
+• Feldman and El-Yaniv [41] first encode the question using a Bi-GRU layer on contextualized
+ELMo [111] embeddings and retrieve all the relevant passages using MIPS. To reduce the
+search space for MIPS, a TF-IDF based retriever [ 16] is employed to get top 𝑛𝑖 passages.
+A supervised re-ranker scores the paragraphs and the each of top k paragraphs is used to
+modify the question hidden representation to give k new search vectors for the next step.
+The reformulation module using bi-directional attention [127] on the paragraph and question
+encodings followed by a Linear layer with ReLU activation. A residual connection is added
+with this output being passed to a Bi-GRU layer followed by another linear layer with ReLU
+activation. Max pooling is applied to the residual output to give the updated query vector. At
+every step, top k paragraphs are selected by the re-ranker. The paragraph encoding being
+independent of the question allows the encodings to be pre-computed for an efficient retrieval
+during training and inference.
+Query reformulation: Text space Some methods reformulate the question by adding to, modifying
+or re-weighting the text of the question. Changing the questions in the text space allows the
+intermediate questions to be interpretable.
+• Yadav et al. [170] concatenate the question with each answer candidate to obtain initial
+queries. Justification sentences are retrieved using the unsupervised alignment method of
+Yadav et al. [168] which uses GloVe embeddings [110]. They compute a matrix storing the
+cosine similarity of embeddings of the query tokens with the sentence tokens. Max pooling
+across sentence tokens is applied to get the most similar tokens for each query token. Dot
+product between this vector and a vector containing the IDF values of the query tokens is
+calculated to produce the overall alignment score. For MultiRC, these are selected from the
+sentences in all the relevant paragraphs. For QASC, relevant sentences are retrieved using
+heuristic IR approaches. The reformulation process only keeps the uncovered tokens and
+if the number of such tokens is <𝑇(= 2− 4), new tokens are added from the previously
+retrieved sentences. The process is repeated until either a) no new query tokens are retrieved
+or b) all tokens are discovered. 10.7% improvement is observed when the tokens are identified
+using soft matching over GloVe embeddings.
+• Zhang et al. [181] use TF-IDF with the question to get the first hop paragraphs. For each
+subsequent hop, the ALBERT based reader module is used as a span extractor on the previously
+retrieved documents to extract the text relevant to the question. The extracted span is
+concatenated with the query of the previous step for performing the next hop of retrieval.
+This is repeated until the reader module finds an answer or a maximum number of hops is
+reached.
+• Qi et al. [112] follow a similar approach to Zhang et al. [181] with DrQA’s Document Reader
+model used as the span extractor. During training, heuristics are used to find the oracle query.
+• Yadav et al. [171] retrieve k justification sentences using alignment technique similar to
+Yadav et al. [170]. The question𝑄, is concatenated with each retrieved justification𝑞𝑘, and
+the token weights are assigned as: For each token 𝑡 in original question, if 𝑞𝑘 contains𝑡,
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 16]]
+111:16 Trovato and Tobin, et al.
+weight for𝑡 is 1, else it is 2. All terms in𝑞𝑘 have a weight of 1. This is expected to result a in
+higher coverage. The queries are used for second hop retrieval to get a final set of𝑁 contexts.
+Then,  𝑁
+𝑝
+ evidence chains are generated and each evidence set is ranked by how many query
+terms are included (coverage) and top𝑛 are picked for the supervised reranking.
+• Malon and Bai [95] propose generating text based free-form follow-up questions for per-
+forming iterative retrieval. An IR model (BM25) retrieves the set of relevant contexts using
+the question. A BERT based three-way controller module predicts whether each context
+contains final answer, contains intermediate information or is irrelevant. A QG model is used
+for generating a follow up question for each passage that contains intermediate information.
+BERT is used for getting the answers from contexts containing the final answer. Irrelevant
+passages are ignored. The QG model by Zhao et al. [182] is trained on the reverse SQuAD. The
+controller model is trained with cross-entropy loss for ternary classification on the ground
+truth triplets.
+Sidiropoulos et al. [130] evaluate the performance of the two iterative retrieval approaches by
+evaluating the performance on each of the two hops on HotpotQA dataset. It is argued that
+entity based retrieval is limited by the availability of such hyperlinks and passages whereas the
+reformulation approach is limited by the performance of lexical term-based retrieval. They observe
+that while BM25 followed by BERT based reranking performs well on the first hop, it fails on the
+second hop retrieval (evaluated as the ability to retrieve second passage given the first passage).
+Similarly, although the model by Xiong et al. [166] has the best overall performance, it has scope of
+improvement when evaluated for the second hop retrieval. Hence, a hybrid technique is proposed
+where the re-rank model is used for the first hop and a single-hop dense passage retrieval model
+[131] is used for the second hop. Results show that the hybrid technique outperforms the existing
+techniques which calls for further study in this direction.
+4.1.2 Final retrieval. (Re-ranking)
+Concatenating/union Some of the methods do not filter the input contexts and directly pass a
+union or concatenation of the contexts to the reasoning model.
+• Yadav et al. [170] maintain N-parallel reasoning chains in the preliminary retrieval step and
+a union of these chains is passed to the answer prediction module.
+• Ding et al. [34], Yadav et al. [169] do not filter the passages and directly perform reasoning
+at a lower granularity.
+Supervised re-ranking Majority of the methods use a supervised module to score and rank
+the input contexts, and then use some criterion to filter the less relevant documents before passing
+to the answer prediction module.
+• Feldman and El-Yaniv[41] use a Linear layer with sigmoid activation to get a relevance score
+of each sentence in a paragraph with the question. Max pooling across all sentences is applied
+to give a relevance score and top-k most relevant paragraphs are picked. Max pooling allows
+only one of the sentences in a paragraph to be relevant to the question with a high score.
+• Das et al. [28] use BERT to compute query-aware embeddings for every pair of the first hop
+and second hop paragraph. The two paragraphs are concatenated and fed to 2-layer Neural
+Network to get a score. Top𝑘 pairs are passed to the reader module.
+• Xiong et al. [167] use a bi-LSTM layer [59] to predict relevance of each second hop passage
+with the question.
+• Fang et al. [40] use a RoBERTa encoder [92] followed by a fine tuning layer to get the top N
+paragraphs.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 17]]
+A Survey on Multi-hop Question Answering and Generation 111:17
+• Zhang et al. [181]pass the node (document) representations to a binary classifier for predicting
+its relevance and keep the𝑘 highest scoring documents.
+• Yadav et al. [171] use RoBERTa [92] for reranking trained to predict the F-1 score of evidence
+chain.
+• Zhang et al. [179] and 20 concatenate paragraphs with the question and feed it to a BERT
+followed by a binary classifier and keep N(=3) paragraphs with the highest scores. Qiu
+et al. [113] follows a similar approach but sets a threshold to retrieve variable number of
+paragraphs.
+• Shao et al. [129] use the gated memory flow network inspired by the Neural Turing Machine
+[51] to model the probability of a paragraph being the next context in the reasoning chain,
+conditioned on the question and the previous paragraphs in the reasoning chain. At every
+time step𝑡 BERT is used to compute the question aware embeddings of the paragraphs,𝑥𝑡. A
+KVMemNN architecture models the memory as a set of key-value pairs. The model passes
+the key vectors and 𝑥𝑡 to linear layers and applies Softmax to the output of 𝑊𝑥𝑥𝑡·𝑊𝑘𝑘𝑖.
+The output after Softmax multiplied with another matrix𝑊𝑣 is then used as weights while
+summing the value vectors𝑣𝑖 to give the readout vector𝑜𝑡. The memory reading process
+is similar to computing self-attention [148] and the authors concatenate the outputs after
+computing𝑜𝑡 for theℎ attention heads.𝑜𝑡 and𝑥𝑡 are passed to another linear layer with tanh
+and sigmoid activation to give the relevance score𝑠𝑡.𝑥𝑡 is written to the memory if𝑠𝑡 >𝑔𝑎𝑡𝑒
+where𝑔𝑎𝑡𝑒 is a hyper-parameter. Hard negative examples are generated by training a BERT
+based model to predict the relevance score𝑠𝑡 and choosing the top-8 of the non-evidence
+paragraphs.
+• Dua et al. [36] propose generative context selection that learns to predict how the question
+would have been formed. Mathematically, the model tries to learn𝑝(𝑎,𝑞|𝐶) instead of𝑝(𝑎|𝑞,𝐶)
+(as in discriminative models). This probability is modeled as
+𝑝(𝑎,𝑞|𝐶) =
+∑︁
+𝑐𝑖𝑗
+𝑝(𝑎|𝑞,𝑐𝑖𝑗)· 𝑝(𝑞|𝑐𝑖𝑗)· 𝑝(𝑐𝑖𝑗|𝐶) (5)
+where𝑝(𝑐𝑖𝑗|𝐶) is the prior that computes compatibility between any two contexts,𝑝(𝑞|𝑐𝑖𝑗)
+is the question generation model that predicts the probability of𝑞 being formed from the
+given contexts, and𝑝(𝑎|𝑞,𝑐𝑖𝑗) is the standard answering model. During inference, the model
+retrieves the contexts as𝑐∗
+𝑖𝑗 =𝑎𝑟𝑔𝑚𝑎𝑥𝑐𝑖𝑗𝑝(𝑞|𝑐𝑖𝑗)· 𝑝(𝑐𝑖𝑗|𝐶). To model these probabilities, a
+pre-trained T5 is used for obtaining the contextual embeddings. The prior and generative are
+trained together. Concatenation of every pair of contexts is passed to an encoder and a Pointer
+Generator Network (PGN) [126] decoder is used to predict the question. The training objective
+is to increase the likelihood of the question for gold context pairs and the unlikelihood [160]
+for a sample set of negative context pairs. T5 is used for answering using the best pair of
+contexts. The advantage of using a generative model is that it avoids the annotator biases in
+the dataset. This hypothesis is tested by running the model on the adversarial set of questions
+formed by Tu et al . [146]. A multi-label sentence classifier 𝑝(𝑠|𝑞,𝐶) that selects relevant
+sentences is found to have a better performance but at the same time, is more biased.
+• Chen et al. [21] feed each cell along with its neighboring cells to the cell encoder to obtain
+their representations. The representations are aggregated and further fed to a feed-forward
+neural network to obtain a score.
+• Sun et al. [138] perform the retrieval in two steps where the first step retrieves a paragraph,
+and the second step retrieves a sentence from these paragraphs. A weighted sum of paragraph
+and sentence retrieval scores is computed to find the best retrieved sentence. The retrieval
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 18]]
+111:18 Trovato and Tobin, et al.
+score of the paragraph retrieved from the first hop is broadcast to the sentences in the
+paragraphs. The best retrieved sentence fed to BERT-large for extractive QA.
+Unsupervised re-ranking Yadav et al. [169, 170] experimentally verify that using a supervised
+re-ranking method has an implied shortcoming of resulting in a domain dependent performance.
+The performance for each domain depends on the portion of training data belonging to that domain.
+Thus, it is attempted to propose unsupervised re-ranking techniques that can lead to similar level
+of quality as supervised re-ranking.
+• Yadav et al. [169] consider all  𝑛
+𝑘
+(𝑘∈[ 2, 5]) reasoning chains formed by the 𝑛 retrieved
+passages and use a simple formula to compute the scores. They define Relevance as the
+average BM25 scores of the chain, Overlap as the word overlap between each sentence pair
+in the chain and Coverage as the product of word overlap of sentence with the question and
+with the answer. The final score is given by 𝑅·𝐶
+𝑂 . By experiments,𝑘 = 3, 4 are found to be the
+best values with the justification that getting two correct retrieved passages in a chain of size
+two is tough while a chain of size 5 will suffer from noise.
+• Chen et al. [21] retrieve cells from the table in the HybridQA dataset in an unsupervised
+manner. A cell is selected if its value is either mentioned in the question, or is min/max of
+the corresponding column. A cell are also added if it hyperlinks to one of the passages that
+are retrieved by a TF-IDF retriever.
+Another independent way of classifying the re-ranking approaches is based on whether the
+module scores each retrieved context independently or together as constituents of a possible
+reasoning chain. We call the two categories of methods Context re-ranking and Chain re-
+ranking respectively. Table 6.1.1 lists the methods belonging to the two categories. Yadav et al.
+[169] show that evaluating the reasoning chain as a whole leads to better performance than
+evaluating each passage independently.
+4.2 Reading Comprehension
+4.2.1 Graph-based Techniques. - 8 works
+The general flow of the graph based methods is as follows: A graph of one or more types of nodes
+(entity, sentence, paragraph, document nodes, etc.) is constructed and edges are added based on
+some lexical heuristics. Contextual encodings of the nodes are passed to one or more layers of a
+Graph Neural Network [75] or a Graph Attention network [150] or a Graph Convolutional Network
+[76]. These layers update the representation of each node using the representation of each of its
+neighbouring nodes. In this way, after𝑛 such layers, nodes separated by a path of≤𝑛 edges have
+shared information with each other. Therefore, each layer is expected to perform one hop of the
+reasoning process. Some methods slightly deviate from the proposed general flow. We describe
+these difference below along with the other details.
+• Chen et al . [21] take the retrieved cells from the previous stage and then decide which
+neighboring cell to hop to.
+• Ding et al. [34]build an entity graph by starting with the entities extracted during the retrieval
+process. For each node, a BERT model takes its representation along with the question and
+a retrieved passage and extracts entities from the paragraph to be added to the graph. The
+process is repeated until either a) no new nodes can be added or b) a maximum number of
+nodes are extracted. Sentences containing the extracted entities are considered as ’clues’ for
+the respective entities. Clues are then used for updating the node representations using a
+Graph Neural Network (GNN). Clues are also used later for the auxiliary task of supporting
+facts prediction.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 19]]
+A Survey on Multi-hop Question Answering and Generation 111:19
+• Fang et al. [40] propose constructing a hierarchical graph network with four types of nodes
+that represent question text, relevant paragraphs, sentences in these paragraphs and entities
+in these sentences. Bidirectional edges are introduced between the first hop source sentences
+and second hop target paragraphs. Edges are also introduced between paragraph and its
+sentences; sentence and the entities it contains; question and the entities it contains; between
+all paragraphs; between each sentence and its previous and next sentences. RoBERTa is used
+for encoding and a bi-attention and a Bi-LSTM layer are used for getting initial contextualized
+representations of the nodes. Graph Attention Network (GAT) [ 150] is applied over the
+hierarchical graph and the updated representations are merged with the original contextual
+representations using a gated attention mechanism. The merged representations are passed
+to the answer prediction module. The gated merging is supposed to be effective for dealing
+with smaller number of hops.
+• Zhang et al. [181] construct a graph of documents and add edges if the documents have a
+shared entity. Question aware embeddings of the document are generated by Albert and used
+as initial node representations. GAT is used to update the representations of each shared
+entity. To update the representations of non-entity tokens, they are fed to a transformer along
+with the updated representations for multi-document fusion. The updated representations
+are passed to the answer prediction module.
+• Cao et al. [15] make entity graph of all entity mentions of the answer candidate in supporting
+documents. Cross-document edges are added between the mentions about the same entity and
+within-document edges are added between every node pair belonging to the same document.
+For initial representations, GloVe and ELMo are used for token-level and contextualized
+embeddings respectively. Contextualized embeddings are crucial since graph nodes only
+contain entity tokens. To deal with entities containing multiple words, average is taken over
+their embeddings. The two embeddings are passed to a 1 layer NN (replaced by Bi-LSTM for
+encoding the question) for getting the initial node representations which are concatenated
+with the NER and POS embeddings before feeding to a GCN layer.
+• Thayaparan et al. [142] compute similarity between GloVe embeddings of each word of the
+sentence with each word of the query and take the mean among m(=5) closest sentence
+words to get a sentence score and select top k(=25 or 30) sentences. A graph containing
+sentence nodes and document nodes is created with only the selected sentences. Edges are
+added between documents if they have a shared entity and between a paragraph and all
+its sentences. Adding edges among sentences adds complexity without much improvement.
+Initial representation of a node is computed by passing the matrix of GloVe embeddings
+of the entities contained in the sentence or paragraph to a bi-linear attention [74] layer on
+nodes and query. To compress the representations into fixed size, self-attention is used. T(=3)
+layers of Gated Graph Neural Network is used to update the representations.
+• De Cao et al. [30] create an entity graph similar to Cao et al. [15] but have some additional
+edge types: co-reference edges: between co-reference mentions of the same entity (separate
+type since these are less reliable) and complement edges which signify no connection between
+the two nodes. Co-reference edges is a separate edge type since these are less reliable owing to
+the error in the co-reference system. These are not required for the masked version. The query
+representations are formed by passing ELMo [111] to a Bidirectional RNN [118]. Initial query
+dependent node representations are formed by passing the ELMo contextual embeddings to a
+feed forward network. L layers of a gated relational-GCN [123] R-GCN, a version of GCN are
+applied to get the final representations which are passed to the prediction module. Relational-
+GCN is able to accommodate different edge types by using different weight matrices for the
+neighbouring nodes connected by different edge types. An ablation experiments verifies that,
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 20]]
+111:20 Trovato and Tobin, et al.
+although useful, co-reference edges have the least contribution to performance. Another
+experiment tries to predict the edge type by training a model but the performance is poor.
+• Qiu et al. [113] construct an entity graph and add edges between entities with the same
+mention text, between entities belonging to the same sentence, and between each entity in a
+paragraph and each entity in its title. Question and contexts are concatenated and passed
+to a BERT followed by a bi-attention layer to get the contextual node representations. The
+following four steps are performed iteratively: 1) Mean-max pooling over tokens in an entity
+mention to update the entity embeddings. 2) Attention between query and entity is used
+to compute the mask weights which are multiplied to the entity representations before
+feeding to a GAT. 3) Updated entity representations are concatenated to entity tokens and
+representations of all tokens are updated using an LSTM layer. 4) Bi-directional attention
+between query and entity representations is used to update the query representation. Updating
+embeddings of each token is necessary since the answer might not be an entity.
+• Zhang et al. [179]create two different graphs: a) sentence graph with edges between sentences
+belonging to the same paragraph and between sentences that share an entity. b) entity graph
+with edges between entities appearing in the same sentence, between different mentions
+of same entities and between each entity in the paragraph to each entity in its title. The
+intuition is that humans first focus on question-related paragraphs, then sentences, and
+then the important words. BERT word embeddings are passed to a bidirectional attention
+layer to get the contextual embedding. Propose a novel similarity matrix for the layer. Self
+attention is applied to the query and query aware node embeddings are passed to a GAT.
+Self attention is applied on the sentence node representations and the output is appended by
+the representation of each word in the sentence. An LSTM is applied to fuse the output of 2
+graphs.
+• Huang and Yang [61] form a sentence graph and add an edge between sentences𝑠𝑖 and𝑠𝑗
+with the weight𝑤𝑖𝑗 given by:
+𝑤𝑖𝑗 =
+(
+1
+1+𝑒−𝑛+𝐾1 𝑠𝑖 and𝑠𝑗 have𝑛 > 0 shared entities
+1
+1+𝑒𝑑+𝐾2 𝑠𝑖 and𝑠𝑗 belong to the same paragraph separated by𝑑 sentences. (6)
+These weights allow the model to deal with the edge types in a novel way. The concatenated
+paragraphs along with the question are fed to a BERT followed by a bi-attention layer. Sen-
+tence representations are obtained by extracting token level embeddings from the paragraph
+encoding and a weighted addition of token embeddings where the weights are calculated
+using a two layer MLP (Multi Layer Perceptron). Most methods using GNN perform message
+passing for each node in parallel. This requires the representation of nodes to be updated
+exactly𝐿 times where𝐿 needs to be specified as a hyper-parameter. If𝐿 is large, it leads to
+over smoothing. If it is too small, it inhibits long-path reasoning. Moreover, this algorithm
+performs un-necessary updates leading to inefficiency. Thus, a novel message passing algo-
+rithm is proposed which performs a BFS starting from the question and passing the messages
+through every edge that is visited in the process.
+Thayaparan et al. [142] argue that the advantage of using graph-structured representations lies
+in reducing the inference steps necessary to combine multiple pieces of information related in
+a path-like manner. The fact that the required graphs (or some parts of it) can be created offline
+gives it a computational advantage. However, graph structure also has certain limitation [ 129],
+particularly for comparison type questions in HotpotQA where the evidence paragraphs about the
+two entities are independent. Many of the techniques assume that the relation between nodes is
+directional which may not always be the case. For gated GNNs, computational efficiency as well as
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 21]]
+A Survey on Multi-hop Question Answering and Generation 111:21
+the learning ability of the model degrades with the increasing number of nodes and edge types in
+the graph used.
+While the graph structure is prevalent for multi-hop reasoning, Shao et al. [128] argue that it is
+not necessary and that graph attention can be considered as a special case of self-attention. Treating
+Qiu et al. [113] as the baseline, results are compared after removing the graph fusion module. It
+is observed that the performance gained by using the graph structure can be easily compensated
+for by fine-tuning the BERT based encoder. While the graph structure enables the model to focus
+only on adjacent nodes, a model without any prior knowledge can still learn this behaviour. This is
+verified by further experiments. When the graph fusion module is replaced by self-attention layers
+the results are very similar whereas replacing it by a transformer leads to a significant improvement.
+Graph attention reduces to self-attention for a fully connected graph making it a special case of
+self-attention. Attention patterns are visualized and observed similar to Kovaleva et al. [78]. It is
+found that the pre-trained transformers are able to capture several types of attention patterns: a)
+between entities, b) between co-referenced entities, c) between an entity and its attribute, and d)
+between an entity and a sentence. Depending on the structure of the graph, these patterns may or
+may not be covered by graph attention. Therefore, self-attention can be said to be more general
+and flexible than graph attention.
+4.2.2 Question Decomposition Techniques. - 3 works The key idea is to decompose the multi-hop
+question into multiple single hop questions and use a single-hop QA model to answer each of
+the questions. This approach is particularly effective for questions like the bridge questions in
+HotpotQA that are constructed using a bridge entity. These questions can be easily decomposed into
+two sub-questions by finding the bridge entity. While this technique has been used effectively for
+2-hop and binary comparison questions, it is yet to be tested against questions requiring more than
+2 hops of reasoning. This technique also exploits the knowledge about the structure of question
+and thus, is difficult to adapt when the structure of the questions can be flexible.
+• Min et al. [102] use the hypothesis that each sub-question can be formed from a multi-hop
+question by copying and lightly editing a key span from it. Questions in HotpotQA are
+categorized into four categories: bridge (47%), comparison (22%), intersection (23%)(questions
+asking for an entity that satisfy multiple properties) and others (8%). Editing methods are
+proposed to be dependent on the question type for the first three categories. Question text is
+segmented into several spans by training a pointer network that predicts𝑝𝑖𝑗 , the probability of
+the𝑖𝑡ℎ word to be the𝑗𝑡ℎ index to split the question. 400 annotations are manually generated
+for training. For each question, three such indices for bridge questions, two indices for
+intersection and four indices for comparison questions are predicted by maximizing the
+joint probability of the decomposition. These spans are modified slightly depending on
+the reasoning type. Any single-hop QA model can be used for answering each single hop
+question. Concatenation of the question, the reasoning type, the answer, and the evidence is
+encoded using BERT and scored using 1 layer feed forward NN with sigmoid activation. The
+reasoning type is decided as the one resulting in the maximum score. An alternative way
+where the reasoning type is predicted before decomposing and answering is tried and found
+to be giving poor results. To verify the original hypothesis, same technique is tested with
+span-based questions replaced by human written questions. There is a little difference in
+model performance indicating that the span-based sub-questions are as effective as free-form
+sub-questions.
+• Cao and Liu [14] break down the task of MHQA into two components: Coarse grained
+decomposition and Fine grained interaction. The decomposition module is responsible for
+making the high dimensional vector distribution of entity nouns or pronouns more inclined
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 22]]
+111:22 Trovato and Tobin, et al.
+to the intermediate answer to the question. The fine grained interaction module is a modified
+bidirectional attention module. The resulting context representations are passed to a self-
+attention layer and then used for supporting facts prediction by passing to a Bi-GRU layer.
+• Sun et al. [138] propose MHQA methods for four different datasets: HybridQA, QASPER,
+HotpotQA-Long and ShARC-Long. QASPER is originally proposed as single hop QA over
+long documents whereas ShARC is proposed as a conversational QA task. The paper utilizes
+the fact that long documents are often structured into sections and subsections which can be
+used as separate contexts with limited dependence among them. A pre-trained ETC model [1]
+is used as the question encoder and the context encoder. ETC is a pre-trained Mask Language
+Model that employs a global-local attention mechanism. ETC assigns to each sentence a
+special global token that only attends to local tokens in the sentence, and its embedding
+is trained to summarize the information of local tokens in the sentence. ETC additionally
+adopts Contrastive Predictive Coding (CPC) [147] to train the embedding of global tokens
+to make them aware of other sentences in the context. It takes in a sequence of sentences
+and outputs the contextualized representations of each sentence. For conversational QA, the
+question is formed by concatenating the original question with a sentence formed by each
+pair of follow-up question and answer. ETC is again used to encode the question paragraph.
+For the 2-hop questions (HotpotQA, HybridQA), a null sentence is passed to ETC along with
+the question to get two question encodings. The paragraph embeddings are computed by a
+weighted sum of sentence embeddings, where weights are the attention score of the query
+vector to that sentence. At every step, each sentence and every paragraph in the document
+is attended to the query and the output is used to update the query representations. The
+updated query representation are then combined with the embedding of next query sentence
+to give the query vector for the next hop.
+Min et al. [102]also find that some of the questions are not composed of two single-hop questions but
+require implicit multi-hop reasoning, hence cannot be decomposed. Secondly, for some questions,
+answer for each sub-question does not exist explicitly in the text and has to be inferred with
+commonsense reasoning.
+4.2.3 Miscellaneous Techniques.
+• Entailment based MHQA:Equation 1 presents MHQA roughly as an entailment task, where
+the premise consists of multiple contexts and the hypothesis is "a answers q" (referred as𝐻𝑎𝑞
+henceforth). This indicates the utility of entailment models for the task. However, modelling
+MHQA as entailment faces three major challenges: a) A larger set of possible answers makes
+this method difficult to scale. b) MHQA requires aggregation of multiple contexts and single
+sentence based entailment models can not be used directly. c) Entailment models are usually
+not trained to filter irrelevant information. Trivedi et al. [145] aim to tackle the two latter
+challenges on Multiple choice datasets, OpenBookQA and MultiRC. Two simple baselines
+are proposed: Concatenate that concatenates all sentences as the input to an entailment task,
+and Max of local decisions that uses entailment on each sentence independently and then
+aggregate the results with a max operation. The two baselines perform poorly validating the
+challenges mentioned above. Therefore, a novel method ’Multee’ comprising of a sentence
+relevance module and a multi-level aggregation is proposed. The sentence relevance module
+uses a pre-trained entailment model to produce hypothesis aware representation of each
+sentence which are passed to a Bi-LSTM layer to give contextual representation of each
+sentence which is fed to a feed forward layer to get the relevance scores𝛼𝑖. The multi-level
+aggregation module pass each sentence along with the hypothesis to𝑘 ESIM [19] entailment
+stacks to generate𝑘 paragraph level vectors which are concatenated and passed to a feed
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 23]]
+A Survey on Multi-hop Question Answering and Generation 111:23
+forward layer to predict the entailment. Each entailment stack has𝑚 layers,𝑙 of these layers
+process each sentence independently and the outputs are aggregated by using 𝛼𝑖’s. Rest
+of the layers process this aggregated output to result in paragraph level embeddings. The
+aggregation is also done in the cross attention layer to produce a cross attention matrix
+containing attention between each hypothesis token and each paragraph token. The sentence
+relevance weights are used here as well. Each entailment stack used is pre-trained on SNLI
+[13] and MultiNLI [161].
+• Commonsense knowledge for MHQA: Bauer et al. [7] argue that a pre-trained model may
+not be able to capture every grounded common-sense knowledge even with large corpora
+and propose using ConceptNet [134] for extracting the same and using it, form reasoning
+paths leading to the answer. A tree of various reasoning paths, all starting from the question
+concepts (𝑐′
+1𝑠) is formed by following four steps: a) Selecting relations𝑟′
+1𝑠 from ConceptNet
+that link𝑐1 to another concept𝑐2 from the context. b) selecting relations𝑟′
+2𝑠 that link𝑐2 to
+another concept𝑐3 from the context. c) Selecting all neighbouring concepts𝑐4 of𝑐3 connected
+by𝑟3. d) Selecting relations𝑟4 that link𝑐4 to another concept𝑐5 from the context. This results
+in a large number of reasoning paths that are scored in two steps: a)𝑛−𝑠𝑐𝑜𝑟𝑒 is computed by
+term frequency of each of𝑐2,𝑐 3,𝑐 5 in the context𝐶.𝑐4 is scored with its Point-wise Mutual
+Information (PMI) [24] with𝑐1−3. Each node’s score is normalized across all its siblings in
+the tree using Softmax. b)𝑐−𝑠𝑐𝑜𝑟𝑒 The node scores are accumulated starting from the leaf
+node and updating each non-leaf node recursively.
+𝑐_𝑠𝑐𝑜𝑟𝑒(𝑐𝑖) =
+(
+𝑛_𝑠𝑐𝑜𝑟𝑒(𝑐𝑖) 𝑐𝑖 is a leaf node
+𝑛_𝑠𝑐𝑜𝑟𝑒(𝑐𝑖)+ 𝑐_𝑠𝑐𝑜𝑟𝑒(𝑐′
+𝑖+1)+𝑐_𝑠𝑐𝑜𝑟𝑒(𝑐′′
+𝑖+1)
+2 𝑜𝑡ℎ𝑒𝑟𝑤𝑖𝑠𝑒 (7)
+where𝑐′
+𝑖+1 and𝑐′′
+𝑖+1 are the top two scoring children of𝑐𝑖. At each level of the tree, for every
+node, only the two top scoring children are maintained and the rest are pruned resulting
+in a total of 24 reasoning paths. Context representation is attended to the commonsense
+representations formed by embedding the tokens in each of the reasoning paths. Updated
+context representation is combined with the original one using a sigmoid gate. The gate
+incorporates the fact that the commonsense might be optional. Hence, the unit is called NOIC
+(Necessary and Optional Information Cell).
+• Reasoning over tables: Chen et al. [21] use BERT to encode a cell in a table where a cell is
+represented by its value, position, hyperlinks etc. Encoding of a cell along with the encodings
+of its neighbouring cells is fed to a feed forward model and a Softmax layer to find the cell
+for the next hop. The model can also hop to the same cell. The cell value is prepended to the
+hyperlinked passage and passed to the answer prediction module.
+• Pointer network for reasoning chain prediction: Chen et al. [18] encode the question
+and obtain query dependent paragraph encoding by using BERT. Sentence encodings are
+extracted from the paragraph encoding similar to Huang and Yang[61]. Alternative baselines
+are a) BERT-Sent that obtains query aware encoding of each sentence by using BERT and
+b) BiDAF-Para that uses BiDAF [127] to encode paragraphs. Results show that BERT-para
+performs the best. An LSTM Pointer Network is trained to predict probability of each sentence
+being the𝑡−𝑡ℎ sentence in the reasoning chain i.e.,𝑃(𝑠𝑖 =𝑟𝑐𝑡). The ground truth reasoning
+chain is determined using a chain extractor model discussed in Section 4.4. The model is
+trained using both Negative Log Likelihood (NLL) and Reinforcement Learning (RL). However,
+RL does not improve the performance significantly. During test time, a beam of possible
+chains is maintained since the best chain may not be evident until it is entirely retrieved.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 24]]
+111:24 Trovato and Tobin, et al.
+• Bi-directional attention baseline: Yang et al. [173] propose a baseline by modifying the
+architecture of Song et al. [133]. Question and the concatenation of paragraphs is passed to
+an RNN for combining the character and word level embeddings. Bi-directional attention is
+applied across the question and context embeddings to get query aware context representa-
+tions. A residual connection is added to the output of another RNN on these representations
+before passing to a self-attention layer.
+4.3 Answer Prediction Module
+4.3.1 Candidate answering approach. Methods dealing with candidate answer prediction usually
+start the retrieval/reasoning process by using a candidate-aware embedding of the question, and
+output the representations for each candidate independently. A Bi-directional attention layer on
+query and context [ 15]. These representations can be used to perform an independent binary
+classification for each candidate (for multiple-correct type questions such as MultiRC) [145, 169–
+171] or a multi-way classification for all candidates (for single-correct type questions such as
+OpenBookQA, WikiHop) [15, 18, 30, 170, 171]. De Cao et al. [30] also use an ensemble of 5 models,
+each trained with a different weight initialisation. Yadav et al. [170] use both the answering methods
+for QASC and find that the multi-way classification results in an improvement of 5% accuracy.
+4.3.2 Span answering approach.
+• Yang et al. [173] Output of the reasoning module is passed to another RNN for supporting
+facts prediction. Another RNN is used to predict the start and end token of the answer span.
+Finally, a three-way classifier layer is used to predict the answer type among ’yes’, ’no’ and
+the extracted span. Many methods focusing on the first two units use this baseline as the
+answer prediction unit [14, 28, 41, 113, 128, 129, 179].
+• Qi et al. [112] make two changes to this baseline: a) Concatenating passages before encoding
+makes the representations depend on the order while concatenating. Thus, a shared RNN
+encoder first encodes each passage independently and then concatenates the representations.
+b) All the attention layers are replaced by self-attention on the concatenated question and
+context representation.
+• Ding et al. [34], Fang et al. [40] replace the RNNs in the baseline by MLPs and directly feed
+the node representations for answering. Xiong et al. [167] deal only with bridge question
+and hence use a single MLP for span prediction on entities. Thayaparan et al. [142] only deal
+with supporting facts prediction and use a single MLP for the same.
+• Zhang et al. [181] use an ALBERT model to predict the answer span among the𝐾 identified
+passages. The model then predicts if the answer was found in the given passage. If not, the
+predicted span is used for iterative retrieval for the next hop.
+• Min et al. [102] use an off-the-shelf single-hop answering module to answer the sub-questions
+formed by the reasoner.
+• Malon and Bai [95] use a simple BERT model to answer the question from the paragraph
+identified as the answer paragraph. Dua et al. [36] do the same from the concatenation of the
+two identified passages.
+• Chen et al. [18] concatenate question and all sentences of all the retrieved reasoning chains
+and feed to BERT to perform the 4 tasks.
+• Huang and Yang [61] propose to use the output of the GNN model. Sentence scores are
+computed using MLPs on the sentence node representations. Paragraph score are computed
+using MLPs on max pooling over the sentence representations. The two scores are combined
+with the span extraction score to predict the final answer. Separate MLPs are used for
+predicting the answer type and the supporting facts.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 25]]
+A Survey on Multi-hop Question Answering and Generation 111:25
+• Sun et al. [138] Concatenate the embeddings at all retrieved steps{𝑘 0,··· ,𝑘∗,··· ,𝑘 0,··· ,𝑘∗}
+and perform a weighted sum to getK that is used to make the final prediction. The Softmax
+weightY𝑗 is computed across the retrieved sentences from all steps.
+4.3.3 Generative answering approach. Bauer et al. [7] use a self-attention layer followed by a PGN
+decoder to get the final answer.
+4.4 Auxiliary Tasks
+4.4.1 Reasoning Chain Prediction. Reasoning chains are an integral part of explainable MHQA.
+HotpotQA contains the supporting facts that are required to answer the question, however these
+are not ordered. Several works have aimed to predict the order among these supporting facts by
+using simple lexical heuristics [66, 144, 151] so that the reasoning chain formed can be used to
+further train or evaluate a model. However, it is also crucial for the models to be able to predict the
+reasoning chains only by using the question and contexts.
+• Feng et al. [42] propose a semi supervised reinforcement learning for two modules to recover
+the reasoning chain in a cooperative-game approach. Apart from predicting the reasoning
+chain, the model is also able to predict the relations among the sentences. The two modules
+are: a) Ranker module that, given 𝑘 passages and a question, selects a reasoning chain.
+Question and passages are encoded by bi-GRU [22] and a Match-LSTM [156] model is used to
+get a probability for each passage containing a part of the reasoning chain. A passage is then
+sampled and used to update the question by passing to an MLP. The process is repeated with
+the updated question. The ranker module is rewarded for selecting the correct passage at the
+correct reasoning step. b) Reasoner module that predicts the entity from the current passage
+to the next passage. Given the first passage (called head) selected by the trained Ranker, the
+Reasoner uses a Math-LSTM model to predict the probability of each entity appearing in the
+second passage (called tail). While the ordering of the supporting facts is generated similar
+to Yang et al. [173] for HotpotQA, the reasoning chains need to be manually annotated for
+MedHop. The manual annotation is done by extracting all valid paths such that the first
+sentence contains an entity in the second sentence and the second contains the answer. A
+chain is manually labelled as positive if the corresponding passage describes the drug-protein
+interaction. Reasoning chains extracted in this way may not be unique.
+• Chen et al. [18] derive pseudo gold chains using NER and co-reference resolution. A sentence
+(only) graph is constructed with edges between sentences that belong to the same paragraph
+and between those that have a shared entity. Reasoning chains are collected by starting
+from the question node and finding all possible paths in the graph that lead to an answer
+containing sentence. These chains are then ranked by two heuristics: a) shorter chains are
+given higher scores. b) chains whose sentences have a high F-1 ROUGE overlap with the
+question are given higher scores. Experimental results indicate that b) is a good criteria for
+scoring chains. Human evaluation shows that the reasoning chains produced are of similar
+quality compared to the supporting facts present in the HotpotQA. A pointer network is then
+trained to predict each sentence in the reasoning chains.
+4.4.2 QA with partial knowledge. Khot et al. [73] propose a new sub task of MHQA where the
+model has to figure out and fill the knowledge gap for question answering. It is assumed that the
+first hop retrieval has been performed ideally and the task is to use the retrieved context to answer
+the question. Modified version of OpenBookQA is released where the core fact is part of the input
+and several relations have been modified.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 26]]
+111:26 Trovato and Tobin, et al.
+Multi-hop 
+QA task RC based
+Others
+Graph 
+based
+Edge
+Type
+Node 
+Granularity
+Entity
+Sentence
+Paragraph
+Homogenous
+Heterogeneous
+Question 
+Decomposition
+N-hop
+Any-hop
+Specific
+Task 
+based
+Domain 
+Specificity
+No. of Hops
+Two-hop
+Generic
+Span
+MCQ
+Answer 
+Type
+Generative
+Retrieval
+based
+Final 
+Retrieval
+Preliminary
+Retrieval
+Rerank
+Concatenation
+Rerank 
+paradigm
+Rerank Unit
+Retrieval 
+Rounds
+Retriever 
+type
+Supervised
+Unsupervised
+ContextChain
+Single
+Iterative
+Reformulative
+Linking
+Dense
+Lexical
+Fig. 4. Overview of Proposed Taxonomy.
+5 PROPOSED TAXONOMY
+Section 4 covers the existing methods in a structured way, proposing some bases for classifications
+for MHQA techniques. We summarize these in Table 6.1.1. The acronyms used in the table are
+described below.
+• General:
+– Datasets used 9: The datasets used for MHQA along with their acronyms in Table 6.1.1 are:
+HotpotQA ([173]) in the full-wiki (HP-F) and distractor (HP-D) settings. Sun et al. [138]pro-
+vide the modified versions of the ShARC [121] and the HotpotQA datasets as ShARC-Long
+(Sh-L) and HotpotQA-Long (HP-L). MultiRC [71] (MRC), ARC [26] (ARC), QAngaroo
+datasets [159] WikiHop (WH) and MedHop ( MH), HybridQA [21] (Hy), QASPER [29]
+(QSP), OpenBookQA [97] (OB), QASC[72] (QSC) and Nr [77].
+– Hop Constraints: Some of the methods require the type of questions to be exactly two-
+hop questions ( Two) or require the number of hops in the question to be provided as
+an input (N). Other methods are flexible for answering any-hop questions without any
+additional input (Any).
+– Answer types: Whether the methods proposed work for MCQ type questions ( MCQ),
+Span based questions (Span) and generative answers (Gen). Note that some methods focus
+on more than one of these answer types.
+– Domain Specificity: Whether the works focus on domain specific (Specific) or domain
+generic techniques (Generic).
+• Retrieval:
+– Retriever Type: Whether the preliminary retrieval step uses a dense (Dense) or a lexical
+(Lexical) retriever.
+9Note that we do not include the datasets used in the proposed Taxonomy, but still add it in the Table 6.1.1 for the sake of
+completeness.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 27]]
+A Survey on Multi-hop Question Answering and Generation 111:27
+– No. of Retrieval Passes: Whether the preliminary step is single pass (Single) or iterative
+(Iter). In case it is iterative, whether it uses query reformulation ( Iter-QR) or Entity-
+links/Hyperlinks (Iter-EL/H).
+– Final Retrieval Strategy Whether the final retrieval step uses a simple concatenation/union
+(Concat) of the contexts or it is uses a re-ranking approach (RR). In case, it uses re-ranking,
+whether the re-ranking is supervised (RR-S-?) or unsupervised (RR-U-?), and whether the
+individual contexts (RR-?-X) or the entire chain candidates (RR-?-C) are scored during
+the re-ranking.
+• RC based:
+– Node Granularity: In case the reasoner is a graph based model, what kinds of nodes it
+has: entity nodes (Ent), sentence nodes (Snt) or passage nodes (Psg). Note that the graph
+may have more than one type of nodes. (-) in case the reasoner is not graph based.
+– Relational Edge: Whether the graph is a relational graph (Yes) (i.e., has multiple types of
+edges) or not (No) (i.e., has single edge type). (-) in case the reasoner is not graph based.
+– Question Decomposition: Whether the reasoning module uses question decomposition
+(QuesD) or not ( Other). The rows where both graph-based and decomposition-based
+columns are (-) are for the models that use other techniques like [127].
+6 EVALUATION TECHNIQUES
+6.1 Evaluation Metrics
+Diversity in multi-hop QA tasks and datasets engenders the need for different evaluation metrics.
+6.1.1 Answer Evaluation.
+• Multi-Choice questions: MCQ questions are straight-forward to evaluate when there is a
+single correct answer, and classification accuracy over the answer choices is used. To deal
+with multiple correct answer candidates, Khashabi et al. [71] propose F1a and F1m. Precision
+and Recall are computed by evaluating each predicted answer candidate. Macro harmonic
+mean of average precision and average recall is the F1m score. F1a uses micro harmonic
+mean of precision and recall values for all answer candidates.
+• Span based answers: The most commonly adopted metrics are Exact Match (EM) and
+F1 scores on the predicted string tokens. Tang et al. [141] argue that EM can often be too
+strict and propose an alternative Partial Match (PM) where a predicted answer𝑎𝑝 is said
+to be a partial match with the ground truth answer 𝑎𝑔 if either (a) 𝐹 1(𝑎𝑝,𝑎𝑔) > 0.8 or (b)
+𝐹 1(𝑎𝑝,𝑎𝑔) > 0.6 and one of𝑎𝑝,𝑎𝑔 is a substring of the other. These evaluation metrics are
+known to work well when the answer spans are small (< 10 tokens).
+• Auxiliary task evaluation: supporting facts Yang et al. [173] propose to evaluate the
+reasoning chains by reporting EM and F1 on the supporting facts (note that this is different
+from reasoning chain as supporting facts are sentences and the contexts are passages). They
+also propose Joint-EM and Joint-F1 where the precision is defined as𝑃𝑗𝑜𝑖𝑛𝑡 =𝑃𝑎𝑛𝑠·𝑃𝑠𝑢𝑝
+and the recall as𝑅𝑗𝑜𝑖𝑛𝑡 =𝑅𝑎𝑛𝑠·𝑅𝑠𝑢𝑝 . Qiu et al. [113] compute the score of a reasoning path in
+the entity graph by multiplying the corresponding soft masks and attention scores along the
+path and selecting the top-k scoring paths. If any entity in a supporting fact is reached by
+any of the𝑘 paths, that fact is said to be a hit. Entity-level Supporting fact Prediction (ESP)
+scores are reported as Exact Match (EM) and Recall values over these supporting facts.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 28]]
+111:28 Trovato and Tobin, et al.
+Table 3. Comprehensive study of existing work using the proposed taxonomy.
+General Retrieval Reasoning
+Datasets Hop
+Constraints
+Answer
+type
+Domain
+Specificity Preliminary Final Graph based Ques
+Decomp
+Type Technique Technique Node types Relational
+graph?
+Ding et al. [34] HP-F N Span Generic Lexical Iter-EL/H Concat Ent Yes Other
+Feldman and El-Yaniv [41] HP-F N Span Generic Dense Iter-QR RR-S-X - - Other
+Das et al. [28] HP-F Two MCQ Generic Lexical Iter-EL/H RR-S-C - - Other
+Yadav et al. [169] ARC, MRC Any MCQ Generic Lexical Single RR-U-C - - Other
+Xiong et al. [167] HP-F Two Span Specific Lexical Iter-EL/H RR-S-X - - Other
+Fang et al. [40] HP-F Two MCQ Generic Lexical Iter-EL/H RR-S-C Ent-Snt-Psg No Other
+Yadav et al. [170] MRC, QSC Any MCQ Specific Lexical Iter-QR Concat - - Other
+Zhang et al. [181] HP-F Any Span Generic Lexical Iter-QR RR-S-X Psg Yes Other
+Yadav et al. [171] MRC, QSC Two MCQ Generic Dense Iter-QR RR-S-C - - Other
+Shao et al. [129] HP-F Two Span Generic Lexical Iter-EL/H RR-S-X - - Other
+Sidiropoulos et al. [130] HP-F Two Span Generic Dense Single RR-S-X - - Other
+Cao et al. [15] WH N Span Generic - - Concat Ent-Snt-Psg No Other
+Thayaparan et al. [142] HP-D N Span Generic - - Concat Snt-Psg No Other
+Min et al. [102] HP-D Two Span Generic - - Concat - - QuesD
+De Cao et al. [30] WH N Span Generic - - Concat Ent No Other
+Zhang et al. [179] HP-D N Span Generic - - RR-S-X Ent-Snt No Other
+Malon and Bai [95] HP-D Any Span Generic Lexical Iter-QR RR-S-X - - QuesD
+Feng et al. [42] MH, HP-D N Span Specific Dense Single RR-S-C - - Other
+Chen et al. [18] WH, HP-D N Span Generic - - Concat Snt No Other
+Huang and Yang [61] HP-D Any Span Generic - - Concat Snt No Other
+Cao and Liu [14] HP-D Any Span Generic - - Concat - - QuesD
+Sun et al. [138] HP-L, Sh-L
+QSP, Hy N Span Specific - - Concat - - QuesD
+Dua et al. [36] WH, HP-D Two Span Generic - - RR-S-C - - Other
+Qi et al. [112] HP-D N Span Generic Lexical Iter-QR Concat - - Other
+Qiu et al. [113] HP-D N Span Generic - - RR-S-X Ent No Other
+Shao et al. [128] HP-D N Span Generic - - RR-S-X - - Other
+Bauer et al. [7] Nr N Gen Specific - - RR-S-X Ent Yes Other
+Trivedi et al. [145] MRC, OB Any MCQ Generic - - Concat - - Other
+Khot et al. [73] OB - MCQ Specific Lexical Single Concat - - Other
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 29]]
+A Survey on Multi-hop Question Answering and Generation 111:29
+• Generative answers: For longer sequences of texts, directly matching strings to give a
+binary score fails to tell which answers are closer to the gold answers. Thus, natural language
+generation (NLG) evaluation metrics are required. Kočisk`y et al. [77] propose using Bleu-1,
+Bleu-4, Meteor [5, 108] and ROUGE-L [87] to evaluate predictions on their dataset. Bauer
+et al. [7] also use CIDer [149] for evaluating long answers on NarrativeQA which emphasizes
+on annotator consensus.
+6.1.2 Retrieval evaluation.
+• Preliminary retrieval: Ye et al. [175] propose three evaluation metrics: P EM (Paragraph
+exact match) that measures the ability of the retriever to retrieve all the gold paragraphs
+in the reasoning chain; PR (Paragraph recall) that computes the recall of gold paragraphs
+among the retrieved paragraphs; and AR (answer recall) that checks if any of the retrieved
+paragraph contains the answer. Das et al. [28] propose acc@𝑘 which measures the fraction
+of cases where the model was able to retrieve all the supporting facts within top𝑘 retrieved
+documents. Sidiropoulos et al. [130] define the per-hop retrieval evaluation that treats each
+hop of retrieval independently. First hop retrieval performance is measured by fraction of
+cases where the first gold context is retrieved in the first hop of retrieval. For the second hop,
+the gold paragraph is added to the set of contexts retrieved in the first hop and the ability to
+retrieve the second hop gold paragraph is evaluated. Since the paper only deals with 2-hop
+questions, the definition is originally limited to 2 hops. However, we note that this might be
+extended to𝑛 hops where the𝑛𝑡ℎ retrieval step is evaluated by the ability to retrieve the𝑛𝑡ℎ
+gold paragraph𝑝𝑛 given∪𝑛−1
+𝑖=1({𝑝𝑖}∪ 𝑅𝑖) where𝑅𝑖 is the set of contexts retrieved during𝑖𝑡ℎ
+hop.
+• Re-ranking: Jhamtani and Clark[66] require the models to classify or rank several reasoning
+chains as valid explanations of the answer. Therefore, they use AUC-ROC [96] (area under
+the Receiver Operating Characteristics (ROC) curve) andF1 scores for classification, andP@1
+and Normalized Discounted Cumulative Gain (NDCG) [65] for ranking. P@1 measures
+the fraction of cases where the top ranked chain is valid, whereas NDCG is a commonly used
+metric for evaluating rankings. MRR [65] (Mean Reciprocal Rank) is another ranking based
+metric used for evaluating ranking of reasoning chains [63, 77]. Das et al. [28] also use Mean
+Average Precision (MAP) [90] that considers the relative position of the relevant document
+in the ranked list [69].
+6.2 Adversarial evaluation
+As indicated in Section 3.1, the particular choice of available contexts ( 𝐶) for a question in the
+dataset can lead to ‘reasoning shortcuts’ where a model can correctly answer the question by using
+only a single context. To avoid such shortcuts in the HotpotQA’s distractor setting, the authors
+used TF-IDF for retrieving confusing contexts. Min et al. [102] collect a different set of distractor
+paragraphs for the HotpotQA dataset, to evaluate if the models are robust to this change. Same
+strategy as (Yang et al. [173]) is used while making sure that there is no overlapping distractor
+paragraph with the original set. An adversarial set of comparison questions is also created by
+altering the original question so that the correct answer is inverted (for instance, replacing ’which
+is higher’ by ’which is lower’). Tu et al. [146] use a clever technique to add fake distractors that can
+fool a model which uses single hop reasoning shortcuts to answer the questions. A word in the final
+answer is replaced by another word having a similar GloVe embedding to create a fake answer. For
+instance, ‘Mumbai’ is replaced by ‘Delhi’. All occurrences of the word are replaced in the answer
+passage to get a confusing distractor passage. Since the bridge entity is mentioned in the title of the
+answer passage, all mentions of a word from the title are also replaced with a similar entity. This is
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 30]]
+111:30 Trovato and Tobin, et al.
+done to break the connection between the fake distractor and the first gold context. This ensures
+that there is only a single reasoning chain and that a model cannot answer the question by only
+looking at the answer’s paragraph. Evaluation using the adversarial distractors shows a significant
+drop in the accuracy of a baseline model. Moreover, training using adversarial distractors leads to
+better performance on the original distractors as well. Therefore, more confusing distractors would
+lead to better training as well as testing of the MHQA models.
+6.3 Verifying the extent of multi-hop reasoning
+Despite the improved scores of models indicated by multiple evaluation metrics on various datasets,
+it remains doubtful whether the models are actually performing the multi-hop reasoning and
+following the expected reasoning path for reaching the correct answer. Therefore, different evalua-
+tion techniques and modifications of existing datasets are proposed as benchmarks for testing the
+multi-hop reasoning capabilities of a model.
+• In order to evaluate the interpretability of a model, Ding et al. [34] define the Logical rigor of
+a model as Joint EM/Ans EM. Intuitively, it tries to measure among the questions that were
+answered correctly, what fraction also had correct supporting facts prediction. Surprisingly,
+baselines have scores of only 30.3% and 7.9%.
+• Wang et al. [151] modify and further annotate HotpotQA to provide three settings, where
+the models are provided (1) only the passage containing the answer, (2) both supporting
+passages in random order and (3) both supporting passages in the order of their occurrence
+in the reasoning chain, with the intuition that a model that employs multi-step reasoning to
+answer multi-hop questions should benefit from the supporting passages whereas a model
+that tries to guess the answer directly would instead be confused by the extra informa-
+tion given. Two common techniques, BERT and HotpotReader were tested after employing
+both query-reformulating and co-matching approaches (see Section 5 on taxonomy) and it
+was observed the models could gain very little performance (∼ 1% and 4% accuracy with
+query reformulation and co-matching respectively) by using the reasoning chains provided
+which highlights the inability of the existing techniques to incorporate multi-hop reasoning
+to perform MHQA. Further, it is found that BERT and co-matching show slightly higher
+improvements than their respective counter-parts.
+• Tang et al . [141] use BERT and DecompRC [ 102] to generate single hop sub-questions
+comprising the 2-hop questions in the HotpotQA dataset and the answers to these questions.
+The claim is that if a model employs multi-hop reasoning to answer a question, it should
+trivially be able to answer the individual sub-questions. Surprisingly, for the∼ 50− 60% of
+the questions correctly answered, at least 1 of their corresponding sub-questions could not be
+answered correctly. Further, of the questions where both the sub-questions were answered
+correctly,∼ 10% were incorrectly answered. This indicates that the models tend to jump
+directly to the answer instead of breaking down the questions into simpler questions.
+• Jhamtani and Clark [66] propose three modifications of the QASC dataset that require the
+model to explicitly predict the reasoning chains along with the final answers (explainable
+MHQA). i) eQASC: For each question in QASC, up to 10 candidate reasoning chains are
+automatically generated and each candidate chain is annotated to be valid (if the chain can
+imply the answer) or invalid (otherwise). ii) eQASC-perturbed: In the candidate chains of
+QASC, one word/phrase that is likely to be a bridge entity among two facts, is replaced by a
+similar meaning word ensuring that the chain remains to be valid. This is done by crowd
+sourcing where workers were asked to replace one occurrence of the word that appears
+in different sentences of a candidate chain. iii) eOBQA: a small number of questions in
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 31]]
+A Survey on Multi-hop Question Answering and Generation 111:31
+OpenBookQA are used for generating candidate reasoning chains using sentences present in
+QASC and are annotated by crowd-sourcing. This is done to test the generalization of the
+model on an unseen dataset.
+• Trivedi et al. [144] use the term Disconnected Reasoning (DiRe) for when the model is able
+to arrive at the correct answer using (possibly multiple independent) incomplete reasoning
+chains. To measure disconnected reasoning, a DiRe probe is created that checks if the output
+ofℎ(𝑞,𝐶−{𝑝1}) andℎ(𝑞,𝐶−{𝑝2}) (refer to section 2 for notations) can be trivially combined
+to answer𝑞,𝐶 (’−’ denotes set difference). To discourage disconnected reasoning, the dataset
+is modified to include negative samples where the given 𝐶 is not sufficient to answer the
+question i.e.,𝐶∩𝑃𝑞 ≠𝜙 and the model is required to identify these questions as unanswerable.
+When running the DiRe probe, disconnected reasoning is found to be reduced significantly
+after training using this modification.
+• Inoue et al. [62] argue that requiring the model to only output the supporting facts might
+not be enough to ensure the explainability of the model and the model should be required
+to also output the derivation steps. A derivation step is formalized as a triplet of the form
+⟨𝑑ℎ,𝑑𝑟,𝑑𝑡⟩, where𝑑ℎ,𝑑𝑡 are entities (noun phrases), and 𝑑𝑟 is a verb phrase representing
+a relationship between the two entities. A small subset of the HotpotQA dataset is anno-
+tated by crowd-sourcing and released. Evaluating models on this set indicates the scope of
+improvement on this benchmark.
+Results of these works are significant as they suggest that improved accuracy on existing datasets
+may not correlate well with the models’ ability to perform multi-hop reasoning. Furthermore, they
+highlight the inefficacy of existing models to perform multi-hop reasoning as well as the inefficacy
+of the datasets to evaluate the same. This implies a need for more carefully created datasets and
+challenging benchmarks that do not allow the models to score well without accurately following
+the required reasoning paths. Additionally, it is encouraged to formulate better and more such
+tests/probes that check and prevent the models from using loop-holes instead of doing multi-hop
+reasoning. Above all, it is fair to say that the task of MHQA is far from solved.
+7 MULTI-HOP QUESTION GENERATION
+The task of Multi-Hop Question Generation (MHQG) is to generate a multi-hop question given a
+set of contexts and optionally, an answer. MHQG has widespread applications in multiple domains
+including education, where generating questions that require multiple steps of reasoning can be
+very useful for inspiring critical thinking in students [ 89]. QG also has a direct application for
+chat-bots e.g., in initiating conversations, asking and providing detailed information to the user by
+considering multiple sources of information. MHQG will enhance the ability of these chat-bots to
+ask useful questions [174]. It can also combine with question answering (QA) models as dual tasks
+to boost QA systems with reasoning ability [140].
+The task of traditional question generation (QG) has gained a lot of interest recently [35, 125, 183].
+However, MHQG is a more challenging task than simple QG. It requires the model to first identify
+scattered pieces of information that can be aptly combined to form a valid reasoning path from the
+answer to the question, and then reason over these pieces of information to generate a factual and
+coherent question.
+7.1 Datasets
+The datasets for MHQA can also be used to train and evaluate MHQG models by modifying the
+input and the required output of the model [54, 137]. Since HotpotQA has annotated supporting
+facts, it is able to provide stronger training supervision and hence, it is the most commonly used
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 32]]
+111:32 Trovato and Tobin, et al.
+dataset for MHQG. Kumar et al. [79] use the DecompRC model [102] to decompose each question
+in HotpotQA into two sub questions and fine tune a GPT2-small model to rewrite the first question
+into the second. Yu et al. [176] use HotpotQA as the labelled dataset and ComplexWebQuestions
+[139] and DROP [38] as large corpora for multi-hop questions.
+7.2 Evaluation
+Language generation metrics such as BLEU (BLEU1-4), ROUGE-L, METEOR are usually adopted
+for MHQG [ 54, 79, 119, 137, 176]. QBLEU4 [ 105], a QG metric which was shown to correlate
+significantly better with human judgements, is also used for evaluating MHQG [79, 137]. The task
+also often requires human evaluation of fluency, semantics, answerability etc of the generated
+questions. Sachan et al . [119] also use GLEU [ 165] for their experiments. Another method of
+evaluating MHQG is to measure the gain in performance of SOTA MHQA models when trained
+with data augmentation using the generated questions [79, 107].
+7.3 Methods
+Kumar et al. [79] tackle the problem of difficulty controllable question generation (DQG)[44] by
+generating questions which require a particular number of reasoning hops. The assumption is that
+the difficulty of a question directly correlates to the number of inference steps required to answer it.
+The first step of the proposed algorithm builds a context graph in the same way as [39]. All sentences
+from the context are converted into triplets of the form{𝑠(𝑠𝑢𝑏𝑗𝑒𝑐𝑡),𝑟(𝑟𝑒𝑙𝑎𝑡𝑖𝑜𝑛),𝑜(𝑜𝑏𝑗𝑒𝑐𝑡)} and a
+relational edge of type𝑟 is added from𝑠 to𝑜. Co-reference resolution is used to merge the nodes
+referring to the same entity. Next, a node𝑁0 is sampled as the final answer and with 𝑁0 as the
+root, a maximum spanning tree is extracted. For generating a question with difficulty (same as the
+number of hops) =𝑑, the tree is pruned to have𝑑+ 1 nodes. A GPT2-small model is fine-tuned
+on HotpotQA and used to generate an initial question𝑞0 using𝑁0,𝑁1 and the context sentence
+connecting the two nodes𝑆1. Another GPT-2 model is used to rewrite the question iteratively and
+successively increase the difficulty. In simpler words, for generating a question𝑞𝑑 with difficulty𝑑,
+the re-writer model is run on𝑞0 for𝑑 iterations. While the model performs well for up-to 3 hops,
+the input to the re-writer model becomes too large for subsequent hops and results in questions
+with poor quality.
+Su et al. [137] leverage a graph constructed similar to Qiu et al . [113] to generate multi-hop
+questions. Pre-trained GloVe embeddings and answer tagging embeddings [89] are passed to two Bi-
+LSTM layers to get the initial contextual representations. An attention layer and another Bi-LSTM
+layer is used to get the answer aware context embeddings. An answer aware sub-graph is computed
+by masking the entities that are irrelevant to the answer and Graph Attention Network is applied
+to this sub-graph. The context encodings across the hops are combined via a gated fusion module.
+The Answer embeddings are updated using bi-attention and The Maxout Pointer [183] framework
+is used on top of a Uni-directional LSTM decoder to generate the question. An additional BFS loss
+proposed by [113] is found to improve the performance.
+Gupta et al. [54] exploit the presence of supporting facts in HotpotQA while training by adopting
+an RL reward of the auxiliary task of supporting facts prediction (SFP). Similar to Su et al. [137],
+answer tagging features are concatenated with the document word embeddings and fed to a Bi-
+LSTM encoder. The output of the encoder is shared by the MHQG and supporting fact prediction
+(SFP) models. The SFP model is a binary classifier trained on HotpotQA to output the probability
+of each sentence being a supporting fact. The F1 score between the predicted and ground truth
+supporting facts is added as a reward. The REINFORCE algorithm [162] is used with the self-critical
+sequence training [117] framework to avoid the high variance. In order to make the training more
+stable, a weight history similar to Rennie et al . [117] is added. The output probabilities of the
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 33]]
+A Survey on Multi-hop Question Answering and Generation 111:33
+SFP model are also used to update the answer aware encodings by another Bi-LSTM model. For
+generating the question, a LSTM decoder with global attention mechanism [93] is used along with
+the copy mechanism [53, 126].
+Sachan et al. [119] argue that using standard transformers instead of Graph networks should
+be enough to reason about the relations between entities for forming multi-hop questions. A
+transformer is extended with sentence id embeddings and answer token indicator embeddings
+and trained with an additional contrastive loss as regularization. The contrastive learning setup
+assumes supporting fact sentences as positive samples and others as negative samples and a binary
+classifier consisting of a MLP. A significant mismatch in the distribution of question length over
+train and dev set of HotpotQA is observed and mitigated by filtering out all the questions that are
+more than 30 words long. Most of the pruned questions are from the train-easy subset. Both data
+filtering and contrastive training are found to boost the performance significantly.
+A novel graph-augmented transformer encoder (GATE) is proposed which has two additional
+layers than the standard transformer encoder (TE): a) Graph-attention sub-layer computes the
+similarity scores for attention using only the nodes that are connected in a dynamically created
+graph. The graph is a multi-relational graph with three types of nodes- named-entity mentions,
+co-referent-entities and sentence-ids. b) Fused attention sub-layer which uses a MLP with ReLU
+activation to aggregate the graph-attention embeddings and the TE embeddings. Experiments show
+that the added layers alone do not improve the performance significantly whereas an ensemble of
+TE and GATE does.
+Pan et al. [107] propose a question generation technique for the task of unsupervised MHQA.
+Following HotpotQA, their method generates two types of questions:
+Bridge questions: Given two contexts as inputs, all entities common to the two contexts are consid-
+ered as bridge entities. A Google T5 model [114] is fine-tuned on SQuAD to generate two single
+hop questions using the answer entity and the bridge entity respectively. The latter question is
+converted to a declarative form,𝑠 following Demszky et al. [31]. The bridge entity in the bridge
+entity question is replaced with "The [MASK] that {s}" and BERT -Large is used to fill the [MASK].
+Comparison questions: Entities with NER types Nationality, Location, DateTime and Number are
+treated as potential comparative properties. Two single hop questions are generated on two enti-
+ties of the same NER type and a pre-defined template is used to combine these into a multi-hop
+comparison question.
+For generating questions using a table, a GPT-TabGen model [20] is used to generate sentences that
+describe a given entity using information from the given table. These sentences are then used for
+generating either bridge or comparison type questions. We refer the reader to Figure 4 of the original
+paper Pan et al. [107] for a better understanding of the different types of generated questions. A
+pre-trained GPT-2 model is used to filter questions that are unnatural or dis-fluent. A BART model
+[85] is also used to paraphrase the generated questions. The generated questions are then used to
+train the model resulting in a zero shot algorithm.
+Yu et al. [176] aim to tackle MHQG in a low resource setting. Specifically, the model uses a
+small amount of labelled data𝐷𝐿, in the form of(𝑐𝑜𝑛𝑡𝑒𝑥𝑡,𝑎𝑛𝑠𝑤𝑒𝑟,𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛 ) triplets, and a large
+set of multi-hop questions𝐷𝑈 . The idea is to first learn the semantics of multi-hop questions by
+training a neural hidden semi-Markov model [27] on the unlabelled data𝐷𝑈 . The model uses two
+latent variables for parameterizing the similar segments in questions from𝐷𝑈 : a) a state variable𝑧𝑡,
+indicating which segment the𝑡𝑡ℎ term belongs to, and b) a length variable𝑙𝑡, specifying the length
+of the current segment. The term probabilities are computed using a GRU decoder followed by an
+attention layer.
+The patterns learned in the first step are used as priors for the QG model for regularization. Prior
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 34]]
+111:34 Trovato and Tobin, et al.
+is estimated by sampling a sequence of states𝑧𝑡 having length𝑙𝑡. The reasoning chain extraction
+is similar to as described in Su et al . [137]. For encoding the textual input, BERT embeddings
+are passed to a bi-GRU followed by an attention layer. The decoder is another GRU with a copy
+mechanism [52] which is regularized to fit the prior pattern. The training loss is the weighted sum
+of the cross entropy loss and RL policy gradient [ 86]. The reward function evaluates a) fluency
+(following Zhang and Lapata [180]), b) Answerability (using QBLEU4), and c) Semantics (using
+WMD).
+8 CONCLUSIONS AND FUTURE WORK
+Multi-hop QA has been researched quite frequently in the recent years with multiple diverse models
+proposed that aim to model the multi-step retrieval-reasoning process and achieve promising
+improvements on existing datasets and benchmarks. Such systems capable of performing multi-
+step reasoning have a variety of applications ranging from chat-bot assistants that are capable of
+interactive conversations, to search engines that are capable to retrieve results that may be relevant
+but not reachable directly from the query text. At the same time the task of MHQA is significantly
+more challenging than its single hop counterpart. Since paragraphs multiple hops away from the
+question could share few common words and little semantic relation with the question [34], the
+task to retrieve such contexts is challenging and suffers from semantic drift. The ability of current
+models to combine multiple contexts for reasoning is also limited. Further challenges for solving
+MHQA is the difficult process of creating datasets that require the models to perform multi-hop
+reasoning, as well as the task of evaluating the models’ abilities to do so without any hacks. Some
+challenging benchmarks and evaluation methods have been recently proposed that bring out some
+surprising and interesting observations. These results point out to several limitations of existing
+systems and call for further research.
+Below, we list and discuss some of these directions for future research (including ones originating
+from the currently recognized shortcomings) which we believe could be promising to be explored.
+8.1 Flexible any-hop model
+As discussed in Section 5, majority of the existing methods for MHQA are either limited to two
+hops or require the number of hops to be a hyper-parameter. Since natural questions can require
+any number of reasoning hops, this attribute of existing models is artificially limiting. QA systems
+should be flexible and robust to the number of hops in a question in order to be practically usable.
+In order to do so, methods following the type III and IV in Figure 2 should be explored with a
+greater interest since feedback from the answering module can serve as a useful stopping criteria.
+8.2 Explainable multi-hop QA
+Despite the impressive gains in performance on various multi-hop datasets, it is not evident whether
+the models are performing the multi-step reasoning or just guessing the answers. Therefore,
+following the release of HotpotQA, a large number of works have focused on explainable MHQA.
+Apart from the standard evaluation metrics, various evaluation methods and dataset benchmarks
+have been proposed to test the explainability of the models which have revealed several significant
+results. Further such benchmarks and evaluation strategies are encouraged to measure and reflect
+the true progress of models in performing multi-hop reasoning.
+8.3 Better datasets
+Many works have highlighted the limitations of existing MHQA datasets. Chen and Durrett [17]
+show experimentally that multi-choice questions are easier to hack by models, regardless of number
+of answer candidates being small or very large. Similarly, Min et al. [102] show that the distractor
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 35]]
+A Survey on Multi-hop Question Answering and Generation 111:35
+setting, even with as many as 500 distractors, is easier to hack for single-hop QA models. Yang
+et al. [173] and Zhang et al. [179] argue that datasets that are created using KBs suffer from lack
+of diversity in question and answer types. Following these observations, it is encouraged that the
+future datasets are in the open-domain setting, have questions with either span-based or generative
+answers, and do not rely completely on the structure of existing KBs.
+Das et al. [28], Xiong et al . [167], Min et al . [102] and Min et al . [100] find that a significant
+portion of questions in the existing datasets are single-hop solvable due to a variety of reasons.
+One of these reasons is that the source of the questions is same as the set of contexts. Therefore
+datasets like [23, 77, 143, 154, 159] that use separate sources for generating and answering questions
+are encouraged. However, attention needs to be given to the cases where there is a discrepancy
+between what is mentioned in the two sources [40].
+Most of the existing works have focused on datasets with MCQ or questions with span answers
+and more focus on the more challenging problem of generative MHQA is desirable.
+8.4 Better evaluation metrics
+As discussed in Section 6, a variety of evaluation metrics have been used for evaluating MHQA
+models. However, existing metrics face some challenges and might not be sufficient for evaluating
+MHQA. Since MHQA is a more complex task compared to single-hop QA, more metrics specific to
+MHQA are encouraged. One promising direction is to perform per-hop evaluation and accumulate
+the per-hop scores to get a final score. This kind of evaluation would require the models to be
+explainable as well as interpretable.
+Some challenges are common to both single-hop and multi-hop QA evaluation metrics. For
+instance, while evaluating span based answers, metrics based on lexical matching would mark U.S.
+as incorrect when the gold answer is United States [40]. Therefore, evaluation metrics should be
+able to deal with synonyms when matching the answers. Another issue might be a metric giving a
+score of 0 to the answer U.K. when the gold answer is London. These cases are frequent in datasets
+like WikiHop where the sources of question and the contexts are different [30] and might have
+answers mentioned with different granularity. Therefore, it might be useful to give some partial
+score for the answer being geographically close or for the answer having a coarser granularity.
+Similarly, answering January, 1989 should earn some score if the gold answer is December, 1988
+due to the predicted answer being temporally close to the gold answer. Some partial score can also
+be rewarded to answers having a coarser granularity (December, 1988 vs 1988). On similar lines,
+using hypernym relations from ConceptNet or WordNet [98] for evaluating the answer can be a
+possible direction.
+Following a similar reasoning, the evaluation should match the semantics of the answer rather
+than the lexical overlap. Therefore, evaluation metrics like word mover similarity [81] or sentence
+mover similarity [25] that perform soft matching over embeddings might be a promising direction.
+Since the evaluation of language generation tasks are widely known to have a scope of improvement,
+evaluation of generative MHQA is also an open problem and new evaluation techniques are
+encouraged.
+8.5 Methods to incorporate commonsense
+A hop in multi-hop reasoning can be performed using some retrieved context, where the context
+may either be retrieved from the corpus or from the commonsense knowledge. Fang et al . [40]
+find that 16% of the failures of their model were caused by missing commonsense background
+knowledge. Bauer et al. [7] propose a novel method for incorporating commonsense for MHQA
+that shows impressive results. More techniques for exploiting the rich commonsense knowledge
+bases to perform multi-step reasoning can be a promising direction to explore.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 36]]
+111:36 Trovato and Tobin, et al.
+8.6 Arithmetic questions
+The inability of QA systems to perform arithmetic operations is well known [ 57, 109, 124] and
+this inability is exacerbated in the multi-hop setting. Min et al . [100] observe that 45% of the
+comparison questions in HotpotQA are numerical questions. Fang et al. [40], Min et al. [102], Qiu
+et al. [113] find that their model is unable to give a correct answer when the query is a comparison
+between two dates “February 20, 1959” and “February 10, 1967”. Arithmetic calculation may also
+be required for non-comparison type questions. For example, answering "Who was the president
+of USA in 1994" from the context "Bill Clinton: 1993-2001" requires some arithmetic computation.
+Wang et al. [153] approached this kind of temporal problems by computing the overlap of content
+time expressions that occur in text with the computed question’s time scope using kernel density
+estimate. Another example is [155] that answers "when" type questions by predicting the event
+dates based on the analysis of multi-variate time series derived from underlying news collection.
+Multi-hop QA systems that are capable of solving arithmetic comparisons and computations would
+greatly enhance accuracy of MHQA.
+Similarly, it is observed that some particular types of questions (temporal, geographical, count)
+are more challenging than others [ 30, 34, 102, 181]. Figure 3 in Zhang et al . [181] shows the
+complexity and model performance on different types of questions in HotpotQA. Targeting the
+more challenging questions specifically could also lead to better MHQA systems.
+REFERENCES
+[1] Joshua Ainslie, Santiago Ontanon, Chris Alberti, Vaclav Cvicek, Zachary Fisher, Philip Pham, Anirudh Ravula, Sumit
+Sanghai, Qifan Wang, and Li Yang. 2020. ETC: Encoding Long and Structured Inputs in Transformers. In Proceedings
+of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP) . Association for Computational
+Linguistics, Online, 268–284. https://doi.org/10.18653/v1/2020.emnlp-main.19
+[2] Ali Mohamed Nabil Allam and Mohamed Hassan Haggag. 2012. The question answering systems: A survey. Interna-
+tional Journal of Research and Reviews in Information Sciences (IJRRIS) 2, 3 (2012).
+[3] David Alvarez-Melis and Tommi Jaakkola. 2017. A causal framework for explaining the predictions of black-box
+sequence-to-sequence models. In Proceedings of the 2017 Conference on Empirical Methods in Natural Language
+Processing. Association for Computational Linguistics, Copenhagen, Denmark, 412–421. https://doi.org/10.18653/v1/
+D17-1042
+[4] Leila Arras, Franziska Horn, Grégoire Montavon, Klaus-Robert Müller, and Wojciech Samek. 2016. What is Relevant
+in a Text Document?": An Interpretable Machine Learning Approach. CoRR abs/1612.07843 (2016). arXiv preprint
+arXiv:1612.07843 (2016).
+[5] Satanjeev Banerjee and Alon Lavie. 2005. METEOR: An Automatic Metric for MT Evaluation with Improved
+Correlation with Human Judgments. InProceedings of the ACL Workshop on Intrinsic and Extrinsic Evaluation Measures
+for Machine Translation and/or Summarization . Association for Computational Linguistics, Ann Arbor, Michigan,
+65–72. https://aclanthology.org/W05-0909
+[6] Regina Barzilay, Kathleen McKeown, and Michael Elhadad. 1999. Information fusion in the context of multi-document
+summarization. In Proceedings of the 37th annual meeting of the Association for Computational Linguistics . 550–557.
+[7] Lisa Bauer, Yicheng Wang, and Mohit Bansal. 2018. Commonsense for Generative Multi-Hop Question Answering
+Tasks. In Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing . 4220–4230.
+[8] Ruben Becker, Federico Corò, Gianlorenzo D’Angelo, and Hugo Gilbert. 2020. Balancing Spreads of Influence
+in a Social Network. Proceedings of the AAAI Conference on Artificial Intelligence 34 (April 2020), 3–10. https:
+//doi.org/10.1609/aaai.v34i01.5327
+[9] Chandra Sekhar Bhagavatula, Thanapon Noraset, and Doug Downey. 2013. Methods for exploring and mining tables
+on wikipedia. In Proceedings of the ACM SIGKDD workshop on interactive data exploration and analytics . 18–26.
+[10] Or Biran and Courtenay Cotton. 2017. Explanation and justification in machine learning: A survey. In IJCAI-17
+workshop on explainable AI (XAI) , Vol. 8. 8–13.
+[11] Emanuela Boros, Jose G. Moreno, and Antoine Doucet. 2021. Event Detection as Question Answering with Entity
+Information. CoRR abs/2104.06969 (2021). arXiv:2104.06969 https://arxiv.org/abs/2104.06969
+[12] Abdelghani Bouziane, Djelloul Bouchiha, Noureddine Doumi, and Mimoun Malki. 2015. Question answering systems:
+survey and trends. Procedia Computer Science 73 (2015), 366–375.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 37]]
+A Survey on Multi-hop Question Answering and Generation 111:37
+[13] Samuel R Bowman, Gabor Angeli, Christopher Potts, and Christopher D Manning. 2015. A large annotated corpus
+for learning natural language inference. In Conference on Empirical Methods in Natural Language Processing, EMNLP
+2015. Association for Computational Linguistics (ACL), 632–642.
+[14] Xing Cao and Yun Liu. 2021. Coarse-grained decomposition and fine-grained interaction for multi-hop question
+answering. Journal of Intelligent Information Systems (2021), 1–21.
+[15] Yu Cao, Meng Fang, and Dacheng Tao. 2019. BAG: Bi-directional Attention Entity Graph Convolutional Network for
+Multi-hop Reasoning Question Answering. In Proceedings of the 2019 Conference of the North American Chapter of the
+Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers) . 357–362.
+[16] Danqi Chen, Adam Fisch, Jason Weston, and Antoine Bordes. 2017. Reading Wikipedia to Answer Open-Domain
+Questions. In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long
+Papers). Association for Computational Linguistics, Vancouver, Canada, 1870–1879. https://doi.org/10.18653/v1/P17-
+1171
+[17] Jifan Chen and Greg Durrett. 2019. Understanding Dataset Design Choices for Multi-hop Reasoning. In Proceedings of
+the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language
+Technologies, Volume 1 (Long and Short Papers) . Association for Computational Linguistics, Minneapolis, Minnesota,
+4026–4032. https://doi.org/10.18653/v1/N19-1405
+[18] Jifan Chen, Shih-ting Lin, and Greg Durrett. 2019. Multi-hop question answering via reasoning chains. arXiv preprint
+arXiv:1910.02610 (2019).
+[19] Qian Chen, Xiaodan Zhu, Zhen-Hua Ling, Si Wei, Hui Jiang, and Diana Inkpen. 2017. Enhanced LSTM for Natural
+Language Inference. In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume
+1: Long Papers). Association for Computational Linguistics, Vancouver, Canada, 1657–1668. https://doi.org/10.18653/
+v1/P17-1152
+[20] Wenhu Chen, Jianshu Chen, Yu Su, Zhiyu Chen, and William Yang Wang. 2020. Logical Natural Language Generation
+from Open-Domain Tables. CoRR abs/2004.10404 (2020). arXiv:2004.10404 https://arxiv.org/abs/2004.10404
+[21] Wenhu Chen, Hanwen Zha, Zhiyu Chen, Wenhan Xiong, Hong Wang, and William Yang Wang. 2020. HybridQA:
+A Dataset of Multi-Hop Question Answering over Tabular and Textual Data. In Findings of the Association for
+Computational Linguistics: EMNLP 2020 . 1026–1036.
+[22] Kyunghyun Cho, B van Merrienboer, Caglar Gulcehre, F Bougares, H Schwenk, and Yoshua Bengio. 2014. Learning
+phrase representations using RNN encoder-decoder for statistical machine translation. In Conference on Empirical
+Methods in Natural Language Processing (EMNLP 2014) .
+[23] Eunsol Choi, He He, Mohit Iyyer, Mark Yatskar, Wen-tau Yih, Yejin Choi, Percy Liang, and Luke Zettlemoyer. 2018.
+QuAC : Question Answering in Context.CoRR abs/1808.07036 (2018). arXiv:1808.07036 http://arxiv.org/abs/1808.07036
+[24] Kenneth Ward Church and Patrick Hanks. 1990. Word Association Norms, Mutual Information, and Lexicography.
+Computational Linguistics 16, 1 (1990), 22–29. https://aclanthology.org/J90-1003
+[25] Elizabeth Clark, Asli Celikyilmaz, and Noah A Smith. 2019. Sentence mover’s similarity: Automatic evaluation
+for multi-sentence texts. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics .
+2748–2760.
+[26] Peter Clark, Isaac Cowhey, Oren Etzioni, Tushar Khot, Ashish Sabharwal, Carissa Schoenick, and Oyvind Tafjord.
+2018. Think you have solved question answering? try arc, the ai2 reasoning challenge. arXiv preprint arXiv:1803.05457
+(2018).
+[27] Hanjun Dai, Bo Dai, Yanming Zhang, Shuang Li, and Le Song. 2017. Recurrent Hidden Semi-Markov Model. In ICLR.
+[28] Rajarshi Das, Ameya Godbole, Dilip Kavarthapu, Zhiyu Gong, Abhishek Singhal, Mo Yu, Xiaoxiao Guo, Tian Gao,
+Hamed Zamani, Manzil Zaheer, et al. 2019. Multi-step entity-centric information retrieval for multi-hop question
+answering. In Proceedings of the 2nd Workshop on Machine Reading for Question Answering . 113–118.
+[29] Pradeep Dasigi, Kyle Lo, Iz Beltagy, Arman Cohan, Noah A. Smith, and Matt Gardner. 2021. A Dataset of Information-
+Seeking Questions and Answers Anchored in Research Papers. In Proceedings of the 2021 Conference of the North
+American Chapter of the Association for Computational Linguistics: Human Language Technologies . Association for
+Computational Linguistics, Online, 4599–4610. https://doi.org/10.18653/v1/2021.naacl-main.365
+[30] Nicola De Cao, Wilker Aziz, and Ivan Titov. 2019. Question Answering by Reasoning Across Documents with Graph
+Convolutional Networks. In Proceedings of the 2019 Conference of the North American Chapter of the Association for
+Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers) . 2306–2317.
+[31] Dorottya Demszky, Kelvin Guu, and Percy Liang. 2018. Transforming Question Answering Datasets Into Natural
+Language Inference Datasets. CoRR abs/1809.02922 (2018). arXiv:1809.02922 http://arxiv.org/abs/1809.02922
+[32] Dennis Diefenbach, Vanessa Lopez, Kamal Singh, and Pierre Maret. 2018. Core techniques of question answering
+systems over knowledge bases: a survey. Knowledge and Information systems 55, 3 (2018), 529–569.
+[33] Eleftherios Dimitrakis, Konstantinos Sgontzos, and Yannis Tzitzikas. 2020. A survey on question answering systems
+over linked data and documents. Journal of intelligent information systems 55, 2 (2020), 233–259.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 38]]
+111:38 Trovato and Tobin, et al.
+[34] Ming Ding, Chang Zhou, Qibin Chen, Hongxia Yang, and Jie Tang. 2019. Cognitive Graph for Multi-Hop Reading
+Comprehension at Scale. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics .
+Association for Computational Linguistics, Florence, Italy, 2694–2703. https://doi.org/10.18653/v1/P19-1259
+[35] Xinya Du, Junru Shao, and Claire Cardie. 2017. Learning to Ask: Neural Question Generation for Reading Comprehen-
+sion. In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) .
+Association for Computational Linguistics, Vancouver, Canada, 1342–1352. https://doi.org/10.18653/v1/P17-1123
+[36] Dheeru Dua, Cicero dos Santos, Patrick Ng, Ben Athiwaratkun, Bing Xiang, Matt Gardner, and Sameer Singh. 2021.
+Generative Context Pair Selection for Multi-hop Question Answering. In Proceedings of the 2021 Conference on
+Empirical Methods in Natural Language Processing . 7009–7015.
+[37] Dheeru Dua, Sameer Singh, and Matt Gardner. 2020. Benefits of Intermediate Annotations in Reading Compre-
+hension. In Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics . Association for
+Computational Linguistics, Online, 5627–5634. https://doi.org/10.18653/v1/2020.acl-main.497
+[38] Dheeru Dua, Yizhong Wang, Pradeep Dasigi, Gabriel Stanovsky, Sameer Singh, and Matt Gardner. 2019. DROP: A
+Reading Comprehension Benchmark Requiring Discrete Reasoning Over Paragraphs. In Proceedings of the 2019 Con-
+ference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies,
+Volume 1 (Long and Short Papers) . Association for Computational Linguistics, Minneapolis, Minnesota, 2368–2378.
+https://doi.org/10.18653/v1/N19-1246
+[39] Angela Fan, Claire Gardent, Chloé Braud, and Antoine Bordes. 2019. Using Local Knowledge Graph Construction to
+Scale Seq2Seq Models to Multi-Document Inputs. InProceedings of the 2019 Conference on Empirical Methods in Natural
+Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) .
+Association for Computational Linguistics, Hong Kong, China, 4186–4196. https://doi.org/10.18653/v1/D19-1428
+[40] Yuwei Fang, Siqi Sun, Zhe Gan, Rohit Pillai, Shuohang Wang, and Jingjing Liu. 2020. Hierarchical Graph Network
+for Multi-hop Question Answering. In Proceedings of the 2020 Conference on Empirical Methods in Natural Language
+Processing (EMNLP). 8823–8838.
+[41] Yair Feldman and Ran El-Yaniv. 2019. Multi-Hop Paragraph Retrieval for Open-Domain Question Answering. In
+Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics . Association for Computational
+Linguistics, Florence, Italy, 2296–2309. https://doi.org/10.18653/v1/P19-1222
+[42] Yufei Feng, Mo Yu, Wenhan Xiong, Xiaoxiao Guo, Junjie Huang, Shiyu Chang, Murray Campbell, Michael Greenspan,
+and Xiaodan Zhu. 2020. Learning to recover reasoning chains for multi-hop question answering via cooperative
+games. arXiv preprint arXiv:2004.02393 (2020).
+[43] Bin Fu, Yunqi Qiu, Chengguang Tang, Yang Li, Haiyang Yu, and Jian Sun. 2020. A survey on complex question
+answering over knowledge base: Recent advances and challenges. arXiv preprint arXiv:2007.13069 (2020).
+[44] Yifan Gao, Jianan Wang, Lidong Bing, Irwin King, and Michael R. Lyu. 2018. Difficulty Controllable Question
+Generation for Reading Comprehension. CoRR abs/1807.03586 (2018). arXiv:1807.03586 http://arxiv.org/abs/1807.
+03586
+[45] Albert Gatt and Emiel Krahmer. 2018. Survey of the state of the art in natural language generation: Core tasks,
+applications and evaluation. Journal of Artificial Intelligence Research 61 (2018), 65–170.
+[46] Mor Geva, Yoav Goldberg, and Jonathan Berant. 2019. Are We Modeling the Task or the Annotator? An Investigation of
+Annotator Bias in Natural Language Understanding Datasets. InProceedings of the 2019 Conference on Empirical Methods
+in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-
+IJCNLP). Association for Computational Linguistics, Hong Kong, China, 1161–1166. https://doi.org/10.18653/v1/D19-
+1107
+[47] Mor Geva, Eric Malmi, Idan Szpektor, and Jonathan Berant. 2019. DiscoFuse: A Large-Scale Dataset for Discourse-
+Based Sentence Fusion. In Proceedings of the 2019 Conference of the North American Chapter of the Association for
+Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers) . 3443–3455.
+[48] Demian Gholipour Ghalandari and Georgiana Ifrim. 2020. Examining the state-of-the-art in news timeline summa-
+rization. arXiv preprint arXiv:2005.10107 (2020).
+[49] Leilani H Gilpin, David Bau, Ben Z Yuan, Ayesha Bajwa, Michael Specter, and Lalana Kagal. 2018. Explaining
+explanations: An overview of interpretability of machine learning. In 2018 IEEE 5th International Conference on data
+science and advanced analytics (DSAA) . IEEE, 80–89.
+[50] Jade Goldstein, Vibhu O Mittal, Jaime G Carbonell, and Mark Kantrowitz. 2000. Multi-document summarization by
+sentence extraction. In NAACL-ANLP 2000 workshop: automatic summarization.
+[51] Alex Graves, Greg Wayne, and Ivo Danihelka. 2014. Neural turing machines. arXiv preprint arXiv:1410.5401 (2014).
+[52] Jiatao Gu, Zhengdong Lu, Hang Li, and Victor O.K. Li. 2016. Incorporating Copying Mechanism in Sequence-to-
+Sequence Learning. InProceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1:
+Long Papers). Association for Computational Linguistics, Berlin, Germany, 1631–1640. https://doi.org/10.18653/v1/P16-
+1154
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 39]]
+A Survey on Multi-hop Question Answering and Generation 111:39
+[53] Caglar Gulcehre, Sungjin Ahn, Ramesh Nallapati, Bowen Zhou, and Yoshua Bengio. 2016. Pointing the Unknown
+Words. In Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long
+Papers). Association for Computational Linguistics, Berlin, Germany, 140–149. https://doi.org/10.18653/v1/P16-1014
+[54] Deepak Gupta, Hardik Chauhan, Ravi Tej Akella, Asif Ekbal, and Pushpak Bhattacharyya. 2020. Reinforced Multi-task
+Approach for Multi-hop Question Generation. In Proceedings of the 28th International Conference on Computational
+Linguistics. 2760–2775.
+[55] Suchin Gururangan, Swabha Swayamdipta, Omer Levy, Roy Schwartz, Samuel Bowman, and Noah A. Smith. 2018.
+Annotation Artifacts in Natural Language Inference Data. In Proceedings of the 2018 Conference of the North American
+Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 2 (Short Papers) .
+Association for Computational Linguistics, New Orleans, Louisiana, 107–112. https://doi.org/10.18653/v1/N18-2017
+[56] Aria Haghighi and Lucy Vanderwende. 2009. Exploring content models for multi-document summarization. In
+Proceedings of human language technologies: The 2009 annual conference of the North American Chapter of the Association
+for Computational Linguistics. 362–370.
+[57] Dan Hendrycks, Collin Burns, Saurav Kadavath, Akul Arora, Steven Basart, Eric Tang, Dawn Song, and Jacob
+Steinhardt. 2021. Measuring mathematical problem solving with the math dataset. arXiv preprint arXiv:2103.03874
+(2021).
+[58] Karl Moritz Hermann, Tomas Kocisky, Edward Grefenstette, Lasse Espeholt, Will Kay, Mustafa Suleyman, and Phil
+Blunsom. 2015. Teaching machines to read and comprehend. Advances in neural information processing systems 28
+(2015).
+[59] Sepp Hochreiter and Jürgen Schmidhuber. 1997. Long short-term memory.Neural computation 9, 8 (1997), 1735–1780.
+[60] Konrad Höffner, Sebastian Walter, Edgard Marx, Ricardo Usbeck, Jens Lehmann, and Axel-Cyrille Ngonga Ngomo.
+2017. Survey on challenges of question answering in the semantic web. Semantic Web 8, 6 (2017), 895–920.
+[61] Yongjie Huang and Meng Yang. 2021. Breadth First Reasoning Graph for Multi-hop Question Answering. InProceedings
+of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language
+Technologies. Association for Computational Linguistics, Online, 5810–5821. https://doi.org/10.18653/v1/2021.naacl-
+main.464
+[62] Naoya Inoue, Pontus Stenetorp, and Kentaro Inui. 2020. R4C: A Benchmark for Evaluating RC Systems to Get the Right
+Answer for the Right Reason. InProceedings of the 58th Annual Meeting of the Association for Computational Linguistics .
+Association for Computational Linguistics, Online, 6740–6750. https://doi.org/10.18653/v1/2020.acl-main.602
+[63] Peter Jansen. 2018. Multi-hop Inference for Sentence-level TextGraphs: How Challenging is Meaningfully Combining
+Information for Science Question Answering?. In Proceedings of the Twelfth Workshop on Graph-Based Methods for
+Natural Language Processing (TextGraphs-12). 12–17.
+[64] Peter Jansen, Elizabeth Wainwright, Steven Marmorstein, and Clayton Morrison. 2018. WorldTree: A Corpus of
+Explanation Graphs for Elementary Science Questions supporting Multi-hop Inference. In Proceedings of the Eleventh
+International Conference on Language Resources and Evaluation (LREC 2018). European Language Resources Association
+(ELRA), Miyazaki, Japan. https://aclanthology.org/L18-1433
+[65] Kalervo Järvelin and Jaana Kekäläinen. 2002. Cumulated Gain-Based Evaluation of IR Techniques. ACM Trans. Inf.
+Syst. 20, 4 (oct 2002), 422–446. https://doi.org/10.1145/582415.582418
+[66] Harsh Jhamtani and Peter Clark. 2020. Learning to Explain: Datasets and Models for Identifying Valid Reasoning
+Chains in Multihop Question-Answering. In Proceedings of the 2020 Conference on Empirical Methods in Natural
+Language Processing (EMNLP). Association for Computational Linguistics, Online, 137–150. https://doi.org/10.18653/
+v1/2020.emnlp-main.10
+[67] Robin Jia and Percy Liang. 2017. Adversarial Examples for Evaluating Reading Comprehension Systems. InProceedings
+of the 2017 Conference on Empirical Methods in Natural Language Processing . 2021–2031.
+[68] Qiao Jin, Zheng Yuan, Guangzhi Xiong, Qianlan Yu, Huaiyuan Ying, Chuanqi Tan, Mosha Chen, Songfang Huang,
+Xiaozhong Liu, and Sheng Yu. 2022. Biomedical Question Answering: A Survey of Approaches and Challenges. ACM
+Computing Surveys (CSUR) 55, 2 (2022), 1–36.
+[69] Rudolf Kadlec, Ondrej Bajgar, and Jan Kleindienst. 2017. Knowledge Base Completion: Baselines Strike Back. In
+Proceedings of the 2nd Workshop on Representation Learning for NLP . Association for Computational Linguistics,
+Vancouver, Canada, 69–74. https://doi.org/10.18653/v1/W17-2609
+[70] Jacob Devlin Ming-Wei Chang Kenton and Lee Kristina Toutanova. 2019. BERT: Pre-training of Deep Bidirectional
+Transformers for Language Understanding. In Proceedings of NAACL-HLT. 4171–4186.
+[71] Daniel Khashabi, Snigdha Chaturvedi, Michael Roth, Shyam Upadhyay, and Dan Roth. 2018. Looking beyond the
+surface: A challenge set for reading comprehension over multiple sentences. In Proceedings of the 2018 Conference of
+the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1
+(Long Papers). 252–262.
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 40]]
+111:40 Trovato and Tobin, et al.
+[72] Tushar Khot, Peter Clark, Michal Guerquin, Peter Jansen, and Ashish Sabharwal. 2020. Qasc: A dataset for question
+answering via sentence composition. InProceedings of the AAAI Conference on Artificial Intelligence, Vol. 34. 8082–8090.
+[73] Tushar Khot, Ashish Sabharwal, and Peter Clark. 2019. What’s Missing: A Knowledge Gap Guided Approach for
+Multi-hop Question Answering. In Proceedings of the 2019 Conference on Empirical Methods in Natural Language
+Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) . 2814–2828.
+[74] Jin-Hwa Kim, Jaehyun Jun, and Byoung-Tak Zhang. 2018. Bilinear attention networks.Advances in Neural Information
+Processing Systems 31 (2018).
+[75] Thomas N. Kipf and Max Welling. 2016. Semi-Supervised Classification with Graph Convolutional Networks. CoRR
+abs/1609.02907 (2016). arXiv:1609.02907 http://arxiv.org/abs/1609.02907
+[76] Thomas N. Kipf and Max Welling. 2016. Semi-Supervised Classification with Graph Convolutional Networks. CoRR
+abs/1609.02907 (2016). arXiv:1609.02907 http://arxiv.org/abs/1609.02907
+[77] Tomáš Kočisk`y, Jonathan Schwarz, Phil Blunsom, Chris Dyer, Karl Moritz Hermann, Gábor Melis, and Edward
+Grefenstette. 2018. The narrativeqa reading comprehension challenge.Transactions of the Association for Computational
+Linguistics 6 (2018), 317–328.
+[78] Olga Kovaleva, Alexey Romanov, Anna Rogers, and Anna Rumshisky. 2019. Revealing the Dark Secrets of BERT. In
+Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint
+Conference on Natural Language Processing (EMNLP-IJCNLP) . Association for Computational Linguistics, Hong Kong,
+China, 4365–4374. https://doi.org/10.18653/v1/D19-1445
+[79] Vishwajeet Kumar, Yuncheng Hua, Ganesh Ramakrishnan, Guilin Qi, Lianli Gao, and Yuan-Fang Li. 2019. Difficulty-
+controllable multi-hop question generation from knowledge graphs. In International Semantic Web Conference .
+Springer, 382–398.
+[80] Ghader Kurdi, Jared Leo, Bijan Parsia, Uli Sattler, and Salam Al-Emari. 2019. A Systematic Review of Automatic
+Question Generation for Educational Purposes. International Journal of Artificial Intelligence in Education 30 (11 2019).
+https://doi.org/10.1007/s40593-019-00186-y
+[81] Matt Kusner, Yu Sun, Nicholas Kolkin, and Kilian Weinberger. 2015. From word embeddings to document distances.
+In International conference on machine learning . PMLR, 957–966.
+[82] Yunshi Lan, Gaole He, Jinhao JIANG, Jing JIANG, Wayne Xin ZHAO, and Ji-Rong WEN. 2021. A survey on complex
+knowledge base question answering: Methods, challenges and solutions. IJCAI.
+[83] Zhenzhong Lan, Mingda Chen, Sebastian Goodman, Kevin Gimpel, Piyush Sharma, and Radu Soricut. 2019. ALBERT:
+A Lite BERT for Self-supervised Learning of Language Representations. In International Conference on Learning
+Representations.
+[84] Logan Lebanoff, John Muchovej, Franck Dernoncourt, Doo Soon Kim, Seokhwan Kim, Walter Chang, and Fei Liu.
+2019. Analyzing Sentence Fusion in Abstractive Summarization. In Proceedings of the 2nd Workshop on New Frontiers
+in Summarization. 104–110.
+[85] Mike Lewis, Yinhan Liu, Naman Goyal, Marjan Ghazvininejad, Abdelrahman Mohamed, Omer Levy, Veselin Stoyanov,
+and Luke Zettlemoyer. 2019. BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation,
+Translation, and Comprehension. CoRR abs/1910.13461 (2019). arXiv:1910.13461 http://arxiv.org/abs/1910.13461
+[86] Jiwei Li, Will Monroe, Tianlin Shi, Sébastien Jean, Alan Ritter, and Dan Jurafsky. 2017. Adversarial Learning for Neural
+Dialogue Generation. In Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing .
+Association for Computational Linguistics, Copenhagen, Denmark, 2157–2169. https://doi.org/10.18653/v1/D17-1230
+[87] Chin-Yew Lin. 2004. ROUGE: A Package for Automatic Evaluation of Summaries. In Text Summarization Branches
+Out. Association for Computational Linguistics, Barcelona, Spain, 74–81. https://aclanthology.org/W04-1013
+[88] Zhihong Lin, Donghao Zhang, Qingyi Tac, Danli Shi, Gholamreza Haffari, Qi Wu, Mingguang He, and Zongyuan Ge.
+2021. Medical Visual Question Answering: A Survey. arXiv preprint arXiv:2111.10056 (2021).
+[89] David Lindberg, Fred Popowich, John Nesbit, and Phil Winne. 2013. Generating Natural Language Questions to
+Support Learning On-Line. In Proceedings of the 14th European Workshop on Natural Language Generation . Association
+for Computational Linguistics, Sofia, Bulgaria, 105–114. https://aclanthology.org/W13-2114
+[90] Ling Liu and M Tamer Özsu. 2009. Mean average precision. Encyclopedia of Database Systems2009 1703 (2009).
+[91] Xiaodong Liu, Yelong Shen, Kevin Duh, and Jianfeng Gao. 2018. Stochastic Answer Networks for Machine Reading
+Comprehension. In Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 1:
+Long Papers). Association for Computational Linguistics, Melbourne, Australia, 1694–1704. https://doi.org/10.18653/
+v1/P18-1157
+[92] Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Mandar Joshi, Danqi Chen, Omer Levy, Mike Lewis, Luke Zettlemoyer,
+and Veselin Stoyanov. 2019. Roberta: A robustly optimized bert pretraining approach. arXiv preprint arXiv:1907.11692
+(2019).
+[93] Thang Luong, Hieu Pham, and Christopher D. Manning. 2015. Effective Approaches to Attention-based Neural
+Machine Translation. In Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing .
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 41]]
+A Survey on Multi-hop Question Answering and Generation 111:41
+Association for Computational Linguistics, Lisbon, Portugal, 1412–1421. https://doi.org/10.18653/v1/D15-1166
+[94] Congbo Ma, Wei Emma Zhang, Mingyu Guo, Hu Wang, and Quan Z Sheng. 2020. Multi-document summarization
+via deep learning techniques: A survey. arXiv preprint arXiv:2011.04843 (2020).
+[95] Christopher Malon and Bing Bai. 2020. Generating followup questions for interpretable multi-hop question answering.
+arXiv preprint arXiv:2002.12344 (2020).
+[96] Francisco Melo. 2013.Area under the ROC Curve. Springer New York, New York, NY, 38–39. https://doi.org/10.1007/978-
+1-4419-9863-7_209
+[97] Todor Mihaylov, Peter Clark, Tushar Khot, and Ashish Sabharwal. 2018. Can a Suit of Armor Conduct Electricity?
+A New Dataset for Open Book Question Answering. In Proceedings of the 2018 Conference on Empirical Methods in
+Natural Language Processing. 2381–2391.
+[98] George A. Miller. 1995. WordNet: A Lexical Database for English. Commun. ACM 38, 11 (nov 1995), 39–41. https:
+//doi.org/10.1145/219717.219748
+[99] Sewon Min, Julian Michael, Hannaneh Hajishirzi, and Luke Zettlemoyer. 2020. AmbigQA: Answering ambiguous
+open-domain questions. arXiv preprint arXiv:2004.10645 (2020).
+[100] Sewon Min, Eric Wallace, Sameer Singh, Matt Gardner, Hannaneh Hajishirzi, and Luke Zettlemoyer. 2019. Com-
+positional Questions Do Not Necessitate Multi-hop Reasoning. In Proceedings of the 57th Annual Meeting of the
+Association for Computational Linguistics . Association for Computational Linguistics, Florence, Italy, 4249–4257.
+https://doi.org/10.18653/v1/P19-1416
+[101] Sewon Min, Victor Zhong, Richard Socher, and Caiming Xiong. 2018. Efficient and Robust Question Answering from
+Minimal Context over Documents. In Proceedings of the 56th Annual Meeting of the Association for Computational
+Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, Melbourne, Australia, 1725–1735.
+https://doi.org/10.18653/v1/P18-1160
+[102] Sewon Min, Victor Zhong, Luke Zettlemoyer, and Hannaneh Hajishirzi. 2019. Multi-hop Reading Comprehension
+through Question Decomposition and Rescoring. In Proceedings of the 57th Annual Meeting of the Association for
+Computational Linguistics. Association for Computational Linguistics, Florence, Italy, 6097–6109. https://doi.org/10.
+18653/v1/P19-1613
+[103] Amit Mishra and Sanjay Kumar Jain. 2016. A survey on question answering systems with classification. Journal of
+King Saud University-Computer and Information Sciences 28, 3 (2016), 345–361.
+[104] Mir Tafseer Nayeem, Tanvir Ahmed Fuad, and Yllias Chali. 2018. Abstractive unsupervised multi-document sum-
+marization using paraphrastic sentence fusion. In Proceedings of the 27th International Conference on Computational
+Linguistics. 1191–1204.
+[105] Preksha Nema and Mitesh M. Khapra. 2018. Towards a Better Metric for Evaluating Question Generation Systems. In
+Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing. Association for Computational
+Linguistics, Brussels, Belgium, 3950–3959. https://doi.org/10.18653/v1/D18-1429
+[106] Jekaterina Novikova, Ondřej Dušek, Amanda Cercas Curry, and Verena Rieser. 2017. Why We Need New Evaluation
+Metrics for NLG. InProceedings of the 2017 Conference on Empirical Methods in Natural Language Processing. Association
+for Computational Linguistics, Copenhagen, Denmark, 2241–2252. https://doi.org/10.18653/v1/D17-1238
+[107] Liangming Pan, Wenhu Chen, Wenhan Xiong, Min-Yen Kan, and William Yang Wang. 2021. Unsupervised Multi-hop
+Question Answering by Question Generation. In Proceedings of the 2021 Conference of the North American Chapter of
+the Association for Computational Linguistics: Human Language Technologies . 5866–5880.
+[108] Kishore Papineni, Salim Roukos, Todd Ward, and Wei-Jing Zhu. 2002. Bleu: a method for automatic evaluation
+of machine translation. In Proceedings of the 40th annual meeting of the Association for Computational Linguistics .
+311–318.
+[109] Arkil Patel, Satwik Bhattamishra, and Navin Goyal. 2021. Are NLP Models really able to Solve Simple Math Word
+Problems?. In Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational
+Linguistics: Human Language Technologies. 2080–2094.
+[110] Jeffrey Pennington, Richard Socher, and Christopher D Manning. 2014. Glove: Global vectors for word representation.
+In Proceedings of the 2014 conference on empirical methods in natural language processing (EMNLP) . 1532–1543.
+[111] Matthew E. Peters, Mark Neumann, Mohit Iyyer, Matt Gardner, Christopher Clark, Kenton Lee, and Luke Zettlemoyer.
+2018. Deep Contextualized Word Representations. In Proceedings of the 2018 Conference of the North American Chapter
+of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long Papers) . Association
+for Computational Linguistics, New Orleans, Louisiana, 2227–2237. https://doi.org/10.18653/v1/N18-1202
+[112] Peng Qi, Xiaowen Lin, Leo Mehr, Zijian Wang, and Christopher D. Manning. 2019. Answering Complex Open-domain
+Questions Through Iterative Query Generation. In Proceedings of the 2019 Conference on Empirical Methods in Natural
+Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) .
+Association for Computational Linguistics, Hong Kong, China, 2590–2602. https://doi.org/10.18653/v1/D19-1261
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 42]]
+111:42 Trovato and Tobin, et al.
+[113] Lin Qiu, Yunxuan Xiao, Yanru Qu, Hao Zhou, Lei Li, Weinan Zhang, and Yong Yu. 2019. Dynamically Fused Graph
+Network for Multi-hop Reasoning. In Proceedings of the 57th Annual Meeting of the Association for Computational
+Linguistics. Association for Computational Linguistics, Florence, Italy, 6140–6150. https://doi.org/10.18653/v1/P19-
+1617
+[114] Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li,
+and Peter J. Liu. 2019. Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer. CoRR
+abs/1910.10683 (2019). arXiv:1910.10683 http://arxiv.org/abs/1910.10683
+[115] Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, and Percy Liang. 2016. SQuAD: 100,000+ Questions for Machine
+Comprehension of Text. In Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing .
+Association for Computational Linguistics, Austin, Texas, 2383–2392. https://doi.org/10.18653/v1/D16-1264
+[116] Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, and Percy Liang. 2016. SQuAD: 100,000+ Questions for Machine
+Comprehension of Text. In Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing .
+2383–2392.
+[117] Steven J. Rennie, Etienne Marcheret, Youssef Mroueh, Jerret Ross, and Vaibhava Goel. 2017. Self-Critical Sequence
+Training for Image Captioning. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition
+(CVPR).
+[118] David E Rumelhart, Geoffrey E Hinton, and Ronald J Williams. 1985. Learning internal representations by error
+propagation. Technical Report. California Univ San Diego La Jolla Inst for Cognitive Science.
+[119] Devendra Singh Sachan, Lingfei Wu, Mrinmaya Sachan, and William Hamilton. 2020. Stronger Transformers for
+Neural Multi-Hop Question Generation. arXiv preprint arXiv:2010.11374 (2020).
+[120] Mrinmaya Sachan and Eric Xing. 2016. Easy Questions First? A Case Study on Curriculum Learning for Question
+Answering. In Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long
+Papers). Association for Computational Linguistics, Berlin, Germany, 453–463. https://doi.org/10.18653/v1/P16-1043
+[121] Marzieh Saeidi, Max Bartolo, Patrick Lewis, Sameer Singh, Tim Rocktäschel, Mike Sheldon, Guillaume Bouchard, and
+Sebastian Riedel. 2018. Interpretation of Natural Language Rules in Conversational Machine Reading. In EMNLP.
+[122] Wojciech Samek, Thomas Wiegand, and Klaus-Robert Müller. 2017. Explainable artificial intelligence: Understanding,
+visualizing and interpreting deep learning models. arXiv preprint arXiv:1708.08296 (2017).
+[123] Michael Schlichtkrull, Thomas N Kipf, Peter Bloem, Rianne Van Den Berg, Ivan Titov, and Max Welling. 2017.
+Modeling Relational Data with Graph Convolutional Networks (2017). Preprint (2017).
+[124] Moritz Schubotz, Philipp Scharpf, Kaushal Dudhat, Yash Nagar, Felix Hamborg, and Bela Gipp. 2018. Introducing
+mathqa: a math-aware question answering system. Information Discovery and Delivery (2018).
+[125] Thomas Scialom, Benjamin Piwowarski, and Jacopo Staiano. 2019. Self-Attention Architectures for Answer-Agnostic
+Neural Question Generation. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics .
+Association for Computational Linguistics, Florence, Italy, 6027–6032. https://doi.org/10.18653/v1/P19-1604
+[126] Abigail See, Peter J Liu, and Christopher D Manning. 2017. Get To The Point: Summarization with Pointer-Generator
+Networks. In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long
+Papers). 1073–1083.
+[127] Min Joon Seo, Aniruddha Kembhavi, Ali Farhadi, and Hannaneh Hajishirzi. 2016. Bidirectional Attention Flow for
+Machine Comprehension. CoRR abs/1611.01603 (2016). arXiv:1611.01603 http://arxiv.org/abs/1611.01603
+[128] Nan Shao, Yiming Cui, Ting Liu, Shijin Wang, and Guoping Hu. 2020. Is Graph Structure Necessary for Multi-hop
+Question Answering?. In Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing
+(EMNLP). 7187–7192.
+[129] Nan Shao, Yiming Cui, Ting Liu, Shijin Wang, and Guoping Hu. 2021. Memory augmented sequential paragraph
+retrieval for multi-hop question answering. arXiv preprint arXiv:2102.03741 (2021).
+[130] Georgios Sidiropoulos, Nikos Voskarides, Svitlana Vakulenko, and Evangelos Kanoulas. 2021. Combining Lexical and
+Dense Retrieval for Computationally Efficient Multi-hop Question Answering. In Proceedings of the Second Workshop
+on Simple and Efficient Natural Language Processing . 58–63.
+[131] Georgios Sidiropoulos, Nikos Voskarides, Svitlana Vakulenko, and Evangelos Kanoulas. 2021. Combining Lexical
+and Dense Retrieval for Computationally Efficient Multi-hop Question Answering. In Proceedings of the Second
+Workshop on Simple and Efficient Natural Language Processing . Association for Computational Linguistics, Virtual,
+58–63. https://doi.org/10.18653/v1/2021.sustainlp-1.7
+[132] Marco Antonio Calijorne Soares and Fernando Silva Parreiras. 2020. A literature review on question answering
+techniques, paradigms and systems. Journal of King Saud University-Computer and Information Sciences 32, 6 (2020),
+635–646.
+[133] Linfeng Song, Zhiguo Wang, Mo Yu, Yue Zhang, Radu Florian, and Daniel Gildea. 2018. Exploring graph-structured pas-
+sage representation for multi-hop reading comprehension with graph neural networks.arXiv preprint arXiv:1809.02040
+(2018).
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 43]]
+A Survey on Multi-hop Question Answering and Generation 111:43
+[134] Robyn Speer, Joshua Chin, and Catherine Havasi. 2016. ConceptNet 5.5: An Open Multilingual Graph of General
+Knowledge. Singh 2002 (2016). arXiv preprint arxiv:1612.03975 (2016).
+[135] Yash Srivastava, Vaishnav Murali, Shiv Ram Dubey, and Snehasis Mukherjee. 2020. Visual question answering
+using deep learning: A survey and performance analysis. In International Conference on Computer Vision and Image
+Processing. Springer, 75–86.
+[136] Julius Steen and Katja Markert. 2019. Abstractive timeline summarization. In Proceedings of the 2nd Workshop on New
+Frontiers in Summarization. 21–31.
+[137] Dan Su, Yan Xu, Wenliang Dai, Ziwei Ji, Tiezheng Yu, and Pascale Fung. 2020. Multi-hop Question Generation with
+Graph Convolutional Network. In Findings of the Association for Computational Linguistics: EMNLP 2020 . 4636–4647.
+[138] Haitian Sun, William W Cohen, and Ruslan Salakhutdinov. 2021. Iterative Hierarchical Attention for Answering
+Complex Questions over Long Documents. arXiv preprint arXiv:2106.00200 (2021).
+[139] Alon Talmor and Jonathan Berant. 2018. The Web as a Knowledge-Base for Answering Complex Questions. In
+Proceedings of the 2018 Conference of the North American Chapter of the Association for Computational Linguistics:
+Human Language Technologies, Volume 1 (Long Papers) . Association for Computational Linguistics, New Orleans,
+Louisiana, 641–651. https://doi.org/10.18653/v1/N18-1059
+[140] Duyu Tang, Nan Duan, Tao Qin, and Ming Zhou. 2017. Question Answering and Question Generation as Dual Tasks.
+CoRR abs/1706.02027 (2017). arXiv:1706.02027 http://arxiv.org/abs/1706.02027
+[141] Yixuan Tang, Hwee Tou Ng, and Anthony Tung. 2021. Do Multi-Hop Question Answering Systems Know How
+to Answer the Single-Hop Sub-Questions?. In Proceedings of the 16th Conference of the European Chapter of the
+Association for Computational Linguistics: Main Volume. Association for Computational Linguistics, Online, 3244–3249.
+https://doi.org/10.18653/v1/2021.eacl-main.283
+[142] Mokanarangan Thayaparan, Marco Valentino, Viktor Schlegel, and André Freitas. 2019. Identifying Supporting Facts
+for Multi-hop Question Answering with Document Graph Networks. In Proceedings of the Thirteenth Workshop on
+Graph-Based Methods for Natural Language Processing (TextGraphs-13) . 42–51.
+[143] Adam Trischler, Tong Wang, Xingdi Yuan, Justin Harris, Alessandro Sordoni, Philip Bachman, and Kaheer Suleman.
+2016. NewsQA: A Machine Comprehension Dataset. CoRR abs/1611.09830 (2016). arXiv:1611.09830 http://arxiv.org/
+abs/1611.09830
+[144] Harsh Trivedi, Niranjan Balasubramanian, Tushar Khot, and Ashish Sabharwal. 2020. Is Multihop QA in DiRe
+Condition? Measuring and Reducing Disconnected Reasoning. In Proceedings of the 2020 Conference on Empirical
+Methods in Natural Language Processing (EMNLP) . Association for Computational Linguistics, Online, 8846–8863.
+https://doi.org/10.18653/v1/2020.emnlp-main.712
+[145] Harsh Trivedi, Heeyoung Kwon, Tushar Khot, Ashish Sabharwal, and Niranjan Balasubramanian. 2019. Repurposing
+Entailment for Multi-Hop Question Answering Tasks. In Proceedings of the 2019 Conference of the North American
+Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short
+Papers). 2948–2958.
+[146] Ming Tu, Kevin Huang, Guangtao Wang, Jing Huang, Xiaodong He, and Bowen Zhou. 2020. Select, answer and explain:
+Interpretable multi-hop reading comprehension over multiple documents. In Proceedings of the AAAI Conference on
+Artificial Intelligence, Vol. 34. 9073–9080.
+[147] Aaron Van den Oord, Yazhe Li, and Oriol Vinyals. 2018. Representation learning with contrastive predictive coding.
+arXiv e-prints (2018), arXiv–1807.
+[148] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia
+Polosukhin. 2017. Attention is all you need. Advances in neural information processing systems 30 (2017).
+[149] Ramakrishna Vedantam, C Lawrence Zitnick, and Devi Parikh. 2014. Cider: consensus-based image description
+evaluation. CoRR. arXiv preprint arXiv:1411.5726 (2014).
+[150] Petar Veličković, Guillem Cucurull, Arantxa Casanova, Adriana Romero, Pietro Liò, and Yoshua Bengio. 2018. Graph
+Attention Networks. In International Conference on Learning Representations .
+[151] Haoyu Wang, Mo Yu, Xiaoxiao Guo, Rajarshi Das, Wenhan Xiong, and Tian Gao. 2019. Do Multi-hop Readers Dream
+of Reasoning Chains?. In Proceedings of the 2nd Workshop on Machine Reading for Question Answering . 91–97.
+[152] Jiexin Wang, Adam Jatowt, Michael Färber, and Masatoshi Yoshikawa. 2020. Answering Event-Related Questions over
+Long-Term News Article Archives. InAdvances in Information Retrieval - 42nd European Conference on IR Research,
+ECIR 2020, Lisbon, Portugal, April 14-17, 2020, Proceedings, Part I (Lecture Notes in Computer Science, Vol. 12035) .
+Springer, 774–789.
+[153] Jiexin Wang, Adam Jatowt, Michael Färber, and Masatoshi Yoshikawa. 2021. Improving question answering for
+event-focused questions in temporal collections of news articles. Inf. Retr. J. 24, 1 (2021), 29–54.
+[154] Jiexin Wang, Adam Jatowt, and Masatoshi Yoshikawa. 2021. ArchivalQA: A Large-scale Benchmark Dataset for
+Open Domain Question Answering over Archival News Collections. CoRR abs/2109.03438 (2021). arXiv:2109.03438
+https://arxiv.org/abs/2109.03438
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 44]]
+111:44 Trovato and Tobin, et al.
+[155] Jiexin Wang, Adam Jatowt, and Masatoshi Yoshikawa. 2021. Event Occurrence Date Estimation based on Multivariate
+Time Series Analysis over Temporal Document Collections. In SIGIR ’21: The 44th International ACM SIGIR Conference
+on Research and Development in Information Retrieval, Virtual Event, Canada, July 11-15, 2021 . ACM, 398–407.
+[156] Shuohang Wang and Jing Jiang. 2016. Machine comprehension using match-lstm and answer pointer. arXiv preprint
+arXiv:1608.07905 (2016).
+[157] Wenhui Wang, Nan Yang, Furu Wei, Baobao Chang, and Ming Zhou. 2017. Gated Self-Matching Networks for
+Reading Comprehension and Question Answering. In Proceedings of the 55th Annual Meeting of the Association for
+Computational Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, Vancouver, Canada,
+189–198. https://doi.org/10.18653/v1/P17-1018
+[158] Daniela Brook Weiss, Paul Roit, Ori Ernst, and Ido Dagan. 2021. Extending Multi-Text Sentence Fusion Resources via
+Pyramid Annotations. arXiv preprint arXiv:2110.04517 (2021).
+[159] Johannes Welbl, Pontus Stenetorp, and Sebastian Riedel. 2018. Constructing datasets for multi-hop reading compre-
+hension across documents. Transactions of the Association for Computational Linguistics 6 (2018), 287–302.
+[160] Sean Welleck, Ilia Kulikov, Stephen Roller, Emily Dinan, Kyunghyun Cho, and Jason Weston. 2019. Neural Text
+Generation With Unlikelihood Training. In International Conference on Learning Representations .
+[161] Adina Williams, Nikita Nangia, and Samuel Bowman. 2018. A Broad-Coverage Challenge Corpus for Sentence
+Understanding through Inference. InProceedings of the 2018 Conference of the North American Chapter of the Association
+for Computational Linguistics: Human Language Technologies, Volume 1 (Long Papers) . Association for Computational
+Linguistics, New Orleans, Louisiana, 1112–1122. https://doi.org/10.18653/v1/N18-1101
+[162] Ronald J. Williams. 1992. Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning.
+Mach. Learn. 8, 3–4 (may 1992), 229–256. https://doi.org/10.1007/BF00992696
+[163] David S Wishart, Craig Knox, An Chi Guo, Dean Cheng, Savita Shrivastava, Dan Tzur, Bijaya Gautam, and Murtaza
+Hassanali. 2008. DrugBank: a knowledgebase for drugs, drug actions and drug targets. Nucleic acids research 36,
+suppl_1 (2008), D901–D906.
+[164] Qi Wu, Damien Teney, Peng Wang, Chunhua Shen, Anthony Dick, and Anton van den Hengel. 2017. Visual question
+answering: A survey of methods and datasets. Computer Vision and Image Understanding 163 (2017), 21–40.
+[165] Yonghui Wu, Mike Schuster, Zhifeng Chen, Quoc V. Le, Mohammad Norouzi, Wolfgang Macherey, Maxim Krikun,
+Yuan Cao, Qin Gao, Klaus Macherey, Jeff Klingner, Apurva Shah, Melvin Johnson, Xiaobing Liu, Lukasz Kaiser,
+Stephan Gouws, Yoshikiyo Kato, Taku Kudo, Hideto Kazawa, Keith Stevens, George Kurian, Nishant Patil, Wei Wang,
+Cliff Young, Jason Smith, Dason Riesa, Alex Rudnick, Oriol Vinyals, Greg Corrado, Macduff Hughes, and Jeffrey Dean.
+2016. Google’s Neural Machine Translation System: Bridging the Gap between Human and Machine Translation.
+CoRR abs/1609.08144 (2016). arXiv:1609.08144 http://arxiv.org/abs/1609.08144
+[166] Wenhan Xiong, Xiang Lorraine Li, Srinivasan Iyer, Jingfei Du, Patrick S. H. Lewis, William Yang Wang, Yashar Mehdad,
+Wen-tau Yih, Sebastian Riedel, Douwe Kiela, and Barlas Oguz. 2020. Answering Complex Open-Domain Questions
+with Multi-Hop Dense Retrieval. CoRR abs/2009.12756 (2020). arXiv:2009.12756 https://arxiv.org/abs/2009.12756
+[167] Wenhan Xiong, Mo Yu, Xiaoxiao Guo, Hong Wang, Shiyu Chang, Murray Campbell, and William Yang Wang. 2019.
+Simple yet Effective Bridge Reasoning for Open-Domain Multi-Hop Question Answering. In Proceedings of the 2nd
+Workshop on Machine Reading for Question Answering . 48–52.
+[168] Vikas Yadav, Steven Bethard, and Mihai Surdeanu. 2019. Alignment over Heterogeneous Embeddings for Question
+Answering. In Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational
+Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers). Association for Computational Linguistics,
+Minneapolis, Minnesota, 2681–2691. https://doi.org/10.18653/v1/N19-1274
+[169] Vikas Yadav, Steven Bethard, and Mihai Surdeanu. 2019. Quick and (not so) Dirty: Unsupervised Selection of
+Justification Sentences for Multi-hop Question Answering. InProceedings of the 2019 Conference on Empirical Methods in
+Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP).
+Association for Computational Linguistics, Hong Kong, China, 2578–2589. https://doi.org/10.18653/v1/D19-1260
+[170] Vikas Yadav, Steven Bethard, and Mihai Surdeanu. 2020. Unsupervised Alignment-based Iterative Evidence Retrieval
+for Multi-hop Question Answering. In Proceedings of the 58th Annual Meeting of the Association for Computational
+Linguistics. 4514–4525.
+[171] Vikas Yadav, Steven Bethard, and Mihai Surdeanu. 2021. If You Want to Go Far Go Together: Unsupervised Joint
+Candidate Evidence Retrieval for Multi-hop Question Answering. In Proceedings of the 2021 Conference of the North
+American Chapter of the Association for Computational Linguistics: Human Language Technologies . 4571–4581.
+[172] Rui Yan, Xiaojun Wan, Jahna Otterbacher, Liang Kong, Xiaoming Li, and Yan Zhang. 2011. Evolutionary timeline
+summarization: a balanced optimization framework via iterative substitution. In Proceedings of the 34th international
+ACM SIGIR conference on Research and development in Information Retrieval . 745–754.
+[173] Zhilin Yang, Peng Qi, Saizheng Zhang, Yoshua Bengio, William Cohen, Ruslan Salakhutdinov, and Christopher D
+Manning. 2018. HotpotQA: A Dataset for Diverse, Explainable Multi-hop Question Answering. In Proceedings of the
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.
+
+[[page 45]]
+A Survey on Multi-hop Question Answering and Generation 111:45
+2018 Conference on Empirical Methods in Natural Language Processing . 2369–2380.
+[174] Kaichun Yao, Libo Zhang, Tiejian Luo, Lili Tao, and Yanjun Wu. 2018. Teaching Machines to Ask Questions. In
+Proceedings of the Twenty-Seventh International Joint Conference on Artificial Intelligence, IJCAI-18 . International Joint
+Conferences on Artificial Intelligence Organization, 4546–4552. https://doi.org/10.24963/ijcai.2018/632
+[175] Deming Ye, Yankai Lin, Zhenghao Liu, Zhiyuan Liu, and Maosong Sun. 2019. Multi-paragraph reasoning with
+knowledge-enhanced graph neural network. arXiv preprint arXiv:1911.02170 (2019).
+[176] Jianxing Yu, Wei Liu, Shuang Qiu, Qinliang Su, Kai Wang, Xiaojun Quan, and Jian Yin. 2020. Low-Resource Generation
+of Multi-hop Reasoning Questions. In Proceedings of the 58th Annual Meeting of the Association for Computational
+Linguistics. Association for Computational Linguistics, Online, 6729–6739. https://doi.org/10.18653/v1/2020.acl-
+main.601
+[177] Yi Yu, Adam Jatowt, Antoine Doucet, Kazunari Sugiyama, and Masatoshi Yoshikawa. 2021. Multi-TimeLine Summa-
+rization (MTLS): Improving Timeline Summarization by Generating Multiple Summaries. In Proceedings of the 59th
+Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural
+Language Processing (Volume 1: Long Papers) . Association for Computational Linguistics, Online, 377–387.
+[178] Munazza Zaib, Wei Emma Zhang, Quan Z Sheng, Adnan Mahmood, and Yang Zhang. 2021. Conversational question
+answering: A survey. arXiv preprint arXiv:2106.00874 (2021).
+[179] Min Zhang, Feng Li, Yang Wang, Zequn Zhang, Yanhai Zhou, and Xiaoyu Li. 2020. Coarse and Fine Granularity
+Graph Reasoning for Interpretable Multi-Hop Question Answering. IEEE Access 8 (2020), 56755–56765. https:
+//doi.org/10.1109/ACCESS.2020.2981134
+[180] Xingxing Zhang and Mirella Lapata. 2017. Sentence Simplification with Deep Reinforcement Learning. In Proceedings
+of the 2017 Conference on Empirical Methods in Natural Language Processing. Association for Computational Linguistics,
+Copenhagen, Denmark, 584–594. https://doi.org/10.18653/v1/D17-1062
+[181] Yuyu Zhang, Ping Nie, Arun Ramamurthy, and Le Song. 2021. Answering Any-hop Open-domain Questions with
+Iterative Document Reranking. In Proceedings of the 44th International ACM SIGIR Conference on Research and
+Development in Information Retrieval . 481–490.
+[182] Yao Zhao, Xiaochuan Ni, Yuanyuan Ding, and Qifa Ke. 2018. Paragraph-level Neural Question Generation with
+Maxout Pointer and Gated Self-attention Networks. In Proceedings of the 2018 Conference on Empirical Methods
+in Natural Language Processing . Association for Computational Linguistics, Brussels, Belgium, 3901–3910. https:
+//doi.org/10.18653/v1/D18-1424
+[183] Yao Zhao, Xiaochuan Ni, Yuanyuan Ding, and Qifa Ke. 2018. Paragraph-level Neural Question Generation with
+Maxout Pointer and Gated Self-attention Networks. In Proceedings of the 2018 Conference on Empirical Methods
+in Natural Language Processing . Association for Computational Linguistics, Brussels, Belgium, 3901–3910. https:
+//doi.org/10.18653/v1/D18-1424
+[184] Fengbin Zhu, Wenqiang Lei, Chao Wang, Jianming Zheng, Soujanya Poria, and Tat-Seng Chua. 2021. Retrieving and
+reading: A comprehensive survey on open-domain question answering. arXiv preprint arXiv:2101.00774 (2021).
+J. ACM, Vol. 37, No. 4, Article 111. Publication date: August 2018.

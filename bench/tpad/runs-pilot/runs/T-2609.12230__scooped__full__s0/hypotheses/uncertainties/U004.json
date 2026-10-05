@@ -1,0 +1,28 @@
+{
+  "id": "U004",
+  "question": "Can triples be reliably extracted from source passages at the scale needed for training, and what is the typical noise level of such extractions?",
+  "description": "Investigate the performance of open-domain triple extraction tools (e.g., OpenIE, parser-based) on text passages used for KGQA.",
+  "category": "feasibility",
+  "importance": "medium",
+  "status": "partially_resolved",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "VERIFY"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "If extraction is too noisy, the context subgraph may introduce harmful noise; if reliable, the assumption holds.",
+  "resolution": "No specific measurements of triple extraction noise at scale found in surveyed literature; extraction quality varies by tool and domain, and errors could introduce noise into context subgraphs.",
+  "paper_ids": [],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "PLAN",
+  "created_at": "2026-09-30T06:32:49.450072Z",
+  "updated_at": "2026-09-30T06:49:25.355466Z"
+}

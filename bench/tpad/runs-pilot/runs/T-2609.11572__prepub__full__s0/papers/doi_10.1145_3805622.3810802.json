@@ -1,0 +1,37 @@
+{
+  "id": "doi:10.1145/3805622.3810802",
+  "title": "Mitigating Semantic Bias in Multilingual Visual Document Retrieval via Language-Vision-Aware Late Interaction",
+  "authors": [
+    "Hao-Wei Li",
+    "Hao-Jie Wu",
+    "Jie Bao",
+    "Zhen Chen",
+    "Yong Liao"
+  ],
+  "year": 2026,
+  "published": "2026-06-15",
+  "venue": "International Conference on Multimedia Retrieval",
+  "url": "https://www.semanticscholar.org/paper/47137a5aff2f93d10ca13d3227d69433102051d9",
+  "pdf_url": "https://doi.org/10.1145/3805622.3810802",
+  "abstract": "Multilingual Visual Document Retrieval (VDR) aims to retrieve relevant document screenshots given a textual query across different languages. Recent late-interaction VDR models estimate relevance via token-level maximum similarity aggregation (MaxSim), but this heuristic can introduce semantic bias in multilingual settings. In particular, linguistic differences such as morphological variation, functional word distribution, and tokenization granularity can lead to heterogeneous query token representations. When aggregated under MaxSim, such heterogeneity may result in disproportionate token contributions and inconsistent relevance estimation across languages. To address these limitations, we propose Language-Vision-Aware Late Interaction (LVALI), a lightweight calibration framework without modifying the original embeddings. LVALI introduces two complementary mechanisms: (1) a language-aware token weighting scheme that calibrates token-level contributions at the vocabulary level, and (2) a visual alignment stability-based correction term that downweights low-confidence token-patch matches according to the dispersion of similarity distributions in the document image space. This design preserves the underlying similarity structure of MaxSim while improving robustness to cross-lingual variability. Experiments on multiple multilingual VDR benchmarks demonstrate consistent improvements in robustness and cross-lingual consistency, achieved with only lightweight token-level calibration training.",
+  "doi": "10.1145/3805622.3810802",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "47137a5aff2f93d10ca13d3227d69433102051d9",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T10:11:51.841669Z",
+  "relevance": 0.6,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal relevance weighting document retrieval"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

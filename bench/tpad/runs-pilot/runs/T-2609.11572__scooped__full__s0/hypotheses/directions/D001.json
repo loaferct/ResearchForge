@@ -1,0 +1,19 @@
+{
+  "id": "D001",
+  "direction": "MODIFY_METHOD",
+  "hypothesis": "Incorporating temporal relevance into retrieval improves the alignment of retrieved passages with the temporally valid version of the answer, thereby increasing answer accuracy (as measured by Exact Match and F1, or win rate via LLM judge) compared to baseline time-aware retrieval approaches that ignore fine-grained temporal overlaps, especially when the temporal relevance function models complex temporal logic and is evaluated on real-world regulatory benchmarks.",
+  "rationale": "The proposed idea overlaps substantially with existing work (TimelyRAG). To establish novelty, we modify the method by incorporating complex temporal logic (e.g., interval algebra) into the temporal relevance function and constructing a real-world regulatory benchmark with noisy temporal metadata, addressing gaps in temporal logic modeling and benchmark realism.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": null,
+  "research_question": null,
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [],
+  "uncertainty_ids": [
+    "U002",
+    "U003",
+    "U004",
+    "U005"
+  ],
+  "recorded_at": "2026-09-30T10:09:16.446993Z"
+}

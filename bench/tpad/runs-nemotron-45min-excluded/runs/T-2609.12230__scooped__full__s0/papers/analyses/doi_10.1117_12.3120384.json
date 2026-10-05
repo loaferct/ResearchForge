@@ -1,0 +1,37 @@
+{
+  "paper_id": "doi:10.1117/12.3120384",
+  "relevance_tier": "high",
+  "problem": "Medical knowledge graph question answering (KGQA) becomes unreliable when questions contain several coupled conditions requiring multi-hop evidence. Failures come from early commitment to locally plausible paths, omission of key constraints, and weak alignment between final answer and cited evidence.",
+  "method": "Proposes a closed-loop framework for medical KGQA combining subgoal decomposition, adaptive graph planning, unified memory, and backward consistency verification. Questions are decomposed into disease, symptom, examination, treatment, and contraindication subgoals. During search, candidate expansions ranked by relation relevance, newly covered subgoals, historical usefulness, conflict risk, and path length. System records explored branches, unresolved conditions, conflicts, and explanation evidence in unified memory, using backward checking to decide branch acceptance, local revision, or rollback.",
+  "key_assumptions": [
+    "Decomposing questions into disease/symptom/examination/treatment/contraindication subgoals improves medical KGQA",
+    "Ranking candidate expansions by multiple criteria enhances search quality",
+    "Unified memory with backward checking prevents unreliable commitment to locally plausible paths"
+  ],
+  "main_contribution": "Closed-loop framework for medical KGQA that combines subgoal decomposition, adaptive graph planning, unified memory, and backward consistency verification, showing consistent improvements in Accuracy, F1, and Faithfulness on GenMedGPT-5k, CMCQA, and ExplainCPE, especially under noisy or conflicting evidence.",
+  "datasets": [
+    "GenMedGPT-5k",
+    "CMCQA",
+    "ExplainCPE"
+  ],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [
+    "Accuracy",
+    "F1",
+    "Faithfulness"
+  ],
+  "results": "Experiments show consistent improvements in Accuracy, F1, and Faithfulness, with clearest gains under noisy or conflicting evidence.",
+  "limitations": [],
+  "future_work": [],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.6,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "This work focuses on a closed-loop framework for medical KGQA with subgoal decomposition and backward consistency verification, while our idea focuses on enriching triples with local context subgraphs and adaptive repair loops for general KGQA training. Both involve closed-loop/adaptive mechanisms but this is medical-specific and works on inference-time planning while our idea works on training data enrichment.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:50:44.702441Z"
+}

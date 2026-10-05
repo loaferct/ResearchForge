@@ -1,0 +1,51 @@
+{
+  "paper_id": "arxiv:2609.30454",
+  "relevance_tier": "medium",
+  "problem": "Assessing the reliability of a commercial System-1 model on biosecurity-relevant benchmarks, focusing on calibration, selective prediction, and answer-order stability.",
+  "method": "Audit of a single System-1 model measuring accuracy, calibration (expected calibration error), error detection, selective prediction (accuracy vs coverage), and sensitivity to answer option order; interpretation of vendor uncertainty field as affine rescaling of max probability; analysis of selective prediction curves and permutation averaging.",
+  "key_assumptions": [
+    "The vendor’s uncertainty field is an affine rescaling of the model’s max probability and can be interpreted as calibrated."
+  ],
+  "main_contribution": "A reliability audit revealing moderate calibration (ECE 0.034) and good AUROC (0.820) for a System-1 model on biosecurity benchmarks, identification of substantial answer-order instability (37.4% of items change answer under option permutations), and demonstration that averaging probabilities across rotations improves accuracy, especially when applied selectively to low-confidence items.",
+  "datasets": [
+    "6,020 multiple-choice items from the Weapons of Mass Destruction Proxy (WMDP), a paraphrase-robust WMDP-Bio variant, and six LAB-Bench subtasks"
+  ],
+  "benchmarks": [
+    "WMDP",
+    "WMDP-Bio",
+    "WMDP-Cyber",
+    "LAB-Bench subtasks"
+  ],
+  "baselines": [
+    "vendor uncertainty field",
+    "max probability (p_max)"
+  ],
+  "metrics": [
+    "accuracy",
+    "expected calibration error (ECE)",
+    "AUROC",
+    "selective prediction (accuracy vs coverage)",
+    "answer-order stability"
+  ],
+  "results": "\"Once the vendor’s uncertainty field is correctly interpreted, the model is reasonably well calibrated (pooled ECE 0.034) and its top-1 probability separates correct from incorrect predictions (pooled AUROC 0.820). Under four cyclic rotations of answer options, 37.4% of WMDP-Cyber items receive different answers; averaging probabilities across rotations improves WMDP-Cyber accuracy by +3.8 percentage points, and applying averaging only to low-confidence items recovers most of that gain at well under the cost of averaging every item.\"",
+  "limitations": [
+    "Calibration quality varies across datasets (ECE up to 0.193 on SuppQA due to small item counts)",
+    "Answer-order instability indicates sensitivity to trivial perturbations, questioning robustness",
+    "Focus on a single commercial System-1 model limits generalizability"
+  ],
+  "future_work": [
+    "Extend audit to other System-1 models and diverse tasks",
+    "Investigate root causes of answer-order instability and develop mitigation strategies",
+    "Explore selective prediction approaches that account for permutation instability"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "The paper evaluates calibration and selective prediction of a single model for reliability auditing; the idea proposes calibrating multiple diverse models and using common thresholds for routing decisions in collaborative inference.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T11:30:06.306243Z"
+}

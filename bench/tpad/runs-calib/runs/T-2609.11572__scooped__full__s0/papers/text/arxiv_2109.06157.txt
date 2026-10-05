@@ -1,0 +1,1397 @@
+[[page 1]]
+SITUATED QA: Incorporating Extra-Linguistic Contexts into QA
+Michael J.Q. Zhang and Eunsol Choi
+Computer Science Department
+The University of Texas at Austin
+{mjqzhang, eunsol}@utexas.edu
+Abstract
+Answers to the same question may change de-
+pending on the extra-linguistic contexts (when
+and where the question was asked). To study
+this challenge, we introduce S ITUATED QA,
+an open-retrieval QA dataset where systems
+must produce the correct answer to a question
+given the temporal or geographical context.
+To construct S ITUATED QA, we ﬁrst identify
+such questions in existing QA datasets. We
+ﬁnd that a signiﬁcant proportion of informa-
+tion seeking questions have context-dependent
+answers (e.g., roughly 16.5% of NQ-Open).
+For such context-dependent questions, we then
+crowdsource alternative contexts and their cor-
+responding answers. Our study shows that ex-
+isting models struggle with producing answers
+that are frequently updated or from uncommon
+locations. We further quantify how existing
+models, which are trained on data collected in
+the past, fail to generalize to answering ques-
+tions asked in the present, even when provided
+with an updated evidence corpus (a roughly 15
+point drop in accuracy). Our analysis suggests
+that open-retrieval QA benchmarks should in-
+corporate extra-linguistic context to stay rel-
+evant globally and in the future. Our data,
+code, and datasheet are available at https:
+//situatedqa.github.io/.
+1 Introduction
+Language reﬂects our ever-changing world; thus,
+the meaning of a sentence depends on a variety
+of extra-linguistic contexts, including when it was
+stated, who stated it, and where it was stated. Fig-
+ure 1 depicts examples of this, where the answer
+to a question varies based on the temporal and ge-
+ographical contexts. In this work, we study such
+questions by exploring the affects of temporal and
+geographical contexts in open-retrieval QA.
+Ideally, QA systems should provide up-to-date,
+localized answers to questions like those in Fig-
+ure 1 that are situated in the inquirer’s temporal
+Figure 1: Examples of questions with answers that
+change depending on the temporal or geographical con-
+text.
+and geographical contexts. The existing paradigm
+for evaluating QA systems, however, makes im-
+plicit assumptions about time and location and does
+not measure how well QA models adapt to new
+contexts. Recent work studying other NLP tasks
+have shown that this static paradigm misrepresents
+how models perform in practical settings (Osborne
+et al., 2014; Wang et al., 2008; Huang and Paul,
+2018; Rijhwani and Preotiuc-Pietro, 2020). To ad-
+dress this challenge, we introduce SITUATED QA, a
+dataset comprised of questions from existing open-
+retrieval QA datasets (Kwiatkowski et al., 2019)
+that have been re-annotated for their their context-
+dependence and answers across different situations
+(i.e., temporal or geographical contexts).1
+As we will see in Section 3, a signiﬁcant pro-
+1In this work, we do not model temporal and geographical
+contexts jointly for simplicity.
+arXiv:2109.06157v1  [cs.CL]  13 Sep 2021
+
+[[page 2]]
+Questionq Context Typect Context Valuecv Answera
+Who composed the music for the ﬁrst Harry Potter ﬁlm? - - -
+What’s the biggest country in Europe excluding Russia? - - -
+How many seasons are there for American Horror Story? TEMP Sep 18, 2019 10
+Sep 13, 2017 9
+Who made the most three point shots in the NBA? TEMP 2014 Ray Allen
+2005 Reggie Miller
+When was the last time states were created? GEO Nigeria 1 October 1996
+United States 1959
+Where do we rank among the world’s largest cities? GEO Tokyo 1st
+Shanghai 3rd
+Table 1: Examples of how questions interact with geographical and temporal context in S ITUATED QA. The ﬁrst
+two questions are not identiﬁed as geographically nor temporally dependent.
+portion of information-seeking questions are sen-
+sitive to the two extra-linguistic contexts we study.
+We annotate 9K questions from four existing
+datasets (Kwiatkowski et al., 2019; Berant et al.,
+2013; Clark et al., 2020; Campos et al., 2016) with
+their temporal dependence and 2K questions for
+their geographical dependence. Annotators ﬁnd
+that up to 30% of questions in existing datasets
+have answers that change over time, and rule-based
+heuristics using an NER tagger identify that about
+5% of questions specify a location. We collect
+answers from different temporal and geographic
+contexts for such context-dependent questions (see
+Table 1).
+Using our collected data, we evaluate whether
+existing open-retrieval QA systems adapt to new
+temporal or geographical contexts by providing an-
+swers that are up-to-date or from new locations.
+While it is often assumed that retrieval based sys-
+tems for QA (Karpukhin et al., 2020; Guu et al.,
+2020) can adapt to updated facts during inference
+by simply updating the retrieval corpus, we ﬁnd
+that this is not the case. State-of-the-art retrieval
+based systems with updated corpora are 15 per-
+centage points less accurate on questions whose
+answers have been updated versus those that have
+remained constant since the time when their large-
+scale training dataset was collected. We also ob-
+serve that models fail to generalize to answering
+questions from new locations (Shankar et al., 2017),
+with accuracy dropping by 10 percentage points
+when asked to provide the answer from a rare loca-
+tion versus a common one.
+To support future research developing open-
+retrieval QA systems which situate questions
+within the inquirer’s extra-linguistic contexts, we
+propose two tasks for modeling what facts change
+across different extra-linguistic contexts and how
+those facts change. We also provide ﬁne-grained
+evaluations for measuring how well models adapt
+to new temporal and geographical contexts. We
+establish initial performance levels on our tasks by
+adapting state-of-the-art methods for open-retrieval
+QA (Karpukhin et al., 2020; Lewis et al., 2020a;
+Roberts et al., 2020). Finally, we provide rich anal-
+ysis of existing QA systems, which suggest that
+benchmark construction should incorporate extra-
+linguistic contexts to remain relevant globally and
+in the future.
+2 Deﬁnitions & Tasks
+2.1 Deﬁning Extra-Linguistic Contexts
+We begin by deﬁning the scope of contexts stud-
+ied in this work. For a given question q, we say
+that ai is its answer when asked in the context ci.
+Each context consists of a type cti and a value cvi.
+We study two context types: temporal (TEMP ) and
+geographical ( GEO). TEMP deﬁnes each context
+value as timestamp (e.g. a date or year) where ai
+is the answer to q if it was asked at the time of cvi.
+GEO deﬁnes each context value as a geopolitical
+entity where ai is the answer to theq in the location
+cvi. See Table 1 for examples from each context
+type. We limit our study to valid questions, ignor-
+ing presupposition cases (Kim et al., 2021) (e.g.,
+asking who is the CEO of Google before Google
+was founded).
+2.2 Situated Question Answering
+Given a question q and context ci, the task is to
+produce the corresponding answer ai for the pro-
+vided context. This task requires models to situate
+the question within the provided extra-linguistic
+context to produce an appropriate answer. Models
+
+[[page 3]]
+are evaluated on exact string match with annotated
+answer ai and predicted answer ˆai after minor nor-
+malization (Rajpurkar et al., 2016).
+By evaluating on different sets of extra-linguistic
+contexts of the same question, we can measure
+whether models are able to generalize to new con-
+texts. For instance, we can evaluate how models
+perform on commonly versus rarely asked about
+locations, or on questions whose answers changed
+recently or long ago. Furthermore, this task allows
+us to train systems that explicitly model how facts
+change across different extra-linguistic contexts.
+2.3 Context-Dependent Question
+Identiﬁcation
+In context-dependent question identiﬁcation, we
+evaluate whether models can determine whether
+the answer to a given question depends on its
+extra-linguistic context. More formally, given a
+question q and context type ct, models must de-
+termine whether there exists two distinct contexts
+values, (cvi, cvj ), with different respective answers,
+ai ⁄= aj. We cast this as binary classiﬁcation and
+evaluate models on their classiﬁcation accuracy, F1,
+precision, and recall.
+Identifying what facts change depending on the
+extra-linguistic contexts is nontrivial even for hu-
+man annotators that often requires extensive back-
+ground knowledge on a subject. For example, de-
+termining whether the capital of Kazakhstan has
+changed requires speciﬁc knowledge of the nation’s
+history. Identifying these questions has many prac-
+tical applications, such as identifying suitable ques-
+tions for QA systems that can only provide static
+answers, an idea we will explore later in Section 6.
+3 Data Collection
+Here we describe the process for identifying
+context-dependent questions and collecting an-
+swers from alternate contexts. We split up data
+collection into three stages which are depicted in
+Figure 2: identiﬁcation, {Context / Answer} col-
+lection, and validation. Additional data collection
+details with interface screenshots can be found in
+Appendix A.
+3.1 Identiﬁcation
+We source questions from a variety of datasets
+for open-retrieval QA: Natural Questions (NQ-
+Open) (Kwiatkowski et al., 2019), WebQues-
+tions (Berant et al., 2013), TyDi-QA (Clark et al.,
+2020), and MS-MARCO (Campos et al., 2016). All
+of these datasets are in English and contain ques-
+tions that are answerable by Wikipedia documents.
+Temporally dependent questions are abundant in
+existing datasets, as they are unambiguous during
+annotation and annotators simply provide the cur-
+rent answer at the time of collection. In contrast,
+geographically dependent questions are often re-
+jected during annotation due to their ambiguity, as
+there is no consensus among annotators on the as-
+sumed geographical context. To correct for this
+scarcity, we generate geographically dependent
+questions by modifying existing questions from
+NQ-Open. We identify questions with phrases that
+specify a location by running an NER tagger (Pe-
+ters et al., 2017) and remove the location entity
+using heuristics based on its syntactic role as iden-
+tiﬁed by a dependency parser (Dozat and Manning,
+2017). See Appendix A for full details.
+For each question, we collect 3-way yes / maybe
+/ no annotations for whether they are temporally or
+geographically dependent. We label questions as
+context dependent if at least two of annotators label
+so. We discard questions with split annotations and
+majority maybe annotations, and map the labels to
+a binary yes/no label.2
+3.2 {Context / Answer} Collection
+After identifying context-dependent questions, we
+then move on to collecting multiple {Context / An-
+swer} pairs via crowdsourcing. For this part, we
+exclusively use questions from NQ-Open dataset.
+We allow crowdworkers to query an up-to-date ver-
+sion of English Wikipedia using the Google Search
+API.3 We outline the annotation process for each
+context type below:
+TEMP To construct SITUATED QA examples
+with temporal context, we take two steps: (1) crowd
+sourcing timeline for each question and (2) gener-
+ating (q, cv, a) from the annotated timeline.
+Crowdworkers are asked to provide a brief time-
+line of answers for a given question, consisting of
+the current answer, the previous answer, as well
+as the start and end transition timestamps for each
+answer given as dates or years (see Figure 2). From
+annotated timeline and query pairs, we construct
+examples of (q, cv, a) pairs in one of three ways
+2These usually are highly ambiguous questions, such as
+“What are the measurements of a vintage oil can?”, and total
+discarded questions only accounts for 11% of the data.
+3We use the February 20, 2021 dump of English
+Wikipedia.
+
+[[page 4]]
+Figure 2: Data collection pipeline: Crowdworkers are ﬁrst asked to identify context dependent questions. We
+then collect brief answer timelines for temporally dependent questions and location/answer pairs geographically
+dependent questions, each of which is then veriﬁed by another worker.
+which we refer to as Start, Sampled, and Static.
+We describe each of these methods below:
+Start examples simply use each answer’s start
+transition timestamp as cv. This is intended to
+simulate the common scenario of asking informa-
+tion that is new or has recently changed. Sampled
+examples use a timestamp that lies between an
+answer’s start and end transition ascv. As each an-
+swer in a timeline can result in many valid(q, cv, a)
+pairs, we limit the number of values of cv for each
+answer to a maximum of two. We uniformly sam-
+ple up to two timestamps between each answers
+start and end transition, using each sampled times-
+tamp to create a new (q, cv, a) triple. Static ex-
+amples utilize questions that were annotated as
+not temporally-dependent to simulate realistic set-
+tings where context dependent and independent
+questions coexist. For each static question, we uni-
+formly sample a single value of cv, resulting in one
+(q, cv, a) triple per static question.
+GEO We construct our evaluation datasets with
+crowdsourcing. For each stripped question that was
+annotated as geographically dependent during the
+identiﬁcation stage, annotators were presented with
+the question, the original answer(s), and stripped
+location. Annotators ﬁrst validate whether the orig-
+inal location and answer pair is correct for the
+stripped question before identifying up to two addi-
+tional location and answer pairs. We then use each
+validated or identiﬁed pair to construct a (q, cv, a)
+triple for the stripped question.
+We construct our training set via distant supervi-
+sion. Using our best performing context-dependent
+question identiﬁcation model which we introduce
+in Section 4, we classify unlabeled examples from
+the NQ-Open training set. For each example that
+was classiﬁed as geographically-dependent, we use
+its original answer, location, and stripped question
+to construct a (q, cv, a) triple.
+3.3 Quality Control
+Validation The {Context / Answer} annotations
+collected above are reviewed by another annota-
+tor in a ﬁnal validation stage. Presented with a
+question along with all answer timelines or loca-
+tion/answer pairs that have been generated by other
+workers, annotators are asked to validate or revise
+each response by marking them as correct or incor-
+rect. We collect 2-way {Context / Answer} anno-
+tations and have one validatator for each question
+from the development and test sets. We collect
+a single {Context / Answer} annotation and skip
+validation for answer timelines from the training
+set.
+Worker Qualiﬁcations / Inter-annotator agree-
+ment Table 2 reports Fleiss’s kappa for the con-
+text dependent question identiﬁcation and valida-
+tion stages. We ﬁnd moderate to high agreement all
+tasks, with lower agreement on datasets with highly
+ambiguous queries (e.g. how much to trust friends)
+or questions require extensive domain knowledge
+(e.g., what is the cause of smog in china?). For ge-
+ographically dependent question answering, ques-
+tions like “when were electric trains introduced"
+had split votes from the annotators, as both geo-
+graphically dependent and independent interpre-
+tations are valid. Overall, we observe high qual-
+ity data with comparable agreement numbers with
+prior work, yet reafﬁrming prevalent ambiguity in
+open retrieval QA (Min et al., 2021).
+3.4 Data Statistics / Analysis
+Table 2 shows the statistics of our collected dataset.
+We annotated over 11K questions, and roughly 30-
+40% of them where identiﬁed as context-dependent.
+Temporally-dependent questions comprised of least
+
+[[page 5]]
+Identiﬁcation Data {Context / Answer} Data
+Context Train Dev Test Agreement Train Dev Test Agreement
+Type (ct) #q % #q % #q % Fleiss’κ #q,c v,a #q,c v,a #q,c v,a Fleiss’κ
+TEMP 4438 36 2572 32 1962 28 0.62 6009 3423 2795 0.57
+GEO 1149 46 879 42 367 37 0.56 3548 1398 505 0.56
+Table 2: Dataset statistics. For our identiﬁcation dataset, we report both the total number of questions (#q) and the
+percent of questions that are context-dependent (%). For our {Context / Answer} dataset, we report the number
+of unique (question, context value, answer) triples (# q, cv, a). Each context type and split’s (q, cv, a) triples are
+collected slightly differently, see Section 3.2 for details. We also report inter-annotator agreement on context
+dependent question identiﬁcation and {Context / Answer} validation.
+Figure 3: The distribution of temporally dependent
+questions by the duration its previous answer was true
+for with examples.
+10% of examples in all datasets we looked at, even
+without any ﬁltering. We also found that examples
+from Natural Questions where at least one answer
+span is within a table in its evidence document are
+more often temporally-dependent. To construct
+our ﬁnal dataset, we upsample such questions. We
+followed the original train, development, and test
+split for each dataset, which caused slight incon-
+sistencies in the proportion of examples from each
+dataset across splits, simulating a domain shift.
+For 2.8K of those context-dependent questions
+(2.4K temporal, 0.5K geographical), we collected a
+total of 5.9K answers from alternate contexts (4.0K
+temporal, 1.9K geographical). From those alter-
+nate temporal context / answer pairs, we construct
+(q, cv, a) by sampling valid dates, creating 6K ex-
+amples. The ﬁnal TEMP dataset also includes 6.7K
+examples from temporally-independent questions.
+More details and statistics on individual datasets
+can be found in the in Appendix A.
+How often do temporally dependent facts
+change? We investigate how frequently answers
+change by measuring the distance between the the
+two most recent answers. Figure 3 depicts how
+long the previous answer was valid for. We observe
+a long tailed distribution, with a large proportion
+of answers changing around the one year mark.
+4 Models
+In this section, we describe our baseline models
+for context-dependent question identiﬁcation and
+situated QA. Details on our learning settings and
+hyperparameters are in Appendix D.
+4.1 Context Dependent Question
+Identiﬁcation
+As a lower bound, we provide a naive random-
+choice baseline, where labels are randomly as-
+signed to match the label distribution in the training
+data. We also train separate BERT-based classiﬁers,
+which encode the input question q using BERT and
+classify based on each question’s encoded[CLS]
+token representation. We experiment with both
+BERT-base and BERT-large. We approximate hu-
+man performance by sampling 50 examples for
+temporal context and geographical context each,
+and re-collecting annotations from a new set of
+crowdworkers.
+4.2 Situated Question Answering
+There are two types of models for open retrieval
+QA: retrieval based (open book) and closed book.
+Retrieval based models (Karpukhin et al., 2020;
+Lee et al., 2019; Guu et al., 2020) answer questions
+by retrieving relevant passages from a corpus be-
+fore producing an answer based on the retrieved
+passages. Closed book approaches (Roberts et al.,
+2020; Lewis et al., 2020a; Févry et al., 2020) do
+not rely on access to a corpus during inference,
+instead use the knowledge that has been stored in
+the model’s parameters. These models, which typ-
+ically have a large number of parameters and are
+trained over a single snapshot of web data, generate
+answers from each question.
+We present two competitive baselines: one
+retrieval-based model, DPR (Karpukhin et al.,
+2020), and one closed-book model, BART-large
+
+[[page 6]]
+Context (ct,c v) Augmented Question
+(TEMP, 2017 ) Who went number 1 in the WNBA
+draft as of 2017?
+(GEO, TOKYO ) Where do we rank among the
+world’s largest citiesin Tokyo?
+Table 3: Examples of modiﬁed queries. Text shown
+in bold is concatenated onto the original question. To
+query for the answer for some context where ct =
+TEMP or ct = GEO, we append the phrase “as of cv”
+or “in cv”, replacing cv with the context value.
+(Lewis et al., 2020a).4 Both baselines are trained
+on NQ-Open (Kwiatkowski et al., 2019; Lee et al.,
+2019). We use the best performing model conﬁg-
+uration from DPR paper, but swap the retrieval
+corpus with an up-to-date Wikipedia dump (times-
+tamped 2021-Feb-20). In standard settings, DPR
+achieves an accuracy of 41.5 and BART achieves an
+accuracy of 24.1 on NQ-Open. We use these base-
+lines in three settings which we introduce below:
+unmodiﬁed, query modiﬁed, and query modiﬁed
+with ﬁnetuning.
+We also approximate human performance on sit-
+uated QA using 100 randomly sampled examples
+from each context type which are annotated by the
+authors of this paper. While our estimated human
+performance appear somewhat low, they are in line
+with agreement rates in the original Natural Ques-
+tions study (Kwiatkowski et al., 2019) and are tied
+to the challenges of evaluating open-retrieval QA.
+Discrepancies are often due to ambiguous ques-
+tions or equivalent answer forms (e.g., July 5, 1945
+vs. 5 July 1945, The Patriots vs. New England Pa-
+triots). The latter is especially problematic for ge-
+ographically dependent questions, where answers
+involving time expression occur much more fre-
+quently, comprising over 50% of examples. See
+Appendix A for more details.
+Unmodiﬁed Baseline We evaluate open-
+retrieval QA models on our task without any
+alterations. Each model is only given the question,
+ignoring the extra-linguistic context, and thus
+predicts the same answer no matter the context.
+For temporally-dependent questions, models are
+expected to output the most up-to-date answer. For
+geographically-dependent questions, models must
+assume some geographical context to produce an
+answer.
+4We use the pretrained model and implemen-
+tation from https://github.com/shmsw25/
+bart-closed-book-qa .
+Query Modiﬁed One simple method for incor-
+porating extra-linguistic contexts into question an-
+swering is to concatenate the context onto the ques-
+tion, separated by some special token. We adopt a
+slightly different approach that leverages what mod-
+els have already learned about producing answers
+from speciﬁc contexts: concatenating a phrase that
+speciﬁes the relevant context onto each question,
+transforming it into a context-independent ques-
+tion. The concatenation templates for each context
+type are described in Table 3. We ﬁnd that these
+simple modiﬁcations mostly generate valid, ﬂuent
+questions that closely resemble examples found in
+our models’ training data. We estimate that 10%
+of questions in NQ-Open contain similar augmen-
+tations, inserting or concatenating a phrase that
+speciﬁes the context (See Appendix B for details).
+Query Modiﬁed w/ Finetuning We also experi-
+ment with ﬁnetuning our query modiﬁed baselines.
+For our retrieval based approach (DPR), we ﬁne-
+tune separate the reader and retriever models for
+each context type. We ﬁnetune retriever models
+using gold and hard-negative passages from the re-
+trieval results of our Query Modiﬁed DPR baseline.
+Likewise, we also ﬁnetune separate closed book
+models for each context type.
+5 Results
+5.1 Context Dependent Question
+Identiﬁcation
+Table 4 reports our results on context dependent
+question identiﬁcation. We ﬁnd that pretrained lan-
+guage models perform competitively in this binary
+classiﬁcation task, matching human agreements.
+Thus, it may be a useful tool for identifying context
+dependent questions which closed book systems
+are poorly suited for or identifying examples in
+benchmark datasets that require re-annotation.
+5.2 Situated Question Answering
+Table 5 shows our results on the situated QA task.
+All models lag behind our estimated human-level
+performance by a signiﬁcant margin, especially
+for temporally dependent questions. Overall, re-
+trieval based models outperform closed book mod-
+els, as in the original QA datasets (41.5 EM vs.
+24.1 EM). We ﬁnd that applying our query modi-
+ﬁcations to the question works well for geographi-
+cally dependent questions, but see no improvement
+for temporally dependent questions. Finetuning
+
+[[page 7]]
+TEMP GEO
+Model Accuracy Precision Recall F1 Accuracy Precision Recall F1
+Random 45.3 / 44.8 31.9 / 28.3 61.7 / 64.9 42.1 / 39.4 49.7 / 48.0 42.3 / 38.1 54.2 / 62.8 47.5 / 47.4
+BERTbase 94.5 / 93.5 94.2 / 92.7 88.5 / 83.1 91.2 / 87.6 86.0 / 79.6 79.0 / 67.4 90.8 / 87.6 84.5 / 76.2
+BERTlarge 95.7 / 93.8 94.7 / 91.2 91.7 / 85.9 93.2 / 88.5 86.1 / 80.7 80.3 / 69.9 88.6 / 84.7 84.3 / 76.6
+Human∗ 96.0 / 94.0 88.9 / 83.3 100 / 100 94.1 / 90.9 88.0 / 84.0 76.5 / 72.7 86.7 / 88.9 81.2 / 80.0
+Table 4: Results for context-dependent question identiﬁcation. Each cell report results on development / test set.
+Query
+Mod.
+Fine-
+tuned
+TEMP GEO
+Static (400) Samp. (1472) Start (923) Total Comm. (265) Rare (240) Total
+Retrieval
+based
+44.2 16.0 14.2 19.4 9.1 2.9 6.1
+✓ 28.8 15.9 18.5 18.6 27.5 22.1 25.0
+✓ ✓ 39.8 17.2 24.9 23.0 27.9 25.0 26.5
+Closed
+Book
+27.2 15.3 12.9 16.2 9.4 4.6 7.1
+✓ 19.5 12.4 15.7 14.5 19.2 9.2 14.5
+✓ ✓ 26.0 16.2 18.3 18.3 21.5 11.7 16.8
+Human∗ - - - 57.0 - - 34.0
+Table 5: Results situated question answering, reporting exact match score on the test set. In addition to reporting
+overall EM for each context type, we also report EM for partitions of the test set. For TEMP , we partition the test
+set based on how the example’s context value was generated. For GEO, we split on whether the context-value is a
+location is common (Comm.) or uncommon (Rare), which is determined by whether the location appears at least
+ﬁve times in our dataset as a geographical context.
+Query
+Mod.
+Fine-
+tuned
+TEMP GEO
+One Any One Any
+Retrieval
+based
+19.4 28.1 6.1 22.6
+✓ 18.6 26.4 25.0 30.7
+✓ ✓ 23.0 29.7 26.5 32.3
+Closed
+Book
+16.2 24.0 7.1 25.1
+✓ 14.5 19.9 14.5 22.6
+✓ ✓ 18.3 25.9 16.8 24.4
+Table 6: Breakdown of errors from context dependent
+QA. We report EM accuracy evaluated against answers
+from the correct context ( One) and answers from the
+union of all our annotated contexts (Any).
+models on answers from multiple extra-linguistic
+contexts with modiﬁed questions improved perfor-
+mance across the board, especially for the TEMP
+context type.
+Adding TEMP context to static questions dis-
+tracts the model, signiﬁcantly decreasing perfor-
+mance especially for the closed book baseline. This
+suggests that models are not robust to semanti-
+cally equivalent edits, as observed in Ribeiro et al.
+(2020). Models also perform better when provided
+with an answer’s start date as context compared
+to a sampled date, which falls between the tran-
+sitions between answers. This gap is especially
+pronounced for our retrieval based model.
+US India Other Rare
+# of Examples 42 20 203 240
+Retrieval Based 23.8 10.0 5.9 2.9
+Closed Book 23.8 10.0 6.4 4.6
+Table 7: Results of our unmodiﬁed baseline run onGEO.
+We further break down performance common locations
+by separating the two most common ones, the “United
+States” and “India”, the “Other” common locations.
+Do systems performance vary based on the fre-
+quency of geographic context? Table 5 splits
+results on GEO questions into those from com-
+mon and rare locations, many of which unseen
+during training. Both methods have greater difﬁ-
+culty with rare locations; however, the drop in per-
+formance for closed book models is signiﬁcantly
+worse. Closed book models perform 10 percentage
+points worse on questions from rare locations while
+retrieval based models only perform 3 points worse.
+These ﬁndings show that retrieval based systems
+generalize better to new locations and are better
+equipped for answering geographically dependent
+questions. We also see that the gap in performance
+between common and rare locations shrinks for
+both models after ﬁnetuning, suggesting that ex-
+plicitly modeling geographical contexts helps with
+generalization.
+
+[[page 8]]
+Query
+Mod.
+Fine-
+tuned
+Current Previous Total
+529 373 902
+Retrieval
+based
+19.5 6.2 14.0
+✓ 19.5 6.4 14.1
+✓ ✓ 22.5 11.3 17.8
+Closed
+Book
+18.5 4.0 12.5
+✓ 18.5 4.8 12.9
+✓ ✓ 18.9 8.0 14.4
+Human∗ - - 51.0
+Table 8: Results on training our baselines on predicting
+the current and previous answers to a question. Human
+performance is estimated using 100 randomly sampled
+examples annotated by the authors of this paper.
+What is the assumed context for a geograph-
+ically dependent question? When presented
+with a geographically dependent question with-
+out the context, open retrieval QA models must
+assume some geographical context to produce an
+answer. We hypothesize that models will exhibit
+bias toward assuming the few geographical co-texts
+are most frequently asked about. We test this by
+reporting the results of our unmodiﬁed baseline,
+further breaking down the results from Table 5 by
+individual location. Each time the unmodiﬁed base-
+line correctly answers a question for some location,
+it did so by assuming that location as its context.
+We report our results in In Table 7, which show
+that models are heavily biased toward assuming
+the question was asked by someone in the United
+States or India.
+How often do models provide answers from the
+wrong context? In Table 6, we report error anal-
+ysis for our situated QA baselines that shows how
+often models are provide the answer from the spec-
+iﬁed context versus the union of all annotated con-
+texts. We see that models often fail to incorporate
+extra-linguistic contexts into the question, produc-
+ing the answer from another context.
+6 Analysis
+Can QA systems differentiate and recall previ-
+ous answers to a question? To answer this, we
+study a new setting where we query models for
+the current and previous answer to a given ques-
+tion. Following the same steps as above for the
+TEMP and GEO context types, we develop a suite of
+retrieval-based and closed-book baselines for this
+new setting. Our query-modiﬁed baselines in this
+setting consist of prepending the word “previously”
+to the beginning of each question to query for the
+Fine- Knowledge Stable Updated
+tuned Source Date 267 209
+Retrieval
+Based
+Wiki. Dec 2018 27.3 7.2
+Wiki. Feb 2021 26.6 11.5
+✓ Wiki. Feb 2021 28.1 17.2
+Closed
+Book
+Feb 2019 28.8 5.3
+✓ Feb 2019 28.1 6.7
+Table 9: Results on the default open-retrieval QA set-
+ting where all questions are assumed to be about the
+present timestamp (Feb 2021), evaluation split by ques-
+tions that require updating the world state to after the
+large scale training dataset was collected,Updated, and
+questions where answers didn’t change since the data
+collection, Stable. Our retrieval based systems use the
+English Wikipedia dumps from 2018-12-20 and 2021-
+02-20 while our closed book systems are pretrained on
+data from 2019-02 and earlier.
+previous answer. In the existing framing of QA,
+all questions are looking for the current answer we
+do no augmentations to query for the current an-
+swer. For our ﬁnetuned baselines, we train separate
+reader models and closed book models to query for
+current and previous answers.
+We report our results for these experiments in
+Table 8. We ﬁnd that models are far better at pro-
+ducing the current answer versus past answers to
+a question. Finetuning, however, greatly increases
+performance on queries for previous answers.
+Can QA systems trained on outdated answers
+adapt to the present? We investigate whether
+QA systems that are pretrained on outdated cor-
+pora and that are trained on large-scale QA datasets
+containing outdated answers can adapt to answer-
+ing questions situated in the present. Lewis et al.
+(2020b) shows that updating the corpera of retrieval
+based models can be effective method for updat-
+ing simple facts, such as current heads of state.
+We test whether this extends to a broader range
+of temporally-dependent facts by evaluating our
+baselines introduced above on their ability to pre-
+dict the current answer in our dataset, which are
+up-to-date as of Feb 2021. We split the current an-
+swers into two categories, stable where answer did
+not change since 2018, and updated where answer
+changed after 2018. We chose 2018 as a thresh-
+old as it is when Natural Questions (Kwiatkowski
+et al., 2019) was collected and roughly matches the
+timestamp of the most recent data our closed book
+model (Lewis et al., 2020a) was pretrained on (Feb
+2019).
+Table 9 shows that, while retrieval based models
+
+[[page 9]]
+were able to update some world knowledge after
+swapping the retrieval corpus, signiﬁcant gains on
+updated questions only come after ﬁnetuning with
+newer data. This suggests that simply updating the
+corpora that models retrieve passages from is not
+sufﬁcient to keep models up-to-date.
+7 Related Work
+Comparison to other QA datasets While a few
+prior studies mention that answers to a question can
+change over time (Min et al., 2020), no prior work
+investigated the performance of existing models on
+temporally dependent queries and their prevalence.
+Addressing ambiguous questions (Min et al.,
+2020) overlaps with our study, as ambiguity can
+arise from extra-linguistic contexts. Their study
+found 13% of examples were ambiguous due to
+temporal deixis. However, we found that context-
+dependence can co-occur with inherent ambigui-
+ties in the question which cannot be resolved with
+context. Thus, this ﬁgure underestimates the true
+proportion of temporally dependent questions. Fur-
+thermore, humans don’t always consider context-
+dependent questions as ambiguous when there is
+only one answer given the context, which is nor-
+mally assumed to be present time and location.
+Thus, ambiguities that arise due to lack of con-
+text should, therefore, be modeled separately from
+semantic ambiguities of the question.
+Recent work has also studied generating
+temporally-dependent questions with timestamped
+answers from temporal knowledge-bases (Chen
+et al., 2021; Saxena et al., 2021). Similarly, Dhin-
+gra et al. (2021) generates temporally-dependent
+cloze-style prompts and presents a temporally
+aware language model to address them. These
+works, however, synthetically generate examples
+and are therefore limited in scope and diversity.
+In contrast, we manually annotate temporally and
+geographically dependent questions.
+Temporal understanding Temporal understand-
+ing in NLP has been typically studied in an intra-
+document setting, i.e., ordering events or ﬁnding
+temporal relationship between two events in the
+same document (Pustejovsky et al., 2003; Bethard
+et al., 2007; Cassidy et al., 2014; Llorens et al.,
+2015; Zhou et al., 2020).
+Dynamic evaluation Dynamic evaluation has
+been studied under the language modeling (Os-
+borne et al., 2014; Yogatama et al., 2014), topic
+modeling (Wang et al., 2008) and entity link-
+ing (Rijhwani and Preotiuc-Pietro, 2020). Recent
+work (Lazaridou et al., 2021) studied temporal drift
+in the context of large scale pretrained language
+model, hinting reusing models from previous snap-
+shot can cause performance decay, as we observe
+in our study as well.
+Adversarial, phased data collection has been pro-
+posed (Paperno et al., 2016; Zellers et al., 2018;
+Potts et al., 2020) to drive model development, con-
+stantly feeding models examples that current mod-
+els are unable to address. We suggest collecting
+questions dynamically for slightly different goal,
+to accurately reﬂect the changing world by identi-
+fying temporally dependent facts from such bench-
+marks and continuously updating them. Building
+a benchmark based on a ﬁxed snapshot (Petroni
+et al., 2021) can be a viable alternative.
+Researchers studied keeping knowledge sources
+up-to-date. Konovalov et al. (2017) looked at
+the constantly changing facts from the perspective
+of automatically extracting knowledgebase revi-
+sions. Schuster et al. (2021) presents contrastive
+sentences based on Wikipedia revisions, showing
+how entailment decision can change over time.
+8 Conclusion & Future Work
+We present the ﬁrst study of how extra-linguistic
+contexts affect open retrieval QA. Our study re-
+veals that current systems fail to adapt to shifts in
+the temporal or geographical context. We, there-
+fore, propose tasks and create a dataset for training
+and evaluating QA systems on modeling how facts
+change across contexts. Our dataset will support
+ample future work for developing models which
+can gracefully update its predictions based on new
+temporal and geographical contexts. Future re-
+search may address incorporating in temporally
+and geographically dependent source documents,
+such as news articles, or considering other extra-
+linguistic contexts such as who is asking the ques-
+tion, taking individual’s preferences into account.
+Acknowledgement
+We would like to thank Sewon Min, Raymond
+Mooney, and members of UT NLP group for com-
+ments and discussions. The work is partially
+funded by Google Faculty Awards.
+
+[[page 10]]
+References
+Jonathan Berant, Andrew K. Chou, Roy Frostig, and
+Percy Liang. 2013. Semantic parsing on freebase
+from question-answer pairs. In Proceedings of the
+Conference on Empirical Methods in Natural Lan-
+guage Processing (EMNLP).
+Steven Bethard, James H. Martin, and Sara Klingen-
+stein. 2007. Timelines from text: Identiﬁcation of
+syntactic temporal relations. International Confer-
+ence on Semantic Computing (ICSC), pages 11–18.
+Daniel Fernando Campos, T. Nguyen, M. Rosenberg,
+Xia Song, Jianfeng Gao, Saurabh Tiwary, Rangan
+Majumder, L. Deng, and Bhaskar Mitra. 2016. Ms
+marco: A human generated machine reading com-
+prehension dataset. ArXiv, abs/1611.09268.
+T. Cassidy, Bill McDowell, Nathanael Chambers, and
+Steven Bethard. 2014. An annotation framework for
+dense event ordering. In Proceedings of the Annual
+Meeting of the Association for Computational Lin-
+guistics (ACL).
+Danqi Chen, Adam Fisch, Jason Weston, and Antoine
+Bordes. 2017. Reading Wikipedia to answer open-
+domain questions. In Proceedings of the Annual
+Meeting of the Association for Computational Lin-
+guistics (ACL).
+Wenhu Chen, Xinyi Wang, and William Yang Wang.
+2021. A dataset for answering time-sensitive ques-
+tions. ArXiv, abs/2108.06314.
+Eunsol Choi, He He, Mohit Iyyer, Mark Yatskar, Wen
+tau Yih, Yejin Choi, Percy Liang, and Luke Zettle-
+moyer. 2018. Quac : Question answering in con-
+text. Proceedings of the Conference on Empirical
+Methods in Natural Language Processing (EMNLP),
+abs/1808.07036.
+J. Clark, Eunsol Choi, M. Collins, Dan Garrette,
+T. Kwiatkowski, V . Nikolaev, and Jennimaria Palo-
+maki. 2020. Tydi qa: A benchmark for information-
+seeking question answering in typologically diverse
+languages. Transactions of the Association for Com-
+putational Linguistics (TACL), 8:454–470.
+J. Devlin, Ming-Wei Chang, Kenton Lee, and Kristina
+Toutanova. 2019. Bert: Pre-training of deep bidi-
+rectional transformers for language understanding.
+In Proceedings of the Conference of the North
+American Chapter of the Association for Computa-
+tional Linguistics: Human Language Technologies
+(NAACL-HLT).
+Bhuwan Dhingra, Jeremy R. Cole, Julian Martin Eisen-
+schlos, D. Gillick, Jacob Eisenstein, and William W.
+Cohen. 2021. Time-aware language models as tem-
+poral knowledge bases. ArXiv, abs/2106.15110.
+Timothy Dozat and Christopher D. Manning. 2017.
+Deep biafﬁne attention for neural dependency pars-
+ing. ArXiv, abs/1611.01734.
+Dheeru Dua, Yizhong Wang, Pradeep Dasigi, Gabriel
+Stanovsky, Sameer Singh, and Matt Gardner. 2019.
+Drop: A reading comprehension benchmark requir-
+ing discrete reasoning over paragraphs. In Proceed-
+ings of the Conference of the North American Chap-
+ter of the Association for Computational Linguistics:
+Human Language Technologies (NAACL-HLT).
+Jacob Eisenstein, Brendan T. O’Connor, Noah A.
+Smith, and E. Xing. 2010. A latent variable model
+for geographic lexical variation. In Proceedings of
+the Conference on Empirical Methods in Natural
+Language Processing (EMNLP).
+Thibault Févry, Livio Baldini Soares, Nicholas FitzGer-
+ald, Eunsol Choi, and T. Kwiatkowski. 2020. Enti-
+ties as experts: Sparse memory access with entity
+supervision. In Proceedings of the Conference on
+Empirical Methods in Natural Language Processing
+(EMNLP).
+Matt Gardner, Joel Grus, Mark Neumann, Oyvind
+Tafjord, Pradeep Dasigi, Nelson F. Liu, Matthew
+Peters, Michael Schmitz, and Luke S. Zettlemoyer.
+2017. Allennlp: A deep semantic natural language
+processing platform.
+Kelvin Guu, Kenton Lee, Zora Tung, Panupong Pa-
+supat, and Ming-Wei Chang. 2020. REALM:
+Retrieval-augmented language model pre-training.
+Proceedings of the International Conference on Ma-
+chine Learning (ICML).
+Johannes Hoffart, Fabian M. Suchanek, Klaus
+Berberich, and Gerhard Weikum. 2013. Yago2: A
+spatially and temporally enhanced knowledge base
+from wikipedia. Artiﬁcial Intelligence, 194:28–61.
+Xiaolei Huang and Michael J. Paul. 2018. Examining
+temporality in document classiﬁcation. Proceedings
+of the Annual Meeting of the Association for Compu-
+tational Linguistics (ACL).
+Jena D. Hwang, Chandra Bhagavatula, Ronan Le Bras,
+Jeff Da, Keisuke Sakaguchi, Antoine Bosselut, and
+Yejin Choi. 2020. Comet-atomic 2020: On symbolic
+and neural commonsense knowledge graphs. ArXiv,
+abs/2010.05953.
+Vladimir Karpukhin, Barlas O ˘guz, Sewon Min, Ledell
+Wu, Sergey Edunov, Danqi Chen, and Wen-tau Yih.
+2020. Dense passage retrieval for open-domain
+question answering. Proceedings of the Conference
+on Empirical Methods in Natural Language Process-
+ing (EMNLP).
+Nora Kassner and H. Schutze. 2020. Negated and
+misprimed probes for pretrained language models:
+Birds can talk, but cannot ﬂy. In Proceedings of
+the Annual Meeting of the Association for Compu-
+tational Linguistics (ACL).
+Najoung Kim, Ellie Pavlick, Burcu Karagol Ayan,
+and D. Ramachandran. 2021. Which linguist in-
+vented the lightbulb? presupposition veriﬁcation
+for question-answering. Proceedings of the Annual
+
+[[page 11]]
+Meeting of the Association for Computational Lin-
+guistics (ACL).
+A. Konovalov, Benjamin Strauss, Alan Ritter, and Bren-
+dan T. O’Connor. 2017. Learning to extract events
+from knowledge base revisions. Proceedings of the
+26th International Conference on World Wide Web.
+T. Kwiatkowski, Jennimaria Palomaki, Olivia Red-
+ﬁeld, Michael Collins, Ankur P. Parikh, C. Alberti,
+D. Epstein, Illia Polosukhin, J. Devlin, Kenton Lee,
+Kristina Toutanova, Llion Jones, Matthew Kelcey,
+Ming-Wei Chang, Andrew M. Dai, Jakob Uszkor-
+eit, Quoc Le, and Slav Petrov. 2019. Natural ques-
+tions: A benchmark for question answering research.
+Transactions of the Association for Computational
+Linguistics (TACL), 7:453–466.
+A. Lazaridou, Adhiguna Kuncoro, E. Gribovskaya,
+Devang Agrawal, Adam Liska, Tayfun Terzi, Mai
+Gimenez, Cyprien de Masson d’Autume, Sebastian
+Ruder, Dani Yogatama, Kris Cao, Tomás Kociský,
+Susannah Young, and P. Blunsom. 2021. Pitfalls of
+static language modelling. ArXiv, abs/2102.01951.
+Kenton Lee, Ming-Wei Chang, and Kristina Toutanova.
+2019. Latent retrieval for weakly supervised open
+domain question answering. In Proceedings of
+the Annual Meeting of the Association for Compu-
+tational Linguistics (ACL) , pages 6086–6096, Flo-
+rence, Italy. Association for Computational Linguis-
+tics.
+Mike Lewis, Yinhan Liu, Naman Goyal, Mar-
+jan Ghazvininejad, Abdelrahman Mohamed, Omer
+Levy, Veselin Stoyanov, and Luke Zettlemoyer.
+2020a. BART: Denoising sequence-to-sequence pre-
+training for natural language generation, translation,
+and comprehension. In Proceedings of the Annual
+Meeting of the Association for Computational Lin-
+guistics (ACL), pages 7871–7880, Online. Associa-
+tion for Computational Linguistics.
+Patrick Lewis, Ethan Perez, Aleksandara Piktus,
+F. Petroni, V . Karpukhin, Naman Goyal, Hein-
+rich Kuttler, M. Lewis, Wen tau Yih, Tim Rock-
+täschel, Sebastian Riedel, and Douwe Kiela. 2020b.
+Retrieval-augmented generation for knowledge-
+intensive nlp tasks. Proceedings of Advances in Neu-
+ral Information Processing Systems (NeurIPS).
+Xin Li and D. Roth. 2002. Learning question classi-
+ﬁers. In Proceedings of the International Confer-
+ence on Computational Linguistics (COLING).
+Xiao Ling and Daniel S. Weld. 2010. Temporal infor-
+mation extraction. In Proceedings of the AAAI Con-
+ference on Artiﬁcial Intelligence.
+Hector Llorens, Nathanael Chambers, N. UzZaman,
+N. Mostafazadeh, James F. Allen, and J. Pustejovsky.
+2015. Semeval-2015 task 5: Qa tempeval - evaluat-
+ing temporal information understanding with ques-
+tion answering. In SemEval@NAACL-HLT.
+Sewon Min, Jordan L. Boyd-Graber, C. Alberti, Danqi
+Chen, Eunsol Choi, Michael Collins, Kelvin Guu,
+Hannaneh Hajishirzi, Kenton Lee, Jennimaria Palo-
+maki, Colin Raffel, Adam Roberts, T. Kwiatkowski,
+Patrick Lewis, Yuxiang Wu, Heinrich Kuttler,
+L. Liu, Pasquale Minervini, Pontus Stenetorp, Se-
+bastian Riedel, Sohee Yang, Minjoon Seo, Gau-
+tier Izacard, F. Petroni, Lucas Hosseini, Nicola De
+Cao, E. Grave, Ikuya Yamada, Sonse Shimaoka,
+Masatoshi Suzuki, Shumpei Miyawaki, S. Sato, Ryo
+Takahashi, J. Suzuki, Martin Fajcik, Martin Docekal,
+Karel Ondrej, P. Smrz, Hao Cheng, Y . Shen, X. Liu,
+Pengcheng He, W. Chen, Jianfeng Gao, Barlas O˘guz,
+Xilun Chen, V . Karpukhin, Stanislav Peshterliev,
+Dmytro Okhonko, M. Schlichtkrull, Sonal Gupta,
+Yashar Mehdad, and Wen tau Yih. 2021. Neurips
+2020 efﬁcientqa competition: Systems, analyses and
+lessons learned. ArXiv, abs/2101.00133.
+Sewon Min, Julian Michael, Hannaneh Hajishirzi, and
+Luke Zettlemoyer. 2020. Ambigqa: Answering am-
+biguous open-domain questions. In Proceedings of
+the Conference on Empirical Methods in Natural
+Language Processing (EMNLP).
+Miles Osborne, Ashwin Lall, and Benjamin
+Van Durme. 2014. Exponential reservoir sampling
+for streaming language models. In Proceedings
+of the Annual Meeting of the Association for
+Computational Linguistics (ACL).
+Denis Paperno, Germán Kruszewski, Angeliki Lazari-
+dou, Ngoc Quan Pham, Raffaella Bernardi, San-
+dro Pezzelle, Marco Baroni, Gemma Boleda, and
+Raquel Fernandez. 2016. The LAMBADA dataset:
+Word prediction requiring a broad discourse context.
+Proceedings of the Annual Meeting of the Associa-
+tion for Computational Linguistics (ACL).
+Matthew E. Peters, Waleed Ammar, Chandra Bhagavat-
+ula, and R. Power. 2017. Semi-supervised sequence
+tagging with bidirectional language models. In Pro-
+ceedings of the Annual Meeting of the Association
+for Computational Linguistics (ACL).
+Fabio Petroni, Aleksandra Piktus, Angela Fan, Patrick
+Lewis, Majid Yazdani, Nicola De Cao, James
+Thorne, Yacine Jernite, Vladimir Karpukhin, Jean
+Maillard, Vassilis Plachouras, Tim Rocktäschel, and
+Sebastian Riedel. 2021. KILT: a benchmark for
+knowledge intensive language tasks.
+Fabio Petroni, Tim Rocktäschel, A. H. Miller, P. Lewis,
+A. Bakhtin, Y . Wu, and S. Riedel. 2019. Language
+models as knowledge bases? In Proceedings of the
+Conference on Empirical Methods in Natural Lan-
+guage Processing (EMNLP).
+Karl Pichotta and R. Mooney. 2014. Statistical script
+learning with multi-argument events. In Proceed-
+ings of the Conference of the European Chapter
+of the Association for Computational Linguistics
+(EACL).
+
+[[page 12]]
+Christopher Potts, Zhengxuan Wu, A. Geiger,
+and Douwe Kiela. 2020. Dynasent: A dy-
+namic benchmark for sentiment analysis. ArXiv,
+abs/2012.15349.
+J. Pustejovsky, J. Castaño, R. Ingria, R. Saurí,
+R. Gaizauskas, A. Setzer, G. Katz, and Dragomir R.
+Radev. 2003. Timeml: Robust speciﬁcation of event
+and temporal expressions in text. In New Directions
+in Question Answering.
+Colin Raffel, Noam Shazeer, Adam Roberts, Katherine
+Lee, Sharan Narang, Michael Matena, Yanqi Zhou,
+Wei Li, and Peter J. Liu. 2020. Exploring the lim-
+its of transfer learning with a uniﬁed text-to-text
+transformer. Journal of Machine Learning Research,
+21(140):1–67.
+Pranav Rajpurkar, Robin Jia, and Percy Liang. 2018.
+Know what you don’t know: Unanswerable ques-
+tions for squad. Proceedings of the Annual Meet-
+ing of the Association for Computational Linguistics
+(ACL).
+Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, and
+Percy Liang. 2016. Squad: 100,000+ questions for
+machine comprehension of text. In Proceedings of
+the Conference on Empirical Methods in Natural
+Language Processing (EMNLP).
+Marco Túlio Ribeiro, Tongshuang Wu, Carlos Guestrin,
+and Sameer Singh. 2020. Beyond accuracy: Behav-
+ioral testing of nlp models with checklist. In Pro-
+ceedings of the Annual Meeting of the Association
+for Computational Linguistics (ACL).
+Shruti Rijhwani and Daniel Preotiuc-Pietro. 2020.
+Temporally-informed analysis of named entity
+recognition. In Proceedings of the Annual Meet-
+ing of the Association for Computational Linguistics
+(ACL).
+Adam Roberts, Colin Raffel, and Noam Shazeer. 2020.
+How much knowledge can you pack into the param-
+eters of a language model? In Proceedings of the
+Conference on Empirical Methods in Natural Lan-
+guage Processing (EMNLP).
+Apoorv Saxena, Soumen Chakrabarti, and Partha P.
+Talukdar. 2021. Question answering over temporal
+knowledge graphs. In Proceedings of the Annual
+Meeting of the Association for Computational Lin-
+guistics (ACL).
+Tal Schuster, A. Fisch, and R. Barzilay. 2021. Get
+your vitamin c! robust fact veriﬁcation with con-
+trastive evidence. Proceedings of the Conference of
+the North American Chapter of the Association for
+Computational Linguistics: Human Language Tech-
+nologies (NAACL-HLT), abs/2103.08541.
+S. Shankar, Yoni Halpern, Eric Breck, J. Atwood,
+J. Wilson, and D. Sculley. 2017. No classiﬁca-
+tion without representation: Assessing geodiversity
+issues in open data sets for the developing world.
+arXiv: Machine Learning.
+Matthew Sims, Jong Ho Park, and David Bamman.
+2019. Literary event detection. In Proceedings of
+the Annual Meeting of the Association for Computa-
+tional Linguistics (ACL).
+Alon Talmor, Ori Yoran, Amnon Catav, Dan Lahav,
+Yizhong Wang, Akari Asai, Gabriel Ilharco, Han-
+naneh Hajishirzi, and Jonathan Berant. 2021. Mul-
+timodal{qa}: complex question answering over text,
+tables and images. In International Conference on
+Learning Representations (ICLR).
+Siddharth Vashishtha, Benjamin Van Durme, and
+A. White. 2019. Fine-grained temporal relation ex-
+traction. In Proceedings of the Annual Meeting
+of the Association for Computational Linguistics
+(ACL).
+C. Wang, D. Blei, and D. Heckerman. 2008. Continu-
+ous time dynamic topic models. In UAI.
+Thomas Wolf, Lysandre Debut, Victor Sanh, Julien
+Chaumond, Clement Delangue, Anthony Moi, Pier-
+ric Cistac, Tim Rault, Rémi Louf, Morgan Fun-
+towicz, Joe Davison, Sam Shleifer, Patrick von
+Platen, Clara Ma, Yacine Jernite, Julien Plu, Can-
+wen Xu, Teven Le Scao, Sylvain Gugger, Mariama
+Drame, Quentin Lhoest, and Alexander M. Rush.
+2020. Transformers: State-of-the-art natural lan-
+guage processing. In Proceedings of the Conference
+on Empirical Methods in Natural Language Process-
+ing (EMNLP): System Demonstrations , pages 38–
+45, Online. Association for Computational Linguis-
+tics.
+Dani Yogatama, C. Wang, Bryan R. Routledge, Noah A.
+Smith, and E. Xing. 2014. Dynamic language mod-
+els for streaming text. Transactions of the Associ-
+ation for Computational Linguistics (TACL), 2:181–
+192.
+Rowan Zellers, Yonatan Bisk, Roy Schwartz, and Yejin
+Choi. 2018. Swag: A large-scale adversarial dataset
+for grounded commonsense inference. In Proceed-
+ings of the Conference on Empirical Methods in Nat-
+ural Language Processing (EMNLP).
+Ben Zhou, Qiang Ning, Daniel Khashabi, and D. Roth.
+2020. Temporal common sense acquisition with
+minimal supervision. Proceedings of the Annual
+Meeting of the Association for Computational Lin-
+guistics (ACL), abs/2005.04304.
+Ben Zhou, Kyle Richardson, Qiang Ning, Tushar Khot,
+Ashish Sabharwal, and D. Roth. 2021. Temporal
+reasoning on implicit events from distant supervi-
+sion. Proceedings of the Conference of the North
+American Chapter of the Association for Computa-
+tional Linguistics: Human Language Technologies
+(NAACL-HLT).
+
+[[page 13]]
+Appendix
+A Data Collection Details
+Data Composition For NaturalQuestions and
+WebQuestions, we use the open-domain splits es-
+tablished in (Lee et al., 2019) and we only consider
+questions from TyDi-QA that are written in En-
+glish. We randomly sampled the questions from all
+datasets except for NQ, where the ratio of tempo-
+rally dependent questions was low (around 15%).
+Initial pilot tests showed that questions where the
+answer span is within a table in its evidence doc-
+ument (we refer these as NQ-Table) are more of-
+ten temporally dependent compared to questions
+where answers are found only in paragraphs (we
+refer these as NQ-Passage). To better target tem-
+porally dependent questions, we sampled heavily
+from NQ-Table. The source dataset statistics can
+be found in Table 10, and proportion of temporally
+dependent questions in each dataset can be found
+in Table 11.
+Geographically Dependent Question Genera-
+tion To generate geographically dependent ques-
+tions, we ﬁrst run the named entity recognition tag-
+ger from Peters et al. (2017) and the dependency
+parser from Dozat and Manning (2017) over each
+example and ﬁlter for those with a geopolitical en-
+tity in the question. We then delete the entity based
+on its syntactic role. If the entity’s syntactic role is
+either nn or amod, we delete the entire entity and
+all of its descendants. If the the entity’s role ispobj,
+the entity’s parent preposition and all its descen-
+dants. Finally, if the entity’s role is root or nsubj,
+we replace the entity with the pronoun we, delet-
+ing all determiners and conjugating any auxiliary
+verbs accordingly. We ignore instances where the
+dependency is not in one of these categories, there
+are multiple GPE entities, the stripped questions
+is has 3 tokens or less, or there is disagreement
+between our parser and tagger. We use the imple-
+mentations of Peters et al. (2017) and Dozat and
+Manning (2017) from AllenNLP (Gardner et al.,
+2017).
+Crowdsourcing Details We pay workers 0.15
+USD per identiﬁcation HIT and 0.40 USD per
+{Context / Answer} collection and validation HIT.
+During {Context / Answer} collection, if an anno-
+tator is unable to ﬁnd the previous answer or either
+transition date after visiting 3 articles, they may
+leave out that information. In validation stage, in
+Source Train Dev Test Total
+NQ-Table 2911 500 839 2647
+NQ-Passage 408 500 500 1500
+WebQuestions 367 361 500 861
+TyDi-QA (en) 412 413 N/A 1000
+MS-MARCO 340 314 348 1500
+Total 4438 2572 1962 8972
+Table 10: Number of identiﬁcation examples by split
+and source dataset.
+Source Temporally Dependent
+No Maybe Yes
+NQ-Passage 73.3 15.6 11.1
+NQ-Table 54.6 3.7 41.6
+WebQuestions 59.9 10.4 29.9
+TyDi-QA (en) 62.3 14.1 23.5
+MS-Marco 60.0 26.4 13.6
+Table 11: Temporal volatility distribution of raw an-
+notation for various datasets (numbers on the training
+split).
+addition to allowing annotators to search over En-
+glish Wikipedia, we also provide a list of articles
+that were used by workers in the prior stage. In
+open retrieval setting, the same question may have
+multiple interpretations, and therefore we ask anno-
+tators to mark answers as correct if they consistent
+with one plausible interpretation. Figure 4, 5, 6, 7, 8
+shows our annotation interface.
+Generating TEMP (q, c, a) examples We sam-
+ple values of cv to match the granularity of the
+annotated dates (year-month-day or year) from our
+collected answer timelines. For each static ques-
+tion, we uniformly sample a single value of cv be-
+tween the original dataset’s creation (2018) and the
+present date (2021-03-01), matching the granularity
+Source Y/N Data Y/N/M Data
+TEMP _ABS / TEMP _REL 0.64 0.62
+- NQ-Passage 0.54 0.61
+- NQ-Table 0.69 0.68
+- WebQuestions 0.46 0.49
+- TyDi-QA (en) 0.64 0.58
+- MS-Marco 0.43 0.45
+GEO 0.56 0.56
+Table 12: Interannotator Agreement of Identiﬁcation
+examples. We compute Fleiss’s kappa all examples
+where the majority of labels (2 out of 3) are either “Yes”
+or “No” (ﬁrst column) and over all examples (second
+column) “Yes”, “No”, or “Maybe/Unsure”.
+
+[[page 14]]
+Query
+Mod.
+Fine-
+tuned
+TEMP GEO
+Static Samp. Start Total Any Comm. Rare Total Any
+Retrieval
+(DPR)
+77.2 70.2 67.9 70.4 80.1 53.8 45.8 50.0 85.0
+✓ 71.2 72.9 72.2 72.4 79.8 76.7 79.6 78.1 87.9
+✓ ✓ 76.5 74.7 72.9 74.3 81.6 76.7 79.6 78.1 87.9
+Table 13: Retrieval performance on situated question answering, measured by answer recall within the top 50
+retrieved documents. We also report performance for partitions of the test set, was well as recall measured against
+the union of all answers from all annotated contexts (Any).
+Fine- Knowledge Stable Updated
+tuned Source Date 267 209
+Retrieval
+(DPR)
+Wiki. Dec 2018 74.9 35.4
+Wiki. Feb 2021 78.3 60.3
+✓ Wiki. Feb 2021 79.4 66.0
+Table 14: Retriever results on the default open-retrieval
+QA setting where all questions are assumed to be
+about the present timestamp (Feb 2021), given as an-
+swer recall at top 50 on our test set. We split exam-
+ples based on whether the current answer started to be
+true after the large scale training dataset was collected,
+Updated, or whether questions where answers didn’t
+change since the data collection, Stable. Retrieval is
+run over English Wikipedia dumps from 2018-12-20
+and 2021-02-20.
+distribution we ﬁnd in our training set annotations.
+Inter Annotator Agreement Inter annotator
+agreement during identiﬁcation phase can be found
+in Table 12. At the validation phase, 70%
+of temporal question-context-answer pairs were
+annotated as correct and 85% of geographical
+question-context-answer pairs were annotated as
+correct, similar to validation phase (76%) in Am-
+bigQA (Min et al., 2020).
+Agreement with Natural Questions The an-
+swer span exact match between our collected an-
+swers and the original answers from NQ where
+the annotated start and end transition dates overlap
+with NQ’s creation (2018) was around 40%, simi-
+lar to the average agreement rate on NQ-Open test
+data is 49.2% in the original study (Kwiatkowski
+et al., 2019). Our manual analysis on randomly
+sampled 50 errors and ﬁnd that only 12% of the er-
+rors can be attributed to annotation errors. 70% of
+other errors are due to ambiguities in the question
+resulting in multiple possible answers (e.g. “Three
+movies made from Agatha Christie’s novels”), or
+the same answer being given in different forms (e.g.
+“Chamberlain, Wilt” vs. “Wilt Chamberlain”). The
+remaining errors are the result of inconsistencies in
+NQ annotations (18%).
+B Data Analysis
+Naturally occurring query modiﬁcations In
+open retrieval QA datasets, questions often ask
+about the answer in some speciﬁc temporal or ge-
+ographical context. For instance, when people
+want to ask about the previous answer to a ques-
+tions, people often add words like "previously"
+or "last" in their question to specify it. We ﬁnd
+that such questions comprise about 4.1% of NQ-
+Open (Kwiatkowski et al., 2019; Lee et al., 2019).
+We also ﬁnd that 5.1% of questions specify a
+speciﬁc point in time, as determined by whether
+there is a year expression in the question. Finally,
+we estimate the number of questions that spec-
+ify a geographical context by counting number of
+stripped questions that were speciﬁed as geograph-
+ically dependent. These questions, which have a
+phrase specifying the geographical context, com-
+prise about 4.4% of NQ-Open. Our modiﬁcations
+closely resemble these naturally occurring ques-
+tions, but can sometimes produce ungrammatical
+sentences, usually due verb tense agreement.
+C Retriever Analysis
+Are errors in retrieval based systems due to
+poor retrieval? In Table 13, we report the re-
+trieval performance from the settings in Section 5.
+We measure comparing against the results from
+Table 5 and Table 6, we see similar trends in end-
+to-end performance reﬂected in our retriever per-
+formance.
+We also explore whether the retriever model is
+able to adapt to updated corpora, reporting retrieval
+performance in Table 14. Here, we see that while
+retriever performance also suffers on queries with
+updated answers, suggesting that retriever systems
+are perhaps implicitly learning to situate questions
+within the time period of their large-scale training
+datasets.
+
+[[page 15]]
+D Implementation Details
+Context Dependent Question Iden-
+tiﬁcation Baselines We use the
+pytorch-transformers (Wolf et al.,
+2020) library to implement our classiﬁcation
+models. The training batch size is set to 8 and
+64 for BERT-base and BERT-large, respectively.
+We train for 10 epochs using a learning rage of
+5e-5 and 500 warmup steps and select the best
+preforming model measured on dev after each
+epoch.
+Context Dependent Question Answering Base-
+lines We ﬁnetune our closed book baselines for
+10 epochs with a batch size of 256, using the
+AdamW optimizer with a learning rate of 1e-5. We
+select the best performing model evaluated after
+each training epoch. We keep all other hyperparam-
+eters the same from the original implementation.
+For our retrieval based baselines, we ﬁnetune
+both the retriever and reader components. The re-
+triever models are trained using in-batch negatives
+plus one hard-negative passage per question. We
+use hard-negative and gold passages from the query
+modiﬁed model’s predictions before ﬁnetuning. We
+train the retriever model for 8 epochs, using a learn-
+ing rate of 1e-5, 100 warmup steps, and a batch
+size of 16. We then ﬁnetune our reader models for
+16 epochs and a batch size of 16. We select the best
+model evaluated after each training epoch for both
+reader and retriever models, and select the best top-
+k retrieval results to use for in k ∈ { 10, 20, 50}
+evaluated on the development set. All other hy-
+perparameters from the DPR reader and retriever
+models are kept the same from the original work.
+
+[[page 16]]
+Figure 4: Interface for identifying temporally and geographically dependent questions.
+Figure 5: Interface for collecting geographical {Context / Answer} pairs. Annotators are also asked to verify the
+original location and answer.
+Figure 6: Interface for searching for articles during temporal {Context / Answer} collection. The search interface
+is shared between temporal and geographical {Context / Answer} collection and veriﬁcation stages.
+
+[[page 17]]
+Figure 7: Interface for viewing Wikipedia articles during the {Context / Answer} collection and veriﬁcation stages.
+Workers select articles from the search results depicted above that they want to view.
+Figure 8: Annotation interface for {Context / Answer} veriﬁcation stages. Workers may search for the answers
+themselves, or view the articles used by workers in the prior stage.

@@ -1,0 +1,33 @@
+{
+  "id": "C008",
+  "statement": "Closest existing work: the proposed semantic+temporal relevance mechanism is already published twice over (a fixed BM25+dense+exponential-decay hybrid evaluated on a temporal benchmark, and learnable exponential decay inside graph-based RAG). The overlap is at the level of mechanism and benchmark recipe; the residual distinctions are (i) attaching the temporal term to an arbitrary base retriever rather than building a fixed hybrid, (ii) validity/as-of semantics rather than recency, and (iii) a corpus of continuously amended statutes with near-duplicate successive versions. If (i)-(iii) are not realized as substantive findings, the delta is application- and ablation-level.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.2139/ssrn.7174868",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "We propose a three-signal hybrid framework integrating BM25 lexical matching, dense semantic embeddings, and exponential temporal decay, which achieves 99.8% temporal accuracy and 50.8% entity precision across all three languages",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.1109/iri69576.2026.00090",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Layer 2 integrates learnable exponential decay functions into graph-based retrieval",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "closest work",
+    "overlap",
+    "novelty"
+  ],
+  "recorded_at": "2026-09-30T04:31:31.123534Z"
+}

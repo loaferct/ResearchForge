@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2406.13397",
+  "title": "MoreHopQA: More Than Multi-hop Reasoning",
+  "authors": [
+    "J. Schnitzler",
+    "Xanh Ho",
+    "Jiahao Huang",
+    "Florian Boudin",
+    "Saku Sugawara",
+    "Akiko Aizawa"
+  ],
+  "year": 2024,
+  "published": "2024-06-19",
+  "venue": "arXiv.org",
+  "url": "https://www.semanticscholar.org/paper/74e1493dd2f62debb1314580f50318348ea697b0",
+  "pdf_url": null,
+  "abstract": "Most existing multi-hop datasets are extractive answer datasets, where the answers to the questions can be extracted directly from the provided context. This often leads models to use heuristics or shortcuts instead of performing true multi-hop reasoning. In this paper, we propose a new multi-hop dataset, MoreHopQA, which shifts from extractive to generative answers. Our dataset is created by utilizing three existing multi-hop datasets: HotpotQA, 2WikiMultihopQA, and MuSiQue. Instead of relying solely on factual reasoning, we enhance the existing multi-hop questions by adding another layer of questioning that involves one, two, or all three of the following types of reasoning: commonsense, arithmetic, and symbolic. Our dataset is created through a semi-automated process, resulting in a dataset with 1,118 samples that have undergone human verification. We then use our dataset to evaluate five different large language models: Mistral 7B, Gemma 7B, Llama 3 (8B and 70B), and GPT-4. We also design various cases to analyze the reasoning steps in the question-answering process. Our results show that models perform well on initial multi-hop questions but struggle with our extended questions, indicating that our dataset is more challenging than previous ones. Our analysis of question decomposition reveals that although models can correctly answer questions, only a portion - 38.7% for GPT-4 and 33.4% for Llama3-70B - achieve perfect reasoning, where all corresponding sub-questions are answered correctly. Evaluation code and data are available at https://github.com/Alab-NII/morehopqa",
+  "doi": "10.48550/arxiv.2406.13397",
+  "arxiv_id": "2406.13397",
+  "openalex_id": null,
+  "s2_id": "74e1493dd2f62debb1314580f50318348ea697b0",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 41,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:03:08.778487Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "HotpotQA 2WikiMultiHopQA MetaQA benchmark multi-hop reasoning evaluation"
+  ],
+  "code_urls": [
+    "https://github.com/Alab-NII/morehopqa"
+  ],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

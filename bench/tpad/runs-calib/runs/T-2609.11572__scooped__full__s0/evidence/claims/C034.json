@@ -1,0 +1,52 @@
+{
+  "id": "C034",
+  "statement": "Premise assessment for U029: the strongest available quantitative signal is the 10.8% temporal-evidence-leakage rate of a hybrid RAG baseline under point-in-time conditions, i.e. roughly one in nine retrieved items violated the time boundary, alongside capability statements that current architectures cannot tell whether a retrieved provision remains in force and that corpora containing only current versions make past-date queries anachronistic, plus a roughly 15-point accuracy drop on present-day questions with an updated corpus. These make a non-trivial version-confusion problem plausible but do not measure it for amended clauses: the leakage metric concerns evidence published after an as-of date rather than superseded clause versions, the domain is financial filings rather than statutes, and no retrieved work reports a version-level failure rate for any retriever on amended legal text. The rate must therefore be measured descriptively before any mechanism comparison is interpreted.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "reducing temporal evidence leakage from 10.8% to 1.7%",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2608.21409",
+      "experiment_run_id": null,
+      "location": "p. 7",
+      "quote": "current architectures lack the temporal logic to determine if a retrieved provision remains in force",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 9",
+      "quote": "the corpus may contain only current versions, so past-date queries default to anachronism",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "a roughly 15 point drop in accuracy",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "premise",
+    "problem magnitude",
+    "unmeasured",
+    "descriptive first"
+  ],
+  "recorded_at": "2026-09-30T04:40:40.996374Z"
+}

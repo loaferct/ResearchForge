@@ -1,0 +1,57 @@
+{
+  "paper_id": "arxiv:2605.17639",
+  "relevance_tier": "high",
+  "problem": "The paper investigates the temporal decay of co-citation predictability in legal statutes, questioning the assumption that co-citation structure provides a stable retrieval signal over time. It constructs a longitudinal benchmark to measure how retrieval performance degrades across annual snapshots of court decisions.",
+  "method": "The authors build annual snapshots (2007-2026) of Ukrainian court decisions, extract codex-article citations, and construct article co-citation matrices. They evaluate retrieval performance using a leave-one-out citation prediction protocol over the bipartite citation graph, measuring metrics such as Adamic-Adar MRR and Hit@k. They also include a BM25 text baseline and analyze decay across article frequency bands and legal domains, complemented by embedding drift analysis with E5-large to explain semantic shifts.",
+  "key_assumptions": [
+    "Co-citation structure reflects retrieval signal for legal statutes.",
+    "Leave-one-out citation prediction is a valid proxy for retrieval performance.",
+    "Temporal train/test split simulates real-world temporal shift.",
+    "Embedding drift captures semantic changes in citation contexts."
+  ],
+  "main_contribution": "A 20-year statute retrieval benchmark (UA-StatuteRetrieval) comprising 396 million citations from 101 million Ukrainian court decisions, demonstrating significant temporal decay of co-citation predictability (33-47% MRR decline), revealing non-uniform decay across legal domains and article frequencies, providing embedding drift analysis as mechanistic explanation, and releasing the benchmark for reproducibility.",
+  "datasets": [
+    "UA-StatuteRetrieval: Ukrainian Unified State Register of Court Decisions (2007-2026), 101M decisions, 396M codex-article citations"
+  ],
+  "benchmarks": [
+    "UA-StatuteRetrieval (own benchmark)",
+    "Referenced legal retrieval benchmarks: BSARD (Belgian), SCALE, LeSICiN (Indian)"
+  ],
+  "baselines": [
+    "Adamic-Adar",
+    "Common Neighbors",
+    "Degree",
+    "Random",
+    "BM25"
+  ],
+  "metrics": [
+    "MRR (Mean Reciprocal Rank)",
+    "Hit@1",
+    "Hit@5",
+    "Hit@10",
+    "Hit@20"
+  ],
+  "results": "\"Adamic-Adar MRR declines 33% on a fixed article set (from 0.43 to 0.29) and 47% under a train/test temporal split (from 0.51 to 0.27). BM25 baseline decays 31%. Civil law degrades from MRR 0.35 to 0.15 post-2017 reform, while criminal procedure remains stable (~0.40). Hub articles (>100K citations) resist decay; mid-frequency articles (1K-10K) lose half their predictability. Embedding drift shows a 4.3% semantic shift in citation contexts over 12 years.\"",
+  "limitations": [
+    "Evaluation is a proxy (citation prediction) rather than end-user question answering.",
+    "Focuses exclusively on co-citation signal, ignoring textual retrieval methods.",
+    "Limited to Ukrainian legal system; may not generalize to other jurisdictions.",
+    "Does not propose or test mitigation strategies for temporal decay."
+  ],
+  "future_work": [
+    "Extend benchmark to other legal systems and document types.",
+    "Investigate hybrid retrieval methods combining graph-based and textual signals.",
+    "Study impact of temporal decay on end-to-end QA systems and develop mitigation techniques.",
+    "Explore incremental updating of retrieval indexes to counteract decay."
+  ],
+  "code_availability": "No code availability stated in the paper.",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "The paper measures temporal decay of co-citation predictability as a proxy for retrieval stability, while our work proposes a retrieval-agnostic temporal relevance component to mitigate degradation in open-domain QA over evolving regulatory texts.",
+    "basis": "Heuristic estimation based on shared focus on temporal aspects in legal texts and retrieval performance, but differing in goal (diagnosis vs mitigation) and method (analysis vs weighting)."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T10:39:31.262299Z"
+}

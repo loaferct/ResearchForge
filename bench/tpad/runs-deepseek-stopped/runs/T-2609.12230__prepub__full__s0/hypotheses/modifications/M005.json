@@ -1,0 +1,34 @@
+{
+  "id": "M005",
+  "title": "Peripheral-context boundary test with chain supervision as a prior-art control",
+  "description": "Reframe the experiment so that chain/shortest-path supervision is an explicit prior-art control, not a claimed contribution (path-based reasoning over KG subgraphs is established: MHGRN unifies path-based reasoning, Variational Reasoning trains over latent KG paths). The inferential target becomes the residual: under a matched supervision token budget, identical templates, and identical test-time context, does chain + same-passage peripheral triples beat (a) chain-only supervision and (b) a chain + shuffled/unrelated-triple arm of equal length? Report Hits@1 by hop depth and a one-hop failure rate. The repair loop and RL stage are dropped from the primary contribution.",
+  "why_differs": "Unlike MHGRN/Variational Reasoning (which establish path-based reasoning without a peripheral-context arm) and unlike the inference-time context systems (SG-RAG MOT, CLAUSE, Co-E), this isolates the training-time effect of peripheral context against a matched shuffled-context control with the chain credited to prior art; no retrieved work performs that contrast.",
+  "technical_mechanism": "Construct four supervision views over the same targets (isolated triple/path; full reasoning chain; chain + same-passage peripheral triples; chain + shuffled unrelated triples) at matched token budget and with byte-identical instruction/output templates, fine-tune the same base model, and evaluate all arms under identical inference context, reporting per-hop Hits@1, one-hop failure rate, and a transfer gap.",
+  "expected_benefit": "Makes the surviving claim falsifiable and honest: chain supervision is credited to prior work, and the paper's result is either a measured (likely small) peripheral-context effect or a clean boundary/negative finding. The shuffled-context arm at matched budget directly tests the strongest counter-evidence (the +0.003 F1 inference-time result) on the training side, where it has not been tested.",
+  "potential_novelty": "Hedged and deliberately narrow: no retrieved work runs this matched-budget, inference-context-matched training ablation, so the comparison and the shuffled-context control are unoccupied. Because the chain component is prior art, novelty rests only on the peripheral-context boundary result and the hop-depth/one-hop-failure diagnostic, not on a new mechanism.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "Reuses existing datasets (MetaQA/WebQSP/CWQ), an off-the-shelf 7B instruction model with LoRA, and existing KG/path construction; no new architecture and no RL infrastructure once the RL stage is dropped.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Four matched-budget arms, byte-identical templates, multiple seeds, a hop-depth split with a construction check, and a format-controlled scorer; standard but careful, and the expected result in the peripheral arm may be null.",
+  "main_risk": "If both the peripheral and shuffled arms are null, the result is purely negative; it must be pre-registered and framed as a boundary contribution, and a null chain effect would collapse the remaining premise entirely.",
+  "required_baselines": [
+    "Chain-only supervision prior-art control",
+    "Isolated triple/path supervision",
+    "Chain + shuffled/unrelated triples at matched token budget",
+    "Training-free inference-time context baseline at matched budget",
+    "Published reference systems: EmbedKGQA, GreaseLM/MHGRN"
+  ],
+  "related_paper_ids": [
+    "doi:10.18653/v1/2020.emnlp-main.99",
+    "doi:10.1609/aaai.v32i1.12057",
+    "arxiv:2609.10237",
+    "doi:10.20944/preprints202505.1992.v1",
+    "arxiv:2505.20245"
+  ],
+  "addresses_gap_ids": [
+    "G001",
+    "G003"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T05:28:26.959791Z"
+}

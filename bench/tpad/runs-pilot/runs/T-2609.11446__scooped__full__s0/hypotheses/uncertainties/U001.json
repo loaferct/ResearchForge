@@ -1,0 +1,30 @@
+{
+  "id": "U001",
+  "question": "Whether temperature scaling is sufficient for calibrating diverse model types (e.g., decision trees, k-NN) in the ensemble.",
+  "description": "The idea assumes standard calibration methods work for all model types, but some methods like temperature scaling are designed for neural networks. Other models may require different calibration techniques.",
+  "category": "validity",
+  "importance": "medium",
+  "status": "partially_resolved",
+  "next_action": "SEARCH",
+  "possible_actions": [],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "If calibration fails for certain model types, the unified reliability metric may not be achievable, undermining the approach.",
+  "resolution": "Temperature scaling has been shown to improve calibration for tree-ensemble classifiers (e.g., skin lesion work), suggesting it may work for some non-neural network models, but evidence for other types like k-NN is lacking.",
+  "paper_ids": [
+    "doi:10.2139/ssrn.7304331"
+  ],
+  "supporting_paper_ids": [
+    "doi:10.2139/ssrn.7304331"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C002"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T11:22:52.174170Z",
+  "updated_at": "2026-09-30T11:38:38.223191Z"
+}

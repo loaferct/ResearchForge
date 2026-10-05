@@ -1,0 +1,31 @@
+{
+  "id": "M002",
+  "title": "External-validity replication on open-answer, general-domain multi-hop benchmarks",
+  "description": "Move the contrast off synthetic biomedical multiple-choice data onto open-answer general-domain benchmarks that ship gold reasoning paths, using a passage-provenance construction so that 'same source passage' is actually instantiated. Candidate targets are 2WikiMultiHopQA (Wikidata structured data plus Wikipedia text, with an explicit evidence path per question) and the MetaQA hop splits for a lighter-weight hop-stratified signal. Evaluate with EM/F1 and evidence-path faithfulness by hop depth rather than multiple-choice accuracy, and compare against the subgraph-reasoner and teacher-student baselines.",
+  "why_differs": "The only training-time evidence comes from two synthetic biomedical disease KGs with multiple-choice answers (arxiv:2609.12230), whose authors state that broader validation is still needed; the open-answer benchmarks with gold evidence paths (arxiv:2011.01060, arxiv:2406.13397) have never been used for this contrast.",
+  "technical_mechanism": "Use the benchmark's gold evidence path to distinguish chain triples from non-chain triples, then attach the non-chain triples that share a source passage or article with the target fact to form the context group. Generate KG-grounded and CG-grounded supervision from the same path, fine-tune identical base models under both regimes at a matched token budget, and evaluate EM/F1 at 2, 3 and 4+ hops plus evidence-path faithfulness.",
+  "expected_benefit": "Tests whether the published effect is a property of multi-hop KG supervision in general or of one synthetic biomedical multiple-choice pipeline. If the effect replicates, the finding becomes general; if it vanishes, the published result is bounded to its domain, which is itself a useful and honest result.",
+  "potential_novelty": "Moderate. The context-augmented training contrast has not been evaluated on these benchmarks in the retrieved literature, but reproducing a published effect on new benchmarks is a validation contribution rather than a new mechanism, and its value depends on whether the result replicates.",
+  "implementation_difficulty": "high",
+  "implementation_difficulty_basis": "2WikiMultiHopQA and MoreHopQA provide evidence paths, but mapping individual triples to a specific source passage requires new extraction or alignment work, and the standard KBQA pipelines used for comparison operate on Freebase neighbourhoods without provenance.",
+  "experimental_difficulty": "high",
+  "experimental_difficulty_basis": "Requires building passage-level provenance for benchmarks that were not designed for it, generating QA supervision under two regimes on open-answer data, and running strong baseline reasoners under a comparable budget; the benchmarks also have small 3+ hop test sets, so power is a real constraint.",
+  "main_risk": "The benchmark construction may become the actual contribution and could be so costly that the result is dominated by construction artefacts; a smaller, carefully scoped MetaQA-based study is the fallback.",
+  "required_baselines": [
+    "Isolated-triple/path SFT on the same benchmark",
+    "Context-augmented SFT on the same benchmark",
+    "Subgraph-retrieval reasoner (arxiv:2202.13296 style)",
+    "Teacher-student intermediate supervision (arxiv:2101.03737 style)"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2011.01060",
+    "arxiv:2406.13397",
+    "arxiv:2101.03737"
+  ],
+  "addresses_gap_ids": [
+    "G002"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:27:52.330990Z"
+}

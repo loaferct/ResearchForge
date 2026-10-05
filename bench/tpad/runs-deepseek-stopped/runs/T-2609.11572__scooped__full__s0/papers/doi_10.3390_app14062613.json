@@ -1,0 +1,34 @@
+{
+  "id": "doi:10.3390/app14062613",
+  "title": "Document Retrieval System for Biomedical Question Answering",
+  "authors": [
+    "Harun Bolat",
+    "Baha Şen"
+  ],
+  "year": 2024,
+  "published": "2024-03-20",
+  "venue": "Applied Sciences",
+  "url": "https://doi.org/10.3390/app14062613",
+  "pdf_url": null,
+  "abstract": "In this paper, we describe our biomedical document retrieval system and answers extraction module, which is part of the biomedical question answering system. Approximately 26.5 million PubMed articles are indexed as a corpus with the Apache Lucene text search engine. Our proposed system consists of three parts. The first part is the question analysis module, which analyzes the question and enriches it with biomedical concepts related to its wording. The second part of the system is the document retrieval module. In this step, the proposed system is tested using different information retrieval models, like the Vector Space Model, Okapi BM25, and Query Likelihood. The third part is the document re-ranking module, which is responsible for re-arranging the documents retrieved in the previous step. For this study, we tested our proposed system with 6B training questions from the BioASQ challenge task. We obtained the best MAP score on the document retrieval phase when we used Query Likelihood with the Dirichlet Smoothing model. We used the sequential dependence model at the re-rank phase, but this model produced a worse MAP score than the previous phase. In similarity calculation, we included the Named Entity Recognition (NER), UMLS Concept Unique Identifiers (CUI), and UMLS Semantic Types of the words in the question to find the sentences containing the answer. Using this approach, we observed a performance enhancement of roughly 25% for the top 20 outcomes, surpassing another method employed in this study, which relies solely on textual similarity.",
+  "doi": "10.3390/app14062613",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 4,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T04:59:32.335780Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "time-aware retrieval temporal relevance document versions question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

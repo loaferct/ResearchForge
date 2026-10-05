@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2510.02827",
+  "title": "StepChain GraphRAG: Reasoning Over Knowledge Graphs for Multi-Hop Question Answering",
+  "authors": [
+    "Tengjun Ni",
+    "Xin Yuan",
+    "Shenghong Li",
+    "Kai Wu",
+    "Ren Ping Liu",
+    "Wei Ni",
+    "Wenjie Zhang"
+  ],
+  "year": 2025,
+  "published": "2025-10-03",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2510.02827",
+  "pdf_url": "https://arxiv.org/pdf/2510.02827v1",
+  "abstract": "Recent progress in retrieval-augmented generation (RAG) has led to more accurate and interpretable multi-hop question answering (QA). Yet, challenges persist in integrating iterative reasoning steps with external knowledge retrieval. To address this, we introduce StepChain GraphRAG, a framework that unites question decomposition with a Breadth-First Search (BFS) Reasoning Flow for enhanced multi-hop QA. Our approach first builds a global index over the corpus; at inference time, only retrieved passages are parsed on-the-fly into a knowledge graph, and the complex query is split into sub-questions. For each sub-question, a BFS-based traversal dynamically expands along relevant edges, assembling explicit evidence chains without overwhelming the language model with superfluous context. Experiments on MuSiQue, 2WikiMultiHopQA, and HotpotQA show that StepChain GraphRAG achieves state-of-the-art Exact Match and F1 scores. StepChain GraphRAG lifts average EM by 2.57% and F1 by 2.13% over the SOTA method, achieving the largest gain on HotpotQA (+4.70% EM, +3.44% F1). StepChain GraphRAG also fosters enhanced explainability by preserving the chain-of-thought across intermediate retrieval steps. We conclude by discussing how future work can mitigate the computational overhead and address potential hallucinations from large language models to refine efficiency and reliability in multi-hop QA.",
+  "doi": null,
+  "arxiv_id": "2510.02827",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T07:29:35.398896Z",
+  "relevance": 0.8,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "iterative refinement multi-hop question answering knowledge graph",
+    "\"Exact Match\" multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

@@ -1,0 +1,174 @@
+raw_idea: 'Multi‑hop question answering often relies on reasoning over a chain of
+  facts in a knowledge graph, yet current language‑model training typically uses isolated
+  head‑relation‑tail triples, depriving the model of the surrounding context that
+  supports multi‑step inference. We propose to enrich each target triple (or path)
+  with additional triples drawn from the same source passage, forming a local context
+  subgraph that is presented together with the primary supervision signal. The model
+  will be fine‑tuned under two regimes: one using only the target triple/path and
+  another that also incorporates the supporting context. To improve the reliability
+  of the base facts, we will introduce an adaptive repair loop that detects one‑hop
+  failures, generates corrective examples, and iteratively refines the model. After
+  this cleaning stage, we will apply reinforcement‑learning‑based optimization on
+  lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.'
+analysis:
+  raw_idea: 'Multi‑hop question answering often relies on reasoning over a chain of
+    facts in a knowledge graph, yet current language‑model training typically uses
+    isolated head‑relation‑tail triples, depriving the model of the surrounding context
+    that supports multi‑step inference. We propose to enrich each target triple (or
+    path) with additional triples drawn from the same source passage, forming a local
+    context subgraph that is presented together with the primary supervision signal.
+    The model will be fine‑tuned under two regimes: one using only the target triple/path
+    and another that also incorporates the supporting context. To improve the reliability
+    of the base facts, we will introduce an adaptive repair loop that detects one‑hop
+    failures, generates corrective examples, and iteratively refines the model. After
+    this cleaning stage, we will apply reinforcement‑learning‑based optimization on
+    lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.'
+  problem: 'Large language models (LLMs) trained for knowledge-graph (KG) question
+    answering are typically supervised on isolated head-relation-tail triples. Such
+    supervision omits the surrounding passage/source context in which the triple occurs,
+    and this omission is hypothesized to limit the model''s ability to perform multi-step
+    (multi-hop) inference over a chain of facts. A second, related problem is the
+    unreliability of the base facts themselves: noisy or unresolved one-hop facts
+    propagate and compound as reasoning chains get deeper.'
+  target_domain: Knowledge-graph multi-hop question answering (KGQA/KBQA) with LLM
+    supervised fine-tuning and reinforcement learning; KG construction from text (disease-specific
+    KGs).
+  proposed_method: 'Context-augmented supervised fine-tuning of an LLM: for each primary
+    target KG triple (or reasoning path), attach additional triples extracted from
+    the same source text chunk to form a local context graph (CG). Two supervision
+    regimes are compared: (a) KG-grounded supervision, using only the target triple/path;
+    (b) CG-grounded supervision, using the target triple/path plus supporting context
+    triples. On top of this, an adaptive repair loop detects unresolved one-hop failures
+    with an LLM judge, generates targeted corrective examples, iteratively fine-tunes
+    on them, and quarantines/removes problematic noisy triples. Finally, reinforcement-learning
+    optimization is applied using lower-hop QA items, and generalization is measured
+    on deeper (3-hop, 4-hop, 5-hop) queries.'
+  hypothesis: 'H1 (context): CG-grounded supervision yields higher multi-hop QA accuracy
+    than KG-grounded supervision at fixed backbone, data, and training budget. H2
+    (repair): the adaptive repair loop raises retained one-hop accuracy and, by strengthening
+    the lower-hop factual foundation, improves deeper-hop performance. H3 (RL transfer):
+    RL on lower-hop QA items initialized from repaired SFT checkpoints produces larger
+    and more stable gains on 3-5-hop queries than RL initialized from unrepaired checkpoints
+    or SFT alone. H4 (conditional): the benefit of context augmentation increases
+    with hop depth (larger at 4-5 hop than at 1-2 hop).'
+  research_question: Under a fixed LLM backbone, training data, and compute budget,
+    does augmenting each target KG triple/path with same-passage supporting triples
+    (local context-graph supervision), followed by an adaptive one-hop repair loop
+    and RL on lower-hop items, improve accuracy on deeper multi-hop (3-5 hop) KGQA
+    relative to KG-only (isolated-triple) supervision, and how much of the gain is
+    attributable to context, to repair, and to RL respectively?
+  expected_contribution: A controlled, ablated characterization of how much multi-hop
+    KGQA performance is attributable to (i) passage-local context subgraphs attached
+    to supervision, (ii) iterative one-hop repair/cleaning, and (iii) RL fine-tuning
+    on lower-hop items; plus evidence on whether lower-hop RL transfers to deeper
+    hop depths. The contribution is a mechanism decomposition of an existing recipe
+    rather than a new architecture; see novelty uncertainty (arxiv:2609.12230 appears
+    to already report the combined recipe).
+  assumptions:
+  - 'Assumption 1 (backbone): a single open-weight ~14B instruction-tuned LLM is used
+    throughout; architecture is not a variable. [assumption: consistent with closest
+    retrieved work arxiv:2609.12230 naming Qwen3-14B]'
+  - 'Assumption 2 (data source): supervision triples and their supporting context
+    are derived from the same source text chunk, so the context graph is passage-local
+    rather than globally retrieved. [assumption: stated in the raw idea; matches arxiv:2609.12230]'
+  - 'Assumption 3 (budget control): all supervision regimes are compared at matched
+    number of training examples and matched gradient steps; otherwise extra context
+    tokens are a confounder.'
+  - 'Assumption 4 (lower-hop definition): ''lower-hop'' means 1-hop and 2-hop QA items,
+    and ''deeper'' means 3-5 hop items. [assumption: not stated in the idea]'
+  - 'Assumption 5 (metric): primary metric is answer accuracy/exact-match, reported
+    separately per hop depth, with the one-hop retained validation set used as a factual-foundation
+    check.'
+  - 'Assumption 6 (RL algorithm): a policy-gradient-style RL fine-tuning method with
+    a task reward (answer correctness) is used; the specific algorithm is not fixed
+    by the idea. [unresolved]'
+  variables:
+    independent:
+    - supervision regime (KG-grounded isolated triple/path vs CG-grounded triple/path
+      + same-passage supporting triples)
+    - presence/absence of adaptive one-hop repair loop
+    - presence/absence of RL fine-tuning stage
+    - hop depth of evaluation query (1,2,3,4,5)
+    - clean vs noisy/quarantined triple subset
+    dependent:
+    - multi-hop QA answer accuracy (and exact-match / F1) per hop depth
+    - retained one-hop validation accuracy
+    - number of unresolved one-hop failures per repair iteration
+    - RL gain stability (variance across seeds/iterations)
+    - fraction of triples quarantined as noisy
+    controls:
+    - LLM backbone and size, frozen across arms
+    - number of training examples and gradient steps per arm
+    - source corpus and KG extraction pipeline
+    - question template/phrasing generator for each hop depth
+    - evaluation split construction and hop-depth definition
+    - decoding parameters and prompt format
+    - random seeds
+  target_system: Open-weight instruction-tuned LLM (e.g., Qwen3-14B class) fine-tuned
+    on KG-derived question-answer items over KGs extracted from source text (e.g.,
+    GraphMERT-extracted Gastroparesis/Diabetes KGs).
+  expected_benefits: []
+  potential_risks:
+  - The combined recipe is already published (arxiv:2609.12230), so the original idea
+    risks being a replication rather than a novel contribution.
+  - Context augmentation is confounded with extra supervision tokens / larger effective
+    training signal; a matched-token or matched-example control is needed.
+  - Repair may inflate accuracy on the retained one-hop validation set by construction
+    (test-set cleaning / selection), so 100% one-hop accuracy is not evidence of genuine
+    factual grounding.
+  - Lower-hop RL gains may not transfer to unseen deeper-hop queries; gains may be
+    explained by SFT alone or by benchmark-specific artifacts.
+  - Domain-specific disease KGs give small evaluation sets, limiting statistical power
+    on 3-5-hop queries.
+  - LLM-judge-based failure detection introduces judge noise and possible self-consistency
+    bias.
+  ambiguities:
+  - question: Which LLM backbone and size?
+    resolution: An open-weight instruction-tuned LLM in the ~14B class; the closest
+      retrieved work (arxiv:2609.12230) reports Qwen3-14B.
+    resolved_by: literature
+  - question: Are standard multi-hop KGQA benchmarks (e.g., WebQSP, ComplexWebQuestions,
+      MetaQA) or domain-specific KGs the evaluation setting?
+    resolution: The retrieved closest work validates on disease-specific KGs (Gastroparesis,
+      Diabetes) extracted with GraphMERT; whether the effect generalizes to standard
+      WebQSP/CWQ-style benchmarks remains open.
+    resolved_by: literature
+  - question: What is the primary baseline?
+    resolution: KG-grounded (isolated-triple) SFT with the same backbone and data
+      is the natural primary baseline, plus ablations without repair and without RL.
+    resolved_by: assumption
+  - question: Which RL algorithm and reward are used for the lower-hop RL stage?
+    resolution: null
+    resolved_by: unresolved
+  - question: How is 'one-hop failure' detected and judged, and what counts as a noisy/quarantined
+      triple?
+    resolution: The closest retrieved work uses an LLM-judged, history-aware adaptive
+      repair pipeline; exact judge prompts/thresholds are not specified in the abstract.
+    resolved_by: literature
+  - question: Is the combined idea already published?
+    resolution: 'Yes, apparently: arxiv:2609.12230 (2026) describes the full combined
+      recipe (context graph from same source chunk, KG- vs CG-grounded SFT, adaptive
+      one-hop repair, RL on lower-hop with 3-5-hop evaluation).'
+    resolved_by: literature
+  keywords:
+  - multi-hop question answering
+  - knowledge graph QA
+  - context-augmented supervision
+  - context subgraph / context graph
+  - isolated triple supervision
+  - adaptive repair loop
+  - one-hop failure
+  - reinforcement learning fine-tuning
+  - hop-depth generalization
+  - knowledge graph extraction
+  search_queries:
+  - context subgraph triple supervision multi-hop knowledge graph question answering
+  - fine-tuning large language models on knowledge graph triples with context passage
+    multi-hop question answering
+  - reinforcement learning training on simpler questions transferring to multi-hop
+    reasoning
+  - context-aware KGQA SFT versus isolated triple supervision ablation
+  - knowledge graph question answering hop-depth generalization 3-hop 4-hop 5-hop
+    evaluation
+  - LLM-judged iterative data repair knowledge graph noisy triples
+  recorded_at: '2026-09-30T05:02:01.186161Z'

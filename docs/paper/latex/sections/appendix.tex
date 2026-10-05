@@ -1,0 +1,18 @@
+\section{Items}\label{app:items}
+All \PilotItems{} items. $d(P)$ is the realising paper's first arXiv version date (the \textsc{prepub} cutoff); ``Prior'' is the number of prior works found among its Semantic Scholar references (0 when the reference list was unavailable, in which case prior-work recall is undefined for the item). Idea texts, prior works and the audit trail of each item are released with the data.
+
+{\small\input{generated/items_table}}
+
+\section{Prompts used to build items}\label{app:prompts}
+\paragraph{Paraphrase} (model \texttt{gpt-oss:120b}, temperature 0.2):
+\begin{quote}\small\ttfamily
+Rewrite the core idea of the paper below as a short research proposal (80-150 words) written BEFORE the work was done. Rules: - State the problem and the proposed approach so a researcher could recognise the idea. - Do NOT use the paper's method name, any acronym it coins, its title words in sequence, author names, numbers, or results. - Do not claim it works; phrase it as a plan ("We propose to ...", "The idea is to ..."). - Use your own wording; do not copy phrases from the abstract. Output only the proposal text. Title: \{title\} Abstract: \{abstract\}
+\end{quote}
+\paragraph{Closed-book probe} (run with \texttt{deepseek-v4.1-flash} when it was the planned agent, and again with \texttt{nemotron-3-super}, the agent model used; no tools):
+\begin{quote}\small\ttfamily
+Here is a research idea. Do you know of a specific published paper (arXiv or venue) that proposes essentially this idea? If yes, give its exact title and year. If you are not sure, answer NONE. Answer in one line. Idea: \{idea\}
+\end{quote}
+A probe counts as naming the realising paper if its answer contains the first 40 normalised characters of the paper's title or the paper's method name.
+
+\section{Reproducibility}\label{app:repro}
+The harness, the benchmark runner (\texttt{researchforge bench}), the item builder and the analysis script are released. Each run directory contains the settings file both the orchestrator and the tool server read, every controller decision with its candidates and observed information gain, the agent's structured records, the dsh event streams, and the ledger of records hidden by the cutoff. All literature API responses are cached, so scores can be recomputed offline and runs replayed against identical API responses.

@@ -1,0 +1,25 @@
+{
+  "id": "M003",
+  "title": "Joint retrieval-QA evaluation with correlation analysis",
+  "description": "Design experiments that measure both retrieval metrics (nDCG, MAP) and answer accuracy (Exact Match, F1, LLM-judged win rate) and statistically analyze their correlation across different temporal relevance configurations.",
+  "why_differs": "TimelyRAG focuses on retrieval improvements; this adds explicit QA evaluation and correlation study.",
+  "technical_mechanism": "For each temporal relevance weight hyperparameter, run retrieval and QA pipeline, collect metrics, compute Pearson/Spearman correlation.",
+  "expected_benefit": "Insight into whether retrieval gains translate to QA gains, guiding hyperparameter selection.",
+  "potential_novelty": "moderate",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "Adds evaluation scripts to existing pipeline.",
+  "experimental_difficulty": "low",
+  "experimental_difficulty_basis": "Runs additional metrics; minimal overhead.",
+  "main_risk": "May require more computational resources for QA generation.",
+  "required_baselines": [
+    "BM25",
+    "BGE-M3",
+    "LLM reader (e.g., Llama 3)"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.11572"
+  ],
+  "addresses_gap_ids": [],
+  "recommended": false,
+  "recorded_at": "2026-09-30T10:09:03.558859Z"
+}

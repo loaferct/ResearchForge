@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.1109/access.2022.3228821",
+  "title": "Parallel Pathway Dense Video Captioning With Deformable Transformer",
+  "authors": [
+    "Wangyu Choi",
+    "Jiasi Chen",
+    "Jongwon Yoon"
+  ],
+  "year": 2022,
+  "published": "2022-01-01",
+  "venue": "IEEE Access",
+  "url": "https://doi.org/10.1109/access.2022.3228821",
+  "pdf_url": "https://ieeexplore.ieee.org/ielx7/6287639/6514899/09982599.pdf",
+  "abstract": "Dense video captioning is a very challenging task because it requires a high-level understanding of the video story, as well as pinpointing details such as objects and motions for a consistent and fluent description of the video. Many existing solutions divide this problem into two sub-tasks, event detection and captioning, and solve them sequentially (“localize-then-describe” or reverse). Consequently, the final outcome is highly dependent on the performance of the preceding modules. Detecting events or generating sentences directly from vast amounts of video information is prone to loss of elaborateness (accuracy and fluency), and hence propagates as a cascade effect to subsequent modules. Parallel decoding approaches have been proposed to overcome these limitations, which leads to another challenge: the bottleneck at the branch point. In this paper, we decompose this sequential approach by proposing a parallel pathway dense video captioning framework (PPVC) that localizes and describes events simultaneously without any bottlenecks. We introduce a representation organization network at the branching point of the parallel pathway to organize the encoded video feature by considering the entire storyline. Then, an event localizer focuses to localize events without any event proposal generation network, a sentence generator describes events while considering the fluency and coherency of sentences. A gating network controls the flow of organized representations to filter out unnecessary information. Our method has several advantages over existing work: (i) the final output does not depend on the output of the preceding modules, (ii) it improves existing parallel decoding methods by relieving the bottleneck of information. We evaluate the performance of PPVC on large-scale benchmark datasets, the ActivityNet Captions, and YouCook2. PPVC not only outperforms existing algorithms on the majority of metrics but also improves on both datasets by 5.4% and 4.9% compared to the state-of-the-art parallel decoding method.",
+  "doi": "10.1109/access.2022.3228821",
+  "arxiv_id": null,
+  "openalex_id": "W4312968125",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 16,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T04:17:45.007082Z",
+  "relevance": 0.125,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "recency-aware dense retrieval temporal decay document version timestamp"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

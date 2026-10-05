@@ -1,0 +1,42 @@
+{
+  "paper_id": "arxiv:2606.09724",
+  "relevance_tier": "high",
+  "problem": "Legal RAG failures (anachronistic content, fabricated citations, structural incompleteness) are argued to be symptoms of an architectural mismatch between probabilistic retrieval and the hierarchical, temporal and institutional structure of legal knowledge, rather than residual confabulations to be fixed by scaling.",
+  "method": "Conceptual/position framework grounded in classical legal theory plus a pathology-organized critical review of existing legal retrieval approaches; no retrieval algorithm, no empirical study.",
+  "key_assumptions": [
+    "Legal knowledge is hierarchical/mereological, diachronically dynamic and causally traceable, and these properties are translatable into retrieval requirements",
+    "The relevant task is quaestio juris (which norms apply and in what state), primarily legislative and constitutional retrieval",
+    "Deterministic-by-design retrieval (ontology, event reification, bitemporal correctness, deterministic protocols) is the appropriate direction"
+  ],
+  "main_contribution": "An ontological framing of legal knowledge and a three-pathology diagnostic (mereological blindness, diachronic blindness, causal opacity) for legal retrieval, from which four architectural commitments are derived (ontological primacy, event reification, bitemporal correctness, deterministic interaction protocols).",
+  "datasets": [
+    "none introduced (reviews existing legal retrieval approaches)"
+  ],
+  "benchmarks": [
+    "none introduced; proposes criteria to support future comparisons"
+  ],
+  "baselines": [
+    "not applicable (framework/diagnostic paper; no empirical comparison)"
+  ],
+  "metrics": [
+    "none reported (defines detection criteria for pathologies instead)"
+  ],
+  "results": "No empirical results. Argues that existing approaches address the requirements unevenly and do not compose into a paradigm treating them as co-constitutive.",
+  "limitations": [
+    "Explicitly no benchmarked empirical comparison; contribution is formal and diagnostic",
+    "Scope limited to quaestio juris and legislative/constitutional retrieval; case law treated as an extension; interpretive time deferred to future work"
+  ],
+  "future_work": [
+    "Section 6 Research Agenda: interpretive time and the doctrinal dimension; evaluation methodology for deterministic retrieval; cross-jurisdictional portability"
+  ],
+  "code_availability": "not stated in abstract; no repository found",
+  "relation_to_idea": {
+    "problem_overlap": 0.85,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.1,
+    "conceptual_difference": "It is a diagnostic/position framework prescribing a deterministic-by-design, neuro-symbolic, bitemporal architecture for quaestio juris, whereas the proposal is a lightweight post-hoc temporal re-ranking term evaluated empirically. The paper pre-empts the conceptual claim that legal retrieval must respect valid time rather than recency, but does not deliver a measured retrieval component or a version-level retrieval benchmark.",
+    "basis": "Full text read: the paper names the same temporal pathology ('diachronic blindness' = failure to reconstruct the state of norms at a point in time, including statutory evolution through amendments) and the same validity-vs-transaction-time requirement, but proposes no retrieval mechanism, no temporal score and no benchmark, and explicitly reports no empirical comparison."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T04:33:39.056315Z"
+}

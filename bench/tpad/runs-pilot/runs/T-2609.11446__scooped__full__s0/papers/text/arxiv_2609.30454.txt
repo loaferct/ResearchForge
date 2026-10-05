@@ -1,0 +1,623 @@
+[[page 1]]
+Auditing System-1 Models on Biosecurity-Relevant Benchmarks:
+Calibration, Selective Prediction, and Permutation Instability
+in a Non-Generative Model
+Kimon Antonios Provatas Ilias Georgakopoulos-Soares
+Division of Pharmacology and Toxicology, College of Pharmacy
+The University of Texas at Austin, Dell Pediatric Research Institute
+Austin, TX, USA
+kap4722@my.utexas.edu ilias@austin.utexas.edu
+Abstract—Non-generative “System-1” models return struc-
+tured probabilistic decisions in a single forward pass, without
+autoregressive decoding, at a small fraction of the inference
+cost of a generative model. This makes them of interest as
+inexpensive components in larger pipelines, but their reliabil-
+ity on biosecurity-relevant tasks has not been systematically
+examined. We audit one commercial System-1 model on 6,020
+multiple-choice items drawn from the Weapons of Mass De-
+struction Proxy (WMDP), a paraphrase-robust WMDP-Bio
+variant, and six LAB-Bench subtasks, measuring accuracy,
+calibration, error detection, selective prediction, and sensitivity
+to the order in which answer options are presented. Accuracy
+is strongly task-dependent. Once the vendor’s uncertainty
+field is correctly interpreted, the model is reasonably well
+calibrated (pooled expected calibration error 0.034) and its
+top-1 probability separates correct from incorrect predictions
+(pooled AUROC 0.820), though both degrade substantially on
+the weaker tasks. Under four cyclic rotations of the answer
+options, 37.4% of WMDP-Cyber items receive different an-
+swers; a control using byte-identical repeated calls attributes
+most of this to option order rather than run-to-run variation.
+Averaging probabilities across rotations improves WMDP-
+Cyber accuracy by +3.8 percentage points, and applying it
+only to low-confidence items recovers most of that gain at well
+under the cost of averaging every item.
+Index Terms:model evaluation, calibration, selective prediction,
+robustness, biosecurity, AI safety
+1. Introduction
+Recent work on efficient inference has produced models
+that return a typed, probabilistic decision from a single
+forward pass rather than by decoding tokens autoregres-
+sively. Such “System-1” models are offered for settings in
+which many decisions must be made cheaply. The evaluation
+reported here cost 0.57 USD for 19,060 calls. Answering
+the same items with a generative model at current list
+prices would cost between roughly 0.71 USD, using the
+Corresponding author: Ilias Georgakopoulos-Soares.
+cheapest small model and emitting only the option label,
+and 421 USD at frontier prices with a short chain of
+thought (Section 3). That difference is what makes repeated
+evaluation of the same item a practical experimental option
+here rather than a hypothetical one.
+Low-cost probabilistic models are potentially relevant to
+AI safety and biosecurity pipelines, where auxiliary classi-
+fiers are already deployed alongside larger models [1], [2].
+Before such a role could be considered, the basic empirical
+properties of these models need to be established: how
+accurate they are, how well their reported uncertainty tracks
+correctness, whether that uncertainty supports abstention,
+and how stable their decisions are under changes that do
+not alter the meaning of the input. Benchmark accuracy
+addresses only the first of these.
+This paper reports a reliability audit of one commercially
+available System-1 model, JEV, on two kinds of benchmark.
+The Weapons of Mass Destruction Proxy (WMDP) [3] is
+a multiple-choice set covering biosecurity, chemical secu-
+rity, and cybersecurity, written as a measurable stand-in for
+knowledge that could assist misuse and introduced so that
+unlearning methods could be scored onreducingit; high
+accuracy on it is therefore not a capability result. LAB-
+Bench [4] covers practical biology research skill and carries
+the opposite sign. Neither benchmark asks the model to
+judge whether a request is dangerous, so neither measures
+screening or hazard-detection performance. They are used
+here as subject matter on which reliability, uncertainty, and
+robustness can be studied.
+We ask four questions. When is the model correct? Does
+its reported uncertainty identify likely errors? Can uncertain
+items be set aside to raise accuracy on the remainder? And
+are its decisions stable under a change that does not affect
+meaning, namely the order in which the answer options are
+listed?
+This paper makes three contributions.
+1) A reliability audit of a commercial non-generative
+System-1 model across 6,020 biosecurity- and
+biology-relevant benchmark items, covering accu-
+racy, calibration, error detection, and selective pre-
+arXiv:2609.30454v1  [cs.LG]  24 Sep 2026
+
+[[page 2]]
+diction.
+2) A controlled answer-order study, with a byte-
+identical-repeat control that separates option-order
+sensitivity from run-to-run variation, showing sub-
+stantial item-level instability despite comparatively
+stable aggregate accuracy.
+3) An evaluation of selective permutation averaging,
+showing that repeated inference applied only to
+low-confidence items improves accuracy on the
+instability-heavy task while avoiding the cost of
+evaluating every item four times.
+We do not claim novelty for confidence-based selection
+of items for further computation [5]–[8], nor for the obser-
+vation that multiple-choice evaluation is sensitive to option
+order [9], [10].
+2. Background and Related Work
+Decision cascades and early exit.Spending extra com-
+putation only on inputs a cheap model finds difficult is es-
+tablished: CALM [5] exits a decoder early under a calibrated
+criterion, Big Little Decoder [6] escalates when a small
+model’s maximum predicted probability falls below a thresh-
+old, and FrugalGPT [7] and RouteLLM [8] allocate queries
+across models under a cost budget. Our final experiment
+applies the same idea with additional answer permutations of
+the same model rather than a larger model. For uncertainty
+we use standard tools: maximum class probability as an
+error-detection baseline [11], expected calibration error and
+reliability diagrams [12], and risk–coverage analysis from
+selective classification [13].
+Multiple-choice robustness.Reordering answer options
+changes model rankings on leaderboards [9] and degrades
+accuracy in model-dependent ways [10]; Zheng et al. [14]
+attribute the effect to a token-level bias toward particular
+option labels, and formatting changes that preserve meaning
+can also shift accuracy substantially [15]. That work con-
+cerns generative models scored by likelihood over option
+tokens. We test whether a non-generative model emitting a
+typed distribution in one pass shows comparable sensitivity.
+Safety classifiers and biosecurity context.Deployed
+language-model systems commonly place auxiliary classi-
+fiers around a primary model to detect disallowed content:
+moderation classifiers [16], input–output safeguards such as
+Llama Guard [1] and ShieldGemma [17], constitutional clas-
+sifiers trained to resist jailbreaks [2], with biological risk a
+specific concern [18]. That work motivates why inexpensive
+probabilistic models are of interest, but we evaluate none of
+these safeguard tasks: prior work asks whether a system can
+block a dangerous request, whereas we ask what reliability
+properties a cheap System-1 model exhibits on biosecurity-
+relevant knowledge benchmarks.
+3. Experimental Setup
+JEVis a commercial non-generative model queried
+through thev1REST endpoint. A request carries a free-
+text state and a typed question; the response gives a se-
+lected category, a probability distribution over categories,
+a scalarconfidence, the resolved model version, and
+token usage. All calls used the aliasjev-latest, which
+resolved tojev-1.13.0throughout, and were made from
+2026-09-19 to 2026-09-20. The model is proprietary: no
+logits, token probabilities, or random seed are exposed, and
+returned probabilities are quantised to two decimals (101
+distinct values observed). Because inference is a single pass
+rather than autoregressive decoding, per-item cost is low;
+we did not measure latency and make no claim about it.
+Table 1 lists the 10 datasets. WMDP-Bio, WMDP-Chem,
+and WMDP-Cyber are hazardous-knowledge proxies [3],
+WMDP-Bio-Robust is a paraphrased variant of WMDP-
+Bio, and six LAB-Bench subtasks cover practical biology
+research [4]. Option counts range from 2 to 10, so we report
+accuracy against each item’s own chance level1/nrather
+than a single 25% line. LAB-Bench items are formed by
+combining the reference answer with its distractors under a
+fixed shuffle seed; items with fewer than two distinct options
+after de-duplication are skipped. Of 6,021 single-pass calls,
+1 returned an API error and is excluded, leaving 6,020 items.
+We report accuracy with Wilson intervals; expected cal-
+ibration error (ECE) over ten equal-width bins; the area
+under the receiver operating characteristic curve (AUROC)
+for separating correct from incorrect predictions usingp max,
+the largest returned probability; the error rate conditional
+on high confidence,P(error|p max ≥0.9); and risk–
+coverage curves obtained by withholding the least confident
+items. Intervals on proportions are Wilson; intervals on
+ECE, AUROC, and on differences between accuracies are
+percentile bootstrap over items, 2,000 resamples with a fixed
+seed.
+For the two four-option WMDP suites we additionally
+present each item under all four cyclic rotations of its option
+list (1,273and1,987items, 13,040 calls), mapping each
+returned distribution back to the original option indices so
+that rotations are comparable.
+The endpoint reports token usage per response. The
+study consumed 13.5 million input tokens over 19,060 calls,
+a mean of 709 per call; at 0.042 USD per million input
+tokens with no output charge, 0.57 USD. The same calls
+with a generative model, at list prices retrieved 2026-09-20,
+would cost about 0.71 USD for the cheapest small model
+emitting only an option label (1.3×), 84 USD mid-tier with
+a short chain of thought (148×), and 421 USD at frontier
+prices (742×). These are upper bounds: batch interfaces list
+at half rate, cached input at a tenth, and large deployments
+negotiate below list, while an agentic configuration issuing
+several turns per decision moves the other way. We did not
+measure latency.
+4. Results
+4.1. Benchmark performance and uncertainty
+Accuracy varies widely across tasks (Table 1). It is
+highest on WMDP-Bio (85.2%), falls on the paraphrased
+
+[[page 3]]
+TABLE 1. PER-DATASET RESULTS.LiftIS CHANCE-ADJUSTED ACCURACY,(acc−c)/(1−c),USING EACH ITEM’S OWN OPTION COUNTc= 1/n
+RATHER THAN A SINGLE25%LINE,SINCE OPTION COUNTS RANGE FROM2TO10. ECEANDAUROCARE COMPUTED ONp max RATHER THAN ON
+THE VENDORC O N F I D E N C EFIELD(SECTION4.1).P(ERR|p max≥0.9)IS THE ERROR RATE GIVEN A CONFIDENT ANSWER,WITHWILSON
+INTERVALS.RetainedIS ACCURACY ON THE ITEMS KEPT WHEN THE LEAST CONFIDENT40%ARE WITHHELD(SECTION4.2).
+Suite DatasetNopts. accuracy [95% CI] lift ECE AUROCP(err|p max≥0.9)retained
+WMDP WMDP-Bio 1273 4 0.852 [0.83, 0.87] 0.802 0.036 0.855 0.039 [0.03, 0.05] 0.971
+WMDP-Bio-Robust 811 4 0.801 [0.77, 0.83] 0.735 0.044 0.823 0.063 [0.04, 0.09] 0.938
+WMDP-Chem 408 4 0.730 [0.69, 0.77] 0.641 0.057 0.824 0.056 [0.03, 0.10] 0.898
+WMDP-Cyber 1987 4 0.634 [0.61, 0.66] 0.512 0.033 0.774 0.075 [0.06, 0.10] 0.789
+LAB-Bench LB-CloningScenarios 32 4–8 0.469 [0.31, 0.64] 0.314 0.126 0.671 0.500 [0.09, 0.91] 0.579
+LB-ProtocolQA 108 4–7 0.537 [0.44, 0.63] 0.397 0.124 0.620 0.077 [0.01, 0.33] 0.600
+LB-SeqQA 600 2–5 0.618 [0.58, 0.66] 0.492 0.093 0.861 0.000 [0.00, 0.05] 0.825
+LB-DbQA 520 4 0.398 [0.36, 0.44] 0.197 0.086 0.653 0.091 [0.03, 0.28] 0.468
+LB-LitQA2 199 2–10 0.402 [0.34, 0.47] 0.208 0.168 0.656 0.381 [0.21, 0.59] 0.479
+LB-SuppQA 82 4–8 0.366 [0.27, 0.47] 0.195 0.193 0.709 0.250 [0.07, 0.59] 0.429
+pooled6020 2–10 0.673 [0.661, 0.685] – 0.034 0.820 – –
+WMDP-Bio-Robust (80.1%), and is substantially lower on
+WMDP-Cyber (63.4%). LAB-Bench results are lower and
+more variable, from 36.6% on SuppQA to 61.8% on SeqQA;
+SuppQA is the weakest subtask, though still above its 21.3%
+chance level. Aggregate accuracy therefore describes the
+particular task at least as much as the model.
+Interpreting the model’s uncertainty requires first es-
+tablishing what the reportedconfidencefield measures.
+Across all 6,020 records it matches
+c= pmax−1/n
+1−1/n
+to within±0.015for 97.9% of records, wherenis the
+number of options. Competing readings fit less well: raw
+pmax matches 28.0%, the margin between the top two
+options 31.0%, and normalised entropy 20.7%. The field
+is a rescaling of the top-1 probability onto[0,1], mapping
+a uniform distribution to 0 and a one-hot distribution to 1;
+on a four-option item an even split between two candidates
+(pmax = 0.5) is reported as 0.33. It is not a predicted
+probability of correctness, and calibration should be assessed
+againstp max instead.
+On that basis, pooled ECE is 0.034 (95% CI
+[0.027,0.045]; Brier 0.161), against 0.091 when the rescaled
+field is used (Fig. 1(a)). Pooled AUROC for separat-
+ing correct from incorrect predictions is 0.820 (95% CI
+[0.810,0.830]), sop max carries information about correct-
+ness. Both pooled figures flatter the model, since pooling
+letsp max discriminate partly on which dataset an item came
+from: per-task values span 0.62–0.86 AUROC and 0.033–
+0.193 ECE (Table 1), and those are the relevant figures
+for a system consuming these predictions. We compared
+four candidate signals,p max, the top-two margin, negative
+entropy, and the rescaled field; they differ by at most 0.006
+AUROC, so the choice among them is not consequential.
+Calibration quality is not uniform. Per-dataset ECE is
+at most 0.057 on the four WMDP suites but reaches 0.168
+on LitQA2 and 0.193 on SuppQA, where item counts are
+small.
+4.2. Confidence and selective prediction
+A quantity that is directly interpretable for a system
+consuming these predictions is the error rate given a con-
+fident answer. UnderP(error|p max≥0.9)the model is
+most reliable on WMDP-Bio (3.9%,n= 848) and less
+so on WMDP-Cyber (7.5%,n= 550); a Fisher exact
+test givesp= 0.00469, andq= 0.0141after Benjamini–
+Hochberg correction across all pairwise comparisons. Con-
+fident answers are considerably less reliable on the LAB-
+Bench literature tasks, reaching 38.1% on LitQA2 (95%
+CI[21,59]%,n= 21), although that subset is small. A
+confidence threshold calibrated on one dataset should not
+be assumed to transfer to another.
+Withholding low-confidence items raises accuracy on the
+remainder (Fig. 1(b)). Deferring the least confident 40%
+of items raises accuracy on the retained set from 85.2%
+to 97.1% on WMDP-Bio and from 63.4% to 78.9% on
+WMDP-Cyber. Confidence therefore identifies a subset on
+which the model performs substantially better, which is a
+prerequisite for any scheme that would direct difficult items
+elsewhere.
+4.3. Answer-order instability
+We next ask whether decisions are stable under a change
+that does not alter the content of the question. Each item is
+presented under all four cyclic rotations of its option list,
+and each returned distribution is mapped back to the original
+option indices.
+Aggregate accuracy is nearly unaffected: across the four
+rotations it spans 0.8 pp on WMDP-Cyber and 1.3 pp
+on WMDP-Bio. Item-level agreement is much lower. Only
+62.6% of WMDP-Cyber items receive the same answer
+under all four rotations, against 89.4% on WMDP-Bio
+(Fig. 2(a)). Error rates differ sharply between the two
+groups: on WMDP-Cyber, 62.5% of unstable items are
+answered incorrectly under the original ordering against
+21.3% of stable items. A substantial fraction of errors occurs
+on items whose predictions are unstable under reordering.
+
+[[page 4]]
+0.00 0.25 0.50 0.75 1.00
+reported score
+0.00
+0.25
+0.50
+0.75
+1.00empirical accuracy
+(a) reliability of the two reported quantities
+perfect calibration
+vendor field (ECE 0.091)
+pmax  (ECE 0.034)
+20 40 60 80 100
+coverage: items answered (%)
+60
+70
+80
+90
+100accuracy on retained items (%)
+defer 40%
+(b) accuracy against coverage
+WMDP-Bio (AUROC 0.85)
+WMDP-Bio-Robust (AUROC 0.82)
+WMDP-Cyber (AUROC 0.77)
+LB-SeqQA (AUROC 0.86)
+Fig. 1. Uncertainty and selective prediction. (a) Pooled reliability curves for the two quantities the API reports: theconfidencefield (squares) is an
+affine rescaling ofp max (circles), so calibration measured against it differs from calibration measured against the probability itself. Bins holding fewer
+than 25 items are omitted, becausep max≥1/nleaves the lowest bins of thep max curve nearly empty; error bars are Wilson intervals. (b) Accuracy
+on retained items against coverage, withholding the least confident first, for the three WMDP suites and the largest LAB-Bench subtask (dashed); the
+remaining six subtasks are omitted for legibility and appear in Table 1. The dashed vertical marker is the 40% deferral operating point quoted in Section 4.2
+and in Table 1.
+WMDP-Bio WMDP-Cyber
+0
+10
+20
+30
+40
+50
+items not answered
+identically every time (%)
++8 pp
++28 pp
+(a) run-to-run variation vs. option order
+4 identical calls
+4 cyclic rotations
+1.0 1.5 2.0 2.5 3.0 3.5 4.0
+mean inference calls per item
+0
+2
+4
+6
+8
+10
+12
+accuracy gain over
+a single evaluation (pp)
+(b) selective permutation averaging
+WMDP-Bio
+WMDP-Cyber
+least-confident first
+random
+oracle
+Fig. 2. Answer-order instability and selective permutation averaging. (a) Items answered differently across four byte-identical calls, which isolates run-to-
+run variation, against four cyclic rotations, which adds option order; the annotation gives the difference. Wilson intervals. (b) Accuracy gain over a single
+evaluation against mean inference calls per item, plotted as a gain so that two datasets 22 pp apart in absolute accuracy share one scale. Items are selected
+for additional permutations least-confident first, and compared against random selection at the same budget (averaged over 400 draws) and against an
+oracle that selects, under a fixed budget, the items where averaging helps.
+One observation qualifies this. An association between
+instability and error is partly implied by the measurement:
+consistency and correctness are both defined relative to
+the first rotation, and there is one way to be consistently
+correct but several ways to be wrong. A null model with
+no positional preference, matched to the same accuracy
+and the same consistency, produces an error ratio of 5.43
+on WMDP-Cyber (95% CI[4.68,6.35]) against the 2.93
+observed, and 10.03 against 4.64 on WMDP-Bio. The ob-
+served ratio fallsbelowwhat the artefact alone predicts. The
+descriptive result stands; a causal reading does not.
+4.4. Separating option order from run-to-run vari-
+ation
+Rotating the options changes the presentation and also
+makes a fresh call, and the endpoint is not deterministic, so
+the second alone could produce disagreement. We therefore
+held the presentation fixed and queried every item 4 times
+with a byte-identical prompt, and queried a stratified sub-
+sample of 500 items per dataset 3 times at every rotation
+for a two-factor design (25,040 calls). Dispatch order was
+shuffled so repeats of one item were never consecutive.
+Identical prompts disagree far less often than rotations do.
+On WMDP-Cyber, 9.2% of items receive different answers
+across 4 identical calls, against 37.4% across four rotations,
+leaving 28.2 pp attributable to option order; on WMDP-
+Bio the figures are 2.4% and 10.6% (Fig. 2(a)). Run-to-run
+variation thus accounts for roughly 25% of the observed
+instability on WMDP-Cyber and 23% on WMDP-Bio. The
+two-factor subsample agrees: within-rotation disagreement
+is 7.8% against 37.8% between rotations on WMDP-Cyber,
+a ratio of 4.8×(3.8×on WMDP-Bio). The same design
+
+[[page 5]]
+gives the matched-budget control for Section 4.5: four iden-
+tical calls cost exactly what four rotations cost. Averag-
+ing four identical calls changes WMDP-Cyber accuracy by
++0.5 pp, with an interval spanning zero, whereas averaging
+four rotations gives +3.8 pp; the difference is +3.4 pp (95%
+CI[+2.0,+4.8]). The gain therefore comes from averaging
+over presentations, not from averaging away per-call noise.
+Positional preference is directly detectable too. Since pre-
+dicted labels are drawn toward correct labels by accuracy,
+aχ 2 against the correct-label distribution loses power as
+accuracy rises, so we compare against a simulated null of the
+same accuracy with no positional preference. The first option
+is over-selected on 3 of 8 testable datasets — WMDP-Cyber,
+LB-SeqQA and LB-DbQA — most clearly on WMDP-
+Cyber (p <10 −4; 34.8% of predictions against 26.6% of
+correct answers) but not on WMDP-Bio (p= 0.11; power
+1.00 against the worst case in which every error lands on the
+first option), and on Cyber it is confined to uncertain items:
+atp max <0.5, 42.5% of predictions fall first against 21.8%
+of correct answers (p <10 −4), whereas atp max ≥0.9
+it is absent (p= 0.84, power 1.00). Because the default
+prompt labels options in positional order, a preference for
+the firstpositionand one for the letterAare confounded;
+two re-runs separate them. Replacing the letters with non-
+alphabetic glyphs, which carry no ordinal prior, leaves the
+effect intact, the first position taking 36.1% of WMDP-
+Cyber predictions against 34.8% at baseline. Permuting the
+letters across positions splits it, with 30.5% falling on the
+first position and 31.2% on the letterA. The preference is
+therefore primarily positional, with a weaker label compo-
+nent. Quantisation ties do not explain it either: ties occur on
+only 1.2% of records (71 items, the first option among the
+tied set in 46), and it wins 21 of them against 23.0 expected
+under random tie-breaking. Accuracy is barely affected by
+the labelling scheme (glyphs change it by−1.0pp, 95% CI
+[−2.4,+0.5]), but prompt format matters: listing the options
+only as category keys costs 4.7 pp on WMDP-Cyber (95%
+CI[−6.3,−3.1]) and listing them only in the state text costs
+2.0 pp ([−3.3,−0.8]), so the redundant serialisation is doing
+work.
+4.5. Selective permutation averaging
+If a single evaluation returns one of several possible
+answers, averaging over presentations should help where
+instability is high. Averaging the four inverse-permuted
+probability distributions raises WMDP-Cyber accuracy from
+63.3% (rotation 0 of the cyclic run; the independent single-
+pass figure in Table 1 is 0.634) to 67.1% (+3.8 pp, 95%
+CI[+2.4,+5.3]); majority voting over the four answers is
+weaker (65.2%). On WMDP-Bio, where 89.4% of items are
+already stable, the gain is +0.5 pp with an interval spanning
+zero ([−0.2,+1.4]). Averaging helps on the dataset that
+exhibits substantial instability and not on the one that does
+not.
+Evaluating four rotations costs four times as much as
+one. Sincep max predicts correctness, it can be used to select
+which items receive the additional evaluations. Presenting
+a fractioncof items under all four rotations, chosen least-
+confident first, costs1+3ccalls per item. On WMDP-Cyber,
+selecting the least confident 20% reaches 65.9% and the
+least confident 40% reaches 67.0% at 2.2 calls per item,
+which is 97% of the gain available from averaging every
+item at 45% lower cost (Fig. 2(b)). Random selection at the
+same budget reaches 64.8%, averaged over 400 draws, and
+no draw beat the confidence-based ordering. On WMDP-Bio
+the advantage over random selection is +0.3 pp and 6.8%
+of random draws do at least as well, so we do not claim a
+benefit there. The distance to the oracle curve indicates the
+headroom remaining for a better selection rule.
+5. Discussion and Limitations
+These results bear on how System-1 models should be
+evaluated. Aggregate accuracy was nearly invariant across
+the four rotations while more than a third of WMDP-
+Cyber items received different answers, so similar accu-
+racy figures can conceal substantial item-level instability.
+Reported uncertainty is informative once its definition is
+established:p max separates correct from incorrect predic-
+tions with pooled AUROC 0.820 and supports abstention,
+but calibration quality and the error rate at high confidence
+both vary by dataset, so a threshold chosen on one task
+should not be assumed to hold on another. Stability under
+re-presentation is a second signal, unavailable from a single
+evaluation, and repeated inference is worth its cost where
+instability is high but not where it is low.
+Where users can influence how a decision is presented,
+representation sensitivity could become a manipulation sur-
+face, and disagreement across re-presentations could signal
+an unreliable decision. Our benchmark does not test such a
+deployment.
+These properties are relevant if System-1 models are
+later considered as components of biosecurity classifiers
+or language-model safety pipelines. Evaluating such a use
+would require a dedicated benign-versus-hazardous classifi-
+cation benchmark, which this study does not provide.
+5.1. Limitations
+We evaluate one proprietary closed-weight model that
+exposes no seed, so these results do not generalise to
+System-1 models as a class and exact reproduction depends
+on vendor behaviour. We evaluate no biosafety or hazard-
+classification task, and multiple-choice questions are only
+a proxy for the knowledge they probe; label quality in
+biology-adjacent sets can be poor [19] and we did not
+audit it, nor can benchmark contamination be excluded.
+We did not measure latency and did not run an external
+larger model as a fallback, so we make no claim about
+either. Cyclic evaluation covers four rotations rather than
+all4!permutations and only the four-option WMDP suites,
+making the reported instability a lower bound. The label
+and format ablations were run on those two suites only,
+so their conclusions do not automatically extend to the
+LAB-Bench subtasks. Returned probabilities are quantised
+
+[[page 6]]
+to two decimals, and several LAB-Bench high-confidence
+subsets contain fewer than 25 items, so we report intervals
+throughout.
+6. Conclusion
+We audited a commercial non-generative System-1
+model on 6,020 items drawn from biosecurity-relevant and
+biology-relevant benchmarks. Its accuracy is strongly task-
+dependent, its top-1 probability is reasonably well calibrated
+and predicts its own errors well enough to support absten-
+tion, and its decisions are considerably less stable under
+reordering of the answer options than aggregate accuracy
+suggests. Averaging probabilities over answer permutations
+improves accuracy where instability is high, and applying
+it only to low-confidence items recovers most of that im-
+provement at a fraction of the cost. Confidence and stabil-
+ity under re-presentation provide complementary evidence
+about when such a model’s predictions should be trusted,
+and neither is visible in a single accuracy figure.
+Acknowledgment
+This work has been supported by start-up funds awarded
+to I.G.S. We thank TypeSafe for API access; the vendor had
+no role in the design, analysis, or conclusions of this study
+and did not review this manuscript before submission.
+Ethics and Conflict of Interest
+This study authored no new hazardous technical content:
+all items come from existing public benchmarks, and we
+release model decision records but no new question content.
+We reported theconfidencefield semantics to the vendor
+as a documentation issue. The authors declare no competing
+financial or non-financial interests.
+Code Availability
+Decision records, analysis code, and manuscript
+source are available at https://github.com/
+Georgakopoulos-Soares-lab/biosafety_knowledge_jev.
+Every reported statistic can be recomputed from them.
+References
+[1] H. Inan, K. Upasani, J. Chi, R. Rungta, K. Iyer, Y . Maoet al.,
+“Llama Guard: LLM-based input-output safeguard for human-AI
+conversations,”arXiv preprint arXiv:2312.06674, 2023.
+[2] M. Sharma, M. Tong, J. Mu, J. Wei, J. Kruthoff, S. Goodfriend
+et al., “Constitutional classifiers: Defending against universal jail-
+breaks across thousands of hours of red teaming,”arXiv preprint
+arXiv:2501.18837, 2025.
+[3] N. Li, A. Pan, A. Gopal, S. Yue, D. Berrios, A. Gattiet al.,
+“The WMDP benchmark: Measuring and reducing malicious use
+with unlearning,” inProc. 41st International Conference on Machine
+Learning (ICML), 2024, pp. 28 525–28 550.
+[4] J. M. Laurent, J. D. Janizek, M. Ruzo, M. M. Hinks, M. J. Hammer-
+ling, S. Narayananet al., “LAB-Bench: Measuring capabilities of lan-
+guage models for biology research,”arXiv preprint arXiv:2407.10362,
+2024.
+[5] T. Schuster, A. Fisch, J. Gupta, M. Dehghani, D. Bahri, V . Q. Tran
+et al., “Confident adaptive language modeling,” inAdvances in Neural
+Information Processing Systems 35 (NeurIPS), 2022.
+[6] S. Kim, K. Mangalam, S. Moon, J. Malik, M. W. Mahoney, A. Gho-
+lamiet al., “Speculative decoding with Big Little Decoder,” in
+Advances in Neural Information Processing Systems 36 (NeurIPS),
+2023.
+[7] L. Chen, M. Zaharia, and J. Zou, “FrugalGPT: How to use large
+language models while reducing cost and improving performance,”
+Transactions on Machine Learning Research (TMLR), 2024.
+[8] I. Ong, A. Almahairi, V . Wu, W.-L. Chiang, T. Wu, J. E. Gonzalez
+et al., “RouteLLM: Learning to route LLMs from preference data,” in
+International Conference on Learning Representations (ICLR), 2025.
+[9] N. Alzahrani, H. A. Alyahya, Y . Alnumay, S. Alrashed, S. Alsubaie,
+Y . Almushayqihet al., “When benchmarks are targets: Revealing
+the sensitivity of large language model leaderboards,” inProc. 62nd
+Annual Meeting of the Association for Computational Linguistics
+(ACL), 2024, pp. 13 787–13 805.
+[10] V . Gupta, D. Pantoja, C. Ross, A. Williams, and M. Ung, “Chang-
+ing answer order can decrease MMLU accuracy,”arXiv preprint
+arXiv:2406.19470, 2024.
+[11] D. Hendrycks and K. Gimpel, “A baseline for detecting misclassified
+and out-of-distribution examples in neural networks,” inInternational
+Conference on Learning Representations (ICLR), 2017.
+[12] C. Guo, G. Pleiss, Y . Sun, and K. Q. Weinberger, “On calibration of
+modern neural networks,” inProc. 34th International Conference on
+Machine Learning (ICML), 2017, pp. 1321–1330.
+[13] Y . Geifman and R. El-Yaniv, “Selective classification for deep neural
+networks,” inAdvances in Neural Information Processing Systems 30
+(NeurIPS), 2017, pp. 4878–4887.
+[14] C. Zheng, H. Zhou, F. Meng, J. Zhou, and M. Huang, “Large
+language models are not robust multiple choice selectors,” inProc.
+12th International Conference on Learning Representations (ICLR),
+2024.
+[15] M. Sclar, Y . Choi, Y . Tsvetkov, and A. Suhr, “Quantifying language
+models’ sensitivity to spurious features in prompt design,” inInter-
+national Conference on Learning Representations (ICLR), 2024.
+[16] T. Markov, C. Zhang, S. Agarwal, F. Eloundou Nekoul, T. Lee,
+S. Adleret al., “A holistic approach to undesired content detection in
+the real world,” inProc. AAAI Conference on Artificial Intelligence,
+vol. 37, no. 12, 2023, pp. 15 009–15 018.
+[17] W. Zeng, Y . Liu, R. Mullins, L. Peran, J. Fernandez, H. Harkous
+et al., “ShieldGemma: Generative AI content moderation based on
+Gemma,”arXiv preprint arXiv:2407.21772, 2024.
+[18] A. Gopal, N. Helm-Burger, L. Justen, E. H. Soice, T. Tzeng,
+G. Jeyapragasanet al., “Will releasing the weights of future large
+language models grant widespread access to pandemic agents?”arXiv
+preprint arXiv:2310.18233, 2023.
+[19] A. P. Gema, J. O. J. Leang, G. Hong, A. Devoto, A. C. M. Mancino,
+R. Saxenaet al., “Are we done with MMLU?” inProc. 2025 Confer-
+ence of the Nations of the Americas Chapter of the Association for
+Computational Linguistics (NAACL), 2025, pp. 5069–5096.
+LLM Usage Statement
+A large language model (LLM) based coding assistant
+(Anthropic Claude) was used to write the evaluation harness
+and analysis scripts, to assist with statistical analysis and
+literature search, and for editorial work on this manuscript.
+
+[[page 7]]
+All generated code was executed and its outputs inspected
+by the authors. Every statistic in the running text is emitted
+by the released pipeline, and the build fails if a cited
+value does not match it; all references were verified against
+primary sources. An earlier version of this analysis con-
+tained statistical errors, found and corrected during internal
+adversarial review. The model under evaluation is a com-
+mercial closed-weight system, a reproducibility limitation
+we cannot remove. The authors take full responsibility for
+the correctness, originality, and integrity of all content.

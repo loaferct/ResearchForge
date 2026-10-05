@@ -1,0 +1,28 @@
+{
+  "id": "M003",
+  "title": "Cross‑domain transfer evaluation after context enrichment and repair",
+  "description": "After training on a source knowledge graph (e.g., Freebase) with context subgraph enrichment and an adaptive repair loop, evaluate the model’s zero‑shot or few‑shot transfer performance on a target KG (e.g., Hetionet for biomedical QA) using alignment techniques such as relation mapping or entity embedding projection, to assess whether the learned repair and contextualization generalize across domains.",
+  "why_differs": "Most KGQA studies (e.g., UniKGQA, MRE, multi‑perspective RL) report performance only within the same benchmark or KG; none explicitly test whether a context‑enriched, repaired model transfers to a different KG with differing schema and entity distribution.",
+  "technical_mechanism": "Train the model on the source KG as usual. At test time, project entity embeddings from the target KG into the source KG’s embedding space via a learned linear mapping (or use bilingual embedding alignment), then run inference using the translated triples, measuring Hits@1 on the target KG’s QA benchmark.",
+  "expected_benefit": "Demonstrates that the benefits of context subgraph enrichment and adaptive repair are not limited to a single KG, increasing the practical impact of the approach.",
+  "potential_novelty": "Cross‑domain transfer evaluation after a model‑refinement stage (context enrichment + repair) has not been explored in KGQA literature.",
+  "implementation_difficulty": "high",
+  "implementation_difficulty_basis": "Requires obtaining or constructing a second KG with QA data, learning an alignment mechanism, and running additional evaluation experiments.",
+  "experimental_difficulty": "high",
+  "experimental_difficulty_basis": "Involves data alignment, potential re‑training of projection layers, and comprehensive statistical testing across domains.",
+  "main_risk": "Negative transfer could occur if the KGs are too dissimilar, obscuring the benefits of the proposed method.",
+  "required_baselines": [
+    "within‑source KG baseline",
+    "direct transfer without enrichment/repair"
+  ],
+  "related_paper_ids": [
+    "arxiv:2211.05351",
+    "arxiv:2501.16350",
+    "doi:10.1016/j.knosys.2022.108515"
+  ],
+  "addresses_gap_ids": [
+    "G003"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T08:00:28.801497Z"
+}

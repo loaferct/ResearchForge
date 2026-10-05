@@ -1,0 +1,34 @@
+{
+  "id": "M001",
+  "title": "Training Data Enrichment Only",
+  "description": "Simplify the proposed method by using only the training regime that enriches each target triple with local context subgraphs from the same passage, and omit the adaptive repair loop and reinforcement learning lower-hop transfer stages.",
+  "why_differs": "The original idea includes three stages: (1) training with/without context subgraphs, (2) adaptive repair loop to detect and correct one-hop failures, and (3) RL lower-hop transfer. This modification removes stages (2) and (3) to isolate the effect of context subgraph enrichment alone.",
+  "technical_mechanism": "During fine-tuning, for each training instance (question, answer, knowledge graph), extract the source passage(s) that yielded the answer triple(s). From these passages, extract all head-relation-tail triples (using an off-the-shelf IE system) to form a local context subgraph. Concatenate the target triple(s) with the context subgraph triples as training input. No further iterative correction or RL optimization is applied.",
+  "expected_benefit": "Reduces complexity and training time; allows clear ablation of the contribution of context subgraph enrichment; easier to implement and debug.",
+  "potential_novelty": "While context enrichment at training is unexplored, this modification tests whether the core hypothesis (context subgraphs help) holds without additional complexity.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "Requires only a passage-to-triple extraction step and concatenation of triples; no new model architectures or reinforcement learning components.",
+  "experimental_difficulty": "low",
+  "experimental_difficulty_basis": "Experiments involve two training regimes and standard evaluation; no need for iterative failure detection or RL tuning.",
+  "main_risk": "The adaptive repair loop and RL transfer might be necessary for significant gains; removing them could underestimate the full potential of the idea.",
+  "required_baselines": [
+    "Baseline A: training on isolated triples",
+    "Baseline B: training on triples with random context subgraphs (noise control)"
+  ],
+  "related_paper_ids": [
+    "doi:10.26615/978-954-452-102-8-014",
+    "arxiv:2101.03737",
+    "arxiv:2305.13691",
+    "arxiv:2312.15194",
+    "arxiv:2501.16350",
+    "arxiv:2502.14245",
+    "arxiv:2608.13588",
+    "arxiv:2507.17365",
+    "arxiv:2604.26176"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T09:29:40.454557Z"
+}

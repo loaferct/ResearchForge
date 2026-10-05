@@ -1,0 +1,43 @@
+{
+  "id": "arxiv:2608.22479",
+  "title": "GTA-RAG: Graph-Trajectory-Augmented Reinforcement Learning for Multi-Turn Retrieval-Augmented Reasoning",
+  "authors": [
+    "Jun Chen",
+    "Yongchao Liu",
+    "Pengyu Qiu",
+    "Jiajun Zheng",
+    "Juelu Zhang",
+    "Yujie Zeng",
+    "Qin Zhang",
+    "Ziyue Qiao",
+    "Xiao Luo"
+  ],
+  "year": 2026,
+  "published": "2026-08-23",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2608.22479",
+  "pdf_url": "https://arxiv.org/pdf/2608.22479v2",
+  "abstract": "Retrieval-augmented generation (RAG) enables LLMs to access external knowledge for answering knowledge-intensive questions. For complex multi-hop questions, multi-turn retrieval-augmented reasoning extends RAG into an iterative process that repeatedly searches for and integrates evidence across documents. However, existing reinforcement-learning (RL) approaches for agentic RAG are typically optimized with final-answer rewards, which provide sparse supervision and overlook whether the model actually retrieves the required evidence chain. We present \\textsc{GTA-RAG}, a graph-trajectory-augmented RL framework for multi-turn retrieval-augmented reasoning. From an entity--document graph, we sample connected document paths, synthesize multi-hop QA trajectories, and validate them with the deployed retriever to obtain executable trajectory-level supervision. We then optimize the retrieval policy with Group Relative Policy Optimization (GRPO) and a trajectory-guided reward that encourages both accurate answers and acquisition of target evidence documents, followed by answer-reward training on natural QA instances. Experiments on three multi-hop and two simple QA benchmarks show that \\method{} consistently outperforms RL-based RAG baselines with both Qwen2.5-3B and Qwen2.5-7B backbones, while substantially improving evidence-chain coverage. Our code is available at https://github.com/cjcj46262/GTA-RAG.",
+  "doi": null,
+  "arxiv_id": "2608.22479",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T07:31:30.156198Z",
+  "relevance": 0.5714,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "reinforcement learning multi-hop question answering knowledge graph"
+  ],
+  "code_urls": [
+    "https://github.com/cjcj46262/GTA-RAG"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

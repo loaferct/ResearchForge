@@ -1,0 +1,39 @@
+{
+  "id": "arxiv:2507.14784",
+  "title": "LeAdQA: LLM-Driven Context-Aware Temporal Grounding for Video Question Answering",
+  "authors": [
+    "Xinxin Dong",
+    "Baoyun Peng",
+    "Haokai Ma",
+    "Yufei Wang",
+    "Zixuan Dong",
+    "Fei Hu",
+    "Xiaodong Wang"
+  ],
+  "year": 2025,
+  "published": "2025-07-20",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2507.14784",
+  "pdf_url": "https://arxiv.org/pdf/2507.14784v2",
+  "abstract": "Video Question Answering (VideoQA) requires identifying sparse critical moments in long videos and reasoning about their causal relationships to answer semantically complex questions. While recent advances in multimodal learning have improved alignment and fusion, current approaches remain limited by two prevalent but fundamentally flawed strategies: (1) task-agnostic sampling indiscriminately processes all frames, overwhelming key events with irrelevant content; and (2) heuristic retrieval captures superficial patterns but misses causal-temporal structures needed for complex reasoning. To address these challenges, we introduce LeAdQA, an innovative approach that bridges these gaps through synergizing causal-aware query refinement with fine-grained visual grounding. Our method first leverages LLMs to reformulate question-option pairs, resolving causal ambiguities and sharpening temporal focus. These refined queries subsequently direct a temporal grounding model to precisely retrieve the most salient segments, complemented by an adaptive fusion mechanism dynamically integrating the evidence to maximize relevance. The integrated visual-textual cues are then processed by an MLLM to generate accurate, contextually-grounded answers. Experiments on NExT-QA, IntentQA, and NExT-GQA demonstrate that our method's precise visual grounding substantially enhances the understanding of video-question relationships, achieving state-of-the-art (SOTA) performance on complex reasoning tasks while maintaining computational efficiency.",
+  "doi": null,
+  "arxiv_id": "2507.14784",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T09:54:36.332004Z",
+  "relevance": 0.3077,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "retrieval agnostic temporal relevance question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

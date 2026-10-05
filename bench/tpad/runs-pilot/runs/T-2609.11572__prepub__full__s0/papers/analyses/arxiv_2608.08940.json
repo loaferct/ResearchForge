@@ -1,0 +1,32 @@
+{
+  "paper_id": "arxiv:2608.08940",
+  "relevance_tier": "medium",
+  "problem": "not stated in abstract",
+  "method": "Proposes difficulty-gated fusion of reasoning views for temporal retrieval, where query-specific weights are assigned to different query reformulations based on performance-prediction signatures.",
+  "key_assumptions": [
+    "Query difficulty can be predicted from score distribution signatures.",
+    "Fusing multiple reasoning views with adaptive weights improves temporal retrieval."
+  ],
+  "main_contribution": "Introduces difficulty-gated fusion that improves temporal retrieval performance across retrievers, with significant gains on weaker backbones.",
+  "datasets": [
+    "\\textsc{Tempo} benchmark"
+  ],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [
+    "nDCG@10"
+  ],
+  "results": "[\"Strongest retrievers reach 0.297 and 0.303 nDCG@10; per-query gain significant under paired bootstrap (p<0.001).\"]",
+  "limitations": [],
+  "future_work": [],
+  "code_availability": "[]",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "Focuses on adaptive fusion of reasoning views for temporal retrieval, while our idea focuses on temporal relevance weighting based on version timestamps for regulatory document QA.",
+    "basis": "Abstract describes difficulty-gated fusion method."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T10:57:55.990815Z"
+}

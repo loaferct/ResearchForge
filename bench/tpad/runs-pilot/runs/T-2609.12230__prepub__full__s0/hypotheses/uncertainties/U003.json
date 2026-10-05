@@ -1,0 +1,42 @@
+{
+  "id": "U003",
+  "question": "Which pre‑trained language model architecture and size (e.g., BERT‑base, BERT‑large, RoBERTa, T5) should be used as the encoder for the triple‑only and triple‑plus‑context regimes?",
+  "description": "The idea does not fix the underlying language model; performance may vary significantly with model capacity and training regime.",
+  "category": "feasibility",
+  "importance": "medium",
+  "status": "open",
+  "next_action": "READ",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Choosing a too‑weak model may obscure the effect of contextual enrichment, while a too‑strong model may saturate the baseline.",
+  "resolution": "The surveyed papers do not provide clear evidence on which pre-trained language model architecture (e.g., BERT-base, BERT-large, RoBERTa, T5) and size is most suitable for encoding triples in the proposed context subgraph enrichment framework. Works such as Omne-R1, RouteRAG, and KG-Reasoner utilize large language models for reasoning or data generation but do not specify encoder architectures for triple-level supervision. No comparative ablation studies comparing encoder architectures were found in the retrieved literature.",
+  "paper_ids": [
+    "arxiv:2508.17330",
+    "arxiv:2512.09487",
+    "arxiv:2604.12487",
+    "arxiv:2605.12313",
+    "doi:10.1109/mlccim55934.2022.00016",
+    "doi:10.1109/prml59573.2023.10348187"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2508.17330",
+    "arxiv:2512.09487",
+    "arxiv:2604.12487",
+    "arxiv:2605.12313",
+    "doi:10.1109/mlccim55934.2022.00016",
+    "doi:10.1109/prml59573.2023.10348187"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T07:32:23.377509Z",
+  "updated_at": "2026-09-30T08:20:09.691446Z"
+}

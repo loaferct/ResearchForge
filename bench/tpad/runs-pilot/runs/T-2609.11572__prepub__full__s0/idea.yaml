@@ -1,0 +1,121 @@
+raw_idea: 'The reliability of open‑domain question answering drops sharply when source
+  texts are continuously amended, as in statutes, policies, or regulations. In such
+  settings each new amendment supersedes earlier clauses while retaining much of the
+  original wording, creating a dense semantic overlap across successive versions.
+  Existing time‑aware retrieval techniques treat each version as an isolated snapshot
+  and therefore cannot distinguish which revision best matches a time‑specific query.
+  We propose to develop a retrieval‑agnostic framework that enriches any standard
+  document retriever with a temporal relevance component: the rank of a candidate
+  passage will be adjusted according to the elapsed time between the query’s target
+  date and the passage’s version timestamp, while still leveraging its semantic similarity
+  to the query. To evaluate the approach, we will construct a benchmark comprising
+  regulatory documents with overlapping revisions and time‑stamped queries, measuring
+  how well the combined temporal‑semantic ranking improves answer accuracy.'
+analysis:
+  raw_idea: 'The reliability of open‑domain question answering drops sharply when
+    source texts are continuously amended, as in statutes, policies, or regulations.
+    In such settings each new amendment supersedes earlier clauses while retaining
+    much of the original wording, creating a dense semantic overlap across successive
+    versions. Existing time‑aware retrieval techniques treat each version as an isolated
+    snapshot and therefore cannot distinguish which revision best matches a time‑specific
+    query. We propose to develop a retrieval‑agnostic framework that enriches any
+    standard document retriever with a temporal relevance component: the rank of a
+    candidate passage will be adjusted according to the elapsed time between the query’s
+    target date and the passage’s version timestamp, while still leveraging its semantic
+    similarity to the query. To evaluate the approach, we will construct a benchmark
+    comprising regulatory documents with overlapping revisions and time‑stamped queries,
+    measuring how well the combined temporal‑semantic ranking improves answer accuracy.'
+  problem: The reliability of open-domain question answering drops when source texts
+    are continuously amended (e.g., statutes, policies, regulations) because each
+    new amendment supersedes earlier clauses while retaining much of the original
+    wording, creating dense semantic overlap across versions. Existing time-aware
+    retrieval techniques treat each version as an isolated snapshot and therefore
+    cannot distinguish which revision best matches a time-specific query.
+  target_domain: Open-domain question answering over continuously amended regulatory
+    texts (statutes, policies, regulations).
+  proposed_method: A retrieval-agnostic framework that enriches any standard document
+    retriever with a temporal relevance component. The rank of a candidate passage
+    is adjusted according to the elapsed time between the query's target date and
+    the passage's version timestamp (e.g., via a decaying function), while still leveraging
+    its semantic similarity to the query from the base retriever.
+  hypothesis: Combining temporal relevance (based on time proximity) with semantic
+    similarity will significantly improve answer accuracy (e.g., Exact Match or F1)
+    in open-domain QA over continuously amended regulatory texts compared to using
+    semantic similarity alone or existing time-aware retrieval techniques that treat
+    versions independently.
+  research_question: Does adding a temporal relevance component to a standard document
+    retriever improve answer accuracy in open-domain question answering over continuously
+    amended regulatory texts compared to using semantic similarity alone?
+  expected_contribution: (1) A general framework for incorporating temporal dynamics
+    into any document retriever for versioned collections; (2) A benchmark of regulatory
+    documents with overlapping revisions and time-stamped queries to evaluate temporal-semantic
+    retrieval approaches.
+  assumptions:
+  - Each document version has a valid timestamp indicating when it was enacted or
+    amended.
+  - Queries are associated with a target date (the time at which the question is asked).
+  - Semantic similarity (e.g., from a dense retriever) is a suitable baseline for
+    relevance.
+  - The temporal relevance function can be modeled as a decaying function of time
+    difference (e.g., exponential decay).
+  - The combination of temporal and semantic scores can be a simple weighted sum.
+  variables:
+    independent:
+    - 'Retrieval method (baseline: semantic similarity only; proposed: temporal-semantic
+      combination; other baselines: temporal-only, existing time-aware methods)'
+    dependent:
+    - Answer accuracy (Exact Match, F1) on the benchmark
+    controls:
+    - Base retriever (e.g., BM25, DPR) kept constant when comparing methods
+    - Benchmark dataset (regulatory documents with versions and timestamps)
+    - Query set
+  target_system: ''
+  expected_benefits: []
+  potential_risks: []
+  ambiguities:
+  - question: What is the appropriate temporal relevance function (e.g., linear, exponential,
+      step) for adjusting passage ranks based on time difference?
+    resolution: 'Literature suggests learned combinations (e.g., Re3: Learning to
+      Balance Relevance & Recency for Temporal Information Retrieval, 2025) may outperform
+      fixed functions, so this remains unresolved; we will treat it as a design choice
+      to be evaluated.'
+    resolved_by: literature
+  - question: How should temporal and semantic scores be combined (e.g., weighted
+      sum, product, learned)?
+    resolution: Recent work (e.g., Re3, 2025) learns to balance relevance and recency,
+      indicating that a learned combination is promising; we will treat this as unresolved
+      and plan to compare combination strategies.
+    resolved_by: literature
+  - question: What baseline time-aware retrieval techniques exist for versioned documents
+      to compare against?
+    resolution: Found work on time-travel phrase queries on versioned documents (Practical
+      Index Framework for Efficient Time-Travel Phrase Queries on Versioned Documents,
+      2016) and time-aware random walk models for web archives; we will use these
+      as baselines.
+    resolved_by: literature
+  - question: Which metrics should be used to measure answer accuracy in the QA benchmark?
+    resolution: Standard QA metrics are Exact Match and F1; we will adopt these.
+    resolved_by: assumption
+  - question: What regulatory documents should be used to construct the benchmark
+      of overlapping revisions?
+    resolution: We assume publicly available corpora such as the US Code, EU regulations,
+      or corporate policy histories; this remains an assumption to be verified during
+      benchmark construction.
+    resolved_by: assumption
+  - question: How to handle conflicting information across versions where an amendment
+      supersedes a clause?
+    resolution: The idea assumes that the latest version's clause overrides earlier
+      ones; we will treat this as a design principle for the temporal component (favoring
+      newer versions for time-specific queries).
+    resolved_by: assumption
+  keywords:
+  - temporal retrieval
+  - versioned documents
+  - open-domain QA
+  - regulatory texts
+  - semantic similarity
+  search_queries:
+  - temporal document retrieval versioned documents
+  - question answering over regulatory document versions
+  - combining temporal and semantic relevance for information retrieval
+  recorded_at: '2026-09-30T10:13:32.693933Z'

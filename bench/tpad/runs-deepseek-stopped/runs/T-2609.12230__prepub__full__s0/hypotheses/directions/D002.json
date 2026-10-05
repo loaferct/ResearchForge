@@ -1,0 +1,30 @@
+{
+  "id": "D002",
+  "direction": "Reposition the work as a boundary test of the residual component rather than a method for context-enriched supervision. Chain/path supervision is credited to prior art and used only as a control; the repair loop and RL stage are dropped from the primary contribution. The deliverable becomes a matched-budget, inference-context-matched training comparison that asks whether peripheral same-passage context adds anything beyond the chain and beyond token budget, reported with per-hop accuracy, a one-hop failure rate, and a transfer gap - with a pre-registered negative/boundary outcome.",
+  "hypothesis": "H1'': Under a matched supervision token budget, identical templates, and identical test-time context, adding peripheral same-passage triples to chain supervision yields no measurable multi-hop KGQA improvement over chain-only supervision, and performs no better than a chain + shuffled/unrelated-triple arm of equal length; any observed gain is attributable to the chain or to added tokens rather than to peripheral-context relevance. H2'': Per-hop failure attribution and a shallow-to-deep transfer gap can be measured reliably and localize whether multi-hop errors originate at the first hop.",
+  "rationale": "U015 resolved largely in the affirmative: the effective ingredient (exposing the reasoning chain) is established path-based reasoning (MHGRN, Variational Reasoning), and the repair loop is established self-bootstrapping (KnowTrace, Self-Refine). What remains is not a method but a boundary question about peripheral context - untested at training time yet predicted near-inert at inference (+0.003 F1 for non-chain triples, with inflated context adding distractors). Continuing to ask 'does context-enriched supervision improve multi-hop KGQA' would overclaim prior art and conflate the chain effect with the peripheral effect; the original question is therefore replaced by the residual boundary test. This deserves investigation next because it is the only unoccupied and cheaply decidable question left in the idea, it directly tests the strongest counter-evidence on the training side where it has never been tested, and it yields a publishable boundary/negative result under pre-registration. The original idea and hypothesis remain recorded unchanged.",
+  "change_type": "CHANGE_RESEARCH_QUESTION",
+  "previous_direction_id": "D001",
+  "research_question": "Under a matched supervision token budget and identical inference-time context, does training-time exposure to peripheral same-passage context triples add any measurable multi-hop KGQA accuracy beyond prior-art chain/path supervision and beyond a matched shuffled-triple control - and if not, can per-hop failure attribution and a shallow-to-deep transfer gap characterize where multi-hop errors originate?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "doi:10.18653/v1/2020.emnlp-main.99",
+    "doi:10.1609/aaai.v32i1.12057",
+    "arxiv:2609.10237",
+    "arxiv:2505.20245",
+    "doi:10.20944/preprints202505.1992.v1",
+    "arxiv:2509.21035",
+    "doi:10.24963/kr.2020/77"
+  ],
+  "uncertainty_ids": [
+    "U015",
+    "U024",
+    "U013",
+    "U017",
+    "U008",
+    "U010",
+    "U002"
+  ],
+  "recorded_at": "2026-09-30T05:28:54.288381Z"
+}

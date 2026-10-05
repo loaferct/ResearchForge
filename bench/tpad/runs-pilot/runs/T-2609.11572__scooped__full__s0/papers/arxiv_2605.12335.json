@@ -1,0 +1,36 @@
+{
+  "id": "arxiv:2605.12335",
+  "title": "EHR-RAGp: Prototype-Guided Retrieval of Longitudinal Electronic Health Records for Clinical Prediction Models",
+  "authors": [
+    "Saeed Shurrab",
+    "Mariam Al-Omari",
+    "Dana El Samad",
+    "Farah E. Shamout"
+  ],
+  "year": 2026,
+  "published": "2026-05-12",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2605.12335",
+  "pdf_url": "https://arxiv.org/pdf/2605.12335v2",
+  "abstract": "Electronic Health Records (EHR) contain rich longitudinal patient information and are widely used in predictive modeling applications. However, effectively leveraging historical data remains challenging due to long trajectories, heterogeneous events, temporal irregularity, and the varying relevance of past clinical context. Existing approaches often rely on fixed windows or uniform aggregation, which can obscure clinically important signals. In this work, we introduce EHR-RAGp, a retrieval-based framework that dynamically integrates the most relevant patient history consisting of diverse clinical event types. We propose a prototype-guided retrieval module that acts as an alignment mechanism and estimates the relevance of retrieved historical chunks with respect to a given prediction task, guiding the model towards the most informative context. Across multiple clinical prediction tasks and two benchmark datasets, EHR-RAGp consistently outperforms state-of- the-art EHR-based and transformer-based baselines. Furthermore, EHR-RAGp is model-agnostic, as integrating it with various backbone models yields substantial performance gains. Overall, EHR-RAGp establishes a novel direction for modeling long-range clinical context to improve downstream performance via retrieval.",
+  "doi": null,
+  "arxiv_id": "2605.12335",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T09:39:32.505803Z",
+  "relevance": 0.1333,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "retriever agnostic temporal relevance"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

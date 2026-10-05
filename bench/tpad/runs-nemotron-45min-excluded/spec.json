@@ -1,0 +1,33 @@
+{
+ "dataset": "/Users/kingsofttech/KINGSOFT-PROJECTS/LF/bench/tpad/items.yaml",
+ "out": "/Users/kingsofttech/KINGSOFT-PROJECTS/LF/bench/tpad/runs-pilot",
+ "systems": [
+  "full",
+  "nochal"
+ ],
+ "conditions": [
+  "scooped",
+  "prepub"
+ ],
+ "seeds": 1,
+ "items": null,
+ "settings": {
+  "model": {
+   "model": "nemotron-3-super"
+  },
+  "literature": {
+   "cache_dir": "/Users/kingsofttech/KINGSOFT-PROJECTS/LF/bench/tpad/cache"
+  },
+  "investigation": {
+   "max_iterations": 20,
+   "max_tool_calls": 250,
+   "max_searches": 14,
+   "max_papers": 90,
+   "time_limit_s": 2700
+  },
+  "dsh": {
+   "phase_timeout_s": 900
+  }
+ },
+ "corruption": null
+}

@@ -1,0 +1,49 @@
+{
+  "paper_id": "arxiv:2605.23497",
+  "relevance_tier": "high",
+  "problem": "LLM-based statutory question answering fails temporally: post-cutoff staleness (models apply superseded provisions after amendments) and recency bias (models prefer newer provisions even when a historical version governs the fact pattern). Law evolves continuously while LLM knowledge is a static snapshot.",
+  "method": "Benchmark of 312 expert-validated, time-sensitive German statutory QA pairs in three categories (Post-Cutoff Amendment, Pre-Amendment, Multi-Provision Pre-Amendment). Five LLMs evaluated under four settings: Vanilla, Web-search, RAG-kNN and RAG-ToC. Both RAG variants extract the \"as-of\" date from the query with a regex and use it as a hard constraint that filters the retrieval space to paragraph versions valid during that period, then retrieve by embedding (kNN) or via a statute table of contents (ToC).",
+  "key_assumptions": [
+    "The query's applicable date can be recovered by a regex pattern over the question text",
+    "Legal validity should be enforced as a hard constraint rather than a soft relevance signal",
+    "German civil-law statutes and LLM-generated, expert-validated questions are representative of time-sensitive statutory QA",
+    "Version validity depends on effective/amendment dates, not on temporal proximity"
+  ],
+  "main_contribution": "A temporal legal benchmark for diagnosing post-cutoff staleness and recency bias, plus evidence that strict \"as-of date\" version filtering is the most effective mitigation (\"treating temporal validity as a hard constraint\").",
+  "datasets": [
+    "Own benchmark: 312 expert-validated German statutory QA pairs (3 categories)"
+  ],
+  "benchmarks": [
+    "Own temporal statutory QA benchmark (Post-Cutoff Amendment, Pre-Amendment, Multi-Provision Pre-Amendment)"
+  ],
+  "baselines": [
+    "Vanilla (no retrieval)",
+    "Web-search tool calling",
+    "RAG-kNN (embedding retrieval over version-filtered corpus)",
+    "RAG-ToC (table-of-contents mediated retrieval over version-filtered corpus)"
+  ],
+  "metrics": [
+    "LLM-as-a-judge rubric score, validated against human expert ratings"
+  ],
+  "results": "Severe degradation in the Vanilla post-cutoff setting. Both RAG approaches substantially improve performance across all question types; web search yields unstable gains and shows marked recency bias on historically anchored tasks. The authors report no significant difference between RAG-kNN and RAG-ToC, inferring that the correct timeframe matters more than the retrieval method.",
+  "limitations": [
+    "Single jurisdiction and language (German civil law)",
+    "Questions are LLM-synthesized and then expert-validated, so construction artifacts are possible",
+    "Hard filtering depends on a regex date extractor over query text",
+    "Only hard version filtering is tested; no soft/graded temporal re-ranking is evaluated",
+    "Retrieval-layer ranking metrics are not separately reported"
+  ],
+  "future_work": [
+    "Section 6 is titled 'Conclusion and Open Questions'; abstention mechanisms when queries exceed a model's temporal knowledge are suggested in Section 2.3 as safer alternatives to returning outdated legal conclusions"
+  ],
+  "code_availability": "Dataset published at https://github.com/TUMLegalTech/temporal_bias (repository exists; root files 'Prompts' and 'qa_set.xlsx'; README is empty, so the arXiv link is unconfirmed by the repo itself).",
+  "relation_to_idea": {
+    "problem_overlap": 0.95,
+    "method_overlap": 0.6,
+    "evaluation_overlap": 0.85,
+    "conceptual_difference": "This work treats temporal validity as a hard, discrete constraint and targets LLM staleness/recency at answer time; the proposed idea instead re-ranks candidates with a continuous elapsed-time relevance term added to semantic similarity and claims retrieval-agnosticism. Crucially, this paper's conclusion that validity should be a hard constraint directly challenges the soft-decay premise.",
+    "basis": "Both papers address time-sensitive statutory QA over amended provisions; this paper also supplies the benchmark and the hard-filter baseline that the proposed soft temporal score must beat. Method overlap is high but not full because it enforces validity by discrete interval filtering rather than a continuous elapsed-time term."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:10:27.550505Z"
+}

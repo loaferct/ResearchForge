@@ -1,0 +1,28 @@
+{
+  "questions": [
+    "What exact temporal signal is used in prior time-aware retrieval: recency/elapsed-time decay, as-of validity filtering, or both?",
+    "Has a retrieval-agnostic semantic+temporal re-ranking component already been evaluated on amended statutes or regulations, and with what gains?",
+    "Which benchmark, metrics, and baselines are standard for time-specific QA over versioned documents?",
+    "What evidence shows semantic similarity alone fails on near-duplicate successive versions?",
+    "Is reliable version/validity metadata available for a regulatory benchmark?"
+  ],
+  "search_topics": [
+    "time-sensitive question answering",
+    "temporal information retrieval and recency ranking",
+    "point-in-time / as-of retrieval",
+    "temporal decay in retrieval-augmented generation",
+    "legal and statutory question answering",
+    "versioned document retrieval and supersession",
+    "temporal-semantic misalignment",
+    "temporal QA surveys and benchmarks (SituatedQA, TimeQA)"
+  ],
+  "comparison_targets": [
+    "Semantic-only dense retriever",
+    "BM25 sparse retriever",
+    "Hybrid lexical+dense retriever",
+    "Hybrid + exponential temporal decay (three-signal)",
+    "As-of / validity-interval filtering",
+    "Metadata-filtered retriever (hard date filter)"
+  ],
+  "recorded_at": "2026-09-30T04:18:33.826099Z"
+}

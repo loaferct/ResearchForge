@@ -1,0 +1,52 @@
+HTTP Request: GET https://arxiv.org/pdf/2605.23497 "HTTP/1.1 200 OK"
+HTTP Request: GET https://arxiv.org/pdf/2401.13222 "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.github.com/search/repositories?q=TempRALM+temporally-aware+retrieval+augmented+language+model&per_page=5&sort=stars "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.github.com/search/repositories?q=statutory+question+answering+temporal+version+filtering+benchmark&per_page=5&sort=stars "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.github.com/repos/TUMLegalTech/temporal_bias "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.github.com/repos/TUMLegalTech/temporal_bias/languages "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.github.com/repos/TUMLegalTech/temporal_bias/contents/ "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.github.com/repos/TUMLegalTech/temporal_bias/readme "HTTP/1.1 404 Not Found"
+HTTP Request: GET https://api.github.com/search/repositories?q=TempRALM&per_page=5&sort=stars "HTTP/1.1 200 OK"
+Tool 'fetch_paper_text' failed: "Error executing tool fetch_paper_text: full text unavailable for doi:10.18653/v1/2024.emnlp-main.394: no open-access PDF is known for doi:10.18653/v1/2024.emnlp-main.394. Work from the abstract and mark analyzed_from='abstract'."
+HTTP Request: GET https://api.openalex.org/works?search=TimeR4+time-aware+retrieval+augmented+LLM+temporal+knowledge+graph+question+answering&per-page=5 "HTTP/1.1 429 Too Many Requests"
+{"ts": "2026-09-30T05:07:17.617792+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.openalex.org", "attempt": 1, "delay_s": 36.0, "error": "HTTP 429"}
+HTTP Request: GET https://export.arxiv.org/api/query?search_query=all%3Atimer4+AND+all%3Atime-aware+AND+all%3Aretrieval+AND+all%3Aaugmented+AND+all%3Allm+AND+all%3Atemporal+AND+all%3Aknowledge+AND+all%3Agraph&start=0&max_results=5&sortBy=relevance "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=TimeR4+time-aware+retrieval+augmented+LLM+temporal+knowledge+graph+question+answering&limit=5&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T05:07:18.159925+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 1, "delay_s": 1.98, "error": "HTTP 429"}
+HTTP Request: GET https://api.crossref.org/works?query.bibliographic=TimeR4+time-aware+retrieval+augmented+LLM+temporal+knowledge+graph+question+answering&rows=5 "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=TimeR4+time-aware+retrieval+augmented+LLM+temporal+knowledge+graph+question+answering&limit=5&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T05:07:20.900242+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 2, "delay_s": 3.08, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=TimeR4+time-aware+retrieval+augmented+LLM+temporal+knowledge+graph+question+answering&limit=5&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T05:07:24.747198+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 3, "delay_s": 6.76, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=TimeR4+time-aware+retrieval+augmented+LLM+temporal+knowledge+graph+question+answering&limit=5&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T05:07:32.394997+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 4, "delay_s": 12.67, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=TimeR4+time-aware+retrieval+augmented+LLM+temporal+knowledge+graph+question+answering&limit=5&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.openalex.org/works?search=TimeR4+time-aware+retrieval+augmented+LLM+temporal+knowledge+graph+question+answering&per-page=5 "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.openalex.org/works?search=TIQ+benchmark+temporal+question+answering+implicit+time+constraints&per-page=5 "HTTP/1.1 429 Too Many Requests"
+{"ts": "2026-09-30T05:07:56.694898+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.openalex.org", "attempt": 1, "delay_s": 35.0, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=TIQ+benchmark+temporal+question+answering+implicit+time+constraints&limit=5&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T05:07:56.759375+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 1, "delay_s": 1.62, "error": "HTTP 429"}
+HTTP Request: GET https://export.arxiv.org/api/query?search_query=all%3Atiq+AND+all%3Abenchmark+AND+all%3Atemporal+AND+all%3Aquestion+AND+all%3Aanswering+AND+all%3Aimplicit+AND+all%3Atime+AND+all%3Aconstraints&start=0&max_results=5&sortBy=relevance "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.crossref.org/works?query.bibliographic=TIQ+benchmark+temporal+question+answering+implicit+time+constraints&rows=5 "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=TIQ+benchmark+temporal+question+answering+implicit+time+constraints&limit=5&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T05:07:58.703942+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 2, "delay_s": 3.67, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=TIQ+benchmark+temporal+question+answering+implicit+time+constraints&limit=5&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T05:08:03.151122+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 3, "delay_s": 6.58, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=TIQ+benchmark+temporal+question+answering+implicit+time+constraints&limit=5&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+{"ts": "2026-09-30T05:08:10.594349+00:00", "level": "info", "logger": "researchforge.http", "msg": "retrying request", "host": "api.semanticscholar.org", "attempt": 4, "delay_s": 12.07, "error": "HTTP 429"}
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=TIQ+benchmark+temporal+question+answering+implicit+time+constraints&limit=5&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 429 "
+HTTP Request: GET https://api.openalex.org/works?search=TIQ+benchmark+temporal+question+answering+implicit+time+constraints&per-page=5 "HTTP/1.1 200 OK"
+{"ts": "2026-09-30T05:08:33.858378+00:00", "level": "warning", "logger": "researchforge.toolkit", "msg": "source failed", "source": "semantic_scholar", "error": "api.semanticscholar.org failed after 5 attempts (HTTP 429)"}
+HTTP Request: GET https://export.arxiv.org/api/query?search_query=all%3Atime-aware+AND+all%3Aevidence+AND+all%3Aretrieval+AND+all%3Ahealth+AND+all%3Aquestion+AND+all%3Aanswering+AND+all%3Avladika+AND+all%3Amatthes&start=0&max_results=5&sortBy=relevance "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.semanticscholar.org/graph/v1/paper/search?query=time-aware+evidence+retrieval+health+question+answering+Vladika+Matthes&limit=5&fields=title%2Cabstract%2Cyear%2CpublicationDate%2Cvenue%2Cauthors%2CcitationCount%2CexternalIds%2Curl%2CopenAccessPdf "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.openalex.org/works?search=time-aware+evidence+retrieval+health+question+answering+Vladika+Matthes&per-page=5 "HTTP/1.1 200 OK"
+HTTP Request: GET https://api.crossref.org/works?query.bibliographic=time-aware+evidence+retrieval+health+question+answering+Vladika+Matthes&rows=5 "HTTP/1.1 200 OK"
+HTTP Request: GET https://arxiv.org/pdf/2404.08359 "HTTP/1.1 200 OK"
+HTTP Request: GET https://www.tandfonline.com/doi/pdf/10.1080/08839514.2026.2626097?needAccess=true "HTTP/1.1 403 Forbidden"
+Tool 'fetch_paper_text' failed: 'Error executing tool fetch_paper_text: full text unavailable for doi:10.1080/08839514.2026.2626097: www.tandfonline.com returned HTTP 403: <!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta nam. Work from the abstract and mark analyzed_from=\'abstract\'.'
+Tool 'record_paper_analysis' rejected arguments: ['future_work']
+Tool 'record_paper_analysis' rejected arguments: ['future_work']
+Tool 'record_paper_analysis' rejected arguments: ['future_work']
+Tool 'record_paper_analysis' rejected arguments: ['future_work']
+Tool 'record_paper_analysis' rejected arguments: ['future_work']
+Tool 'record_paper_analysis' rejected arguments: ['future_work']

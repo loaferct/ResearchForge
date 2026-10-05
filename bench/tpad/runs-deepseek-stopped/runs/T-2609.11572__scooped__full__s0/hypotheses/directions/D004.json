@@ -1,0 +1,20 @@
+{
+  "id": "D004",
+  "direction": "Continue D003 with two tightening restrictions. First, state the temporal component's claim explicitly as equivalence plus robustness: with correct in-force intervals and a correct target date the graded membership score reproduces the hard filter's ordering, so the contribution is confined to cases where those inputs are wrong, incomplete or unofficial, and the headline result is a noise crossover rather than a mean improvement. Second, restrict the evaluation to substantively changed version transitions; editorial transitions, on which the versions are interchangeable, must be excluded or reported separately because they dilute any measurable difference.",
+  "hypothesis": "A single graded interval-membership temporal term equals hard in-force filtering when in-force intervals and the query target date are correct, and exceeds it only as those inputs degrade; on substantively changed versions the crossover point is measurable and lies at a metadata-noise level low enough that real unofficial corpora fall on the graded side.",
+  "rationale": "U011 is now resolved as degeneracy under exact inputs, because interval membership is maximal for the in-force version and therefore reproduces the hard filter's ordering when the filter's inputs are correct (C027). This is worth recording as a scope refinement rather than a mechanism change because it does not alter what is built - the graded interval-membership term stays - but it removes any remaining basis for a general improvement claim and forces the evaluation to be built around input uncertainty. The second restriction follows from Prior et al.'s screening criterion: they rejected questions whose legal consequence was identical whichever version applied and classified every transition for substantive change (C025), which shows that editorial transitions make version selection immaterial and would otherwise dilute the comparison. Both restrictions make the claim smaller and the experiment sharper, and neither is contradicted by the two papers that could have contradicted it. Two new risks are recorded: the share of substantive transitions (U021) and the label-noise floor of synthetic legal QA (U022), either of which could make the crossover effect undetectable.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": "D003",
+  "research_question": "On substantively changed statutory versions, at what level of in-force-date noise and target-date error does a graded interval-membership temporal score overtake a hard in-force filter in version-selection accuracy, and do real unofficial regulatory corpora fall on the graded side of that crossover?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "arxiv:2605.23497"
+  ],
+  "uncertainty_ids": [
+    "U011",
+    "U017",
+    "U020"
+  ],
+  "recorded_at": "2026-09-30T05:31:42.011444Z"
+}

@@ -1,0 +1,37 @@
+{
+  "paper_id": "doi:10.18653/v1/2020.emnlp-main.99",
+  "relevance_tier": "medium",
+  "problem": "Augmenting QA models with external knowledge (knowledge graphs) either fails to model multi-hop relations efficiently or lacks transparency into the model's prediction rationale.",
+  "method": "Multi-hop graph relation network (MHGRN): a knowledge-aware module added to a pretrained language model that performs multi-hop, multi-relational reasoning over external-KG subgraphs, unifying path-based methods with graph neural networks.",
+  "key_assumptions": [
+    "Subgraphs extracted from an external knowledge graph can be encoded by a module bolted onto a pretrained language model",
+    "Unifying path-based reasoning and GNNs improves interpretability without losing scalability"
+  ],
+  "main_contribution": "MHGRN, a multi-hop graph relation network that equips pretrained language models with a module performing multi-hop, multi-relational reasoning over subgraphs extracted from external knowledge graphs, unifying path-based reasoning and GNNs for better interpretability and scalability.",
+  "datasets": [
+    "CommonsenseQA",
+    "OpenbookQA"
+  ],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [
+    "accuracy (values not stated in abstract)"
+  ],
+  "results": "Abstract: empirically shown effective and scalable on CommonsenseQA and OpenbookQA, with case studies interpreting behaviour.",
+  "limitations": [
+    "Knowledge-aware QA over concept graphs (CommonsenseQA, OpenbookQA), not passage-grounded triple supervision for multi-hop QA.",
+    "The subgraph is used as model input, not as an enriched training target.",
+    "Does not study whether the provenance (same passage) of context triples matters."
+  ],
+  "future_work": [],
+  "code_availability": "Code released for experiments according to the abstract (\"with the code for experiments released\"); exact URL not stated in abstract.",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.25,
+    "conceptual_difference": "MHGRN is the canonical 'use the subgraph as model input' approach (GraftNet-family pre-processing is also used by the KBQA teacher-student line). The idea instead varies what supervision the LM sees (isolated triple vs passage-coherent group) and asks whether context is the active ingredient — a question MHGRN does not pose because it never trains on isolated triples as a control.",
+    "basis": "Problem overlap 0.5: both are multi-hop reasoning over KG subgraphs for QA, and both use a subgraph rather than isolated triples. Method overlap 0.3: MHGRN adds a reasoning module over a subgraph at model level; the idea adds context triples as supervision text and compares two training regimes. Evaluation overlap 0.25: CommonsenseQA/OpenbookQA multiple-choice differs from multi-hop KBQA with hop-depth transfer."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:07:27.685253Z"
+}

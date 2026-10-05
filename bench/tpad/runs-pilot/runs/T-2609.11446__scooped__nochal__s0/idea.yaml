@@ -1,0 +1,101 @@
+raw_idea: We aim to improve collaborative inference among a set of diverse models
+  by establishing a unified reliability metric for their confidence scores. The plan
+  is to first apply a model‑specific calibration step, using held‑out validation data,
+  so that each model’s output probabilities reflect true likelihoods. Once calibrated,
+  we will define common thresholds that determine whether a prediction can be accepted
+  immediately, whether a more powerful model should be consulted, or whether multiple
+  model outputs should be combined. By basing decisions on calibrated confidence,
+  the routing policy becomes independent of the particular models or computational
+  budget in use. We will also develop a theoretical link between calibration and the
+  expected selective risk, and evaluate the approach on language and vision benchmarks.
+analysis:
+  raw_idea: We aim to improve collaborative inference among a set of diverse models
+    by establishing a unified reliability metric for their confidence scores. The
+    plan is to first apply a model‑specific calibration step, using held‑out validation
+    data, so that each model’s output probabilities reflect true likelihoods. Once
+    calibrated, we will define common thresholds that determine whether a prediction
+    can be accepted immediately, whether a more powerful model should be consulted,
+    or whether multiple model outputs should be combined. By basing decisions on calibrated
+    confidence, the routing policy becomes independent of the particular models or
+    computational budget in use. We will also develop a theoretical link between calibration
+    and the expected selective risk, and evaluate the approach on language and vision
+    benchmarks.
+  problem: Lack of a unified reliability metric for confidence scores across diverse
+    models hinders effective collaborative inference, leading to suboptimal routing
+    decisions that are tied to specific model pools or budgets.
+  target_domain: Heterogeneous model collaboration, specifically cascading inference
+    or model routing in machine learning, applicable to language and vision tasks.
+  proposed_method: Model-specific calibration (e.g., temperature scaling) using held-out
+    validation data to align confidence scores with true likelihoods, followed by
+    defining common thresholds for routing decisions (accept, consult stronger model,
+    combine outputs).
+  hypothesis: Calibrating individual models' confidence scores enables a unified reliability
+    metric that improves the efficiency (reduced computational cost) and effectiveness
+    (maintained or improved accuracy) of collaborative inference compared to uncalibrated
+    baselines, while making routing policies invariant to model pool and budget.
+  research_question: Does temperature scaling calibration of diverse models' confidence
+    scores lead to improved selective risk when routing based on common thresholds,
+    compared to using raw confidence scores, across language and vision benchmarks?
+  expected_contribution: A simple post-hoc calibration framework for heterogeneous
+    model collaboration, theoretical analysis linking calibration to selective risk,
+    and empirical validation on language and vision benchmarks demonstrating improved
+    accuracy-cost trade-offs.
+  assumptions:
+  - Held-out validation data is available and representative of the deployment distribution.
+  - Calibration methods like temperature scaling are effective for the models considered
+    and do not harm discriminative performance.
+  - Common thresholds can be derived from validation data to achieve desired accuracy-cost
+    trade-offs.
+  - The approach is applicable to both language and vision models.
+  variables:
+    independent:
+    - Calibration method (e.g., temperature scaling, isotonic regression)
+    - Model heterogeneity (types, sizes, architectures)
+    - Threshold values for routing decisions
+    dependent:
+    - Selective risk (expected risk)
+    - Prediction accuracy
+    - Computational cost (e.g., FLOPs, latency, number of strong model invocations)
+    - Calibration error (ECE, MCE)
+    controls:
+    - Validation set used for calibration
+    - Test set for evaluation
+    - Base model architectures
+  target_system: ''
+  expected_benefits:
+  - Improved accuracy-cost trade-offs in collaborative inference
+  - Routing policies that generalize across different model pools and budgets
+  - Theoretical grounding of confidence thresholds in selective risk
+  potential_risks:
+  - Calibration may degrade performance if validation data is not representative
+  - Overhead of calibration step may offset gains
+  - Threshold tuning may be sensitive to validation set
+  ambiguities:
+  - question: Which calibration method is most appropriate for diverse models?
+    resolution: null
+    resolved_by: unresolved
+  - question: How should a 'more powerful model' be defined in a heterogeneous setting?
+    resolution: null
+    resolved_by: unresolved
+  - question: What is the optimal way to combine multiple model outputs (e.g., averaging
+      logits, weighted voting)?
+    resolution: null
+    resolved_by: unresolved
+  - question: Which specific language and vision benchmarks should be used for evaluation?
+    resolution: null
+    resolved_by: unresolved
+  - question: How to empirically demonstrate independence from model pool and budget?
+    resolution: null
+    resolved_by: unresolved
+  keywords:
+  - collaborative inference
+  - model calibration
+  - confidence scoring
+  - selective inference
+  - heterogeneous models
+  - cascade routing
+  search_queries:
+  - model calibration collaborative inference confidence threshold
+  - heterogeneous model collaboration confidence cascades
+  - uncertainty calibration selective risk routing
+  recorded_at: '2026-09-30T11:35:16.149448Z'

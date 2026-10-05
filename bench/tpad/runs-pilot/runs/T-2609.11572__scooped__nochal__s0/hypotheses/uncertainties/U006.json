@@ -1,0 +1,35 @@
+{
+  "id": "U006",
+  "question": "Does temporal relevance improve QA accuracy on versioned regulatory documents where amendments create dense semantic overlap across versions, making it difficult to distinguish the correct version for a time-specific query?",
+  "description": "Need to test if temporal relevance helps select the correct version in regulatory text with high semantic similarity between versions.",
+  "category": "validity",
+  "importance": "high",
+  "status": "unresolved",
+  "next_action": "VERIFY",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "VERIFY"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Existing evidence is on synthetic datasets; regulatory text may have different characteristics.",
+  "resolution": "No existing work directly evaluates temporal relevance for QA over versioned regulatory documents; TempRALM uses tennis grand slam data and Re3 focuses on general TIR benchmarks, leaving the effect on versioned regulatory text with dense semantic overlap untested.",
+  "paper_ids": [
+    "arxiv:2509.01306",
+    "arxiv:2401.13222"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2401.13222",
+    "arxiv:2509.01306"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C020"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 2,
+  "source": "CRITIQUE",
+  "created_at": "2026-09-30T09:53:51.268988Z",
+  "updated_at": "2026-09-30T10:28:31.274435Z"
+}

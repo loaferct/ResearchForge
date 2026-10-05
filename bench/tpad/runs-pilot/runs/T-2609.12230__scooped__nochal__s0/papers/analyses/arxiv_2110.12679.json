@@ -1,0 +1,51 @@
+{
+  "paper_id": "arxiv:2110.12679",
+  "relevance_tier": "high",
+  "problem": "Multi-hop KGQA suffers from: (i) absent explicit relational chain order in questions, (ii) incorrectly capturing relational types due to weak supervision, (iii) failing to consider implicit relations due to limited neighborhood size in subgraph retrieval.",
+  "method": "Propose Relational Chain based Embedded KGQA (Rce-KGQA) that simultaneously uses explicit relational chain from question (via Siamese network) and implicit relational chain from KG. Architecture includes Answer Filtering Module (AFM) and Relational Chain Reasoning Module (RCRM). Uses RoBERTa for question encoding and KG embeddings for entity/relation encoding.",
+  "key_assumptions": [
+    "Explicit relational chain can be extracted from question syntax.",
+    "Implicit relational chain exists in KG and can be retrieved via KG embeddings.",
+    "Combining explicit and implicit chains improves reasoning."
+  ],
+  "main_contribution": "A novel KGQA model that integrates explicit and implicit relational chains, achieving state-of-the-art hit@1 performance on MetaQA, WebQuestionsSP-tiny, and Complex-WebQSP benchmarks, with code publicly available.",
+  "datasets": [
+    "MetaQA (1-hop, 2-hop, 3-hop)",
+    "WebQuestionsSP-tiny",
+    "Complex-WebQSP"
+  ],
+  "benchmarks": [
+    "MetaQA",
+    "WebQuestionsSP-tiny",
+    "Complex-WebQSP"
+  ],
+  "baselines": [
+    "GraftNet",
+    "PullNet",
+    "EmbedKGQA",
+    "NSM+h",
+    "NSM+p",
+    "NSM"
+  ],
+  "metrics": [
+    "hit@1",
+    "hit@5"
+  ],
+  "results": "[\"On MetaQA test set: 1-hop hit@1 ~98.3% (improvement +1.3% over GraftNet/PullNet, +0.8% over EmbedKGQA, +1.1% over NSM+h); 2-hop hit@1 ~99.7% (slightly behind PullNet etc at 99.9%); 3-hop hit@1 ~97.9% (behind baselines at 98.9%).\"]",
+  "limitations": [
+    "Not explicitly stated in abstract or full text."
+  ],
+  "future_work": [
+    "Not explicitly stated in abstract or full text."
+  ],
+  "code_availability": "[\"Available at https://github.com/albert-jin/Rce-KGQA\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.9,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "This work integrates explicit and implicit relational chains via specific modules (Siamese network, AFM, RCRM). Our idea enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than architectural chain reasoning.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T06:36:47.135519Z"
+}

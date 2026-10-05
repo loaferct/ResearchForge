@@ -1,0 +1,26 @@
+{
+  "id": "D003",
+  "direction": "Keep the valid-time, retrieval-agnostic framing of D001/D002 and additionally fix the outcome hierarchy: version-level contamination and version confusion are primary; answer accuracy is a co-primary only on queries that pass an answer-differential screen (retrieving a non-gold version would change the reference answer); retrieval metrics and abstention are diagnostic. Report the answer-differential pass rate, and treat a low pass rate as an informative negative result about the practical significance of version confusion rather than a failure to measure.",
+  "hypothesis": "On continuously amended regulatory text, valid-time (as-of) gating reduces version-level contamination and version confusion relative to semantic-only retrieval, elapsed-time decay and a hard as-of filter; the reduction in contamination translates into improved answer accuracy specifically on queries where retrieving a non-gold version would change the answer, and not on queries whose versions are answer-equivalent.",
+  "rationale": "Point-in-time financial QA reports answer accuracy and temporal evidence leakage separately and adds a temporal-validity verifier, indicating accuracy alone does not capture temporal correctness; the regulatory retrieval benchmark reports only answer-quality metrics because it has no temporal dimension; SituatedQA's accuracy effects come from questions deliberately constructed so answers differ by temporal context; and the survey treats retrieval quality as the primary bottleneck with temporal mismatch as a failure mode that accuracy does not directly expose. This direction deserves investigation because it makes the evaluation falsifiable at two levels (version selection and end-task answer) and forces the study to report how often version confusion can actually change an answer, which is currently unknown and would determine whether the problem matters practically.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": "D002",
+  "research_question": "Does valid-time (as-of) gating applied post hoc to sparse, dense and hybrid retrievers reduce version-level temporal contamination and version confusion on continuously amended regulatory text relative to semantic-only retrieval, elapsed-time decay and a hard as-of filter, and does that reduction translate into improved answer accuracy specifically on queries where retrieving a non-gold version would change the reference answer?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "doi:10.3390/sym18091498",
+    "arxiv:2109.06157",
+    "arxiv:2505.20243",
+    "doi:10.2139/ssrn.7087840",
+    "arxiv:2606.09724"
+  ],
+  "uncertainty_ids": [
+    "U007",
+    "U006",
+    "U013",
+    "U009",
+    "U002"
+  ],
+  "recorded_at": "2026-09-30T04:35:37.735958Z"
+}

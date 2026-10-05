@@ -1,0 +1,42 @@
+{
+  "id": "C006",
+  "statement": "Within the searched and retrieved literature, no directly matching work was found that provides a benchmark of amended statutes/regulations with near-duplicate successive revisions and time-stamped queries: the closest temporal benchmarks found are ESG disclosures (TemporalESG), point-in-time SEC filings (TempFinQA), and date-annotated web QA (SituatedQA/TimeQA), while retrieved regulatory-document work is static. This is an absence-of-evidence finding from the searched set (arXiv, OpenAlex, Crossref queries, and citation metadata), not proof that no such benchmark exists.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.2139/ssrn.7174868",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "TemporalESG comprises 40,814 ESG disclosure documents across Vietnamese, English, and Arabic from 43 multinational corporations spanning 11 years (2015-2025), with 970 validated temporal queries.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "we further introduce TempFinQA, a point-in-time evaluation protocol built from public filings and XBRL facts",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2505.20243",
+      "experiment_run_id": null,
+      "location": "p. 24",
+      "quote": "most are focused on static question answering and do not address the temporal dynamics of legal knowledge",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "analysis",
+  "tags": [
+    "gap",
+    "benchmark",
+    "no matching work found"
+  ],
+  "recorded_at": "2026-09-30T04:30:38.766240Z"
+}

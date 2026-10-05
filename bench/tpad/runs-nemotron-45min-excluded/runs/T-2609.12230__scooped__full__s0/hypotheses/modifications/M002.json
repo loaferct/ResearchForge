@@ -1,0 +1,29 @@
+{
+  "id": "M002",
+  "title": "Context Relevance Filtering Mechanism",
+  "description": "Implement a relevance scoring function to filter triples in the local context subgraph, retaining only those with high semantic or structural relevance to the target triple or query intent, thereby reducing noise from irrelevant contextual information.",
+  "why_differs": "Existing context enrichment methods (e.g., arxiv:2506.09414's data augmentation, arxiv:2407.13101's summarization) either use all retrieved context or apply coarse filtering; this modification introduces fine-grained, triple-level relevance scoring to selectively enrich training signals with maximally informative context.",
+  "technical_mechanism": "Use a lightweight relevance scorer (e.g., based on entity-relation embedding similarity, path ranking, or cross-attention weights) to assign relevance scores to candidate context triples and retain only those above a threshold, or select top-k most relevant triples.",
+  "expected_benefit": "Mitigates the context noise problem (G004) by ensuring that enriched local context contains predominantly relevant information, improving signal-to-noise ratio in training data and reducing the risk of performance degradation from irrelevant triples.",
+  "potential_novelty": "Applies relevance scoring mechanisms from information retrieval to the context enrichment step in KGQA training, combining techniques not previously integrated in this manner.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Requires implementing a relevance scoring function and integrating it into the context extraction pipeline, using established similarity or scoring methods.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Requires experiments with different relevance scoring strategies and threshold/selection mechanisms to optimize performance.",
+  "main_risk": "Overly aggressive filtering may remove useful contextual information, while insufficient filtering may not adequately reduce noise; threshold tuning is critical.",
+  "required_baselines": [
+    "No context filtering (all retrieved triples)",
+    "Random triple selection",
+    "Base model without context enrichment"
+  ],
+  "related_paper_ids": [
+    "arxiv:2506.09414",
+    "arxiv:2407.13101",
+    "arxiv:2202.13296"
+  ],
+  "addresses_gap_ids": [
+    "G004"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T06:21:14.140903Z"
+}

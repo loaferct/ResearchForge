@@ -1,0 +1,42 @@
+{
+  "id": "U007",
+  "question": "Which evaluation methodology (standard benchmarks with EM/F1 vs generated domain-specific multiple-choice items, and which metrics) is appropriate and would the effect replicate under it?",
+  "description": "The closest retrieved work evaluates with structured multiple-choice clinical QA items over two disease-specific KGs (Gastroparesis, Diabetes) and reports robustness to option shuffling. It is unclear whether the same mechanism would show gains under the standard multi-hop KGQA evaluation regime (WebQSP, ComplexWebQuestions, MetaQA) with answer exact-match/F1, or whether multiple-choice format and domain-specific item generation interact with the effect. Metric choice and benchmark choice therefore affect whether any measured improvement generalizes.",
+  "category": "evaluation",
+  "importance": "medium",
+  "status": "partially_resolved",
+  "next_action": "VERIFY",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE",
+    "VERIFY"
+  ],
+  "confidence": 0.7,
+  "confidence_basis": "Based on verified quotes describing each side's evaluation protocol (synthetic per-hop MCQ with option shuffling versus Hits@1/F1 on WebQSP, CWQ and up-to-3-hop MetaQA) and on the earlier finding that benchmark KGs lack passage provenance; no paper directly tests cross-regime transfer, so the transfer question itself remains unmeasured.",
+  "rationale": "The evaluation setting determines comparability with the prior literature and whether a re-scoped contribution is measurable; standard-benchmark evidence has not been gathered, and metric-format confounds (multiple choice, option shuffling, judge-based scoring) are plausible.",
+  "resolution": "Narrowed, not settled. The closest work's methodology is four-way multiple-choice accuracy over synthetically generated items spanning 1-5 hops on two purpose-built disease KGs, with option-shuffling robustness below one percentage point; the standard multi-hop regime is Hits@1 (and F1) answer-entity ranking on WebQSP and CWQ over Freebase-like graphs, with the deepest standard multi-hop tier being 3-hop MetaQA and no source-passage provenance. These measure different things (option selection among generated distractors versus entity ranking on natural questions) on different data, and the mechanism cannot even be instantiated on the standard benchmarks without passage-attributed KGs; so replication under the standard methodology is untested rather than expected. The comparison supports a mixed protocol for the refined question - per-hop accuracy on a frozen split plus open-ended exact match/F1 on a text-attributed corpus, with multiple choice retained only for comparability - and leaves the cross-metric transfer question (recorded separately) to be measured.",
+  "paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2202.13296",
+    "arxiv:2101.03737",
+    "arxiv:2510.06039"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2202.13296",
+    "arxiv:2101.03737"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C004",
+    "C012",
+    "C013"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "PLAN",
+  "created_at": "2026-09-30T05:05:55.915751Z",
+  "updated_at": "2026-09-30T05:25:51.263084Z"
+}

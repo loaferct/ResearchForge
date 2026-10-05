@@ -1,0 +1,51 @@
+{
+  "paper_id": "doi:10.1561/9781638283751",
+  "relevance_tier": "high",
+  "problem": "Defining and surveying the multi-hop question answering (MHQA) task, which involves extracting and combining multiple pieces of information and performing multi-step reasoning, is challenging due to the variety of tasks, datasets, and models that hinder generalization.",
+  "method": "This paper is a survey; it does not propose a new method but organizes and summarizes existing MHQA frameworks, datasets, evaluation techniques, and generation methods.",
+  "key_assumptions": [
+    "Not explicitly stated in the paper."
+  ],
+  "main_contribution": "Provides a general and formal definition of MHQA, organizes and summarizes existing MHQA frameworks, outlines best practices for creating MHQA datasets, and discusses evaluation metrics and future research directions.",
+  "datasets": [
+    "HotpotQA",
+    "2WikiMultiHopQA",
+    "MetaQA",
+    "HybridQA",
+    "Wikitables",
+    "NarrativeQA",
+    "and others surveyed in the paper"
+  ],
+  "benchmarks": [
+    "Same as datasets surveyed"
+  ],
+  "baselines": [
+    "Surveys a wide range of MHQA methods including retrieval-based, reasoning-based, graph-based, decomposition-based, and hybrid approaches"
+  ],
+  "metrics": [
+    "Exact Match (EM)",
+    "F1 score",
+    "Partial Match (PM)",
+    "BLEU",
+    "ROUGE",
+    "CIDer",
+    "and task-specific metrics discussed in Section 6"
+  ],
+  "results": "[\"N/A (survey paper)\"]",
+  "limitations": [
+    "May not cover the very latest works due to the time of writing; the survey’s completeness depends on the literature covered up to its publication date."
+  ],
+  "future_work": [
+    "Explore flexible any-hop models, explainable multi-hop QA, better datasets, improved evaluation metrics, incorporation of commonsense knowledge, and handling of arithmetic questions (as outlined in Section 8)."
+  ],
+  "code_availability": "not applicable (survey)",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "The survey provides a broad overview of MHQA, including definitions, datasets, methods, and metrics, which overlaps with the idea’s focus on multi-hop QA over knowledge graphs. However, the idea proposes a specific training‑data enrichment strategy with local context subgraphs, an adaptive repair loop, and RL lower‑hop transfer, which is not covered as a distinct method in the survey. Overlap in the general problem domain; differences in specificity (survey vs concrete proposal).",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T09:36:44.901933Z"
+}

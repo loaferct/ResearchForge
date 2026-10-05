@@ -1,0 +1,25 @@
+{
+  "id": "C001",
+  "statement": "Holding the number of prompt triples fixed, replacing every non-chain triple with material from an unrelated entity neighbourhood changes KGQA answer accuracy by only +0.003 F1, while removing the answer chain removes most of the graph's value.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.10237",
+      "experiment_run_id": null,
+      "location": "p. 1 (abstract and setup)",
+      "quote": "Holding the number of triples fixed and replacing every triple that is not on the chain with material from an unrelated entity changes answer accuracy by +0.003 F1, while removing the chain costs most of what the graph was worth.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "high",
+  "phase": "analysis",
+  "tags": [
+    "context-triples",
+    "confounder",
+    "multi-hop",
+    "negative-result"
+  ],
+  "recorded_at": "2026-09-30T05:10:31.060678Z"
+}

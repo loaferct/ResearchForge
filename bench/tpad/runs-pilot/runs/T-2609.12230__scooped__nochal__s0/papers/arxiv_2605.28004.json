@@ -1,0 +1,41 @@
+{
+  "id": "arxiv:2605.28004",
+  "title": "Beyond Chunk-Local Extraction: Cross-Chunk Graph Augmentation for GraphRAG",
+  "authors": [
+    "Jiaming Zhang",
+    "Yibo Zhao",
+    "Jing Yu",
+    "Jianxiang Yu",
+    "Xiang Li"
+  ],
+  "year": 2026,
+  "published": "2026-05-27",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2605.28004",
+  "pdf_url": "https://arxiv.org/pdf/2605.28004v1",
+  "abstract": "GraphRAG extends retrieval-augmented generation by organizing corpora as explicit knowledge graphs, enabling graph-based retrieval for complex question answering. However, existing frameworks extract entities and relations within individual chunks, leaving cross-chunk relations -- those whose evidence spans multiple passages -- systematically absent from the index. Exhaustive LLM-based recovery of such relations is impractical due to the combinatorial explosion of chunk combinations. We present CrossAug, a GNN-guided CROSS-Chunk Graph AUGmentation method that enriches GraphRAG indices with cross-chunk relational structure as an offline step before query-time retrieval. CrossAug derives training supervision through self-supervised graph corruption, uses a topology-aware GNN to score subgraphs for missingness, and applies evidence-grounded LLM completion only to selected high-scoring regions. Experiments on three LLM-based GraphRAG frameworks across four multi-hop and long-document QA benchmarks demonstrate that CrossAug consistently improves performance, confirming the benefit of cross-chunk graph augmentation for retrieval-based question answering. Our code is available at https://github.com/DonFinliani/CrossAug.",
+  "doi": null,
+  "arxiv_id": "2605.28004",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T06:55:25.174239Z",
+  "relevance": 0.1842,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "subgraph enrichment knowledge graph question answering training"
+  ],
+  "code_urls": [
+    "https://github.com/DonFinliani/CrossAug"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": [
+    "abstract (from arxiv) never mentions 'Beyond Chunk-Local Extraction'; it may belong to another work"
+  ]
+}

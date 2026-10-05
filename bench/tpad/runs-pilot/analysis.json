@@ -1,0 +1,245 @@
+{
+ "systems": [
+  "full",
+  "nochal"
+ ],
+ "items": 1,
+ "leaked_items": [],
+ "per_system": {
+  "full": {
+   "scoop_detected": {
+    "k": 1,
+    "n": 1,
+    "rate": 1.0,
+    "lo": 0.20654329147389294,
+    "hi": 1.0
+   },
+   "realising_retrieved": {
+    "k": 1,
+    "n": 1,
+    "rate": 1.0,
+    "lo": 0.20654329147389294,
+    "hi": 1.0
+   },
+   "realising_analysed": {
+    "k": 0,
+    "n": 1,
+    "rate": 0.0,
+    "lo": 0.0,
+    "hi": 0.7934567085261071
+   },
+   "realising_cited": {
+    "k": 0,
+    "n": 1,
+    "rate": 0.0,
+    "lo": 0.0,
+    "hi": 0.7934567085261071
+   },
+   "false_scoop": {
+    "k": 0,
+    "n": 1,
+    "rate": 0.0,
+    "lo": 0.0,
+    "hi": 0.7934567085261071
+   },
+   "discriminates": {
+    "k": 1,
+    "n": 1,
+    "rate": 1.0,
+    "lo": 0.20654329147389294,
+    "hi": 1.0
+   },
+   "scoop_both": {
+    "k": 0,
+    "n": 1,
+    "rate": 0.0,
+    "lo": 0.0,
+    "hi": 0.7934567085261071
+   },
+   "verdicts": {
+    "scooped": {
+     "ALREADY_WELL_EXPLORED": 1
+    },
+    "prepub": {
+     "INSUFFICIENT_EVIDENCE": 1
+    }
+   },
+   "scooped_cost": {
+    "iterations": 15,
+    "tool_calls": 199,
+    "tokens": 21945675,
+    "searches": 11,
+    "papers_retrieved": 93,
+    "papers_read": 6
+   },
+   "scooped_wall_min": 61.81333333333334,
+   "scooped_prior_recall": 0.0,
+   "scooped_challenges": 3.0,
+   "scooped_contradictions": 2.0,
+   "scooped_status": {
+    "incomplete": 1
+   },
+   "prepub_cost": {
+    "iterations": 14,
+    "tool_calls": 223,
+    "tokens": 27643119,
+    "searches": 5,
+    "papers_retrieved": 105,
+    "papers_read": 38
+   },
+   "prepub_wall_min": 88.06333333333333,
+   "prepub_prior_recall": 0.0,
+   "prepub_challenges": 1.0,
+   "prepub_contradictions": 0.0,
+   "prepub_status": {
+    "incomplete": 1
+   }
+  },
+  "nochal": {
+   "scoop_detected": {
+    "k": 0,
+    "n": 1,
+    "rate": 0.0,
+    "lo": 0.0,
+    "hi": 0.7934567085261071
+   },
+   "realising_retrieved": {
+    "k": 0,
+    "n": 1,
+    "rate": 0.0,
+    "lo": 0.0,
+    "hi": 0.7934567085261071
+   },
+   "realising_analysed": {
+    "k": 0,
+    "n": 1,
+    "rate": 0.0,
+    "lo": 0.0,
+    "hi": 0.7934567085261071
+   },
+   "realising_cited": {
+    "k": 0,
+    "n": 1,
+    "rate": 0.0,
+    "lo": 0.0,
+    "hi": 0.7934567085261071
+   },
+   "false_scoop": {
+    "k": 0,
+    "n": 1,
+    "rate": 0.0,
+    "lo": 0.0,
+    "hi": 0.7934567085261071
+   },
+   "discriminates": {
+    "k": 0,
+    "n": 1,
+    "rate": 0.0,
+    "lo": 0.0,
+    "hi": 0.7934567085261071
+   },
+   "scoop_both": {
+    "k": 0,
+    "n": 1,
+    "rate": 0.0,
+    "lo": 0.0,
+    "hi": 0.7934567085261071
+   },
+   "verdicts": {
+    "scooped": {
+     "INSUFFICIENT_EVIDENCE": 1
+    },
+    "prepub": {
+     "INSUFFICIENT_EVIDENCE": 1
+    }
+   },
+   "scooped_cost": {
+    "iterations": 11,
+    "tool_calls": 193,
+    "tokens": 23702695,
+    "searches": 13,
+    "papers_retrieved": 92,
+    "papers_read": 23
+   },
+   "scooped_wall_min": 61.71333333333334,
+   "scooped_prior_recall": 0.0,
+   "scooped_challenges": 0.0,
+   "scooped_contradictions": 0.0,
+   "scooped_status": {
+    "incomplete": 1
+   },
+   "prepub_cost": {
+    "iterations": 13,
+    "tool_calls": 295,
+    "tokens": 33239806,
+    "searches": 8,
+    "papers_retrieved": 101,
+    "papers_read": 25
+   },
+   "prepub_wall_min": 12.238333333333333,
+   "prepub_prior_recall": 0.0,
+   "prepub_challenges": 0.0,
+   "prepub_contradictions": 0.0,
+   "prepub_status": {
+    "incomplete": 1
+   }
+  }
+ },
+ "pairs": {
+  "full-vs-nochal": {
+   "scoop_detected": {
+    "n": 1,
+    "a_only": 1,
+    "b_only": 0,
+    "p": 1.0,
+    "diff": 1.0
+   },
+   "realising_cited": {
+    "n": 1,
+    "a_only": 0,
+    "b_only": 0,
+    "p": 1.0,
+    "diff": 0.0
+   },
+   "realising_retrieved": {
+    "n": 1,
+    "a_only": 1,
+    "b_only": 0,
+    "p": 1.0,
+    "diff": 1.0
+   },
+   "discriminates": {
+    "n": 1,
+    "a_only": 1,
+    "b_only": 0,
+    "p": 1.0,
+    "diff": 1.0
+   },
+   "false_scoop": {
+    "n": 1,
+    "a_only": 0,
+    "b_only": 0,
+    "p": 1.0,
+    "diff": 0.0
+   },
+   "tool_calls_scooped": {
+    "n": 1,
+    "mean_diff": 6.0,
+    "lo": 6.0,
+    "hi": 6.0
+   },
+   "tool_calls_prepub": {
+    "n": 1,
+    "mean_diff": -72.0,
+    "lo": -72.0,
+    "hi": -72.0
+   },
+   "tokens_scooped": {
+    "n": 1,
+    "mean_diff": -1757020.0,
+    "lo": -1757020.0,
+    "hi": -1757020.0
+   }
+  }
+ }
+}

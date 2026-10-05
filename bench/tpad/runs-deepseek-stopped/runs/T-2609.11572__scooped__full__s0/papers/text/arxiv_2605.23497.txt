@@ -1,0 +1,1280 @@
+[[page 1]]
+Asking For An Old Friend: Diagnosing and Mitigating Temporal
+Failure Modes in LLM-based Statutory Question Answering
+Max Prior
+max.prior@tum.de
+Technical University of Munich
+Garching near Munich, Germany
+Andreas Schultz
+andreas.schultz@tum.de
+Technical University of Munich
+Garching near Munich, Germany
+Matthias Grabmair
+matthias.grabmair@tum.de
+Technical University of Munich
+Garching near Munich, Germany
+Abstract
+Large language models are increasingly used for legal research, yet
+their fixed training cutoffs and reliance on static parametric knowl-
+edge are at odds with the evolving nature of statutory law. We study
+two temporal failure modes:post-cutoff staleness, where models ap-
+ply superseded rules after legislative amendments, andrecency bias,
+where models prefer newer provisions even when a historical ver-
+sion governs the fact pattern. To this end, we present a benchmark
+of 312 expert-validated, time-sensitive German statutory QA pairs
+spanning three categories:Post-Cutoff Amendment Questions,Pre-
+Amendment Questions, andMulti-Provision Pre-Amendment Ques-
+tions. We evaluate five LLMs by OpenAI, Anthropic and DeepSeek
+under four inference settings:Vanilla,Web-search, and two retrieval-
+augmented variants that enforce temporal validity via a fact date
+extraction and version filtering. Using an LLM-as-a-judge validated
+against human expert ratings, we find severe degradation in the
+Vanillapost-cutoff setting. Both RAG approaches substantially im-
+prove performance across all question types, while web search
+yields unstable gains and exhibits a marked recency bias on his-
+torically anchored tasks. Our results indicate that reliable legal QA
+requires treating temporal validity as a hard constraint.
+Keywords
+Large Language Models, Temporal Generalization, Recency Bias,
+Legal QA, LLMaaJ
+ACM Reference Format:
+Max Prior, Andreas Schultz, and Matthias Grabmair. 2026. Asking For An Old
+Friend: Diagnosing and Mitigating Temporal Failure Modes in LLM-based
+Statutory Question Answering. InProceedings of International Conference
+on Artificial Intelligence and Law (ICAIL 2026).ACM, New York, NY, USA,
+10 pages.
+1 Introduction
+The advent of large language models (LLMs) has led to substan-
+tial changes in everyday professional work, including in the legal
+sector. The Thomson Reuters report on generative AI from 2025
+[10] shows that the use of LLM-powered tools in legal practice
+increased from 14 % in 2024 to 26 % in 2025. Among current users,
+40 % report daily use, with legal research (73 %) being among the
+most common applications. The survey of 1,702 respondents is
+dominated by common-law jurisdictions, with civil-law systems
+underrepresented. Notably, there were no respondents from Ger-
+many. To address this gap, we draw on a survey conducted by the
+Bayerischer Anwaltverband (BAV). In 2024, the BAV surveyed 558
+attorneys-at-law practicing in Bavaria [4]. Among the attorneys
+Figure 1: Overview of Pipeline for Post-Cutoff Amendment
+Question Generation
+who reported planned or actual use cases for AI tools, legal re-
+search emerged as the most frequently named area, with 73.1% of
+respondents identifying it as a relevant application.
+Because modern legal research is regularly performed using
+LLM-based systems, these findings motivate our work. Legal pro-
+fessionals may rely on LLMs without being aware of their limited
+temporal robustness. Unlike general knowledge, the correctness of
+a legal answer depends on the specific version of the provision and
+its temporal applicability. By contrast, LLMs are trained on static
+data and deployed with a fixed knowledge cutoff. This mismatch
+leads to two temporal failure modes.Post-cutoff stalenessoccurs
+when a model relies on superseded provisions following legislative
+amendments.Recency biasarises when, even though the historically
+applicable provision is available, the model incorrectly prioritizes
+newer legal texts.
+Contributions
+The contributions of this work can be summarized as follows:
+• Temporal Legal Benchmark:We introduce a novel dataset
+of 312 expert-validated QA pairs designed to diagnose two
+temporal failure modes, specificallyPost-Cutoff Amendment
+Questionsto identify staleness andPre-Amendment Ques-
+tionsto test an LLM’s ability to apply historical versions of
+provisions.1
+• Diagnostic Evaluation:We conduct an evaluation across
+multiple model tiers to isolate specific failure modes. For
+thePost-Cutoff Amendmenttasks, we evaluateChatGPT-
+5.1andClaude Sonnet 3.7. Since their knowledge cutoffs
+precede our evaluation date, they serve to diagnose paramet-
+ric staleness. For tasks requiring historical reasoning (Pre-
+AmendmentandMulti-Provision Pre-Amendmentquestions),
+1The dataset is published under https://github.com/TUMLegalTech/temporal_bias.
+arXiv:2605.23497v2  [cs.CL]  25 Sep 2026
+
+[[page 2]]
+ICAIL 2026, June 08-12, Singapore Max Prior, Andreas Schultz, and Matthias Grabmair
+we use the state-of-the-art at experiment-timeChatGPT-
+5.2,Claude 4.5 Opus, andDeepSeek v3.2. Results reveal
+that even the most capable models frequently fail to override
+recent parametric knowledge when the legal fact pattern
+dictates a superseded provision.
+• Temporal RAG Mitigation:We propose and evaluate two
+Retrieval-Augmented Generation (RAG) strategies — RAG-
+kNN and RAG-ToC — that use “as-of date” filtering. We
+demonstrate that strictly constraining the space to the rel-
+evant legal timeframe is the most effective mitigation for
+temporal degradation.
+2 Background
+2.1 Temporal generalization of LLMs
+The challenge of time in NLP has been formalized as temporal gen-
+eralization. Early work by Lazaridou et al. demonstrated that lan-
+guage model performance degrades as the evaluation data moves
+further beyond the training window [ 7]. They argue that time
+should be treated as a distinct factor of generalization; a model
+must be evaluated on future data that does not temporally overlap
+with its training set to measure its adaptability. Zhu et al. extend
+this line of work by introducingFreshBench, a time-stamped and
+extensible evaluation framework built from arXiv papers, news
+articles, and Wikipedia edits [ 20]. They identify two systematic
+behaviors:nostalgia bias, where models perform better on older
+data, andneophilia bias, where models over-favor recent informa-
+tion. In addition, they introduce the termTemporal Degeneration
+which refers to the decline in performance in the future after the
+model is released. Experiments across proprietary and open-source
+models show that although newer models are more capable, they
+often exhibit faster temporal degeneration on future-oriented tasks.
+Recent empirical work has documented such failures in the medical
+domain: Vladika et al. introduceMedRevQAandMedChangeQA
+to evaluate temporal robustness in the biomedical domain, where
+verdicts change as new evidence emerges [ 14]. Evaluating eight
+major LLMs (such as ChatGPT-4o and Llama 3.3), they find that
+performance declines sharply on questions requiring up-to-date
+verdicts, with models often outputting outdated answers due to
+pre-training corpora saturated with older literature.
+2.2 Temporal shifts and adaption in the legal
+domain
+As law texts change over time, LLMs must generalize across time. In
+practice, this means two things: (i) models should remain reliable as
+legal provisions change, and (ii) models should still support historic
+legal provisions when the task demands it.
+ChronosLex extends temporal generalization to multi-label legal
+text classification and shows that performance depends strongly
+on temporal training alignment [13]. Models trained on older legal
+periods degrade substantially when evaluated on later periods, be-
+cause legal language and label-conditional patterns drift over time.
+This aligns with the broader observation of Lazaridou et al. that the
+training order matters [7]: if learning is not temporally structured,
+newer data can overwrite older patterns and yield brittleness under
+temporal shift. ChronosLex further demonstrates that training pro-
+cedures which respect chronology, e.g., incremental updates across
+time, can significantly improve future performance when paired
+with continual-learning mechanisms that limit forgetting [13]. In
+other words, temporal robustness is not only a data issue; it is also
+a training protocol issue.
+Coming from the downstream perspective, LexTempus [12] tar-
+gets upstream adaptation of legal language models. A key motiva-
+tion is that naively updating a single model on the newest legal data
+risks catastrophic forgetting of older legal regimes, even though
+those older regimes may remain necessary for historical case analy-
+sis, retrospective compliance checks, or longitudinal legal research.
+Instead of overwriting the full model, LexTempus freezes the back-
+bone language model and trains a growing pool of lightweight
+adapter experts. New experts are added dynamically when statisti-
+cal shifts in loss or perplexity indicate a change in the legal data
+distribution. At inference time, a non-parametric router selects
+the expert (or expert combination) most relevant to the query’s
+temporal and semantic context. This design enables the system to
+reuse older expertise when analyzing historical cases, rather than
+defaulting to the newest (and potentially inapplicable) legal regime.
+Despite improved temporal robustness, both ChronosLex and
+LexTempus remain reactive: they adapt only after new statutes or
+legal interpretations appear in the training stream. As a result, they
+cannot reliably reason about entirely novel legislation or unprece-
+dented legal developments until such changes are observed in data
+and incorporated through updates of their parametric knowledge.
+This limitation is consequential in law, where the relevant regime
+may change suddenly and correctness depends on recognizing the
+new authority immediately.
+Given that the knowledge stored in a language model’s parame-
+ters is fixed once training is complete, RAG has become the standard
+technique for incorporating fresh information without retraining
+the model [8]. In the legal domain the law is continually evolving,
+and RAG enables models to retrieve statutes, gazettes, and other
+publicly available materials so that answers are grounded in cur-
+rent law [19]. A notable example is theStatutory Research Assistant
+(STARA) [11], which automates statutory surveys. STARA prepro-
+cesses each statutory code by splitting it into granular provisions
+and annotating each fragment with its hierarchical structure, de-
+fined terms, and cross-references. It then employs a large language
+model to classify these provisions and extract structured informa-
+tion according to task-specific rubrics. A keyword filter produces
+a shortlist of candidate provisions, and the model is prompted to
+determine which are relevant and to extract the required fields.
+Because STARA operates over retrieved statutory text rather than
+relying on the model’s internal parameters, updating the statutory
+corpus (e.g. when laws change) suffices to keep the system up to
+date, with no need to retrain the underlying model.
+2.3 Challenges
+Assessing legal RAG requires more than standard factual evaluation
+because misapplying doctrine is a primary risk. Zheng et al. empha-
+size that legal AI must handle a constantly changing corpus and
+therefore augment models with retrievers [19]. Their benchmark
+datasets pair questions with gold passages and answers to evaluate
+both retrieval and reasoning; they show that higher recall alone
+
+[[page 3]]
+Asking For An Old Friend: Diagnosing and Mitigating Temporal Failure Modes in LLM-based Statutory Question Answering ICAIL 2026, June 08-12, Singapore
+does not guarantee improved question-answering because models
+must reason over the retrieved passages.
+Another challenge is that recency bias can arise at both the re-
+trieval and reasoning stages of LLM-based systems. A key finding
+is that recency can function as an implicit relevance signal for
+LLM-based rerankers. By injecting synthetic publication dates into
+candidate passages while keeping their content unchanged, Fang et
+al. show that documents labeled as more recent are systematically
+promoted in the ranking [6]. This promotion is strong enough to
+measurably shift the average publication year of the top-ranked
+results, indicating that the model treats temporal freshness as evi-
+dence of relevance even when no content differences justify such
+a preference. Zhang et al. find that long-context LLMs exhibit era
+sensitivity: models are markedly more accurate on modern cases
+than on nineteenth-century ones [17]. Their temporal stratification
+reveals that accuracy declines as the distance between overruling
+and overruled decisions grows, suggesting that models rely on tem-
+poral heuristics rather than doctrinal reasoning. They also motivate
+the use of abstention mechanisms as listed in [16]: when confronted
+with queries that exceed their temporal knowledge, models might
+be safer refusing to answer, offering a reasonable alternative to
+returning outdated or inapplicable legal conclusions.
+2.4 Diagnosing post-cutoff staleness and
+recency bias
+Zhang et al. ’sLLMs Overruled?dataset [17] was designed specifically
+to probe recency bias in common law systems, but no comparable
+dataset exists for civil-law jurisdictions, and none target post-cutoff
+staleness. Büttner and Habernal’s GerLayQA [1] dataset focuses
+on helping laypeople with German civil-law questions: it pairs≈
+21k real forum questions with lawyer-written answers grounded
+in cited code paragraphs. Their raw data spanned 2004–2023, how-
+ever they filter out QA pairs where the cited statutes had been
+amended. Consequently, no recency bias can be tracked by asking
+questions that would require amended laws. Additionally, they do
+not ensure that post-cutoff questions specifically require knowledge
+of the difference between the pre-cutoff and post-cutoff versions
+of the same provision. Therefore, it is unclear whether questions
+are being answered using pre-cutoff parametric knowledge mak-
+ing it impossible to track post-cutoff staleness accurately. Fan et
+al. ’s LEXAM benchmark comprises 4886 law-exam questions stem-
+ming from 2016–2023 with accompanying reference answers and
+explicit reasoning guidance; they evaluate models via an ensem-
+bleLLM -as-a-Judge[ 5]. They further observe that some answers
+may have become outdated and propose metadata-based updates.
+However, LEXAM, like GerLayQA, does not test whether LLMs
+exhibit recency bias or struggle with post-cutoff knowledge gaps.
+In contrast, our approach explicitly diagnoses both recency bias
+and post-cutoff staleness in a legal setting, filling the gap left by
+existing benchmarks.
+3 Data
+3.1 Data Sources and Preparation
+To evaluate temporal generalization, we required historical, time-
+stamped consolidated versions of statutory law. As Germany does
+not provide a public, legally authoritative database of historical con-
+solidated statutes in machine-readable form [9], we used buzer.de,
+a privately operated resource offering unofficial consolidated ver-
+sions of German federal law along with their in-force dates [2]. Us-
+ing this as raw data, we constructed a dataset of 312 legal questions
+spanning three categories. All QA sets were constructed syntheti-
+cally using Gemini 3 Pro Preview. The complete prompt templates
+are provided in our GitHub repository.2
+We decided to construct the QA sets synthetically by shuffling
+from the historical consolidated statutes and feeding them into
+different LLM-based pipelines. We derived the paragraphs from six
+different statutes spanning entirely different German legal subdo-
+mains: (i) the German Civil Code (Bürgerliches Gesetzbuch, BGB),
+(ii) the German Code of Criminal Procedure (Strafprozessordnung,
+StPO), (iii) the Fiscal Code of Germany (Abgabenordnung, AO), (iv)
+the German Income Tax Act (Einkommensteuergesetz, EStG), (v)
+the German Federal Building Code (Baugesetzbuch, BauGB) and
+(vi) the German Commercial Code (Handelsgesetzbuch, HGB). By
+following this approach, we anticipate avoiding the overrepresenta-
+tion of textbook examples and landmark legal cases which are likely
+prominent in LLM training data, while ensuring equal distribution
+across statutory provisions throughout different time periods and
+legal subdomains.
+3.2 Post-Cutoff Amendment Questions
+The first category, which we namePost-Cutoff Amendment
+Questions, includes questions designed to probe post-cutoff
+staleness and therefore requires post-cutoff information to answer
+correctly. Using raw data, we identified paragraphs updated
+after the target LLMs’ training cutoff and constructed questions
+based on differences between the pre- and post-cutoff versions
+of the same provision, ensuring that correct answers depend
+on knowledge of legislative changes. We constructed such
+questions using an LLM-based pipeline (see Figure 1). The pipeline
+randomly selects a paragraph with a version that starts after
+the cutoff and pairs it with the immediately preceding version,
+then prompts the model to confirm that it contains at least one
+substantive provision change. A provision version change is
+considered substantive when it results in a change in rights or
+obligations, requirements, deadlines, thresholds, percentages,
+amounts, or jurisdictions rather than mere editorial edits. We
+repeat this process until a substantive change is found. After a
+substantive provision version change is confirmed we ask the LLM
+to generate a case question whose fact date falls after the cutoff so
+that the correct answer depends on knowing the post-cutoff version.
+Here is an illustrative instance of the synthesizedPost-Cutoff
+Amendment Questionsset (translated from German):
+Question:
+On February 10, 2025, Tenant M receives an ordinary notice of
+termination from Landlord V. Since M is unable to find alternative
+housing, he sends an email to V on February 20, 2025, objecting to
+the termination and outlining grounds for hardship. V rejects the
+objection, arguing that it is formally invalid because it was not
+2See Footnote 1.
+
+[[page 4]]
+ICAIL 2026, June 08-12, Singapore Max Prior, Andreas Schultz, and Matthias Grabmair
+received as a letter signed by hand. Was M’s objection submitted in a
+formally valid manner?
+Answer:
+M’s objection was submitted in a formally valid manner. Formal
+validity is governed by Section 574b, Paragraph 1, Sentence 1 BGB. In
+the version in effect at the time of the declaration (February 2025),
+this provision dictates that the tenant’s objection to termination must
+be declared in text form. Unlike "written form" (which requires a
+handwritten signature), text form (see Section 126b BGB) merely
+requires a legible declaration on a durable medium in which the
+person making the declaration is named. An email satisfies these
+requirements. Since M declared the objection via email, he adhered to
+the legally prescribed form. V’s objection is therefore unfounded.
+In the version applicable prior to January 1, 2025, Section 574b,
+paragraph 1, Sentence 1 BGB (German Civil Code) stipulated that
+the tenant must declare their objection to the termination in writing.
+V would have been right in this case, as a simple email would not
+have been sufficient. The correct answer to the question therefore
+depends crucially on knowledge of the legal situation after the
+defined post-cutoff date.
+3.3 Pre-Amendment Questions
+The second category, which we callPre-Amendment Questions,
+consists of questions where the correct answer depends on an
+older version of the law rather than the current one. We apply the
+same construction strategy as in the first category but reverse the
+roles: using the current provision leads to an incorrect answer,
+while correctly applying the outdated version is required. To
+construct such questions, we randomly select a paragraph with
+multiple versions available and classify each version transition
+to determine whether it contains substantive provision changes.
+Once a suitable candidate is found, we ask the LLM to generate
+a QA pair requiring the earlier version by embedding a fact date
+within the older version’s validity period. The question implicitly
+requires temporal reasoning through the fact pattern rather than
+explicitly asking about the application of historical law.
+Here is an illustrative instance of the synthesizedPre-Amendment
+Questionsset (translated from German):
+Question:
+On March 3, 2017, the motorist M is stopped by Police Commis-
+sioner P during a routine traffic check. Since M smells strongly of
+alcohol and is slurring his speech, there is a suspicion of drunk
+driving pursuant to Section 316 of the German Criminal Code
+(Strafgesetzbuch, StGB). In order to secure evidence regarding this
+suspicion, P immediately orders a blood sample to be drawn by a
+physician. At this time (Tuesday morning), an investigating judge at
+the competent Local Court (Amtsgericht) is available and on duty.
+However, P deliberately refrains from obtaining a judicial order, as
+he is of the opinion that he generally has the authority to decide for
+himself in traffic offenses of this nature. Was the order to draw blood
+issued by Police Commissioner P lawful?
+Answer:
+The order to draw blood by Police Commissioner P could be lawful
+pursuant to Section 81a StPO (German Criminal Procedure Code).
+This requires that P had the authority to issue the order. Pursuant to
+Section 81a, Paragraph 1 StPO, the authority to order such measures
+generally lies with the judge (Richtervorbehalt / judicial prerogative).
+The public prosecutor’s office and its investigators (here, P) are only
+authorized to do so if the success of the investigation is endangered
+by delay (Eilkompetenz / exigent circumstances). Such a risk exists if
+a judicial order cannot be obtained in time without jeopardizing the
+purpose of the measure. However, according to the facts of the case,
+an investigating judge was available. Since P deliberately failed to
+obtain a judicial decision where there was no concrete risk of delay,
+he acted without the necessary emergency authority. A statutory
+exception to the requirement of a judicial order specifically for road
+traffic offenses (such as Section 316 StGB) did not yet exist at the
+time the measure was taken. Consequently, the order issued by P was
+unlawful due to a lack of jurisdiction.
+The version of Section 81a, Paragraph 2, Sentence 2 StPO cur-
+rently in force allows the police to order [a blood sample] them-
+selves in cases of certain traffic offenses (including Section 316
+StGB), even without a judicial order and without the existence of
+exigent circumstances. However, this new version only came into
+effect on August 24, 2017. Had the case occurred under the new
+version, P’s order would have been lawful. Simply applying the
+current version of Section 81a StPO would lead to a legally incorrect
+conclusion.
+3.4 Multi-Provision Pre-Amendment Questions
+The third category, termedMulti-Provision Pre-Amendment Ques-
+tions, extends the idea of Pre-Amendment Questions while provid-
+ing more legally challenging QA pairs, as answering each question
+requires synthesizing information across multiple provisions rather
+than a single provision. We did not construct a post-cutoff multi-
+provision set analogue of the first category because the limited
+number of post–November 2024 version changes did not provide
+sufficient data. We constructed such questions using an LLM-based
+pipeline with three stages (see Figure 2). First, we randomly se-
+lect an anchor paragraph from a specific statute and present the
+statute’s table of contents to the LLM, which we ask to select ad-
+ditional thematically connected paragraphs. At least one selected
+paragraph must have multiple historical versions, which is then val-
+idated using the same classification prompt to confirm substantive
+changes exist. Second, we ask the LLM to generate a temporally
+neutral case question based exclusively on the current versions of
+all selected paragraphs, requiring knowledge of each provision for
+a complete answer. Third, we ask the LLM to temporalize the draft
+question by injecting all historical versions of each paragraph and
+embedding a fact date that requires applying at least one provision
+in its earlier version while other provisions may remain current.
+Here is an illustrative instance of the synthesizedMulti-Provision
+Pre-Amendment Questionsset (translated from German):
+Question:
+G-GmbH is a large corporation that has commissioned auditor
+P to audit its annual financial statements. P conducts the audit but
+
+[[page 5]]
+Asking For An Old Friend: Diagnosing and Mitigating Temporal Failure Modes in LLM-based Statutory Question Answering ICAIL 2026, June 08-12, Singapore
+Figure 2: Overview of Pipeline for Multi-Provision Pre-
+Amendment Question Generation
+negligently overlooks significant irregularities in the accounting that
+give a false picture of the company’s financial position and should
+have been detected if the audit had been carried out conscientiously.
+On March 10, 2020, P summarizes the results of his audit in writing
+and declares in an audit opinion that the financial statements comply
+with legal requirements without making any reservations. As a result
+of this incorrect audit opinion, G-GmbH later suffers a financial loss
+of EUR 1.2 million. Is G-GmbH entitled to claim damages from P in
+the full amount (EUR 1.2 million) for the incorrect audit?
+Answer (shortened):
+G-GmbH is not entitled to claim damages from P in full, but
+only in the amount of EUR 1 million pursuant to Section 323,
+Paragraph 1, Sentence 3 HGB in conjunction with Section 323, Para-
+graph 2, Sentence 1 HGB (in the version applicable on March 10, 2020).
+I. Basis for the claim
+The basis for the claim for damages is Section 323, Paragraph 1,
+Sentence 3 HGB. [...]
+II. Applicability and duty to examine (Section 316 HGB) [...]
+III. Breach of duty (Section 317 HGB, Section 322 HGB)
+P breached his duties by negligently overlooking material irregu-
+larities (Section 317, Paragraph 1, Sentence 3 HGB) and issuing an
+unqualified audit opinion (Section 322, Paragraph 3 HGB), even
+though this should have been qualified or refused (Section 322,
+Paragraph 4 HGB).
+IV. Fault and damage P acted negligently. G-GmbH suffered a
+causal loss of EUR 1.2 million.
+V. Limitation of liability (Section 323, Paragraph 2 HGB) The
+claim is limited in amount. Pursuant to Section 323, Paragraph 2,
+Sentence 1 HGB in the version applicable at the time of the breach
+of duty in March 2020, the liability for damages in the event of
+negligent conduct is limited to one million euros for one audit. Since
+G-GmbH is not a listed stock corporation (cf. Section 323, Para-
+graph 2, Sentence 2 HGB, old version), no higher liability limit applies.
+Result: G-GmbH can claim damages from P, but limited to the
+maximum amount of EUR 1 million. There is no claim to the full
+amount of EUR 1.2 million.)
+Answering this legal question requires, inter alia, reviewing
+Section 323 HGB (German Commercial Code). The case occurs in
+March 2020, when the version of Section 323 HGB valid at that
+time capped auditor liability for negligence at 1 million euros. The
+current version of the same provision raised this limit to 1.5 million
+euros for non-capital-market-oriented companies. Under current
+law, the 1.2 million euro damage would be fully recoverable. The
+correct solution — limiting recovery to 1 million euros — requires
+applying the law in force at the time of the facts.
+3.5 Human Expert Evaluation of Synthesized
+QA sets
+While all QA pairs were fully LLM generated, each pair was sub-
+sequently evaluated by legal experts (two senior law students and
+one fully-qualified lawyer) to ensure quality control across each set.
+From a total of 697 generated pairs, 312 were accepted. The primary
+reasons for rejection were: (i) despite the classification prompt’s
+instructions, the version change was only editorial in nature rather
+than substantive, (ii) the question implicitly consisted of multiple
+independent sub-questions rather than a single coherent legal issue,
+(iii) the legal consequence remained identical regardless of which
+version was applied, contradicting the temporal sensitivity require-
+ment, and (iv) the generated answer contained legal errors. The
+accepted 312 questions form our final evaluation dataset, compris-
+ing 115 Post-Cutoff Amendment Questions, 113 Pre-Amendment
+Questions, and 84 Multi-Provision Pre-Amendment Questions. 39
+of the accepted 312 questions constituteduplicate pairs. Pairs are
+considered to beduplicateif they are not identical in wording but
+reference the same legal provision and the same amendment event.
+Such pairs construct distinct fact patterns around a single legisla-
+tive change, differing in scenario framing, parties involved, and
+specific fact dates. Although identified post-hoc, these pairs were
+deliberately retained as an internal consistency check, since they
+allow us to verify whether models produce stable scores across
+different fact patterns targeting the same legislative change.
+4 Experiments
+4.1 Model and RAG Configurations
+For thePost-Cutoff Amendment Questions, we set the knowledge
+cutoff to November 1, 2024. Models whose training data precede
+this cutoff include ChatGPT-5.1 and Claude Sonnet 3.7. We did
+not include a DeepSeek model since there is no publicly available,
+reliable source for the knowledge cutoff date. Correctly answering
+questions in this category therefore requires access to legislative
+updates introduced after this date, enabling an explicit evaluation
+of post-cutoff knowledge limitations.
+ForPre-Amendment QuestionsandMulti-Paragraph Pre-
+Amendment Questions, we evaluated state-of-the-art models
+ChatGPT-5.2, Claude Opus 4.5, and DeepSeek V3.2. In these cate-
+gories, the challenge is to determine whether models can recognize
+the need to apply historical versions of the law, even when the
+most recent paragraph versions are available. ChatGPT-5.1’s older
+knowledge cutoff isolates post-cutoff staleness, whereas the newer
+
+[[page 6]]
+ICAIL 2026, June 08-12, Singapore Max Prior, Andreas Schultz, and Matthias Grabmair
+ChatGPT-5.2 tests if a state-of-the-art model can override its
+current knowledge to apply historical provisions.
+We evaluated the models in four distinct experimental settings
+that differ in the information available at inference time:
+• LLM (vanilla)relies exclusively on the model’s internal para-
+metric knowledge, with no access to external tools or data.
+The prompt instructs the model to act as a German legal
+expert, answer precisely based solely on provided legal texts,
+and return a fixed refusal string when information is insuffi-
+cient.3
+• LLM-webenables models to answer using online sources,
+distinguishing between native tool-calling and external con-
+text injection. For ChatGPT-5.1, ChatGPT-5.2, Claude Sonnet
+3.7 , and Claude Opus 4.5, we utilize their native, integrated
+web search tools via their respective APIs. In this setting,
+the model acts as an autonomous agent: it reasons whether
+external information is required and, if so, triggers a tool-call
+to formulate and execute its own search queries.
+In contrast, for DeepSeek v3.2, which lacks a native web
+search interface, we implement a deterministic retrieval
+pipeline. We use Gemini-based grounding Google Web
+Search to fetch snippets through the Google Search
+API. These web snippets are then injected into the local
+OpenAI-compatible prompt. Unlike the autonomous models,
+DeepSeek v3.2 is a passive recipient of this data as the
+search is executed by external scripts before the model is
+even invoked. This forces the model to process the provided
+context regardless of its own internal reasoning.
+• RAG-kNNfollows the retrieval-augmented workflow illus-
+trated in Figure 3. After a user submits a question (1), a regex
+pattern extracts the 𝑎𝑠−𝑜 𝑓 date from the query (2), acting as
+a hard constraint for legal validity by filtering the retrieval
+space to ensure only paragraph versions valid during the rel-
+evant period are considered. Simultaneously, the respective
+LLM identifies the specific applicable law (3).
+To perform retrieval, the question is embedded using the
+text-embedding-3-large model via the OpenAI API. The
+system executes a𝑘-nearest-neighbor search (𝑘= 6) utilizing
+cosine similarity over the embeddings of the filtered full-
+text paragraphs chunks (4). These top-ranked chunks serve
+as keys to retrieve their corresponding paragraphs. Finally,
+these paragraphs are provided as context to the LLM (5),
+ensuring complete legal nuance is preserved in the generated
+answer (6).
+• RAG-ToCfollows a different retrieval strategy while sharing
+the same initial law-identification and temporal filtering
+steps (1-3). Instead of embedding-based retrieval, the model
+is presented with the selected statute’s table of contents,
+stored as a structured outline, and instructed to select a
+small set of relevant paragraphs (4). The full text of these
+paragraphs is then retrieved from the local database and
+supplied as context. The remaining steps are the same as for
+RAG-kNN.
+3The full prompts for all experimental settings are provided in our GitHub repository,
+see Footnote 1.
+Figure 3: RAG-kNN and RAG-ToC
+We evaluate model answers following an LLM-as-a-judge ap-
+proach, where a separate LLM scores each candidate answer against
+a fixed rubric and returns structured ratings. This approach follows
+prior work showing that rubric-guided LLM judges can align well
+with human evaluations while enabling scalable, open-ended as-
+sessment [3, 18]. We used Gemini 3 Flash Preview as the judge LLM
+which we prompted to evaluate each QA pair against the respective
+candidate answer based on the following criteria:
+• Outcome correctness: Is the legal conclusion made by candi-
+date correct?
+• Legal reasoning correctness: Is the candidate’s derivation of
+the legal conclusion correct?
+• Legal basis correctness: Did the candidate identify the correct
+provisions necessary to answer the question?
+• Version application correctness: Did the candidate apply the
+right version of the identified legal provisions?
+Each criterion was scored on a continuous scale from 0 to 1. The
+complete prompt template is provided in our GitHub repository.4
+4.2 Post-Cutoff Questions
+In total, we evaluated 115 Post-Cutoff Questions. Figure 4 summa-
+rizes their evaluation with respect to the different models and meth-
+ods. Both RAG methods achieve consistently high scores across all
+metrics (0.78–0.88). In contrast, theLLM (vanilla)baseline shows se-
+vere degradation, particularly in reasoning and version application
+(Claude Sonnet 3.7: 0.08–0.11; ChatGPT 5.1: 0.18–0.21), confirming
+that post-cutoff questions expose substantial parametric staleness.
+Web search yields moderate scores (0.25–0.67) but remains less
+reliable than retrieval grounded in a curated law corpus.
+Using Welch two-sample t-tests [15] on the post-cutoff summary
+statistics, all four metrics — outcome correctness, legal reasoning
+correctness, legal basis correctness, and version application correct-
+ness — shows significant mean differences between LLM (vanilla)
+and each RAG method, and between each RAG method and web
+search (𝑝< 0.05) for both models. In contrast, the difference be-
+tween RAG ToC and RAG kNN is not statistically significant for
+any metric.
+4.3 Pre-Amendment Questions
+We evaluated 113 single-provision and 84 multi-provision pre-
+amendment questions. Figure 5 compares outcome correctness
+4See Footnote 1.
+
+[[page 7]]
+Asking For An Old Friend: Diagnosing and Mitigating Temporal Failure Modes in LLM-based Statutory Question Answering ICAIL 2026, June 08-12, Singapore
+chatgpt-5.1 claude-sonnet-3-70.0
+0.2
+0.4
+0.6
+0.8
+1.0Score
+0.52
+0.34
+0.43
+0.34
+0.18
+0.26
+0.92
+0.80
+0.86
+0.91
+0.78
+0.85
+0.93
+0.82
+0.87
+0.94
+0.83
+0.88
+0.59
+0.42
+0.51
+0.76
+0.59
+0.67
+Outcome Correctness
+chatgpt-5.1 claude-sonnet-3-7
+Score
+0.23
+0.14
+0.18
+0.11
+0.05
+0.08
+0.84
+0.72
+0.78
+0.83
+0.71
+0.77
+0.87
+0.75
+0.81
+0.87
+0.75
+0.81
+0.31
+0.20
+0.25
+0.61
+0.46
+0.54
+Legal Reasoning Correctness
+chatgpt-5.1 claude-sonnet-3-70.0
+0.2
+0.4
+0.6
+0.8
+1.0Score 0.37
+0.27
+0.32
+0.17
+0.10
+0.13
+0.86
+0.75
+0.80
+0.85
+0.72
+0.79
+0.88
+0.77
+0.82
+0.89
+0.79
+0.84
+0.39
+0.28
+0.33
+0.59
+0.45
+0.52
+Legal Basis Correctness
+chatgpt-5.1 claude-sonnet-3-7
+Score
+0.28
+0.15
+0.21 0.16
+0.06
+0.11
+0.89
+0.76
+0.83
+0.87
+0.73
+0.80
+0.89
+0.77
+0.83
+0.91
+0.80
+0.86
+0.35
+0.20
+0.27
+0.71
+0.54
+0.62
+Version Application Correctness
+LLM (vanilla) RAG T oC RAG kNN Web
+Figure 4: Post-Cutoff Questions: Comparison of metrics across models and methods.
+chatgpt-5.2 claude-opus-4-5 deepseek-v3.20.0
+0.2
+0.4
+0.6
+0.8
+1.0Score
+0.62
+0.45
+0.54
+0.46
+0.28
+0.37
+0.48
+0.30
+0.39
+0.57
+0.37
+0.47
+0.38
+0.19
+0.28
+0.41
+0.22
+0.31
+p=0.351 p=0.200 p=0.273
+0.82
+0.65
+0.73
+0.90
+0.77
+0.83
+0.57
+0.39
+0.48
+0.74
+0.54
+0.64
+0.90
+0.74
+0.82
+0.59
+0.38
+0.48
+p=0.151 p=0.738 p=0.975
+0.82
+0.65
+0.73
+0.88
+0.73
+0.81
+0.63
+0.45
+0.54
+0.70
+0.50
+0.60
+0.86
+0.69
+0.78
+0.53
+0.32
+0.42
+p=0.048 p=0.612 p=0.106
+0.58
+0.40
+0.49
+0.76
+0.59
+0.67
+0.51
+0.33
+0.42
+0.58
+0.38
+0.48
+0.78
+0.58
+0.68
+0.43
+0.24
+0.33
+p=0.872 p=0.963 p=0.197
+LLM (vanilla)  Pre-Amendment Questions
+LLM (vanilla)  Multi-Provision Pre-Amendment Questions
+RAG T oC  Pre-Amendment Questions
+RAG T oC  Multi-Provision Pre-Amendment Questions
+RAG kNN  Pre-Amendment Questions
+RAG kNN  Multi-Provision Pre-Amendment Questions
+Web  Pre-Amendment Questions
+Web  Multi-Provision Pre-Amendment Questions
+Figure 5: Pre-Amendment Questions: Single vs. Multi-Provision (Outcome Correctness).
+across ChatGPT-5.2, Claude Opus 4.5, and DeepSeek v3.2. On single-
+provision tasks, both RAG methods consistently outperform base-
+lines, with RAG-ToC (0.48–0.83) and RAG-KNN (0.54–0.81) surpass-
+ingVanilla(0.37–0.54) and Web search (0.42–0.67).
+Transitioning to multi-provision questions generally incurs a
+modest performance penalty. LLM (Vanilla) scores drop to 0.28–0.47
+
+[[page 8]]
+ICAIL 2026, June 08-12, Singapore Max Prior, Andreas Schultz, and Matthias Grabmair
+and RAG-KNN to 0.42–0.78, while RAG-ToC remains robust (0.48–
+0.82). We assessed the statistical significance of this degradation
+using Welch two-sample t-tests. Notably, only ChatGPT-5.2 with
+RAG-KNN showed a significant decline (𝑝= 0.048;0 .73→ 0.60).
+All other model-method pairs showed no statistically significant
+difference (𝑝> 0.11), suggesting that while multi-provision tasks
+are more complex, they do not systematically break the models’
+reasoning capabilities when the correct legal context is retrieved.
+4.4 Perfect Score Analysis
+Table 1 presents the percentage of perfect scores across the four
+metrics. RAG methods consistently outperform other variants in
+Post-Cutoff scenarios, whereLLM (vanilla)baselines struggle with
+parametric staleness. For example, while Claude Sonnet 3.7 Vanilla
+achieves an outcome correctness of only 24.35%, RAG kNN reaches
+86.96%. This Vanilla degradation is frequently accompanied by
+high refusal rates; Claude Sonnet 3.7 generated 22 one-line refusals,
+adhering to the explicit instruction to stateThe information provided
+is not sufficient to answer the questionwhen uncertain.
+The results further underscore the increased complexity of Multi-
+Provision tasks relative to Pre-Amendment Single-Provision ques-
+tions. Baselines exhibit a marked decrease in reasoning and legal ba-
+sis correctness when multiple provisions are involved. For instance,
+the outcome correctness for Claude Opus 4.5 Vanilla drops from
+35.40% to 26.19% when moving to Multi-Provision tasks, whereas
+RAG ToC maintains a more robust performance, shifting from
+81.42% to 78.57%. Across all models, RAG methods provide sub-
+stantial improvement in citing the correct legal basis and applying
+the appropriate temporal version of the law.
+4.5 Recency Bias
+Figure 6 assesses recency bias by splitting questions into older (Inter-
+val 1) and recent (Interval 2) subsets. The recency split uses a fixed
+midpoint at 2014-10-30: Interval 1 is 𝑡<2014-10-30 and Interval
+2 is 𝑡≥2014-10-30 . This date is the range midpoint of the Pre-
+Amendment and the Multi-Provision Pre-Amendment questions
+(min 2005-03-15, max 2024-06-15). Average performance improves
+slightly for recent questions (rising≈ 0.04–0.06). However, signifi-
+cant performance divergences (𝑝< 0.05) are observed exclusively
+in the Web condition, where recent questions score approximately
+0.20–0.24 points higher. This suggests that recency advantages are
+driven primarily by web retrieval characteristics rather than inher-
+ent biases in the models’ parametric knowledge or the curated RAG
+pipelines.
+4.6 LLM Judge Validation
+To validate the LLM judge, we sampled 48 questions stratified
+by question type and legal domain, yielding 192 model answers,
+which a legal expert independently scored on the same four cri-
+teria. Overall agreement was strong ( 𝑟= 0.853, 𝜅= 0.751, MAE
+= 0.123) with negligible bias. Agreement was highest for outcome
+correctness (𝜅= 0.860), consistent with its near-binary nature, and
+lowest for legal basis correctness ( 𝜅= 0.549), where evaluating
+provision citations involves more subjective judgment. By ques-
+tion type, Post-Cutoff Amendment questions showed the highest
+agreement (𝜅= 0.821) and Pre-Amendment questions the lowest
+(𝜅= 0.696). RAG-based settings yielded higher judge–expert agree-
+ment (𝜅= 0.733–0.805) than Vanilla and Web (𝜅= 0.593–0.639).
+These results confirm that the LLM judge is suitable for large-scale
+evaluation.
+5 Discussion
+Our findings underscore a central tension in the use of LLMs for
+legal research: the static nature of model training is structurally
+misaligned with the dynamic nature of statutory law. This mismatch
+is practically salient given that a large share of legal professionals
+already report using AI systems for research tasks.
+5.1 Knowledge Cutoff as a Critical Failure Point
+In this context, Post-Cutoff Amendment Question answering re-
+veals a core vulnerability: without external grounding or tool-
+calling, even state-of-the-art models degrade substantially when
+asked to answer questions that depend on statutory amendments
+enacted after their training cutoff. It is important to qualify the
+performance metrics in this Vanilla setting. While models like
+ChatGPT-5.1 achieved an outcome correctness score of approx-
+imately 40%, this figure masks a deeper failure. This partial success
+stems from the binary nature of many legal questions (e.g., "lawful"
+vs. "unlawful"), where a random guess yields a 50% baseline accu-
+racy. The discrepancy becomes evident when analyzing the Legal
+Reasoning Correctness, which dropped to 0%. Crucially, the mod-
+els rarely signaled uncertainty, as shown by the small number of
+refusals. In most cases, the models confidently applied superseded
+provisions, a behavior that poses significant liability risks in legal
+practice.
+5.2 RAG as a Valid Mitigation Strategy
+Across all three question types, retrieval-augmented approaches
+provide a robust mitigation. Both RAG-kNN and RAG-ToC consis-
+tently outperformed all baselines across all metrics. By extracting
+an "as-of" date from the query and strictly filtering the retrieval
+corpus to that validity period, the system forces the model to rea-
+son within the correct legal regime. This also implies that existing
+legal RAG systems should not simply retrieve "relevant" semantic
+matches but must also take into account the temporal validity of a
+statute as a hard constraint. The lack of significant difference be-
+tween RAG-kNN and RAG-ToC suggests that what is retrieved (the
+correct timeframe) matters more than how it is retrieved (embed-
+dings vs. table of contents). While RAG solved the retrieval problem,
+the Multi-Hop task demanded when answering Multi-Provision
+Pre-Amendment Questions highlighted the reasoning ceiling. Even
+with perfect retrieval, performance dropped slightly when models
+had to synthesize multiple historical provisions. However, the gap
+was modest, indicating that once the correct temporal context is
+provided, current LLMs are generally capable of the necessary legal
+reasoning.
+To isolate the impact of the regex-based date extraction, we
+conducted a ablation on a subset of our questions. Removing the
+temporal filter reduced the system to a standard RAG pipeline,
+which caused a substantial drop in accuracy.
+
+[[page 9]]
+Asking For An Old Friend: Diagnosing and Mitigating Temporal Failure Modes in LLM-based Statutory Question Answering ICAIL 2026, June 08-12, Singapore
+Model Variant LLM (vanilla) RAG ToC RAG kNN Web
+CO R LB V RC CO R LB V RC CO R LB V RC CO R LB V RC
+ChatGPT-5.1 Post-Cutoff 40.00 0.00 3.48 13.91 0 83.48 46.09 47.83 73.04 2 83.48 49.57 46.96 74.78 1 46.96 3.48 3.48 16.52 0
+Claude Sonnet 3.7 Post-Cutoff 24.35 0.00 0.00 5.22 22 83.48 49.57 47.83 71.30 2 86.96 51.30 49.57 70.43 0 63.48 17.39 19.13 55.65 0
+ChatGPT-5.2 Pre-Amendment 49.56 12.39 14.16 34.51 1 72.57 47.79 45.13 47.79 15 72.57 45.13 51.33 55.75 11 46.90 25.66 37.17 45.13 0
+ChatGPT-5.2 Multi Pre-Amendment 42.86 4.76 4.76 17.86 3 61.90 28.57 26.19 50.00 12 57.14 17.86 15.48 40.48 20 39.29 8.33 11.90 30.95 0
+Claude Opus 4.5 Pre-Amendment 35.40 3.54 6.19 15.04 25 81.42 48.67 59.29 68.14 1 78.76 53.10 62.83 73.45 0 63.72 41.59 53.10 62.83 0
+Claude Opus 4.5 Multi Pre-Amendment 26.19 0.00 2.38 9.52 11 78.57 36.90 34.52 66.67 0 73.81 28.57 20.24 52.38 0 64.29 32.14 29.76 58.33 0
+DeepSeek v3.2 Pre-Amendment 37.17 3.54 4.42 12.39 19 44.25 25.66 38.05 46.90 1 50.44 33.63 42.48 47.79 2 39.82 5.31 8.85 15.04 1
+DeepSeek v3.2 Multi Pre-Amendment 27.38 0.00 1.19 9.52 14 45.24 11.90 15.48 32.14 2 39.29 7.14 10.71 29.76 2 29.76 1.19 1.19 10.71 1
+Table 1: Correct Outcome (CO) % | Reasoning (R) % | Legal Basis (LB) % | Version (V) % | Refusal Count (RC)
+Sample sizes: Post-Cutoff (𝑛=115), Pre-Amendment Single (𝑛=113), Multi (𝑛=84).
+chatgpt-5.2 claude-opus-4-5 deepseek-v3.20.0
+0.2
+0.4
+0.6
+0.8
+1.0Outcome Correctness
+0.58
+0.31
+0.44 0.44
+0.19
+0.31
+0.41
+0.16
+0.29
+0.67
+0.34
+0.51
+p=0.561
+0.38
+0.10
+0.24
+p=0.464
+0.49
+0.19
+0.34
+p=0.593
+0.72
+0.45
+0.59
+0.90
+0.66
+0.78
+0.64
+0.36
+0.50
+0.86
+0.56
+0.71
+p=0.235
+0.97
+0.76
+0.86
+p=0.287
+0.62
+0.30
+0.46
+p=0.725
+0.68
+0.41
+0.54
+0.84
+0.60
+0.72
+0.57
+0.30
+0.43
+0.82
+0.53
+0.68
+p=0.211
+0.96
+0.74
+0.85
+p=0.123
+0.57
+0.25
+0.41
+p=0.829
+0.56
+0.29
+0.43
+0.71
+0.44
+0.57
+0.48
+0.22
+0.35
+0.71
+0.40
+0.55
+p=0.226
+0.94
+0.68
+0.81
+p=0.015
+0.46
+0.16
+0.31
+p=0.657
+Multi-Provision Pre-Amendment Questions  Interval 1 (n=47) vs Interval 2 (n=37)
+chatgpt-5.2 claude-opus-4-5 deepseek-v3.20.0
+0.2
+0.4
+0.6
+0.8
+1.0Outcome Correctness
+0.69
+0.45
+0.57 0.54
+0.29
+0.41
+0.54
+0.29
+0.42
+0.63
+0.37
+0.50
+p=0.473
+0.44
+0.19
+0.32
+p=0.275
+0.48
+0.22
+0.35
+p=0.456
+0.81
+0.58
+0.70
+0.92
+0.73
+0.82
+0.61
+0.37
+0.49
+0.89
+0.67
+0.78
+p=0.319
+0.94
+0.75
+0.85
+p=0.753
+0.60
+0.33
+0.47
+p=0.789
+0.81
+0.58
+0.70
+0.89
+0.68
+0.79
+0.71
+0.46
+0.58
+0.89
+0.67
+0.78
+p=0.319
+0.93
+0.73
+0.83
+p=0.564
+0.61
+0.36
+0.48
+p=0.288
+0.51
+0.27
+0.39
+0.72
+0.48
+0.60
+0.45
+0.21
+0.33
+0.75
+0.48
+0.62
+p=0.013
+0.88
+0.65
+0.76
+p=0.052
+0.66
+0.39
+0.53
+p=0.034
+Pre-Amendment Questions  Interval 1 (n=61) vs Interval 2 (n=52)
+LLM (vanilla) Interval 1
+LLM (vanilla) Interval 2
+RAG T oC Interval 1
+RAG T oC Interval 2
+RAG kNN Interval 1
+RAG kNN Interval 2
+Web Interval 1
+Web Interval 2
+Figure 6: Recency Bias: Outcome Correctness split by time interval (Interval 1: Older, Interval 2: Recent).
+5.3 Web Search Tool Calling Prone to Recency
+Bias
+Finally, our results caution against treating generic web search
+as a reliable remedy for temporal law application errors. While
+web-enabled configurations improve over LLM (vanilla) in many
+cases, performance is unstable and exhibits a systematic recency
+skew in historically anchored tasks. In our (Multi-Provision) Pre-
+Amendment experiments, LLM-web performed substantially better
+on recent questions than on older ones, consistent with retrieval
+pipelines that favor "fresh" content and thereby over-retrieve cur-
+rent statute versions even when queries concern historical regimes.
+This implies that browsing alone is not an adequate safeguard for
+temporally sensitive legal questions. Instead, systems should rely
+on curated, versioned statutes and explicit temporal filtering to
+ensure that the retrieved law matches the relevant point in time.
+6 Conclusion and Open Questions
+Our findings show that legal LLM-based systems that does not
+explicitly model temporal validity comes with reliability risks for
+
+[[page 10]]
+ICAIL 2026, June 08-12, Singapore Max Prior, Andreas Schultz, and Matthias Grabmair
+real-world legal research, several important questions remain unre-
+solved. While our RAG strategies successfully retrieve temporally
+valid provisions, Multi-Provision questions revealed a reasoning
+ceiling when models must synthesize multiple historical provisions
+that changed asynchronously. It remains to be investigated how
+our findings generalize to common law jurisdictions, where legal
+change is driven not only by legislative amendment but depends
+on characteristic dynamics around stare decisis and argumentation
+with precedent cases. These may influence how models learn and
+unlearn legislative history during training.
+In addition, our evidence for recency bias is mixed. Although
+we observe a recency advantage and statistically significant perfor-
+mance divergences in the Web condition, the other comparisons
+do not yield statistically significant effects. This limits the extent to
+which we can claim a robust, model-intrinsic recency bias across
+settings. Establishing when and why recency bias emerges there-
+fore remains an important direction for future research, ideally
+using larger samples.
+7 AI Use Disclosure
+Generative AI tools were used to produce parts of this work, in-
+cluding tables, figures and code, as well as to perform language
+corrections and stylistic refinements.
+8 Acknowledgements
+We thank Elly Breu and Quirin Pelikan (LMU Munich) for helping
+annotate the QA dataset. We also thank the buzer.de project for
+its very valuable open-access data contribution to the German legal
+community. This work was funded by the Digitalisierungsinitia-
+tive des Bundes für die Justiz under the "Generatives Sprachmodell
+der Justiz (GSJ)" project, a collaboration between the justice min-
+istries of North Rhine-Westphalia and Bavaria, TU Munich, and the
+University of Cologne, and by the German Federal Ministry of Fi-
+nance under the "Machbarkeitsstudie Digitaltaugliches Steuerrecht"
+project, a collaboration between LMUDigiTax and TU Munich.
+References
+[1] Marius Büttner and Ivan Habernal. 2024. Answering legal questions from laymen
+in German civil law system. InProceedings of the 18th Conference of the European
+Chapter of the Association for Computational Linguistics (Volume 1: Long Papers).
+2015–2027. doi:10.18653/v1/2024.eacl-long.122
+[2] buzer.de. 2026. Online Database of German Laws. https://www.buzer.de. Accessed
+December 16, 2025.
+[3] Joseph Enguehard, Morgane Van Ermengem, Kate Atkinson, Sujeong Cha, Ar-
+ijit Ghosh Chowdhury, Prashanth Kallur Ramaswamy, Jeremy Roghair, Han-
+nah R. Marlowe, Carina Suzana Negreanu, Kitty Boxall, and Diana Mincu. 2025.
+LeMAJ (Legal LLM-as-a-Judge): Bridging Legal Reasoning and LLM Evaluation.
+InProceedings of the Natural Legal Language Processing Workshop 2025. 318–337.
+doi:10.18653/v1/2025.nllp-1.23
+[4] Bayerischer Anwaltverband e.V. 2024.Auswertung der Umfrage zur KI-Nutzung
+der bayerischen Anwaltschaft. Technical Report. Bayerischer Anwaltverband
+e.V. https://www.bayerischer-anwaltverband.de/site/assets/files/1765/umfrage_
+zur_ki_nutzung_der_bay_anwaltschaft.pdf
+[5] Yu Fan, Jingwei Ni, Jakob Merane, Yang Tian, Yoan Hermstrüwer, Yinya Huang,
+Mubashara Akhtar, Etienne Salimbeni, Florian Geering, Oliver Dreyer, Daniel
+Brunner, Markus Leippold, Mrinmaya Sachan, Alexander Stremitzer, Christoph
+Engel, Elliott Ash, and Joel Niklaus. 2025. LEXam: Benchmarking Legal Reasoning
+on 340 Law Exams. https://arxiv.org/abs/2505.12864
+[6] Hanpei Fang, Sijie Tao, Nuo Chen, Kai-Xin Chang, and Tetsuya Sakai. 2025.
+Do Large Language Models Favor Recent Content? A Study on Recency Bias
+in LLM-Based Reranking. InProceedings of the 2025 Annual International ACM
+SIGIR Conference on Research and Development in Information Retrieval in the
+Asia Pacific Region. Association for Computing Machinery, 85–94. doi:10.1145/
+3767695.3769493
+[7] Angeliki Lazaridou, Adhi Kuncoro, Elena Gribovskaya, Devang Agrawal, Adam
+Liska, Tayfun Terzi, Mai Gimenez, Cyprien de Masson d'Autume, Tomas Kocisky,
+Sebastian Ruder, Dani Yogatama, Kris Cao, Susannah Young, and Phil Blunsom.
+2021. Mind the Gap: Assessing Temporal Generalization in Neural Language
+Models. InAdvances in Neural Information Processing Systems, Vol. 34. Curran
+Associates, Inc., 29348–29363. https://proceedings.neurips.cc/paper_files/paper/
+2021/file/f5bf0ba0a17ef18f9607774722f5698c-Paper.pdf
+[8] Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin,
+Naman Goyal, Heinrich Küttler, Mike Lewis, Wen-tau Yih, Tim Rocktäschel,
+Sebastian Riedel, and Douwe Kiela. 2020. Retrieval-Augmented Generation for
+Knowledge-Intensive NLP Tasks. InAdvances in Neural Information Processing
+Systems, Vol. 33. Curran Associates, Inc., 9459–9474. https://proceedings.neurips.
+cc/paper_files/paper/2020/file/6b493230205f780e1bc26945df7481e5-Paper.pdf
+[9] Max Prior, Adrian Hof, Niklas Wais, and Matthias Grabmair. 2025. Risks and
+Limits of Automatic Consolidation of Statutes. InProceedings of the Natural Legal
+Language Processing Workshop 2025. Association for Computational Linguistics,
+396–407. doi:10.18653/v1/2025.nllp-1.29
+[10] Thomson Reuters. 2025.Generative AI in Professional Services Report.
+Technical Report. https://www.thomsonreuters.com/content/dam/ewp-
+m/documents/thomsonreuters/en/pdf/reports/2025-generative-ai-in-
+professional-services-report-tr5433489-rgb.pdf
+[11] Faiz Surani, Mirac Suzgun, Vyoma Raman, Christopher D. Manning, Peter Hender-
+son, and Daniel E. Ho. 2025. AI for Scaling Legal Reform: Mapping and Redacting
+Racial Covenants in Santa Clara County. https://arxiv.org/abs/2503.03888
+[12] Santosh T.y.s.s and Tuan-Quang Vuong. 2025. LexTempus: Enhancing Temporal
+Generalizability of Legal Language Models Through Dynamic Mixture of Experts.
+InProceedings of the 63rd Annual Meeting of the Association for Computational
+Linguistics (Volume 1: Long Papers). 6608–6624. doi:10.18653/v1/2025.acl-long.329
+[13] Santosh T.y.s.s, Tuan-Quang Vuong, and Matthias Grabmair. 2024. ChronosLex:
+Time-aware Incremental Training for Temporal Generalization of Legal Classifica-
+tion Tasks. InProceedings of the 62nd Annual Meeting of the Association for Compu-
+tational Linguistics (Volume 1: Long Papers). 3022–3039. doi:10.18653/v1/2024.acl-
+long.166
+[14] Juraj Vladika, Mahdi Dhaini, and Florian Matthes. 2025. Facts Fade Fast: Evaluat-
+ing Memorization of Outdated Medical Knowledge in Large Language Models. In
+Findings of the Association for Computational Linguistics: EMNLP 2025. 9161–9174.
+doi:10.18653/v1/2025.findings-emnlp.487
+[15] Bernard L Welch. 1947. The generalization of ’Student’s’ problem when several
+different population variances are involved.Biometrika34, 1/2 (1947), 28–35.
+doi:10.1093/biomet/34.1-2.28
+[16] Bingbing Wen, Jihan Yao, Shangbin Feng, Chenjun Xu, Yulia Tsvetkov, Bill Howe,
+and Lucy Lu Wang. 2025. Know Your Limits: A Survey of Abstention in Large
+Language Models.Transactions of the Association for Computational Linguistics
+13 (2025), 529–556. doi:10.1162/tacl_a_00754
+[17] Li Zhang, Jaromír Savelka, and Kevin Ashley. 2025. Do LLMs Truly Understand
+When a Precedent Is Overruled? (2025). https://arxiv.org/abs/2510.20941
+[18] Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu,
+Yonghao Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric P. Xing, Hao Zhang,
+Joseph E. Gonzalez, and Ion Stoica. 2023. Judging LLM-as-a-Judge with MT-
+Bench and Chatbot Arena. doi:10.48550/arXiv.2306.05685
+[19] Lucia Zheng, Neel Guha, Javokhir Arifov, Sarah Zhang, Michal Skreta, Christo-
+pher D. Manning, Peter Henderson, and Daniel E. Ho. 2025. A Reasoning-
+Focused Legal Retrieval Benchmark. InProceedings of the 2025 Symposium on
+Computer Science and Law. Association for Computing Machinery, 169–193.
+doi:10.1145/3709025.3712219
+[20] Chenghao Zhu, Nuo Chen, Yufei Gao, Yunyi Zhang, Prayag Tiwari, and Benyou
+Wang. 2025. Is Your LLM Outdated? A Deep Look at Temporal Generalization.
+InProceedings of the 2025 Conference of the Nations of the Americas Chapter
+of the Association for Computational Linguistics: Human Language Technologies
+(Volume 1: Long Papers). Association for Computational Linguistics, 7433–7457.
+doi:10.18653/v1/2025.naacl-long.381

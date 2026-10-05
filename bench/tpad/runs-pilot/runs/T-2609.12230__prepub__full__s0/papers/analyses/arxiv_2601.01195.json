@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2601.01195",
+  "relevance_tier": "high",
+  "problem": "Temporal knowledge graph question answering requires multi-hop reasoning over time-sensitive relations, but LLMs often retrieve subgraphs with many similar temporal relations, leading to suboptimal decisions and error propagation.",
+  "method": "Proposes the Multi-hop Reasoning Enhanced (MRE) framework: (1) Multi-Trajectory Sampling using GPT-4 to generate diverse reasoning trajectories from a few-shot dataset; (2) Cold-start supervised fine-tuning on extracted reasoning steps; (3) Tree-Group Relative Policy Optimization (T-GRPO) to address sparse rewards by exploring and evaluating trajectories in a tree-structured manner.",
+  "key_assumptions": [
+    "Generated trajectories capture valid reasoning paths for supervised learning.",
+    "Tree-structured credit assignment in T-GRPO improves reward propagation over flat RL methods."
+  ],
+  "main_contribution": "MRE framework integrating trajectory sampling, supervised fine-tuning, and T-GRPO for enhanced multi-hop reasoning in temporal KGQA, plus the novel T-GRPO algorithm.",
+  "datasets": [
+    "two TKGQA benchmarks (not named in abstract)"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "state-of-the-art approaches (not specified)"
+  ],
+  "metrics": [
+    "Hits@1"
+  ],
+  "results": "[\"T-GRPO achieves Hits@1 of 90.2% with only 10k samples, surpassing PPO and GRPO (Flat) by 7.5% and 5.7% respectively; extended training yields peak Hits@1 of 98.2%.\"]",
+  "limitations": [
+    "Reliance on GPT-4 for trajectory sampling may limit accessibility; performance depends on quality of few-shot dataset."
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "The paper focuses on temporal KGQA with LLM-based trajectory sampling and tree-structured RL, while our idea targets general KGQA with context subgraph enrichment from source passages and an adaptive repair loop before RL on lower-hop instances.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T07:36:54.773723Z"
+}

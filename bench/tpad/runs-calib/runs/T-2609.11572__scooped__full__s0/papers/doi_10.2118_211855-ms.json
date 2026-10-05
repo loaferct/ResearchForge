@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.2118/211855-ms",
+  "title": "Expert System for Question Answering on Anomalous Events and Mitigation Strategies Using Bidirectional Transformers and Knowledge Graphs",
+  "authors": [
+    "Jaijith Sreekantan",
+    "Chad Hutchison",
+    "Pratuat Amatya"
+  ],
+  "year": 2022,
+  "published": "2022-10-31",
+  "venue": "ADIPEC",
+  "url": "https://doi.org/10.2118/211855-ms",
+  "pdf_url": null,
+  "abstract": "Abstract Daily drilling reports provide vital information for well planning as they capture anomalous events and mitigation measures during drilling operations. Previous works predominantly focus on search frameworks for information retrieval from these reports. However, the context between searches is lost, preventing users from narrowing down to the exact answer. Here, we present a transformer-based closed domain conversational agent for longer dialogues to guide users to contextual information for anomalous drilling events through natural language. Automated text extraction, cleaning and validation tasks are initially performed to resolve data quality issues prior to language modeling on a validated data set. Subsequently, a knowledge-based graph is created by node embedding using entity extractions and by learning the semantic-level relationships between entity nodes such as well names and events. Further, conversational agents are trained on the knowledge graphs for natural dialogue generation using neural machine translation models. Here, users’ questions are translated into a query in a structured language that is evaluated directly over the knowledge graph in order to generate the desired answers. The workflow was tested on an asset with multiple wells experiencing several anomalous events during drilling such as stuck pipe, circulation losses and kicks. The end-to-end workflow was tested on its ability to retrieve anomalous events and present mitigation measures in the aforementioned data set based on the descriptions input by survey participants. Performance on the anomaly extraction, attribute mapping and mitigation performance were evaluated through F1 scores. A significantly high F1 score was recorded for anomaly extraction. This is predominantly driven by high precision due to explicit modeling of the reports as a knowledge graph. In addition to testing the workflow end to end, we tested the knowledge graph representation in isolation. For this, ranking metrics and triple classification with negative samples were used for the evaluation. The adjusted mean rank index was close to one, indicating high performance. Structured querying on the knowledge graphs also showed high accuracy for classifying anomalous events in the drilling report. The work described in this paper automates the end-to-end workflow for building an expert system for answering questions about anomalous events and mitigation strategies using daily drilling reports. Our novel approach using a knowledge graph with a transformer-based conversational agent enables users to perform detailed interactive investigation of anomalous events observed in daily drilling reports and create mitigation strategies. The workflow also allows for incorporating prior domain knowledge from drilling experts.",
+  "doi": "10.2118/211855-ms",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 2,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T04:21:47.474666Z",
+  "relevance": 0.25,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "Fusing Temporal Graphs into Transformers for Time-Sensitive Question Answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

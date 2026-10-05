@@ -1,0 +1,44 @@
+{
+  "paper_id": "doi:10.26615/978-954-452-102-8-014",
+  "relevance_tier": "high",
+  "problem": "Multi-hop question answering requires integrating information across multiple sources to derive answers that cannot be found in any individual source; existing approaches struggle with capturing bridging information and reasoning over multiple documents.",
+  "method": "KGEIR: dynamically constructs and refines knowledge graphs during question answering. It identifies key entities from questions, builds an initial graph from retrieved paragraphs, reasons over this structure, identifies information gaps, and iteratively retrieves additional context to refine the graph until sufficient information is gathered.",
+  "key_assumptions": [
+    "Not explicitly stated in the paper."
+  ],
+  "main_contribution": "KGEIR demonstrates competitive or superior performance to state-of-the-art methods on HotpotQA, 2WikiMultiHopQA, and MuSiQue benchmarks, showing that dynamic knowledge graph construction and iterative reasoning improve multi-hop QA, with ablation studies confirming structured knowledge representations outperform traditional prompting approaches.",
+  "datasets": [
+    "HotpotQA",
+    "2WikiMultiHopQA",
+    "MuSiQue"
+  ],
+  "benchmarks": [
+    "HotpotQA",
+    "2WikiMultiHopQA",
+    "MuSiQue"
+  ],
+  "baselines": [
+    "State-of-the-art methods (unspecified), Chain-of-Thought, Tree-of-Thought, HopRAG"
+  ],
+  "metrics": [
+    "Exact Match (EM)",
+    "F1 score"
+  ],
+  "results": "HotpotQA: EM 63.15%, F1 76.77%; 2WikiMultiHopQA: EM 59.13%, F1 69.55%; MuSiQue: EM 44.50%, F1 53.12%.",
+  "limitations": [
+    "Not explicitly stated in the paper."
+  ],
+  "future_work": [
+    "Not explicitly stated in the paper."
+  ],
+  "code_availability": "https://github.com/TiandaSun/KGEIR",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "KGEIR focuses on dynamic knowledge graph construction and iterative refinement at inference time to retrieve relevant information, while the idea enriches training triples with local context subgraphs from the same passage and uses an adaptive repair loop for one-hop failures followed by RL lower-hop transfer. Both address multi-hop QA and utilize knowledge graphs, but differ in stage (inference vs training) and mechanism (iterative KG refinement vs training data enrichment and failure-driven example generation).",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T09:06:17.956433Z"
+}

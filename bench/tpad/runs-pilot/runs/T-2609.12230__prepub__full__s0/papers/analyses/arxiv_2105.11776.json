@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2105.11776",
+  "relevance_tier": "high",
+  "problem": "Existing approaches suffer from low confidence when retrieving evidence facts to fill the knowledge gap and lack transparent reasoning process in multi-hop question answering at web scale.",
+  "method": "Proposes a framework with three ideas: (a) AMR-SG, an AMR-based Semantic Graph constructed by candidate fact AMRs to uncover hop relations among question, answer, and multiple facts; (b) a novel path-based fact analytics approach exploiting AMR-SG to extract active facts from a large fact pool to answer questions; (c) a fact-level relation modeling leveraging graph convolution network (GCN) to guide the reasoning process.",
+  "key_assumptions": [
+    "Abstract Meaning Representation (AMR) can effectively capture the semantic structure of retrieved facts for constructing a semantic graph.",
+    "Graph Convolution Network (GCN) can guide the reasoning process over the constructed semantic graph."
+  ],
+  "main_contribution": "A new framework that surpasses recent approaches (including those using additional knowledge graphs) on scientific multi-hop QA datasets while maintaining high explainability on OpenBookQA and achieving a new state-of-the-art result on ARC-Challenge.",
+  "datasets": [
+    "two scientific multi-hop QA datasets: OpenBookQA and ARC-Challenge"
+  ],
+  "benchmarks": [
+    "OpenBookQA, ARC-Challenge"
+  ],
+  "baselines": [
+    "recent approaches including those using additional knowledge graphs"
+  ],
+  "metrics": [
+    "not stated in abstract (likely accuracy)"
+  ],
+  "results": "[\"Surpass recent approaches including those using additional knowledge graphs while maintaining high explainability on OpenBookQA and achieve a new state-of-the-art result on ARC-Challenge.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "The paper uses AMR-based semantic graph construction and GCN-guided reasoning over facts, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:10:22.928023Z"
+}

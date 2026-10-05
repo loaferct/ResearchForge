@@ -1,0 +1,47 @@
+{
+  "paper_id": "arxiv:2609.10237",
+  "relevance_tier": "high",
+  "problem": "Graph retrieval-augmented generation for KGQA must decide which triples to put in the prompt, in what syntax, in what order, and with what instruction; it is unclear which of these choices actually affect answer accuracy.",
+  "method": "A graph-RAG pipeline is varied along four axes - which triples enter the prompt, their syntax, their order, and the grounding instruction - across six LLMs and two KGQA benchmarks, with subgraphs drawn from gold SPARQL to remove retriever variance.",
+  "key_assumptions": [
+    "Subgraphs can be taken from gold SPARQL, isolating prompt-composition effects from retrieval quality.",
+    "Answer accuracy is format-sensitive, so scorers can conflate instruction effects with formatting.",
+    "The grounding instruction changes response format, complicating comparisons against no-context baselines."
+  ],
+  "main_contribution": "A controlled study of four graph-RAG prompt choices (which triples, syntax, order, grounding instruction) across six LLMs and two KGQA benchmarks, showing that only presence of the answer path and the grounding instruction move accuracy, while syntax, triple order, and subgraph size have no measurable effect at multi-hop depth.",
+  "datasets": [
+    "two knowledge-graph question answering benchmarks (names not stated in abstract)",
+    "gold SPARQL subgraphs"
+  ],
+  "benchmarks": [
+    "multi-hop KGQA (two benchmarks)"
+  ],
+  "baselines": [
+    "no-context arm",
+    "unrelated-entity triple substitution",
+    "chain-removed prompt variant"
+  ],
+  "metrics": [
+    "F1",
+    "answer accuracy"
+  ],
+  "results": "Holding the number of triples fixed, replacing every non-chain triple with material from an unrelated entity changes answer accuracy by +0.003 F1, while removing the chain costs most of what the graph was worth. With no facts in the prompt, a grounding instruction drops F1 from 0.299 to 0.035. Syntax, triple order, and subgraph size produce no measurable effect at multi-hop depth. The authors retract a spurious finding that graph context hurts at depth.",
+  "limitations": [
+    "Uses gold SPARQL subgraphs, so it measures prompt composition rather than a deployed retriever.",
+    "Grounding-instruction vs correct-context contrast not measurable with a format-sensitive scorer; reported as an open contrast.",
+    "Inference-time only; says nothing about training-time supervision."
+  ],
+  "future_work": [
+    "not stated in abstract (open contrast on grounding instruction vs context is noted)"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.45,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "This work is an inference-time prompt-composition study over gold subgraphs; it reports that only the presence of the answer path matters and that syntax/order/size are flat, which directly challenges the idea's assumption that surrounding same-passage context (beyond the answer chain) carries training value. It involves no fine-tuning, no repair loop, and no shallow-to-deep transfer.",
+    "basis": "Problem overlap high: both study how KG triples/context should be presented to an LLM for multi-hop KGQA. Method overlap moderate: both manipulate which triples accompany the target, but this paper does so at inference with fixed budgets, not as training supervision. Evaluation overlap moderate-high: two KGQA benchmarks and accuracy/F1, but no training regimes or hop-transfer comparison."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:10:57.286770Z"
+}

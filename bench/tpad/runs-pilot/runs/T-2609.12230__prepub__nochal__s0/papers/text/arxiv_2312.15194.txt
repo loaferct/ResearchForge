@@ -1,0 +1,1302 @@
+[[page 1]]
+PokeMQA: Programmable knowledge editing for Multi-hop Question
+Answering
+Hengrui Gu1, Kaixiong Zhou2, Xiaotian Han3, Ninghao Liu4,
+Ruobing Wang1, Xin Wang1✢
+1School of Artificial Intelligence, Jilin University
+2 Department of Electrical and Computer Engineering, North Carolina State University
+3 Department of Computer Science and Engineering, Texas A&M University
+4School of Computing, University of Georgia
+Abstract
+Multi-hop question answering (MQA) is one
+of the challenging tasks to evaluate machine’s
+comprehension and reasoning abilities, where
+large language models (LLMs) have widely
+achieved the human-comparable performance.
+Due to the dynamics of knowledge facts in
+real world, knowledge editing has been ex-
+plored to update model with the up-to-date
+facts while avoiding expensive re-training or
+fine-tuning. Starting from the edited fact, the
+updated model needs to provide cascading
+changes in the chain of MQA. The previous
+art simply adopts a mix-up prompt to instruct
+LLMs conducting multiple reasoning tasks se-
+quentially, including question decomposition,
+answer generation, and conflict checking via
+comparing with edited facts. However, the cou-
+pling of these functionally-diverse reasoning
+tasks inhibits LLMs’ advantages in compre-
+hending and answering questions while dis-
+turbing them with the unskilled task of con-
+flict checking. We thus propose a framework,
+Programmable knowledge editing for Multi-
+hop Question Answering (PokeMQA), to de-
+couple the jobs. Specifically, we prompt LLMs
+to decompose knowledge-augmented multi-
+hop question, while interacting with a detached
+trainable scope detector to modulate LLMs be-
+havior depending on external conflict signal.
+The experiments on three LLM backbones and
+two benchmark datasets validate our superior-
+ity in knowledge editing of MQA, outperform-
+ing all competitors by a large margin in almost
+all settings and consistently producing reliable
+reasoning process. Our code is available at
+https://github.com/Hengrui-Gu/PokeMQA.
+1 Introduction
+Multi-hop question answering (MQA) requires a
+sequence of interacted knowledge facts to reach the
+final answer. For instance, considering the two-hop
+question in Figure 1, it is necessary to deduce the
+✢ Corresponding author
+Q:  In which continent is the football club Messi plays for located?
+Post-edit Gold Path:
+Messi Boca
+Juniors EUEU
+EUEU
+Messi
+Boca 
+Juniors
+SA
+Inter
+Miami
+NA
+play for
+play for
+continent
+continent
+continent
+Outdated fact
+Counterfactual edit
+Pre-edit answer
+Post-edit answer
+Original fact
+Non-existent fact
+Unreliable Reasoning : 
+Messi Inter
+Miami EUEU
+Pre-edit Gold Path:
+Messi Inter
+Miami NANA
+Figure 1: An example of multi-hop question answer-
+ing under knowledge editing, which consists of relevant
+knowledge facts and three specific reasoning paths solv-
+ing the two-hop question. For the unreliable reasoning,
+it uses a outdated and a non-existent fact and end up
+with the right answer Europe.
+intermediate answer Inter Miami through the fact
+"Messi plays for Inter Miami", and then deduce the
+final answer NA through another fact "Inter Miami
+is located in North America"). MQA poses a great
+challenge to reasoning abilities of question answer-
+ing systems (Mavi et al., 2022, Chen et al., 2019,
+Lan et al., 2021). Thanks to the natural language
+comprehending and reasoning brought by large-
+scale pre-training, large language models (LLMs)
+have proven its indispensable utility in MQA tasks
+(Rao et al., 2022, Khalifa et al., 2023, Xu et al.,
+2023, Chen et al., 2022).
+However, the knowledge within LLMs may be
+factually wrong or become invalid over time. To en-
+sure the correctness of LLMs without necessitating
+arXiv:2312.15194v1  [cs.CL]  23 Dec 2023
+
+[[page 2]]
+expensive retraining (Liu et al., 2023), technique of
+knowledge editing has been carried out to provide
+efficient and targeted updates on model behaviors
+(Sinitsin et al., 2020, Zhu et al., 2020, De Cao
+et al., 2021 ). There are two popular approaches:
+parameter-modification based editing and memory-
+based editing. The former one modifies the internal
+model weights according to edited facts through
+meta-learning, fine-tuning, or knowledge locating
+(Meng et al., 2022a, Mitchell et al., 2021, Meng
+et al., 2022b). The latter approach leverages an ex-
+ternal memory to explicitly store the edited facts (or
+termed as edits) and reason over them, while leav-
+ing LLMs parameters unchanged (Mitchell et al.,
+2022; Zheng et al., 2023a). Memory-based model
+editing is generally adopted due to its simpleness
+and agnostic to backbone LLMs.
+In the context of MQA, MeLLo (Zhong et al.,
+2023) is first proposed by designing a multipurpose
+prompt to instruct LLMs conducting the reasoning
+tasks of question decomposition and knowledge
+editing sequentially. In particular, after decom-
+posing the multi-hop questions, LLMs generate a
+tentative answer for each subquestion and then de-
+tect whether there exists factual conflict between
+tentative answer and edited facts in memory (e.g.,
+statements of "the current British Prime Minister
+is Rishi Sunak" and "the current Prime Minister
+of the UK is Liz Truss" are factually incompatible
+with each other). By repeatedly prompting LLMs,
+MeLLo reaches the answer of multi-hop question.
+However, the coupling of question decomposi-
+tion and knowledge editing imposes considerable
+demands on LLMs to precisely perform reasoning
+as demonstrations in context. First, the knowl-
+edge editing requires LLMs to fully understand the
+semantics of two candidate facts and then make
+conflict detection based on the factual compati-
+bility between them. In the few-shot prompting,
+LLMs are prone to underfit this editing logic due
+to inadequate supervision signals, especially when
+embedded in a more complex task (Khot et al.,
+2022), i.e. question decomposition. Second, within
+a unified prompt, the incorporation of knowledge
+editing instruction introduces noise to question de-
+composition in the similar way. Such superposed
+noise prevents LLMs from fully focusing on pars-
+ing the syntactic structure of multi-hop questions
+to precisely identify the subquestions.
+Thus, we propose Programmable knowledge
+editing for Multi-hop Question Answering
+(PokeMQA), where we decouple the two essential
+tasks, i.e. question decomposition and knowledge
+editing, to alleviate burdens on LLMs while
+introducing auxiliary knowledge prompt to assist
+question decomposition. Specifically, we offload
+the conflict detection in knowledge editing with
+a programmable scope detector, which is used
+to detect whether a subquestion lies within the
+scope affected by any edited facts in semantic
+space (Challenge #1). A two-stage scope detector
+is designed: In pre-detection stage, we efficiently
+filter out a substantial number of irrelevant edits;
+In conflict-disambiguation stage, we perform
+precise retrieval on the remaining few candidate
+edits. Our two-stage framework provides both
+computational efficiency and expressiveness given
+the high volume of edited facts in real scenarios.
+The retrieved edits are used to calibrate LLMs
+behavior. Moreover, we propose a knowledge
+prompt to augment parse analysis in the process
+of question decomposition ( Challenge #2). The
+knowledge prompt recognizes key entity from
+input question and retrieves its external informa-
+tion from a knowledge source to trig the correct
+decomposition.
+Additionally, we observe that the multi-hop ques-
+tion answering process may use the outdated or
+non-existent facts, but occasionally ends up with
+the right answer. We refer to this situation as un-
+reliable reasoning (as shown in Figure 1). In or-
+der to faithfully evaluate models’ reasoning ability,
+we propose a new metric called hop-wise answer-
+ing accuracy (Hop-Acc), measuring the extent how
+LLMs follow demonstrations, conduct question de-
+composition step by step, and generate desired an-
+swer to each step towards solving the multi-hop
+question.
+2 Multi-hop Question Answering under
+Knowledge Editing
+Notations. Following previous work (Zhong et al.,
+2023; Meng et al., 2022a), we denote a fact as a
+triplet (s, r, o), consisting of the subject s, object
+o, and relation r between them, such as ( Messi,
+play for, Inter Miami). An edited fact (i.e., edit)
+is the knowledge fact that we want to update and
+is represented in the same form (s, r, o), such
+as (Messi, play for, Boca Juniors). We consider
+a multi-hop question Q, where answering Q
+requires sequentially querying and retrieving
+multiple facts. These facts are presented in the
+order they were queried, forming a chain of facts
+
+[[page 3]]
+⟨(s1, r1, o1) , . . . ,(sn, rn, on)⟩, where si+1 = oi
+and on is the final answer, which uniquely repre-
+sents an inter-entity pathP =⟨s1, o1, . . . , on⟩. It
+should be noted that except for s1, all the other
+entities o1, . . . , on inP do not appear in Q and
+need to be deduced either explicitly or implicitly
+through factual reasoning (like Inter Miami and
+North America in the multi-hop question in
+Figure 1). If we replace the invalid fact (si, ri, oi)
+with edit e = ( si, ri, o∗
+i ) in a multi-hop question,
+due to the cascading effect caused by the edited
+fact, the chain of facts accordingly changes to
+⟨(s1, r1, o1) , . . . ,(si, ri, o∗
+i ) , . . .(s∗
+n, rn, o∗
+n)⟩.
+The updated inter-entity path is P∗ =
+⟨s1, o1, . . . , o∗
+i , . . . , o∗
+n⟩, which indicates the
+reasoning path to the final answer of Q has
+changed after being influenced by edit e.
+MQA under knowledge editing. Given a set of
+editsE ={e1, . . . , em} and a language model f
+to be edited, for a multi-hop question Q, its inter-
+entity path becomes P∗ =⟨s1, o∗
+1, . . . , o∗
+n⟩ after
+being affected by edits inE. The goal of multi-hop
+question answering under knowledge editing can be
+formally described as producing an edited language
+model fedit conditioned on f andE, which can de-
+duce the inter-entity pathP∗ and finally output the
+post-edit answer o∗
+n to question Q. We denoteP∗
+as gold path of Q (as shown in Figure 1). Differ-
+ent from the previous work, we not only evaluate
+whether edited model fedit output the desired fi-
+nal answers, but also check the correctness of their
+intermediate reasoning paths, providing faithful
+MQA performance results for knowledge editing.
+Edit scope. In line with our work, we make some
+modifications to this concept that was originally
+proposed by (Mitchell et al., 2022). For an edit
+e = ( s, r, o), we define the single-hop question
+q describing (s, r) with the answer being o as its
+atomic question. It should be noted that the atomic
+question corresponding to a specific edit is not
+unique but rather a set of semantically equivalent
+questions (e.g., "What is the country of origin of
+hockey?" and "Where did hockey originate?"). We
+refer to the set as the scope of an edit, denoted as
+S(e). After making an edit e = ( s, r, o), the an-
+swers to those questions in S(e) should change to
+o accordingly. Compared with the previous work,
+we define the edit scope based on the unit of atomic
+question, excluding the original multi-hop question,
+which typically has a much more complex syntactic
+structure. This simplified definition facilitates the
+programmable scope detector to learn the semantic
+patterns represented by S(e) and then make precise
+edit retrieval to adjust LLMs behavior.
+3 Programmable Editing in Memory of
+Multi-hop Question Answering
+3.1 Workflow of PokeMQA
+As illustrated in Figure 2, PokeMQA is a
+lightweight model editor that can be seamlessly
+integrated into any backbone LLMs, without chang-
+ing parameters in the deployed language models.
+This empowers the language models to be robust to
+respond to questions based on edited facts. From
+initiating the editor to successfully addressing a
+question, the proposed procedure involves two
+steps as follows:
+Storing edits in memory. When receiving a set
+of editsE ={e1, . . . , em}, PokeMQA first uses
+manually-defined template to convert each edit
+triplet e into a natural language statement t (as in
+Zhong et al., 2023), then explicitly stores them in
+an external memoryM ={t1, . . . , tm} for query
+and retrieval.
+Inference by checking with edit memory. Con-
+sidering an input of multi-hop question, we adopt
+in-context learning (Brown et al., 2020) and pro-
+vide a few demonstrations (i.e., input-label pairs)
+as the few-shot prompt to teach models to execute
+the following three tasks alternately: I) Identify
+the next subquestion (i.e., atomic question) condi-
+tioned on the input question and current inference
+state in LLMs; II) Detect whether this subquestion
+falls within the edit scope and generate answer;
+III) Extract the answer entity for this subquestion
+in LLMs. Note that this answer entity is either
+used to decompose the next subquestion at Step I
+or released as the final answer.
+Particularly, we propose the programmable
+scope detector to detach the knowledge editing
+task in Step II from LLMs. Previous work (Zhong
+et al., 2023) generates tentative answers for each
+subquestion and checks the semantic conflict be-
+tween tentative answer and retrieved edit in LLMs.
+With the slight supervision signals from the few-
+shot prompt, it is challenging for LLMs to compare
+their semantic patterns and make the correct con-
+flict detection. In this work, the proposed scope
+detector takes the subquestion as input and detects
+whether it falls within the scope of any edit inM.
+If so, the detector sends the factual conflict signal
+back with a chosen edit statement. The statement
+serves as a prompt to instruct LLMs to infer the an-
+
+[[page 4]]
+Input Question ： Who is the head of state of the country where 
+Messi holds a citizenship?
+Entity of Question ：Messi, a human.
+Augmented Input
+What is the country of citizenship of Messi?
+Messi is a citizen of United States.
+Inference
+United States
+Who is the head of state of United States?
+The president of United States is Joe Biden.
+Joe Biden
+Subquestion:
+Answer:
+Answer entity:
+Subquestion:
+Answer:
+Answer entity:
+Joe BidenFinal answer
+Conflict
+disambiguator
+Pre-
+detector
+Pre-
+detector
+Scope Detector
+External Edited Memory
+Cricket Was created in Finland
+Messi is a citizen of United States
+The capital of Canada is Toronto
+Plato was born in the city of Dublin
+
+Prompt Generator
+External 
+Knowledge 
+Base
+Entity Linking 
+Model
+Documents
+External retrieved content
+(1)
+(2)
+(3)
+(1)
+(2)
+(3)
+(1) Task No.
+Conflict 
+Signal
+disM
+genM
+preM
+Figure 2: The illustration of our proposed method PokeMQA. PokeMQA leverages external knowledge base to
+construct knowledge prompt, facilitating the decomposition of the first subquestion. It then alternately executes
+subsequent question decomposition, knowledge editing with programmable scope detectors, and answer generation
+for MQA. The concrete prompts used in PokeMQA are shown in Appendix A.
+swer from the edit. Otherwise, the factual conflict
+signal is empty and LLMs directly generate answer
+based on their internal knowledge.
+In addition, we propose knowledge prompt to
+correct the question decomposition in Step I. In
+MQA, identifying the leading subquestion (i.e.,
+the first decomposed subquestion) might be chal-
+lenging due to insufficient contextual information.
+Specifically, given the input of multi-hop question,
+one lacks the explicit question entity and entity-
+related fact, which are available when identifying
+the subsequent subquestions. To address this, we in-
+novatively employ the knowledge prompt generator
+to preprocess the input question. It recognizes the
+key entity and retrieves relevant documents from
+an external knowledge base to create a knowledge
+prompt. Then, we concatenate the input question
+and knowledge prompt to form an augmented input,
+effectively resolving the issue.
+Owing to the proposed scope detector and knowl-
+edge prompt, PokeMQA allows language models
+to focus on question decomposing and answering,
+formulating a reliable reasoning path. The details
+of the proposed components are stated below.
+3.2 Programmable Scope Detector
+Motivated by (Mitchell et al., 2022), we utilize a
+programmable scope detector for conflict detec-
+tion and design a task-specific training approach to
+identify effective edit scope patterns.
+Architectures. The scope detector can be formally
+described as g(t, q) :T ×Q→ [0, 1], which pre-
+dicts the probability that an atomic question q falls
+into the scope of the edit statementt (in terms of the
+edit e). The scope detector can be implemented as
+arbitrary text classification models (Liu and Guo,
+2019, Lu et al., 2020, Zha et al., 2022, Chuang
+et al., 2023). In our framework, considering both
+expressiveness and computational efficiency, we
+choose two lightweight, yet complementary mod-
+els. The two models are denoted as gϕ and gψ, re-
+spectively. For an input pair(t, q), gϕ calculates the
+embeddings for t and q separately and models the
+log-likelihood by the negative squared Euclidean
+distance in the embedding space. Model gψ con-
+catenates t and q together as a unified input for the
+sequence classification task.
+In our framework, the models gϕ and gψ serve
+as pre-detector Mpre and conflict disambiguator
+Mdis, respectively. We combine them together to
+establish a two-stage edited fact retrieval frame-
+work. The pre-detector filters out the enormous se-
+mantically irrelevant edits from memory efficiently,
+while the conflict disambiguator accurately locates
+on candidate edit with the highest likelihood. The
+
+[[page 5]]
+details are given in Appendix F. Once the detec-
+tor finally believes that an input atomic question
+falls into the scope of any edit in M, it retrieves
+the edited statement of candidate edit and sends it
+back along with a factual conflict signal to guide
+the language model generation process.
+Training scope detector. According to edit mem-
+oryM = {t1, . . . , tm}, we build up a training
+datasetDtrain ={(t1, q1) , . . . ,(tm, qm)}. See Ap-
+pendix B for more details on the construction of
+the dataset. To learn the scope covered by each edit
+statement ti, we use a binary cross-entropy loss
+with negative sampling (Mikolov et al., 2013) as
+the training objective:
+L =− log g(ti, qi)−Eqn∼Pn(q) [log(1− g(ti, qn))] ,
+(1)
+where Pn is a negative sampling distribution and
+we set it to a uniform distribution over each mini-
+batch. Note that Mpre and Mdis are trained sepa-
+rately using the above supervised learning setting.
+Model selection. In practice, we observed that
+using the traditional classification metric (accuracy)
+to validate the detector’s performance can often
+result in underfitting. We believe this is due to the
+unique characteristics of the conflict detection task.
+Thus, we define two novel task-specific metrics to
+select detector models and guide early stopping
+during training: Success Rate and Block Rate. The
+Success Rate measures the accuracy to retrieve the
+correct edit statement ti for a target question qi
+from a set of candidates:
+SR = 1
+N
+NX
+i=1
+1
+
+ ^
+(t,q)∈Dval
+(g(ti, qi)≥ g(t, qi))
+
+ ,
+(2)
+where 1 (·) is the indicator function, N is the size
+of validation setDval, and V denotes the AND gate.
+For the target pair (ti, qi), the retrieval is precise if
+and only if its detection likelihood is higher than
+the other pairs (t, qi), which are synthesized by re-
+placing the target edit statement ti with candidates
+fromDval. On the other hand, metric Block Rate
+quantifies the extent of detector models to inhibit
+the unrelated edit statements for a target question:
+BR = 1
+N
+NX
+i=1
+1
+
+
+^
+(t,q)∈D−
+val
+(g(t, qi) < 0.5)
+
+ ,
+(3)
+whereD−
+val = Dval−{ (ti, qi)}. Intuitively, a
+higher value of SR suggests that the scope detector
+is able to retrieve the desired edit statements for
+more atomic questions, while a higher value ofBR
+implies that fewer atomic questions are mistakenly
+categorized into the edit scope of the irrelevant ed-
+its. We use these two metrics to evaluate detectors
+Mpre and Mdis, and return the optimal-performing
+detectors on validation set (i.e., having the high-
+est sum of SR and BR). We empirically find that
+these two metrics performs better serving as the
+indicator of early stopping (Yao et al., 2007).
+3.3 Knowledge Prompt Generator
+To identify the leading subquestion during question
+decomposition, we propose knowledge prompt gen-
+erator Mgen, which aims to provide the additional
+valuable contextual information. Specifically, we
+employ ELQ (Li et al., 2020), a fast end-to-end en-
+tity linking model. It recognizes the key entity, i.e.,
+the named entity in the input question Q, links the
+entity to Wikidata, and subsequently retrieves the
+related knowledge facts from Wikidata (Vrandeˇci´c
+and Krötzsch, 2014).
+The retrieved knowledge facts from the Wiki-
+data are the valuable contextual information for
+the question decomposition and the knowledge
+facts are stored as triplets (s, r, o) in Wikidata. We
+adopt the following strategy to only preserve the
+commonsense facts from the vast knowledge base.
+For simplicity, we consider two basic membership
+propertiesR = [r1, r2] as our interested relations,
+where r1=instance of , r2=subclass of . Each en-
+tity in Wikidata possesses at least one of the rela-
+tions. These two relations typically provide infalli-
+ble commonsense facts related to the entity. Thus,
+for a key entity si, we randomly choose (si, r1, o1)
+or (si, r2, o2) as the retrieval fact. After retriev-
+ing, we use a manually-defined template to convert
+both key entity and retrieval fact into a knowledge
+prompt to augment the input question Q. For in-
+stance, as shown in Figure 2, we recognize the
+key entity Messi and retrieve the knowledge fact
+(Messi, instance of, human). After composing them
+together, we finally get the knowledge prompt En-
+tity of Question: Messi, a human .
+4 Experimental Setup
+We evaluate our approach on MQUAKE (Zhong
+et al., 2023), which is a knowledge editing bench-
+mark. It includes MQUAKE-CF-3K based on coun-
+terfactual edits, and MQUAKE-T with temporal
+knowledge updates. These datasets consist of a
+
+[[page 6]]
+number of k-hop questions (k∈{ 2, 3, 4}), each of
+them is associated with one or more edits. More
+statistics can be found in Appendix C.
+4.1 Evaluation Metrics
+Multi-hop accuracy (Zhong et al., 2023). It mea-
+sures the accuracy of the (edited) language models
+in answering multi-hop questions.
+Hop-wise answering accuracy (Hop-Acc). In or-
+der to avoid the potential interference caused by
+unreliable reasoning, we propose the Hop-Acc to
+checks the correctness of intermediate reasoning
+path when evaluating MQA performance. Specif-
+ically, for a multi-hop question Q, since the ques-
+tion decomposition prompt is completely struc-
+tured, language models are able to state the in-
+termediate answer of subquestion in a concise,
+parseable way. Thus, the chain of intermediate
+answer⟨s1, o1, . . . , on⟩ can be parsed from the in-
+ference content as the deduced pathP. We argue
+that a multi-hop question is fully solved by lan-
+guage models only if the deduced pathP is exactly
+the same as the gold pathP∗ (defined in Section 2),
+i.e., the novel metric measures the accuracy of rea-
+soning path for multi-hop questions, which is only
+available for sequential question decomposition.
+4.2 Baselines Methods & Language Models
+We take four knowledge editing methods as base-
+lines, including parameter updating methods, FT
+(Zhu et al., 2020), ROME (Meng et al., 2022a),
+MEMIT (Meng et al., 2022b) and memory-based
+method MeLLo (Zhong et al., 2023). More imple-
+mentation details are in Appendix E. So far there
+is still no enough evidence to prove whether chain-
+of-thought (COT) prompting (Wei et al., 2022) or
+question decomposition (QD) prompting (Press
+et al., 2022) is more effective. Thus, to ensure
+fair and comprehensive comparisons, except for
+memory-based editors (MeLLo, PokeMQA) that
+relies on question decomposition, we report the
+performance of other parameter updating methods
+under both COT and QD prompting1.
+We conduct experiments on the following three
+base language models: LLaMa-2-7B (Touvron
+et al., 2023) is a powerful open-source pre-trained
+large language model, implemented by Hugging-
+face Transformers library (Wolf et al., 2020);
+Vicuna-7B (Chiang et al., 2023) is trained by fine-
+tuning LLaMA, implemented by Fastchat library
+1These methods executes the entire process by itself, with-
+out the need for repeatedly prompting.
+(Zheng et al., 2023b); GPT-3.5-turbo-instruct
+(Ouyang et al., 2022) is a variant of the most ca-
+pable GPT-3.5 series model, GPT-3.5-turbo (Chat-
+GPT), which is used for legacy completion.
+4.3 Implementation Details
+We finetune the pre-detector gϕ and conflict dis-
+ambiguator gψ based on DistilBERT (Sanh et al.,
+2019). Note that the Dtrain used for fine-tuning
+does not contain any edit statements t that appear
+during testing. We provide detailed fine-tuning
+setting in Appendix D.
+To evaluate performance under varying numbers
+of edits, we conduct stratified sampling (Parsons,
+2014) of the dataset according to hops of questions
+to construct edit batches of different sizes, which
+ensures the proportion of questions with different
+hops is relatively the same within each edit batch.
+We inject all the edits within a batch simultane-
+ously2 (Wang et al., 2023).
+It should be noted that we conduct experiments
+related to parameter updating methods exclusively
+on the open-source LLM ( LLaMa-2-7B), while
+the memory-based editing methods are comprehen-
+sively evaluated across all language models. (More
+details about experiments in Appendix H).
+5 Performance Analysis
+5.1 Main Results
+PokeMQA is effective and reliable.We report our
+main results in Table 1. The results demonstrate
+that PokeMQA outperforms all baselines by a large
+margin in almost all settings. Moreover, PokeMQA
+achieves the highest Hop-Acc across all settings,
+which strongly supports our view that the coupling
+of question decomposition and conflict detection
+places too much burden on LLMs, thus negatively
+impacting their inference abilities. PokeMQA sig-
+nificantly addresses the issue of unreliable reason-
+ing, further improving MQA performance under
+knowledge editing. Meanwhile, achieving a high
+Hop-Acc indicates that PokeMQA’s reasoning pro-
+cess is more rational and can serve as a more re-
+liable explanation for model predictions, enhanc-
+ing the interpretability of LLMs in MQA. Further-
+more, PokeMQA can scale effectively with current
+mainstream LLMs, such as GPT-3.5-turbo-instruct,
+without the need for additional training.
+2Since ROME is not able to perform batch edit, we sequen-
+tially inject edits within a batch.
+
+[[page 7]]
+MQUAKE-CF-3K MQUAKE-T
+1 edited 100 edited All edited 1 edited All edited
+Method Acc. Hop-Acc Acc. Hop-Acc Acc. Hop-Acc Acc. Hop-Acc Acc. Hop-Acc
+LLaMa-2 Size: 7B
+FTCOT 22.3 - 2.13 - OOM - 47.32 - 3.75 -
+FT 28.2 7.3 2.37 0.03 OOM OOM 56.48 33.89 1.02 0.37
+ROMECOT 11.17 - 2.87 - 2.77 - 28.96 - 14.4 -
+ROME 13.13 5.37 3.5 0.03 3.63 0.1 24.89 17.99 1.71 0.32
+MEMITCOT 11.83 - 9.23 - 5.57 - 36.88 - 31.58 -
+MEMIT 14.97 6.43 9.4 2.47 2.3 0.37 30.89 23.98 25.21 20.13
+MeLLo 33.57 9.9 20.0 10.07 17.33 9.9 97.7 0.21 62.58 3.96
+PokeMQA (Ours) 44.13 30.6 37.33 27.83 32.83 23.87 75.43 60.44 74.36 60.22
+Vicuna Size: 7B
+MeLLo 22.7 7.03 12.83 6.77 10.9 6.7 42.24 1.12 19.86 1.28
+PokeMQA (Ours) 45.83 34.8 38.77 31.23 31.63 25.3 74.57 55.19 73.07 55.09
+GPT-3.5-turbo-instruct Size: Undisclosed
+MeLLo 57.43 28.8 40.87 28.13 35.27 25.3 88.12 52.84 74.57 53.53
+PokeMQA (Ours) 67.27 56.37 56.0 49.63 48.87 39.77 78.16 68.09 76.98 67.88
+Table 1: Evaluation results on MQUAKE-CF-3K and MQUAKE-T. The best result is indicated inBold. The term
+‘k edited’ means the size of edit batch is k. ‘COT’ means that the current method uses chain-of-thought prompt,
+otherwise the question decomposition prompt; The metrics are multi-hop accuracy (Acc) and Hop-wise answering
+accuracy (Hop-Acc) presented in Section 4.1. ‘-’ means the current metric is not applicable to this setting.
+MeLLo is a potential alternative. The related
+results about MeLLo suggest that it is undoubt-
+edly a strong competitor. In the head-to-head com-
+parisons on LLaMa-2-7B, MeLLo achieves (1/10)
+optimal result and (7/10) sub-optimal results. Sur-
+prisingly, MeLLo also achieves the best perfor-
+mance in two settings (On MQUAKE-T, when the
+size of edit batch is 1, 97.7 on LLaMa-2-7B and
+88.12 using GPT-3.5-turbo-instruct). But through
+a detailed analysis of the reasoning processes, we
+discover that MeLLo resolves most multi-hop ques-
+tions by exploiting shortcut reasoning patterns
+(See an example in Appendix I), which can be con-
+sidered as a form of underfitting to the prompt. A
+clear evidence is that the accuracy on LLaMa-2-
+7B with weaker inference ability is higher than on
+GPT-3.5-turbo. Meanwhile, it is undeniable that
+MeLLo’s performance benefits significantly from
+the increased capabilities of LLMs, suggesting that
+on a stronger LLM in the future, MeLLo might fur-
+ther narrow the performance gap with PokeMQA.
+Parameter-updating may not be the answer to
+knowledge editing. In line with previous re-
+searches (Zhong et al., 2023, Onoe et al., 2023),
+parameter updating methods fail catastrophically
+at answering multi-hop questions, indicating that
+the injected knowledge cannot be flexibly applied
+to inference by the edited model. FT achieves the
+best performance among these updating methods
+when the size of edit batch is 1, but the impact of a
+slightly larger edit batch on its performance can al-
+ready be devastating. ROME performs worse than
+MEMIT in all settings, which is consistent with the
+fact that MEMIT is an improved version of ROME.
+MEMIT displays a certain level of robustness to the
+size of edit batch, but it still fails under thousands
+of edited facts. In summary, our results indicate
+that parameter updating methods can hardly meet
+the desiderata of knowledge editing applications.
+MQA under knowledge editing remains chal-
+lenging. As shown in Figure 3 (Middle, Right),
+PokeMQA consistently maintains state-of-the-art
+performance across multi-hop questions of vary-
+ing difficulty levels while significantly surpassing
+other competitors in producing reliable reasoning.
+But depressingly, the increasing difficulty of the
+questions also has a significant negative impact
+on PokeMQA’s performance. Combining more
+facts to generate more complex reasoning processes
+poses a double challenge in terms of edited fact
+retrieval accuracy and language model reasoning
+capabilities. Currently, PokeMQA is not fully capa-
+ble of addressing these challenges, indicating that
+this task remains challenging for future knowledge
+editing methods.
+5.2 Ablation Study
+We conduct ablation experiments to investigate how
+the two detachable components Mdis and Mgen
+improves PokeMQA and analyze their necessity.
+
+[[page 8]]
+GPT-3.5-turbo-instruct LLaMa-2-7B Vicuna-7B
+Mdis Mgen MQUAKE-CF-3K MQUAKE-T MQUAKE-CF-3K MQUAKE-T MQUAKE-CF-3K MQUAKE-T
+1 edited All edited 1 edited All edited 1 edited All edited 1 edited All edited 1 edited All edited 1 edited All edited
+- - 49.0 29.93 67.99 55.67 29.33 19.47 59.31 52.19 27.37 16.43 54.23 48.39
+√ - 49.0 34.27 68.09 67.77 29.33 22.87 59.31 59.1 27.37 19.37 54.23 54.12
+- √ 56.07 33.83 68.04 56.32 30.6 20.3 60.44 53.21 34.8 22.23 55.19 49.68
+√ √ 56.37 39.77 68.09 67.88 30.6 23.87 60.44 60.22 34.8 25.3 55.19 55.09
+Table 2: Ablation results of PokeMQA and its variants in terms of Hop-Acc. We also provide the results in terms of
+Acc. in Appendix A.
+/uni00000013 /uni00000018/uni00000013/uni00000013 /uni00000014/uni00000013/uni00000013/uni00000013 /uni00000014/uni00000018/uni00000013/uni00000013 /uni00000015/uni00000013/uni00000013/uni00000013 /uni00000015/uni00000018/uni00000013/uni00000013 /uni00000016/uni00000013/uni00000013/uni00000013
+/uni00000036/uni0000004c/uni0000005d/uni00000048/uni00000003/uni00000052/uni00000049/uni00000003/uni00000028/uni00000047/uni0000004c/uni00000057/uni00000003/uni00000025/uni00000044/uni00000057/uni00000046/uni0000004b
+/uni00000016/uni00000013
+/uni00000016/uni00000018
+/uni00000017/uni00000013
+/uni00000017/uni00000018
+/uni00000018/uni00000013
+/uni00000018/uni00000018
+/uni0000002b/uni00000052/uni00000053/uni00000010/uni00000024/uni00000046/uni00000046/uni00000003/uni0000000b/uni00000008/uni0000000c
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024/uni00000003/uni0000005a/uni00000012/uni00000052/uni00000003M
+dis
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024/uni00000003/uni0000005a/uni00000012/uni00000052/uni00000003M
+gen
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024/uni00000003/uni0000005a/uni00000012/uni00000052/uni00000003M
+gen
+, M
+dis
+/uni00000015/uni00000010/uni0000004b/uni00000052/uni00000053 /uni00000016/uni00000010/uni0000004b/uni00000052/uni00000053 /uni00000017/uni00000010/uni0000004b/uni00000052/uni00000053
+/uni00000013
+/uni00000014/uni00000013
+/uni00000015/uni00000013
+/uni00000016/uni00000013
+/uni00000017/uni00000013
+/uni00000018/uni00000013
+/uni00000019/uni00000013
+/uni0000001a/uni00000013
+/uni00000024/uni00000046/uni00000046/uni00000011/uni00000003/uni0000000b/uni00000008/uni0000000c
+/uni00000029/uni00000037
+/uni00000030/uni00000028/uni00000030/uni0000002c/uni00000037
+/uni00000030/uni00000048/uni0000002f/uni0000002f/uni00000052
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024
+/uni00000015/uni00000010/uni0000004b/uni00000052/uni00000053 /uni00000016/uni00000010/uni0000004b/uni00000052/uni00000053 /uni00000017/uni00000010/uni0000004b/uni00000052/uni00000053
+/uni00000013
+/uni00000014/uni00000013
+/uni00000015/uni00000013
+/uni00000016/uni00000013
+/uni00000017/uni00000013
+/uni00000018/uni00000013
+/uni00000019/uni00000013
+/uni0000002b/uni00000052/uni00000053/uni00000010/uni00000024/uni00000046/uni00000046/uni00000003/uni0000000b/uni00000008/uni0000000c
+/uni00000029/uni00000037
+/uni00000030/uni00000028/uni00000030/uni0000002c/uni00000037
+/uni00000030/uni00000048/uni0000002f/uni0000002f/uni00000052
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024
+Figure 3: Left: Hop-Acc across multiple variants of PokeMQA with varying size of edit batch, utilizing GPT-
+3.5-turbo-instruct as the base language model on MQUAKE-CF-3K. Middle, Right: On MQUAKE-CF-3K, Acc.
+and Hop-Acc results for 2,3,4-hop questions, utilizing different knowledge editing methods. The experiments is
+conducted on LLaMa-2-7B with the size of edit batch is 1. Extra results is provided in Appendix A.
+The results are shown in Table 2 and Figure 3 (Left).
+Based on the experimental results, we find that the
+two components indeed enhance PokeMQA and
+summarize two conclusive findings as follows:
+Use Mgen selectively. As shown in Table 2, Fig-
+ure 3 (Left), the knowledge prompt generatorMgen
+improves PokeMQA performance in almost all set-
+tings. Although the above results verify its effec-
+tiveness, we have to point out that the performance
+gain is much more significant in MQUAKE-CF-3K
+compared to MQUAKE-T. Our view is that this is
+because MQUAKE-T is constructed based on real
+fact updates in recent years, so the key entity in
+the input question may be familiar to the latest pre-
+trained LLMs. Consequently, they can recognize
+the key entity and access entity-related knowledge
+relatively easily, even without additional contex-
+tual information. Due to the extra computation cost
+of Mgen, we recommend using Mgen selectively
+depending on the specific application.
+Mdis is indispensable for large-scale editing. As
+shown in Table 2, Figure 3 (Left), Mdis can bring
+more performance gains when edit batch size is
+larger. Meanwhile, we calculate the average num-
+ber of predictions of Mdis (2.746 in MQUAKE-CF-
+3K and 4.565 in MQUAKE-T both on LLaMa-2-
+7B when the size of edit batch is all). The results
+indicate that by incorporating the Mdis, a tiny addi-
+tional number of predictions greatly boosts MQA
+performance under large edit batch. We conclude
+that Mdis can greatly enhance the robustness of
+PokeMQA to large-scale editing with almost no ad-
+ditional computational cost, which is indispensable
+to maintain the applicability of PokeMQA in real
+scenarios.
+6 Related Work
+Knowledge editing methods. Knowledge editing
+focuses on updating factual knowledge to language
+models and a lot of related research has been car-
+ried out. Most of these methods predict updates
+to the weights of the base model by knowledge
+locating or meta-learning and then locally mod-
+ify parameters (Mitchell et al., 2021, Meng et al.,
+2022b). Another part preserves parameters and ex-
+plicitly stores edit instances (Mitchell et al., 2022,
+Zhong et al., 2023). Recent work has identified
+the limitations of existing editing methods through
+theoretical analysis (Hase et al., 2023) and perfor-
+mance evaluation (Onoe et al., 2023). Our work
+focuses on addressing one of these challenging
+tasks: MQA under knowledge editing scenarios.
+7 Conclusion
+In this work, we propose a novel programmable
+knowledge editing method (PokeMQA) to improve
+MQA performance and address unreliable reason-
+ing. PokeMQA leverages a scope detector to align
+LLMs’ behavior with edited facts and incorporates
+auxiliary knowledge prompt to enrich contextual
+
+[[page 9]]
+information. Extensive experiments across three
+LLMs show that PokeMQA helps LLMs answer
+multi-hop questions in a precise and reliable way.
+Limitations
+In this work, we did not design a task-specific archi-
+tecture for the scope detector to achieve higher fact
+retrieval accuracy and mitigate the pressure that
+the context length imposes on the LLMs reason-
+ing capabilities when handling complex multi-hop
+questions.
+Besides, although memory-based editing shows
+great potential for controlled editing and large-
+scale editing, the way it stores edit instances makes
+it extremely vulnerable to attacks such as memory
+injection. Therefore, memory-based editing needs
+to be supported by reliable security technology to
+reduce its risk in real scenarios.
+References
+Tom Brown, Benjamin Mann, Nick Ryder, Melanie
+Subbiah, Jared D Kaplan, Prafulla Dhariwal, Arvind
+Neelakantan, Pranav Shyam, Girish Sastry, Amanda
+Askell, et al. 2020. Language models are few-shot
+learners. Advances in neural information processing
+systems, 33:1877–1901.
+Huiyuan Chen, Xiaoting Li, Kaixiong Zhou, Xia Hu,
+Chin-Chia Michael Yeh, Yan Zheng, and Hao Yang.
+2022. Tinykg: Memory-efficient training framework
+for knowledge graph neural recommender systems.
+In Proceedings of the 16th ACM Conference on Rec-
+ommender Systems, RecSys ’22. ACM.
+Jifan Chen, Shih-ting Lin, and Greg Durrett. 2019.
+Multi-hop question answering via reasoning chains.
+arXiv preprint arXiv:1910.02610.
+Wei-Lin Chiang, Zhuohan Li, Zi Lin, Ying Sheng,
+Zhanghao Wu, Hao Zhang, Lianmin Zheng, Siyuan
+Zhuang, Yonghao Zhuang, Joseph E. Gonzalez, Ion
+Stoica, and Eric P. Xing. 2023. Vicuna: An open-
+source chatbot impressing gpt-4 with 90%* chatgpt
+quality.
+Yu-Neng Chuang, Guanchu Wang, Chia-Yuan Chang,
+Kwei-Herng Lai, Daochen Zha, Ruixiang Tang, Fan
+Yang, Alfredo Costilla Reyes, Kaixiong Zhou, Xi-
+aoqian Jiang, and Xia Hu. 2023. Discoverpath: A
+knowledge refinement and retrieval system for inter-
+disciplinarity on biomedical research.
+Nicola De Cao, Wilker Aziz, and Ivan Titov. 2021. Edit-
+ing factual knowledge in language models. arXiv
+preprint arXiv:2104.08164.
+Peter Hase, Mohit Bansal, Been Kim, and Asma Ghan-
+deharioun. 2023. Does localization inform editing?
+surprising differences in causality-based localization
+vs. knowledge editing in language models. arXiv
+preprint arXiv:2301.04213.
+Muhammad Khalifa, Lajanugen Logeswaran, Moon-
+tae Lee, Honglak Lee, and Lu Wang. 2023. Few-
+shot reranking for multi-hop qa via language model
+prompting. In Proceedings of the 61st Annual Meet-
+ing of the Association for Computational Linguistics
+(V olume 1: Long Papers), pages 15882–15897.
+Tushar Khot, Harsh Trivedi, Matthew Finlayson, Yao
+Fu, Kyle Richardson, Peter Clark, and Ashish Sab-
+harwal. 2022. Decomposed prompting: A modular
+approach for solving complex tasks. arXiv preprint
+arXiv:2210.02406.
+Diederik P Kingma and Jimmy Ba. 2014. Adam: A
+method for stochastic optimization. arXiv preprint
+arXiv:1412.6980.
+Yunshi Lan, Gaole He, Jinhao Jiang, Jing Jiang,
+Wayne Xin Zhao, and Ji-Rong Wen. 2021. A sur-
+vey on complex knowledge base question answering:
+Methods, challenges and solutions. arXiv preprint
+arXiv:2105.11644.
+Belinda Z Li, Sewon Min, Srinivasan Iyer, Yashar
+Mehdad, and Wen-tau Yih. 2020. Efficient one-
+pass end-to-end entity linking for questions. arXiv
+preprint arXiv:2010.02413.
+Gang Liu and Jiabao Guo. 2019. Bidirectional lstm
+with attention mechanism and convolutional layer for
+text classification. Neurocomputing, 337:325–338.
+Zirui Liu, Guanchu Wang, Shaochen Zhong, Zhaozhuo
+Xu, Daochen Zha, Ruixiang Tang, Zhimeng Jiang,
+Kaixiong Zhou, Vipin Chaudhary, Shuai Xu, and Xia
+Hu. 2023. Winner-take-all column row sampling for
+memory efficient adaptation of language model.
+Zhibin Lu, Pan Du, and Jian-Yun Nie. 2020. Vgcn-bert:
+augmenting bert with graph embedding for text classi-
+fication. In Advances in Information Retrieval: 42nd
+European Conference on IR Research, ECIR 2020,
+Lisbon, Portugal, April 14–17, 2020, Proceedings,
+Part I 42, pages 369–382. Springer.
+Vaibhav Mavi, Anubhav Jangra, and Adam Jatowt. 2022.
+A survey on multi-hop question answering and gen-
+eration. arXiv preprint arXiv:2204.09140.
+Kevin Meng, David Bau, Alex Andonian, and Yonatan
+Belinkov. 2022a. Locating and editing factual as-
+sociations in gpt. Advances in Neural Information
+Processing Systems, 35:17359–17372.
+Kevin Meng, Arnab Sen Sharma, Alex Andonian,
+Yonatan Belinkov, and David Bau. 2022b. Mass-
+editing memory in a transformer. arXiv preprint
+arXiv:2210.07229.
+Tomas Mikolov, Ilya Sutskever, Kai Chen, Greg S Cor-
+rado, and Jeff Dean. 2013. Distributed representa-
+tions of words and phrases and their compositionality.
+Advances in neural information processing systems ,
+26.
+
+[[page 10]]
+Eric Mitchell, Charles Lin, Antoine Bosselut, Chelsea
+Finn, and Christopher D Manning. 2021. Fast model
+editing at scale. arXiv preprint arXiv:2110.11309.
+Eric Mitchell, Charles Lin, Antoine Bosselut, Christo-
+pher D Manning, and Chelsea Finn. 2022. Memory-
+based model editing at scale. In International Con-
+ference on Machine Learning, pages 15817–15831.
+PMLR.
+Yasumasa Onoe, Michael JQ Zhang, Shankar Padman-
+abhan, Greg Durrett, and Eunsol Choi. 2023. Can
+lms learn new entities from descriptions? challenges
+in propagating injected knowledge. arXiv preprint
+arXiv:2305.01651.
+Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida,
+Carroll Wainwright, Pamela Mishkin, Chong Zhang,
+Sandhini Agarwal, Katarina Slama, Alex Ray, et al.
+2022. Training language models to follow instruc-
+tions with human feedback. Advances in Neural
+Information Processing Systems, 35:27730–27744.
+Van L Parsons. 2014. Stratified sampling. Wiley Stat-
+sRef: Statistics Reference Online , pages 1–11.
+Ofir Press, Muru Zhang, Sewon Min, Ludwig Schmidt,
+Noah A Smith, and Mike Lewis. 2022. Measuring
+and narrowing the compositionality gap in language
+models. arXiv preprint arXiv:2210.03350.
+Dattaraj J Rao, Shraddha S Mane, and Mukta A Pali-
+wal. 2022. Biomedical multi-hop question answering
+using knowledge graph embeddings and language
+models. arXiv preprint arXiv:2211.05351.
+Victor Sanh, Lysandre Debut, Julien Chaumond, and
+Thomas Wolf. 2019. Distilbert, a distilled version
+of bert: smaller, faster, cheaper and lighter. arXiv
+preprint arXiv:1910.01108.
+Anton Sinitsin, Vsevolod Plokhotnyuk, Dmitriy Pyrkin,
+Sergei Popov, and Artem Babenko. 2020. Editable
+neural networks. arXiv preprint arXiv:2004.00345.
+Hugo Touvron, Louis Martin, Kevin Stone, Peter Al-
+bert, Amjad Almahairi, Yasmine Babaei, Nikolay
+Bashlykov, Soumya Batra, Prajjwal Bhargava, Shruti
+Bhosale, et al. 2023. Llama 2: Open founda-
+tion and fine-tuned chat models. arXiv preprint
+arXiv:2307.09288.
+Denny Vrandeˇci´c and Markus Krötzsch. 2014. Wiki-
+data: a free collaborative knowledgebase. Communi-
+cations of the ACM, 57(10):78–85.
+Peng Wang, Ningyu Zhang, Xin Xie, Yunzhi Yao,
+Bozhong Tian, Mengru Wang, Zekun Xi, Siyuan
+Cheng, Kangwei Liu, Guozhou Zheng, et al. 2023.
+Easyedit: An easy-to-use knowledge editing frame-
+work for large language models. arXiv preprint
+arXiv:2308.07269.
+Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten
+Bosma, Fei Xia, Ed Chi, Quoc V Le, Denny Zhou,
+et al. 2022. Chain-of-thought prompting elicits rea-
+soning in large language models. Advances in Neural
+Information Processing Systems, 35:24824–24837.
+Thomas Wolf, Lysandre Debut, Victor Sanh, Julien
+Chaumond, Clement Delangue, Anthony Moi, Pier-
+ric Cistac, Tim Rault, Remi Louf, Morgan Funtow-
+icz, Joe Davison, Sam Shleifer, Patrick von Platen,
+Clara Ma, Yacine Jernite, Julien Plu, Canwen Xu,
+Teven Le Scao, Sylvain Gugger, Mariama Drame,
+Quentin Lhoest, and Alexander Rush. 2020. Trans-
+formers: State-of-the-art natural language processing.
+In Proceedings of the 2020 Conference on Empirical
+Methods in Natural Language Processing: System
+Demonstrations, pages 38–45, Online. Association
+for Computational Linguistics.
+Zhaozhuo Xu, Zirui Liu, Beidi Chen, Yuxin Tang, Jue
+Wang, Kaixiong Zhou, Xia Hu, and Anshumali Shri-
+vastava. 2023. Compress, then prompt: Improving
+accuracy-efficiency trade-off of llm inference with
+transferable prompt.
+Yuan Yao, Lorenzo Rosasco, and Andrea Caponnetto.
+2007. On early stopping in gradient descent learning.
+Constructive Approximation, 26:289–315.
+Daochen Zha, Kwei-Herng Lai, Kaixiong Zhou, and
+Xia Hu. 2022. Towards similarity-aware time-series
+classification. CoRR, abs/2201.01413.
+Ce Zheng, Lei Li, Qingxiu Dong, Yuxuan Fan, Zhiyong
+Wu, Jingjing Xu, and Baobao Chang. 2023a. Can we
+edit factual knowledge by in-context learning? arXiv
+preprint arXiv:2305.12740.
+Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan
+Zhuang, Zhanghao Wu, Yonghao Zhuang, Zi Lin,
+Zhuohan Li, Dacheng Li, Eric. P Xing, Hao Zhang,
+Joseph E. Gonzalez, and Ion Stoica. 2023b. Judging
+llm-as-a-judge with mt-bench and chatbot arena.
+Zexuan Zhong, Zhengxuan Wu, Christopher D. Man-
+ning, Christopher Potts, and Danqi Chen. 2023.
+Mquake: Assessing knowledge editing in language
+models via multi-hop questions.
+Chen Zhu, Ankit Singh Rawat, Manzil Zaheer, Srinadh
+Bhojanapalli, Daliang Li, Felix Yu, and Sanjiv Kumar.
+2020. Modifying memories in transformer models.
+arXiv preprint arXiv:2012.00363.
+A Prompt & Supplement Results for
+PokeMQA
+A demonstration example used in prompt is shown
+in Table 5. The supplement ablation results are
+shown in Table 6 and Figure 4.
+B Details of Training Dataset
+Construction
+To train our scope detector, including pre-detector
+gϕ and conflict disambiguator gψ, we construct a
+training datasetD. Specifically, we first extract edit
+triples from MQUAKE-CF and filter out the part
+sharing the same (s, r) with fact triples appeared
+
+[[page 11]]
+in MQUAKE-CF-3K and MQUAKE-T, construct-
+ing a edit dataset De ={e1, . . . , en}. Then we
+use manually-defined template to convert each edit
+triple e into a natural language statement s and
+get a edit statement datasetDstate ={t1, . . . , tn}.
+Finally we design a prompt consisting of instruc-
+tion and demonstrations (shown in Table 7) and
+prompt Vicuna-13B (Chiang et al., 2023) to gen-
+erate three diversely phrased atomic questions
+for each s∈ Dstate, building a training dataset
+D ={(t1, q1) , . . . ,(tn, qn)}. It should be noted
+that when computingSR and BR, or sampling neg-
+ative instances, instances with the same statement
+t should not be considered.
+C Multi-hop Question Answering Dataset
+Statistics
+Table 3 contains the statistics for the two bench-
+mark datasets used in our experiments.
+#Edits 2-hop 3-hop 4-hop Total
+1 513 356 224 1093
+2 487 334 246 1067
+MQUAKE-CF-3K 3 - 310 262 572
+4 - - 268 268
+All 1000 1000 1000 3000
+MQUAKE-T 1 (All) 1421 445 2 1868
+Table 3: Statistics of datasets used in experiments
+Besides, there are 2786 different edits for
+MQUAKE-CF-3k and 96 different edits for
+MQUAKE-T when the size of edit batch is all.
+D Details about Scope Detector finetuning
+We finetune the pre-detector gϕ and conflict dis-
+ambiguator gψ based on DistilBERT (Sanh et al.,
+2019) and the checkpoint is distilbert-base-cased
+from Huggingface Transformers library (Wolf et al.,
+2020). We take SR + BR− 1 as the indicator of
+early stopping.
+To fine-tune pre-detector gϕ, the learning rate
+is set as 1e−5 with Adam optimizer (Kingma and
+Ba, 2014), the batch size is set as 1024, and the
+number of negative samples is 20; To fine-tune
+conflict disambiguator gψ, the learning rate is set
+as 1e−5 with Adam optimizer, the batch size is set
+as 256 and the number of negative samples is 1.
+And the dataset split is 80%/20% for training and
+validation, without the need of testing.
+E Implementation Details of Baselines
+In our experiments, the parameter updating knowl-
+edge editing methods, including FT, ROME
+and MEMIT is implemented by EasyEdit library
+(Wang et al., 2023). We basically follow the de-
+fault hyperparameter settings on LLaMa-2-7B in
+library, and make a slight adjustment to ensure the
+effectiveness of these methods in different exper-
+imental settings. We modify the learning rate for
+ROME and target editing layer for MEMIT, the
+detailed modifications is shown in Table 4.
+MQUAKE-CF-3K MQUAKE-T
+Method 1 edited 100 edited All edited 1 edited All edited
+ROME 5e−1 5e−5 5e−6 5e−1 1.5e−1
+MEMIT 4,5,6,7,8 5,6,7 7 4,5,6,7,8 4,5,6,7,8
+Table 4: Detailed hyperparameter modification for
+ROME and MEMIT.
+F Two-stage edited fact Retrieval
+Algorithm 1 Two-stage Edited Fact Retrieval.
+Input: edited memoryM, pre-detector gϕ, con-
+flict disambiguator gψ, atomic question q
+1: Initialize candidate setZ = ∅
+2: Initialize final setF = ∅
+3: /* Pre-detection stage */
+4: for all ti∈M do
+5: if gϕ(ti, q)≥ 0.5 thenZ =Z S{ti}
+6: end for
+7: if|C| = 1 then
+8: return ti∗, where ti∗∈Z
+9: end if
+10: /* Conflict-disambiguation stage */
+11: for all ti∈C do
+12: if gψ(ti, q)≥ 0.5 thenF =F S{ti}
+13: end for
+14: ifF̸ = ∅ then
+15: return ti∗, where i∗ = arg maxi gψ(ti, q),
+ti∈F
+16: end if
+G Licensing
+Vicuna-7B (v1.1) and distilbert-base-cased are re-
+leased under the Apache License 2.0. LLaMa-2-
+7B is licensed under the LLAMA 2 Community
+License. ELQ, ROME, MEMIT, FT are released
+under the MIT license.
+H Details about Experiments
+Because MQUAKE regard a chain of facts as
+an instance and there are three diversely phrased
+multi-hop questions Q for each instance, we follow
+
+[[page 12]]
+(Zhong et al., 2023), if any of the three questions
+is considered solved in terms of the specific metric,
+the instance is considered correct.
+The experiments, data, language models in the
+paper are all in English. We run all experiments on
+a machine with four NVIDIA A40 GPU. One run
+of our experiments takes about 15 GPU hours. For
+all experiments, we use greedy decoding strategy
+to get the output in text space of language models
+for reproducibility and report a single run result
+due to the limited computational resources.
+I Shortcut Reasoning
+Given an example from Table 8, although MeLLo
+appears to successfully combine two facts to arrive
+at the final answer, its reasoning process does not
+adhere to the task logic demonstrated in the prompt,
+which can be regarded as an underfitting to question
+decomposition.
+
+[[page 13]]
+Question: What is the capital city of the country of citizenship of Ivanka Trump’s spouse?
+Entity of Question: Ivanka Trump, a human.
+Subquestion: Who is Ivanka Trump’s spouse?
+Generated answer: Ivanka Trump’s spouse is Jared Kushner.
+According to Generated answer, the entity of Subquestion is: Jared Kushner
+Subquestion: What is the country of citizenship of Jared Kushner?
+Generated answer: Jared Kushner is a citizen of Canada.
+According to Generated answer, the entity of Subquestion is: Canada
+Subquestion: What is the capital city of Canada?
+Generated answer: The capital city of Canada is Ottawa.
+According to Generated answer, the entity of Subquestion is: Ottawa
+Final answer: Ottawa
+Table 5: A in-context demonstration example used in our PokeMQA prompt, here we omit the remaining three
+demonstrations. This color indicate that this part is constructed after being retrieved by knowledge prompt generator
+from external knowledge base. This color indicate that this part is retrieved by scope detector from external memory.
+GPT-3.5-turbo-instruct LLaMa-2-7B Vicuna-7B
+Mdis Mgen MQUAKE-CF-3K MQUAKE-T MQUAKE-CF-3K MQUAKE-T MQUAKE-CF-3K MQUAKE-T
+1 edited All edited 1 edited All edited 1 edited All edited 1 edited All edited 1 edited All edited 1 edited All edited
+- - 62.6 38.63 76.87 65.63 44.07 28.13 74.68 65.90 44.03 26.27 73.72 66.27
+√ - 62.47 43.23 77.09 78.53 44.0 32.3 74.68 73.82 44.03 29.87 73.72 72.38
+- √ 67.13 40.93 76.93 66.06 44.17 28.17 75.43 66.6 45.9 28.2 74.57 67.29
+√ √ 67.27 45.87 76.98 78.16 44.13 32.83 75.43 74.36 45.83 31.63 74.57 73.07
+Table 6: Ablation study results of PokeMQA and its variants in terms of Acc.
+/uni00000013 /uni00000018/uni00000013/uni00000013 /uni00000014/uni00000013/uni00000013/uni00000013 /uni00000014/uni00000018/uni00000013/uni00000013 /uni00000015/uni00000013/uni00000013/uni00000013 /uni00000015/uni00000018/uni00000013/uni00000013 /uni00000016/uni00000013/uni00000013/uni00000013
+/uni00000036/uni0000004c/uni0000005d/uni00000048/uni00000003/uni00000052/uni00000049/uni00000003/uni00000028/uni00000047/uni0000004c/uni00000057/uni00000003/uni00000025/uni00000044/uni00000057/uni00000046/uni0000004b
+/uni00000017/uni00000013
+/uni00000017/uni00000018
+/uni00000018/uni00000013
+/uni00000018/uni00000018
+/uni00000019/uni00000013
+/uni00000019/uni00000018
+/uni00000024/uni00000046/uni00000046/uni00000011/uni00000003/uni0000000b/uni00000008/uni0000000c
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024/uni00000003/uni0000005a/uni00000012/uni00000052/uni00000003M
+dis
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024/uni00000003/uni0000005a/uni00000012/uni00000052/uni00000003M
+gen
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024/uni00000003/uni0000005a/uni00000012/uni00000052/uni00000003M
+gen
+, M
+dis
+(a) GPT-3.5-turbo-instruct (Acc.)
+/uni00000013 /uni00000018/uni00000013/uni00000013 /uni00000014/uni00000013/uni00000013/uni00000013 /uni00000014/uni00000018/uni00000013/uni00000013 /uni00000015/uni00000013/uni00000013/uni00000013 /uni00000015/uni00000018/uni00000013/uni00000013 /uni00000016/uni00000013/uni00000013/uni00000013
+/uni00000036/uni0000004c/uni0000005d/uni00000048/uni00000003/uni00000052/uni00000049/uni00000003/uni00000028/uni00000047/uni0000004c/uni00000057/uni00000003/uni00000025/uni00000044/uni00000057/uni00000046/uni0000004b
+/uni00000015/uni00000013
+/uni00000015/uni00000015
+/uni00000015/uni00000017
+/uni00000015/uni00000019
+/uni00000015/uni0000001b
+/uni00000016/uni00000013
+/uni0000002b/uni00000052/uni00000053/uni00000010/uni00000024/uni00000046/uni00000046/uni00000003/uni0000000b/uni00000008/uni0000000c
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024/uni00000003/uni0000005a/uni00000012/uni00000052/uni00000003M
+dis
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024/uni00000003/uni0000005a/uni00000012/uni00000052/uni00000003M
+gen
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024/uni00000003/uni0000005a/uni00000012/uni00000052/uni00000003M
+gen
+, M
+dis (b) LLaMa-2-7B (Hop-Acc)
+/uni00000013 /uni00000018/uni00000013/uni00000013 /uni00000014/uni00000013/uni00000013/uni00000013 /uni00000014/uni00000018/uni00000013/uni00000013 /uni00000015/uni00000013/uni00000013/uni00000013 /uni00000015/uni00000018/uni00000013/uni00000013 /uni00000016/uni00000013/uni00000013/uni00000013
+/uni00000036/uni0000004c/uni0000005d/uni00000048/uni00000003/uni00000052/uni00000049/uni00000003/uni00000028/uni00000047/uni0000004c/uni00000057/uni00000003/uni00000025/uni00000044/uni00000057/uni00000046/uni0000004b
+/uni00000015/uni0000001b
+/uni00000016/uni00000013
+/uni00000016/uni00000015
+/uni00000016/uni00000017
+/uni00000016/uni00000019
+/uni00000016/uni0000001b
+/uni00000017/uni00000013
+/uni00000017/uni00000015
+/uni00000017/uni00000017
+/uni00000024/uni00000046/uni00000046/uni00000011/uni00000003/uni0000000b/uni00000008/uni0000000c
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024/uni00000003/uni0000005a/uni00000012/uni00000052/uni00000003M
+dis
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024/uni00000003/uni0000005a/uni00000012/uni00000052/uni00000003M
+gen
+/uni00000033/uni00000052/uni0000004e/uni00000048/uni00000030/uni00000034/uni00000024/uni00000003/uni0000005a/uni00000012/uni00000052/uni00000003M
+gen
+, M
+dis (c) LLaMa-2-7B (Acc.)
+Figure 4: Hop-Acc and Acc. across multiple variants of PokeMQA in MQUAKE-CF-3K on GPT-3.5-turbo-instruct
+and LLaMa-2-7B with edit batches of different sizes.
+
+[[page 14]]
+Please generate three different phrased Questions for each fact
+Fact: The univeristy where Bob Dylan was educated is University of Minnesota.
+Question 1: What is the name of the educational institution where Bob Dylan studied?
+Question 2: What is the name of the university where Bob Dylan was educated?
+Question 3: At which university did Bob Dylan receive his education?
+Fact: The capital of United Kingdom is Angri.
+Question 1: What is the name of the capital city of United Kingdom?
+Question 2: Which city serves as the capital of United Kingdom?
+Question 3: In which city is the capital of United Kingdom located?
+Fact: basketball was created in the country of Spain.
+Question 1: Where is basketball originated from?
+Question 2: What is the name of the country of origin of basketball?
+Question 3: Where did the sport of basketball originate?
+Fact: John Coltrane is married to Anne Hathaway.
+Question 1: Who is John Coltrane’s spouse?
+Question 2: To whom is John Coltrane married?
+Question 3: Which person is married to John Coltrane?
+Fact: Miranda Kerr is a citizen of Australia.
+Question 1: Which country is Miranda Kerr a citizen of?
+Question 2: What is the name of the country that Miranda Kerr belongs to?
+Question 3: What is Miranda Kerr’s nationality?
+Table 7: The rephrased question generation prompt we used for dataset construction. The prompt contains one
+instruction and some in-context demonstrations.
+Question: What is the name of the current head of state of Buckcherry’s country of origin?
+Subquestion: What is the country of origin of the band Buckcherry?
+Generated answer: Buckcherry’s country of origin is United States of America.
+Retrieved fact: The name of the current head of state in United States of America is Joe Biden.
+Retrieved fact does not contradict to generated answer, so the intermediate answer is: Joe Biden
+Final answer: Joe Biden
+Table 8: An example of shortcut reasoning that occurs in the inference process of GPT-3.5-turbo-instruct.

@@ -1,0 +1,23 @@
+{
+  "id": "C001",
+  "statement": "SG-RAG MOT retrieves a subgraph from the knowledge graph using Cypher queries and applies a Merging and Ordering Triplets (MOT) step to reduce redundancy in retrieved triplets and order them via Breadth First Search traversal.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "doi:10.20944/preprints202505.1992.v1",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "SG-RAG leverages Cypher queries to search the given knowledge graph and retrieve the necessary subgraph to answer the question. The results from our previous work showed a higher performance of our method compared to the traditional Retrieval Augmented Generation (RAG). In this work, we further enhance SG-RAG by proposing an additional step called Merging and Ordering Triplets (MOT). The new MOT step seeks to decrease the redundancy in the retrieved triplets by applying hierarchical merging on the retrieved subgraphs. Moreover, it provides an ordering among the triplets using the Breadth First Search (BFS) traversal algorithm.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "high",
+  "phase": "critique",
+  "tags": [
+    "closest work",
+    "subgraph retrieval"
+  ],
+  "recorded_at": "2026-09-30T05:57:06.387358Z"
+}

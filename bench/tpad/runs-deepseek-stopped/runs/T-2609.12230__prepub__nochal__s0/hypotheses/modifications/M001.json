@@ -1,0 +1,37 @@
+{
+  "id": "M001",
+  "title": "Make the matched-budget context-relevance ablation the primary experiment, executed in gated stages",
+  "description": "Restructure the contribution around an inference-isolating factorial design, executed in explicit stages so no claim depends on an unverified component. Stage 1 (primary): one base model and one KG, arms with matched example counts, matched total supervision tokens, matched prompt template and matched optimization steps — (A) isolated triple/path; (B) target + passage-derived context triples; (C) target + an equal-length set of irrelevant/random triples; (D) target + relevance-selected context triples at the same token count as B; primary contrast B vs. C, with A vs. C as the extra-context manipulation check and a no-fine-tuning LLM reference. Stage 2 (conditional): only if Stage 1 shows a context effect, add error-type attribution and targeted repair (M003) as an ablation on top of the frozen Stage-1 winner, reporting per-type repair rates. Stage 3 (deferred, separately reported): the lower-hop RL extension, evaluated only if Stage 1 or 2 leaves a hop-transfer gap that supervised fine-tuning on lower-hop data does not close. Each stage is reported as its own result, so a null Stage 1 does not invalidate the diagnostic output of Stage 2.",
+  "why_differs": "DrKGC warns about long-context noise but treats subgraph compactness as a design choice with no matched control; SG-RAG MOT varies context scope without a no-context or equal-length-irrelevant arm; the IKG/KGSweetSpot study compares triple vs. path representations and relevance filtering only in prompts for multiple-choice QA, with no training and no budget matching. Unlike the original bundled proposal, this version never tests three unverified components at once, so no reported claim depends on the repair loop or RL stage working.",
+  "technical_mechanism": "Keep the supervision pipeline unchanged; only vary what accompanies each target triple/path. For each target, materialise four context versions with identical serialization and token counts. Enforce matched example counts and matched total supervision tokens by truncating or padding the context field (padding drawn from the irrelevant pool for arm C), and log exact token counts per arm. Run Stage 1 to completion first; only if the primary contrast is positive, freeze that configuration and layer error-type-attributed repair (Stage 2), then the lower-hop RL extension (Stage 3). Analyse Stage 1 as a within-example paired comparison across arms plus a between-seed variance estimate.",
+  "expected_benefit": "Makes every claim attributable and removes the pipeline confound identified in U007: no single published claim depends on the repair loop or the RL stage, and each component's contribution is isolated by construction. It also guarantees a useful outcome even if the primary hypothesis fails (a clean matched-budget negative result plus an error-type diagnostic).",
+  "potential_novelty": "Hedged: the context family is crowded, so novelty is the matched-budget causal test with an equal-length irrelevant arm plus staged attribution in a training-time KGQA setting, not 'adding context'. A null or quantity-attributable result is itself a publishable negative finding.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "No new model components are needed for Stage 1 beyond an isolated-triple baseline that already exists; the work is mainly data construction and budget accounting. Stages 2-3 reuse already-proposed components (M003 and RL) and are gated on Stage-1 outcomes.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Stage 1 alone requires careful construction of the irrelevant-triple arm (length- and structure-matched but semantically unrelated), token accounting across arms, and multiple seeds; Stages 2-3 add perturbation harnesses and RL training but are conditional, so the cost is incurred only if earlier stages justify it.",
+  "main_risk": "The irrelevant-triple control may itself change behaviour (e.g. teach 'ignore context'), and exact token matching can force unnatural truncation. Gating Stage 2 on Stage 1 means the repair and RL contributions may never be tested if the context effect is null, which must be presented as a scope decision rather than a hidden omission.",
+  "required_baselines": [
+    "Isolated triple/path fine-tuning baseline (arm A)",
+    "Equal-length irrelevant/random-triples control (arm C)",
+    "Relevance-selected context at matched token count (arm D)",
+    "No-context zero-shot/few-shot LLM reference",
+    "DrKGC-style subgraph-conditioned fine-tuning",
+    "GNN-RAG-style retrieval-context LLM",
+    "NSM-style intermediate supervision (reproduced under the same budget)"
+  ],
+  "related_paper_ids": [
+    "doi:10.1109/ickg66886.2025.00020",
+    "arxiv:2506.00708",
+    "doi:10.20944/preprints202505.1992.v1",
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "arxiv:2307.03172",
+    "arxiv:2101.03737"
+  ],
+  "addresses_gap_ids": [
+    "G001",
+    "G002"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T05:30:35.549465Z"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "doi:10.3390/app15031088",
+  "title": "Enhancing In-Context Learning of Large Language Models for Knowledge Graph Reasoning via Rule-and-Reinforce Selected Triples",
+  "authors": [
+    "Shao-Fei Wang"
+  ],
+  "year": 2025,
+  "published": "2025-01-22",
+  "venue": "Applied Sciences",
+  "url": "https://www.semanticscholar.org/paper/45379c1e4b52c39928d0bad77e764bfd2636278f",
+  "pdf_url": "https://www.mdpi.com/2076-3417/15/3/1088/pdf?version=1737558130",
+  "abstract": "Knowledge graph (KG) reasoning aims to obtain new knowledge based on existing data. Utilizing large language models (LLMs) through in-context learning for KG reasoning has become a significant direction. However, existing methods mainly extract in-context triples by manually defined standards (such as the neighbors that are directly linked with the query triple), without considering whether they are useful for LLM reasoning. Furthermore, the triples beyond the neighbors can also provide important clues for reasoning. Therefore, it is necessary to extract more useful in-context triples of LLMs for KG reasoning. This paper proposes a rule-and-reinforce in-context triple extraction method to enhance the in-context learning of LLMs for KG reasoning. First, we collect the in-context triples specific to each query triple with the guidance of logical rules, and a neural extractor is pre-trained by the collected triples. Subsequently, the feedback of LLMs is collected as rewards to further optimize the extractor, where the policy gradient is utilized to encourage the extractor to explore more useful triples that yield higher rewards. The experimental results on five different knowledge graphs demonstrate that the proposed method can effectively improve the reasoning performance of LLMs. Compared to the traditional reasoning method AnyBURL, the greatest improvement is 0.147 on Hits@10, FB15k-237.",
+  "doi": "10.3390/app15031088",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "45379c1e4b52c39928d0bad77e764bfd2636278f",
+  "source": "semantic_scholar",
+  "sources": [
+    "crossref",
+    "semantic_scholar"
+  ],
+  "citation_count": 5,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T06:52:21.927515Z",
+  "relevance": 0.2632,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "local passage context triples knowledge graph"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

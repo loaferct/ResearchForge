@@ -1,0 +1,37 @@
+{
+  "questions": [
+    "Which existing methods are closest to training-time, context-subgraph-enriched supervision for multi-hop KGQA — subgraph retrieval/knowledge-augmented pretraining/graph-neural KGQA — and how much do they overlap?",
+    "Does the idea already exist under other terminology (subgraph-aware or neighborhood-aware KG embedding training, knowledge-graph-augmented LLM pretraining, contextualized fact supervision, query subgraph retrieval, intermediate/path supervision)?",
+    "Is the mechanism feasible: do standard multi-hop KGQA benchmarks (MetaQA, WebQSP, CWQ, HotpotQA) provide source-passage provenance linking triples to a shared passage, and if not, which text-grounded KGs do?",
+    "What is the correct baseline and evaluation methodology (datasets, KG versions, splits, Hits@1 vs EM/F1, hop-depth transfer protocol) that a controlled comparison must follow?",
+    "Does any accuracy gain from context enrichment survive matched controls for number of examples, supervision tokens, and template?",
+    "Does an adaptive one-hop-failure repair loop genuinely reduce base-fact errors, or does it amplify label noise / reward-hack the failure detector?",
+    "Does RL-based optimization on lower-hop instances transfer to deeper-hop queries, or overfit shallow path patterns?"
+  ],
+  "search_topics": [
+    "subgraph-aware / neighborhood-aware knowledge graph embedding training (R-GCN, CompGCN, NBFNet)",
+    "knowledge-graph-augmented language model pretraining and injection (ERNIE, K-BERT, KnowBert, KEPLER, KG-BERT, continual pretraining vs GraphRAG)",
+    "subgraph retrieval-augmented generation over KGs (DrKGC, GRAG, GNN-RAG, SG-RAG, Think-on-Graph, ToG-2)",
+    "query-subgraph / path-based multi-hop KGQA (EmbedKGQA, NSM/intermediate supervision, UniKGQA, QAGNN)",
+    "rejection sampling / self-training / iterative self-refinement / error-driven data augmentation (Self-Refine, STaR)",
+    "reinforcement learning for KGQA and multi-hop reasoning (DeepPath, MINERVA reward shaping, KG-Hopper, KG-Reasoner, GRPO-style objectives)",
+    "hop-length generalization / transfer in multi-hop reasoning and chain-of-thought",
+    "noise and incompleteness in knowledge graphs and robustness of KGQA to incorrect base facts",
+    "text-grounded knowledge graphs with passage provenance (HotpotQA supporting paragraphs, text-derived/temporal KGs)"
+  ],
+  "comparison_targets": [
+    "EmbedKGQA (Saxena et al. 2020) - embedding-based multi-hop KGQA",
+    "NSM / intermediate supervision (He et al. 2021) - path supervision for KGQA",
+    "UniKGQA (Jiang et al. 2022) - unified retrieval+reasoning",
+    "GNN-RAG (Mavromatis & Karypis 2025) - graph-neural retrieval for LLM KG reasoning",
+    "DrKGC (Xiao et al. 2025) - dynamic subgraph retrieval-augmented LLM for KG completion",
+    "GRAG (Hu et al. 2025) - graph retrieval-augmented generation",
+    "SG-RAG MOT (Saleh et al. 2025) - subgraph retrieval with merging/ordering of triplets",
+    "KG-Hopper / KG-Reasoner (Wang & Yu 2026) - RL for LLM KG reasoning",
+    "DeepPath (Xiong et al. 2017) and MINERVA/reward shaping (Das et al. 2018; Lin et al. 2018) - RL path reasoning",
+    "KagNet (Feng et al. 2020) - knowledge-aware QA over paths",
+    "KG-augmented LM pretraining baselines (ERNIE, K-BERT, KnowBert, KEPLER)",
+    "isolated-triple fine-tuning baseline (plain triple serialization, no context)"
+  ],
+  "recorded_at": "2026-09-30T05:10:43.266762Z"
+}

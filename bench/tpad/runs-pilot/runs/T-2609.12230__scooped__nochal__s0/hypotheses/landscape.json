@@ -1,0 +1,210 @@
+{
+  "field_name": "Multi-hop Knowledge Graph Question Answering with Language Models",
+  "categories": [
+    {
+      "name": "Language Model + Knowledge Graph Embedding",
+      "parent": null,
+      "description": "Approaches that combine pretrained language models for question understanding with knowledge graph embeddings for entity/relation representation.",
+      "paper_ids": [
+        "arxiv:2211.05351",
+        "arxiv:2110.12679"
+      ]
+    },
+    {
+      "name": "Explicit-Implicit Relational Chain Reasoning",
+      "parent": "Language Model + Knowledge Graph Embedding",
+      "description": "Methods that simultaneously leverage explicit relational chains from questions and implicit chains from knowledge graphs.",
+      "paper_ids": [
+        "arxiv:2110.12679"
+      ]
+    },
+    {
+      "name": "Retrieval-Augmented Generation (RAG)",
+      "parent": null,
+      "description": "Frameworks that retrieve relevant knowledge graph subgraphs or passages to augment language model generation for question answering.",
+      "paper_ids": [
+        "doi:10.1109/ikt65497.2024.10892619",
+        "arxiv:2507.13625"
+      ]
+    },
+    {
+      "name": "Dual-Graph Hybrid Retrieval",
+      "parent": "Retrieval-Augmented Generation (RAG)",
+      "description": "RAG systems that model both linguistic relationships and document structure for improved retrieval.",
+      "paper_ids": [
+        "arxiv:2507.13625"
+      ]
+    },
+    {
+      "name": "Graph-based Retrieval with Relation Embeddings",
+      "parent": "Retrieval-Augmented Generation (RAG)",
+      "description": "Methods that construct document-level knowledge graphs and use vector embeddings of graph relations for retrieval.",
+      "paper_ids": [
+        "doi:10.1109/ikt65497.2024.10892619"
+      ]
+    },
+    {
+      "name": "Question Decomposition",
+      "parent": null,
+      "description": "Approaches that break down complex multi-hop questions into simpler semantic components for easier processing.",
+      "paper_ids": [
+        "arxiv:2501.16350"
+      ]
+    },
+    {
+      "name": "Reasoning Network Architectures",
+      "parent": null,
+      "description": "Custom neural network designs specifically engineered for multi-hop reasoning over knowledge graphs.",
+      "paper_ids": [
+        "doi:10.1016/j.knosys.2022.108515",
+        "doi:10.1016/j.knosys.2026.115902"
+      ]
+    },
+    {
+      "name": "Unrestricted Multi-hop Reasoning Network",
+      "parent": "Reasoning Network Architectures",
+      "description": "Network designs that avoid restrictive neighborhood constraints for more flexible reasoning paths.",
+      "paper_ids": [
+        "doi:10.1016/j.knosys.2022.108515"
+      ]
+    },
+    {
+      "name": "Logic-adaptive Multi-source Reasoning Fusion",
+      "parent": "Reasoning Network Architectures",
+      "description": "Methods that fuse reasoning from multiple sources with adaptive logic mechanisms.",
+      "paper_ids": [
+        "doi:10.1016/j.knosys.2026.115902"
+      ]
+    },
+    {
+      "name": "Graph Convolutional Network-based Relation Classification",
+      "parent": null,
+      "description": "Approaches that use GCNs to improve relation classification for multi-hop KGQA.",
+      "paper_ids": [
+        "doi:10.1109/ialp63756.2024.10661134"
+      ]
+    },
+    {
+      "name": "Progressive Planning and Reinforced Reasoning",
+      "parent": null,
+      "description": "Frameworks that combine progressive planning strategies with reinforcement learning for LLM-guided reasoning.",
+      "paper_ids": [
+        "doi:10.18653/v1/2026.findings-acl.1147"
+      ]
+    }
+  ],
+  "idea_position": "Local Context Subgraph Enrichment with Adaptive Repair Loop",
+  "dominant_approaches": [
+    "Language Model + Knowledge Graph Embedding",
+    "Explicit-Implicit Relational Chain Reasoning",
+    "Retrieval-Augmented Generation (RAG)"
+  ],
+  "common_assumptions": [
+    "Language models can effectively encode natural language questions for KGQA tasks.",
+    "Knowledge graph embeddings capture semantic relations and can help overcome KG incompleteness.",
+    "Combining multiple sources of information (e.g., explicit and implicit chains, linguistic and structural features) improves reasoning performance.",
+    "Effective multi-hop QA requires modeling chains or paths of relations in the knowledge graph."
+  ],
+  "common_datasets": [
+    "MetaQA",
+    "Hetionet",
+    "WebQuestionsSP-tiny",
+    "Complex-WebQSP",
+    "Persian multi-hop question datasets",
+    "PeCoQ",
+    "Document-based KGQA datasets"
+  ],
+  "common_benchmarks": [
+    "MetaQA (1-hop, 2-hop, 3-hop)",
+    "WebQuestionsSP-tiny",
+    "Complex-WebQSP",
+    "PeCoQ",
+    "Custom domain-specific datasets (e.g., biomedical, construction safety)"
+  ],
+  "common_metrics": [
+    "hit@1",
+    "hit@5",
+    "hit@10",
+    "F1-score",
+    "precision",
+    "recall",
+    "accuracy",
+    "adjusted arithmetic mean rank"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Limited generalizability across different domains, datasets, or knowledge graph constructions.",
+      "paper_ids": [
+        "arxiv:2211.05351",
+        "arxiv:2110.12679",
+        "arxiv:2501.16350",
+        "doi:10.1109/ikt65497.2024.10892619"
+      ]
+    },
+    {
+      "description": "Dependence on the quality, completeness, and accuracy of the underlying knowledge graph.",
+      "paper_ids": [
+        "arxiv:2211.05351",
+        "arxiv:2110.12679",
+        "doi:10.1109/ikt65497.2024.10892619",
+        "arxiv:2507.13625"
+      ]
+    },
+    {
+      "description": "Computational complexity and memory constraints when reasoning over large knowledge graphs.",
+      "paper_ids": [
+        "arxiv:2110.12679",
+        "doi:10.1109/ikt65497.2024.10892619",
+        "arxiv:2508.15790"
+      ]
+    },
+    {
+      "description": "Limited explicit interpretability of the reasoning process in some neural approaches.",
+      "paper_ids": [
+        "arxiv:2110.12679",
+        "arxiv:2508.15790",
+        "doi:10.18653/v1/2026.findings-acl.1147"
+      ]
+    },
+    {
+      "description": "Challenges in handling noisy, conflicting, or missing information in knowledge graphs.",
+      "paper_ids": [
+        "arxiv:2211.05351",
+        "arxiv:2110.12679",
+        "doi:10.1016/j.knosys.2022.108515"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Enriching training triples with local context subgraphs from the same source passage",
+    "Adaptive repair loops that detect and correct one-hop failures in KGQA",
+    "Combining local context enrichment with reinforcement learning optimization",
+    "Transfer learning from lower-hop to higher-hop QA via RL-based optimization",
+    "Integrating context subgraph enrichment with explicit-implicit relational chain reasoning"
+  ],
+  "contradictions": [
+    {
+      "description": "Disagreement on the effectiveness of neighborhood constraints: some methods restrict reasoning to local subgraphs for efficiency (e.g., GraftNet, PullNet), while others argue unrestricted reasoning is necessary for interpretability and completeness.",
+      "paper_ids": [
+        "doi:10.1016/j.knosys.2022.108515",
+        "arxiv:2110.12679"
+      ]
+    },
+    {
+      "description": "Varying claims about the necessity of explicit relational chain annotations: some works require them for supervision, while others aim to work without expensive labeling.",
+      "paper_ids": [
+        "arxiv:2110.12679",
+        "arxiv:2501.16350"
+      ]
+    },
+    {
+      "description": "Different assumptions about what constitutes useful context: some focus on document-level graphs, others on passage-level subgraphs, and others on logical path construction.",
+      "paper_ids": [
+        "doi:10.1109/ikt65497.2024.10892619",
+        "arxiv:2508.15790",
+        "arxiv:2507.13625"
+      ]
+    }
+  ],
+  "recorded_at": "2026-09-30T06:41:42.131866Z"
+}

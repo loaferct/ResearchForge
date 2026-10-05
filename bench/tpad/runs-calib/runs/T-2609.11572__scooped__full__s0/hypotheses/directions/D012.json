@@ -1,0 +1,30 @@
+{
+  "id": "D012",
+  "direction": "Narrow the programme to a claim-matched, dual-scored point-in-time retrieval study on amended legal clauses: version identity (was the returned passage in force at the target date) adjudicates retrieval-level claims, and answer accuracy restricted to the answer-differential stratum adjudicates user-visible harm, with citation-validity failure and the screen pass rate reported alongside, prevalence kept as a swept assumption, and no single aggregate score. The framework contribution is repositioned from a new retrieval mechanism to an implemented version-level benchmark plus the comparative evidence on whether published recency decay suffices; the valid-time gate is retained as the mechanism arm, with recency decay as the published comparison arm.",
+  "hypothesis": "On near-duplicate amended legal clauses, a valid-time (as-of) gate reduces version-level point-in-time retrieval failures where recency decay does not, and the resulting reduction produces user-visible answer improvement only on the subset of queries whose answer differs between versions - so retrieval-level and content-level improvements must be reported and interpreted separately.",
+  "rationale": "Recorded after U039 was resolved: the evidence shows prior work reports citation-level and content-level outcomes side by side (a point-in-time system headlines accuracy while reporting leakage; legal analysis treats anachronistic citation as the characteristic failure), so a single aggregate would either overstate or obscure the effect and the scope must be fixed to claim-matched metrics. This narrowing follows from U038 (contamination rate is not an error rate) and U039 (the two definitions answer different questions), and it keeps the benchmark plus comparative evidence - the part of the contribution that survives the overlap findings in U017, U005 and U009 - while dropping the implication that a new retrieval mechanism is the contribution. The direction deserves investigation next because it is the only framing in which the remaining uncertainties are decidable: E003 measures whether contamination is non-trivial, E004 whether version-level metrics change conclusions, E009 whether contamination changes answers, and E006 whether the necessary corpus and power exist. Confidence is medium because the magnitudes are still unmeasured and depend on corpus availability (U003, U013, U034).",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": "D011",
+  "research_question": "What version-level point-in-time retrieval failure rates - and, on the answer-differential subset, what answer-accuracy differences - do sparse, dense and hybrid retrievers, including the published lexical+dense+recency-decay hybrid, exhibit on continuously amended legal text with near-duplicate successive clause versions, and does valid-time (as-of) gating reduce those failures where recency decay does not?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "doi:10.3390/sym18091498",
+    "arxiv:2606.09724",
+    "arxiv:2608.21409",
+    "doi:10.2139/ssrn.7174868",
+    "arxiv:2109.06157"
+  ],
+  "uncertainty_ids": [
+    "U039",
+    "U038",
+    "U033",
+    "U029",
+    "U025",
+    "U013",
+    "U017",
+    "U003",
+    "U034"
+  ],
+  "recorded_at": "2026-09-30T04:44:38.939192Z"
+}

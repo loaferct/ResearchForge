@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2212.00959",
+  "relevance_tier": "high",
+  "problem": "Existing multi-hop KGQA methods use a two-stage approach (retrieval then reasoning) with separate models for retrieval and reasoning, neglecting the relatedness of these stages and failing to jointly optimize them.",
+  "method": "Proposes UniKGQA that unifies retrieval and reasoning in both model architecture (semantic matching module based on PLM for question-relation matching, and matching information propagation module to propagate matching information along KG edges) and parameter learning (shared pre-training task based on question-relation matching, followed by retrieval- and reasoning-oriented fine-tuning).",
+  "key_assumptions": [
+    "A shared pre-training task on question-relation matching can effectively initialize both retrieval and reasoning models.",
+    "Unifying retrieval and reasoning leads to better performance due to tighter coupling."
+  ],
+  "main_contribution": "UniKGQA, a unified retrieval and reasoning approach for multi-hop KGQA, with shared pre-training and fine-tuning strategies, and publicly available code and data.",
+  "datasets": [
+    "three benchmark datasets (not named in abstract)"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "previous studies (not specified)"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"Extensive experiments on three benchmark datasets have demonstrated the effectiveness of our method on the multi-hop KGQA task.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"Available at GitHub: https://github.com/RUCAIBox/UniKGQA\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "The paper focuses on unifying retrieval and reasoning via shared pre-training and propagation modules, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:54:16.250001Z"
+}

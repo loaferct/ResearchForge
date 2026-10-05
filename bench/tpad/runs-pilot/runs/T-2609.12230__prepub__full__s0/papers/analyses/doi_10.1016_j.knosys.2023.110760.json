@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.1016/j.knosys.2023.110760",
+  "relevance_tier": "high",
+  "problem": "Learning effective reasoning paths for multi-hop KGQA is difficult due to sparse rewards and the need to explore large path spaces.",
+  "method": "Uses adversarial reinforcement learning to train a policy for path-based multi-hop reasoning over knowledge graphs, where an adversary generates challenging questions to improve the agent's robustness.",
+  "key_assumptions": [
+    "Adversarial training can improve the robustness and generalization of RL policies for KGQA.",
+    "Path-based representation is sufficient for multi-hop reasoning over KGs."
+  ],
+  "main_contribution": "An adversarial reinforcement learning method for path-based multi-hop reasoning over knowledge graphs to improve robustness and answer accuracy.",
+  "datasets": [
+    "not stated in abstract"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"not stated in abstract\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.75,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "The paper uses adversarial RL for path-based reasoning, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:49:46.221803Z"
+}

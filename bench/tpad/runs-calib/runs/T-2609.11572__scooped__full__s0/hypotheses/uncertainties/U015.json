@@ -1,0 +1,34 @@
+{
+  "id": "U015",
+  "question": "How often does retrieving a superseded or not-yet-in-force version of an amended clause actually change the answer a QA system produces, i.e. what fraction of queries pass an answer-differential screen?",
+  "description": "The direction now leans on version-level contamination as the primary outcome, but the practical significance of the problem depends on whether reducing contamination changes the answers users actually see. If amended clauses are so worded that non-gold versions yield the same answer, contamination falls under the temporal layer while end-task answers stay unchanged - a metric-level improvement with limited real-world payoff. The answer-differential screen is designed to quantify this, but the pass rate is currently unknown.",
+  "category": "validity",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "SEARCH"
+  ],
+  "confidence": 0.6,
+  "confidence_basis": "No retrieved work quantifies answer sensitivity to clause version, and the quantity is a property of the corpus, so it cannot be settled by further reading of the existing set; the experimental design now measures it directly as the screen pass rate.",
+  "rationale": "The idea's stated payoff is improved answer reliability, but the confounder analysis showed near-duplicate wording can make answers invariant to version; no retrieved work quantifies this for legal text.",
+  "resolution": "Partially resolved by design: the literature cannot answer this, so the experiment plan makes the answer-differential screen pass rate a reported primary quantity, computed by obtaining a reference answer under each candidate version with a fixed reader and marking a query answer-differential when the gold version's answer differs from at least one competing version's answer. The plan also makes the consequence explicit in its failure conditions: if the pass rate is only a few percent, contamination reductions cannot be shown to change user-visible answers and the practical-significance claim fails. The value remains unknown until the screen is run.",
+  "paper_ids": [
+    "doi:10.3390/sym18091498",
+    "arxiv:2109.06157",
+    "arxiv:2505.20243"
+  ],
+  "supporting_paper_ids": [
+    "doi:10.3390/sym18091498",
+    "arxiv:2109.06157"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T04:35:37.748220Z",
+  "updated_at": "2026-09-30T04:37:39.161735Z"
+}

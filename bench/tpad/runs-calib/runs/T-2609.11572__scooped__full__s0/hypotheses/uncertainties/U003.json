@@ -1,0 +1,37 @@
+{
+  "id": "U003",
+  "question": "Is a versioned regulatory corpus with reliable validity intervals (in-force start/end dates) and time-stamped queries actually available or constructible at reasonable cost?",
+  "description": "The framework and its benchmark require per-passage validity metadata and queries with target dates. Existing temporal benchmarks cover ESG disclosures and SEC filings; availability of equivalent amendment/validity metadata for statutes or regulations is unverified.",
+  "category": "feasibility",
+  "importance": "medium",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Retrieved temporal benchmarks are in ESG and financial domains; no retrieved work confirms an equivalent amended-statute benchmark with validity intervals.",
+  "resolution": "Partially resolved in the direction of feasibility: the legal-retrieval literature names the European Legislation Identifier as representing date of entry into force and date of applicability, so in-force validity intervals are derivable for at least some jurisdictions, and the problem of distinguishing valid time from transaction time is recognized as a required corpus property. What remains unverified is passage-level (clause) validity granularity and the availability of time-stamped queries with ground-truth in-force versions, so benchmark construction is still a real but no longer speculative cost.",
+  "paper_ids": [
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.3390/sym18091498",
+    "doi:10.2139/ssrn.7087840",
+    "arxiv:2505.20243",
+    "arxiv:2606.09724",
+    "arxiv:2608.21409"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2606.09724"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T04:18:33.820658Z",
+  "updated_at": "2026-09-30T04:33:23.072101Z"
+}

@@ -1,0 +1,114 @@
+{
+ "projects_dir": "/Users/kingsofttech/KINGSOFT-PROJECTS/LF/bench/tpad/runs-pilot/runs",
+ "model": {
+  "provider": "deepseek-official",
+  "model": "deepseek-v4.1-flash",
+  "reasoning_effort": null,
+  "custom": {
+   "provider_id": "ollama-cloud",
+   "base_url": "https://ollama.com/v1",
+   "api": "openai-completions",
+   "api_key_env": "OLLAMA_API_KEY",
+   "models": [
+    "deepseek-v4.1-flash",
+    "deepseek-v4-pro:0813",
+    "gpt-oss:120b"
+   ],
+   "context_window": null,
+   "max_tokens": null
+  }
+ },
+ "dsh": {
+  "command": null,
+  "version": "0.1.7-rc.2",
+  "home": "~/.researchforge/dsh-home",
+  "profile": "headless",
+  "phase_timeout_s": 900.0,
+  "extra_patches": [],
+  "disable_tools": [
+   "tool-bash",
+   "tool-pwsh",
+   "tool-fs",
+   "tool-web",
+   "tool-jobs",
+   "tool-subagent",
+   "tool-subagent-fork",
+   "tool-workflow"
+  ],
+  "disable_telemetry": true
+ },
+ "literature": {
+  "sources": [
+   "arxiv",
+   "openalex",
+   "semantic_scholar",
+   "crossref"
+  ],
+  "max_results_per_source": 10,
+  "timeout_s": 30.0,
+  "max_retries": 4,
+  "max_backoff_s": 40.0,
+  "contact_email": null,
+  "semantic_scholar_api_key_env": "SEMANTIC_SCHOLAR_API_KEY",
+  "openalex_api_key_env": "OPENALEX_API_KEY",
+  "github_token_env": "GITHUB_TOKEN",
+  "max_pdf_bytes": 40000000,
+  "cache_dir": "/Users/kingsofttech/KINGSOFT-PROJECTS/LF/bench/tpad/cache",
+  "integrity_checks": true,
+  "published_before": "2026-09-10",
+  "corrupt_abstracts": 0.0,
+  "corruption_seed": 0
+ },
+ "investigation": {
+  "min_papers": 8,
+  "min_queries": 2,
+  "papers_to_analyze": 8,
+  "max_phase_attempts": 2,
+  "min_modifications": 2,
+  "max_modifications": 5,
+  "max_iterations": 20,
+  "max_tool_calls": 250,
+  "max_searches": 14,
+  "max_papers": 90,
+  "time_limit_s": 2700.0,
+  "max_critiques": 3,
+  "recritique_after_papers": 6,
+  "max_uncertainty_attempts": 2,
+  "max_action_retries": 2,
+  "runtime_retries": 2,
+  "runtime_retry_backoff_s": 5.0,
+  "max_tokens": 0,
+  "max_experiment_runs": 3,
+  "action_costs": {
+   "SEARCH": 1.0,
+   "READ": 2.0,
+   "COMPARE": 1.5,
+   "VERIFY": 1.5,
+   "CHALLENGE": 1.5,
+   "INVESTIGATE_GAP": 1.5,
+   "REFINE": 1.0,
+   "PLAN_EXPERIMENT": 1.0
+  },
+  "min_action_score": 0.15,
+  "diminishing_window": 3,
+  "diminishing_threshold": 0.0,
+  "challenge_conclusions": true,
+  "recritique_on_contradiction": true,
+  "controller_mode": "adaptive",
+  "pipeline_extra_searches": 0
+ },
+ "experiments": {
+  "backend": "local",
+  "docker_image": "python:3.12-slim",
+  "docker_network": "none",
+  "timeout_s": 3600.0,
+  "env_passthrough": [
+   "PATH",
+   "HOME",
+   "LANG",
+   "CUDA_VISIBLE_DEVICES"
+  ],
+  "large_improvement_threshold": 0.5
+ },
+ "log_level": "INFO"
+}

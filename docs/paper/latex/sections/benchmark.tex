@@ -1,0 +1,28 @@
+\section{Temporal Prior-Art Detection}\label{sec:benchmark}
+
+\subsection{Items}
+An item is built from a \emph{realising paper} $P$: a recent arXiv paper with a method contribution. It contains
+\begin{itemize}
+  \item an \emph{idea}: an 80--150-word proposal stating $P$'s problem and approach as a plan, written from $P$'s abstract by a model other than the agent's (\texttt{gpt-oss:120b}), instructed not to use $P$'s method name, coined acronyms, title phrases, numbers or results;
+  \item $P$'s identity and first-version date $d(P)$;
+  \item up to three \emph{prior works}: $P$'s references (from Semantic Scholar) dated before $P$, ranked by distinctive-word overlap with $P$'s abstract.
+\end{itemize}
+Each draft item records an audit trail: the 5-gram overlap of the idea with $P$'s abstract, a check that $P$'s method name does not occur in the idea, and a \emph{closed-book probe} in which the agent's own model is asked, without tools, whether it knows a paper realising the idea. Items whose idea leaks $P$'s name, whose overlap exceeds 0.10, or whose probe names $P$ are excluded. Each idea was compared with its realising abstract, for fidelity and for identifying strings, by an LLM assistant (Claude) working for the author; no item has yet been checked by an independent human annotator (\S\ref{sec:limits}).
+
+\subsection{Conditions}
+Each item is run twice.
+\begin{description}
+  \item[\textsc{scooped}.] The literature is visible up to the run date. The realising paper exists and is retrievable; the correct outcome is to find it and conclude that the idea is already explored.
+  \item[\textsc{prepub}.] Every work published on or after $d(P)$ is hidden. $P$ cannot be retrieved, so a verdict that the idea is already explored must be justified by earlier work.
+\end{description}
+
+\paragraph{Enforcing the cutoff.} The cutoff is applied at the literature layer, never told to the model: (i) it is sent to every API (arXiv \texttt{submittedDate}, OpenAlex \texttt{to\_publication\_date}, Semantic Scholar \texttt{publicationDateOrYear}, Crossref \texttt{until-pub-date}); (ii) every record is filtered again before storage, using the earliest date any source reports, and a record known only by year is kept only if the year is earlier than the cutoff's; (iii) arXiv full text is fetched as version~1, so later revisions cannot leak newer work; (iv) code search is disabled; (v) hidden records are logged. A \textsc{prepub} run in which $P$ nevertheless appears in the workspace is marked \emph{leaked} and excluded.
+
+\subsection{Scoring}
+All scores are computed from the workspace records, not from report prose. The outcomes were fixed after one calibration run and before any pilot run (\S\ref{sec:setup}).
+\paragraph{Primary.}
+\begin{description}
+  \item[Realising-paper evidence] (\textsc{scooped}): $P$ was retrieved, and $P$ is cited in at least one claim with verified evidence. This is detection \emph{for the right reason}.
+  \item[Verdict discrimination] (per item): the research decision is \textsc{already\_well\_explored} under \textsc{scooped} and not under \textsc{prepub}. A verdict that does not change when $P$ is hidden cannot be attributed to $P$.
+\end{description}
+\paragraph{Secondary.} Verdict-only detection (\textsc{already\_well\_explored}, or \textsc{needs\_modification} with $P$ cited, under \textsc{scooped}); false-scoop candidates (\textsc{already\_well\_explored} under \textsc{prepub}, which may be justified by earlier work and is inspected case by case); indiscriminate scepticism (\textsc{already\_well\_explored} under both conditions); prior-work recall (share of the item's prior works retrieved); cost and process (agent turns, tool calls, tokens, searches, papers retrieved and read, challenges run, contradictions found).

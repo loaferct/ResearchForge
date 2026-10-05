@@ -1,0 +1,33 @@
+{
+  "id": "C020",
+  "statement": "No existing work directly evaluates whether adding a temporal relevance component improves answer accuracy for open-domain question answering over versioned regulatory documents with overlapping revisions and time-stamped queries; TempRALM is evaluated on a tennis grand slam dataset (p. 5) and Re3 introduces Re2Bench for general temporal information retrieval (abstract).",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 5",
+      "quote": "In particular, we curated a dataset based on tennis grand slam data, where 4 major tournaments take place every year and answers to the queries depend on when the query is asked, with respect to the timing of the tournament.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2509.01306",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "To address this gap, we introduce Re2Bench, a benchmark specifically designed to disentangle and evaluate Relevance, Recency, and their hybrid combination.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "evidence gap",
+    "versioned regulatory QA",
+    "temporal relevance"
+  ],
+  "recorded_at": "2026-09-30T10:28:12.520473Z"
+}

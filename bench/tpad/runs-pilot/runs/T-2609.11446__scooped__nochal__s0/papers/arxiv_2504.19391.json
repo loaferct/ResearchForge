@@ -1,0 +1,34 @@
+{
+  "id": "arxiv:2504.19391",
+  "title": "Bi-directional Model Cascading with Proxy Confidence",
+  "authors": [
+    "David Warren",
+    "Mark Dras"
+  ],
+  "year": 2025,
+  "published": "2025-04-27",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2504.19391",
+  "pdf_url": "https://arxiv.org/pdf/2504.19391v2",
+  "abstract": "Model Cascading, recently applied successfully to LLMs, is a simple but powerful technique that improves the efficiency of inference by selectively applying models of varying sizes. Models are used in sequence from smallest to largest, only deferring samples to large, costly models when smaller models are not sufficiently confident. Existing approaches to deferral use only limited small model confidence estimates because of the inaccessibility of the large model, although large model confidence is known to be important. We therefore propose a bi-directional approach to deferral that considers the confidence of small and large models in the cascade simultaneously through the use of a proxy for the large model. This requires a richer representation of model confidence to enable comparative calibration: we use an analysis of hidden states to improve post-invocation confidence of the small model, which in itself improves cascading results over prior approaches. We then combine this with a tiny proxy model to estimate pre-invocation confidence of the large model. We examine the proposed cascading system over challenging, multiple-choice datasets, finding improvements over standard cascading baselines reflected in reductions in deferrals to more costly models.",
+  "doi": null,
+  "arxiv_id": "2504.19391",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T11:34:11.145470Z",
+  "relevance": 0.6667,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "confidence cascade calibration"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

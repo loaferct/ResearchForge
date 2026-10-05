@@ -1,0 +1,55 @@
+{
+  "paper_id": "arxiv:2502.14340",
+  "relevance_tier": "low",
+  "problem": "Direct Preference Optimization (DPO) for aligning LLMs with human feedback suffers from length bias, generating overly long responses. Existing solutions uniformly treat reward contributions across sequences, ignoring temporal dynamics of token importance.",
+  "method": "The authors propose an enhanced preference optimization method that incorporates a temporal decay factor (gamma) to adjust reward influence based on token position in the sequence, prioritizing earlier tokens. This dynamic weighting mechanism adapts to evolving human preferences and mitigates overfitting to less pertinent data.",
+  "key_assumptions": [
+    "Earlier tokens in a sequence are more critical for alignment with human preferences than later tokens.",
+    "A temporal decay factor can effectively capture the decreasing relevance of tokens across sequence positions.",
+    "Incorporating temporal dynamics into DPO reduces length bias without compromising general capabilities."
+  ],
+  "main_contribution": "Temporal decay-enhanced Direct Preference Optimization (D2PO) that adjusts reward influence via a gamma-controlled decay factor, prioritizing earlier tokens. Experiments show consistent improvements of 5.9-8.8 points on AlpacaEval 2 and 3.3-9.7 points on Arena-Hard across model architectures, while maintaining performance on MMLU, GSM8K, and MATH benchmarks.",
+  "datasets": [
+    "AlpacaEval 2",
+    "Arena-Hard",
+    "MMLU",
+    "GSM8K",
+    "MATH"
+  ],
+  "benchmarks": [
+    "Vanilla DPO",
+    "SimPO",
+    "SamPO"
+  ],
+  "baselines": [
+    "Vanilla DPO"
+  ],
+  "metrics": [
+    "AlpacaEval 2 score",
+    "Arena-Hard score",
+    "MMLU",
+    "GSM8K",
+    "MATH"
+  ],
+  "results": "\"D2PO outperforms vanilla DPO by 5.9-8.8 points on AlpacaEval 2 and 3.3-9.7 points on Arena-Hard across model sizes. Performance on mathematical and reasoning benchmarks is enhanced without compromising general capabilities.\"",
+  "limitations": [
+    "Focuses on preference optimization for LLM alignment, not retrieval or question answering.",
+    "Temporal decay applied to token positions in sequences, not document version timestamps.",
+    "Does not address evolving document collections or versioned texts."
+  ],
+  "future_work": [
+    "Apply temporal decay weighting to other LLM alignment methods (e.g., PPO, RLHF).",
+    "Investigate adaptive gamma scheduling based on sequence length or task difficulty.",
+    "Explore integration with retrieval-augmented generation for temporally evolving knowledge."
+  ],
+  "code_availability": "Code available at https://github.com/LotuSrc/D2PO (stated in abstract).",
+  "relation_to_idea": {
+    "problem_overlap": 0.1,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.1,
+    "conceptual_difference": "The paper applies temporal decay to token-level reward contributions in preference optimization for LLM alignment, while our work proposes temporal relevance weighting at the document retrieval level for time-specific QA over evolving regulatory texts.",
+    "basis": "Heuristic: both involve temporal decay but different domains (LLM alignment vs document retrieval) and different granularity (token position vs document version)."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T10:41:47.493568Z"
+}

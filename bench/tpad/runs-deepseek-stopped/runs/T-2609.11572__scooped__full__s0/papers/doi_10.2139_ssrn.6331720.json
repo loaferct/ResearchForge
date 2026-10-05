@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.2139/ssrn.6331720",
+  "title": "ArabLJP: An Evidence-Grounded and Retrieval-Augmented LLM Framework for Reliable Arabic Legal Judgment Prediction in Statute-Centric Legal Systems",
+  "authors": [
+    "Ahmed Mohamed",
+    "khaled shaban",
+    "Ezieddin Elmahjub"
+  ],
+  "year": 2026,
+  "published": null,
+  "venue": null,
+  "url": "https://doi.org/10.2139/ssrn.6331720",
+  "pdf_url": null,
+  "abstract": "Legal judgment prediction (LJP) using large language models (LLMs) is increasingly explored; however, its practical deployment remains constrained by hallucinations and limited evidentiary traceability, challenges that are especially acute in under‑resourced, statute‑centric Arabic legal systems. This paper introduces ArabLJP, an evidence‑grounded and retrieval‑augmented framework that reframes Arabic LJP as statute‑conditioned judgment generation rather than label‑only classification. ArabLJP integrates (i) a reasoning-preserving Saudi commercial‑law dataset that explicitly retains factual narratives, judicial reasoning, and operative rulings; (ii) a hybrid \"Smart RAG\" retrieval pipeline that combines lexical matching, semantic embeddings, and LLM‑guided query refinement and reranking, with priority grounding in statutes explicitly cited in case materials; and (iii) a hallucination‑aware, multi-dimensional evaluation protocol that measures semantic alignment, entity and numeric consistency, and outcome fidelity, with explicit penalties for unsupported factual inventions. The framework is evaluated under controlled experimental conditions across three modeling paradigms: prompt‑only generation; retrieval‑augmented structured prompting; and parameter‑efficient supervised adaptation, and multiple LLM backbones, including gpt‑40‑mini and four open‑weight models (LLaMA‑3.2, Qwen‑3, Phi‑4, and DeepSeek). Empirical results demonstrate that evidence‑grounded retrieval and structured prompting substantially reduce hallucination strength and improve ruling fidelity relative to prompt-only baselines, while supervised adaptation yields further gains in semantic and stylistic alignment with reference judgments. Overall, ArabLJP shows that disciplined statutory grounding, structured judicial prompting, and reliability-oriented evaluation measurably improve LJP robustness in Arabic, statute‑centric legal settings. The framework provides a reproducible methodological baseline for studying and mitigating hallucinations in Arabic LJP, while underscoring that fully reliable automated legal reasoning remains an open research challenge.",
+  "doi": "10.2139/ssrn.6331720",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T05:17:55.628422Z",
+  "relevance": 0.1304,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "point-in-time legal information retrieval statute versions in force"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

@@ -1,0 +1,1150 @@
+{
+  "project": "T-2609.12230__prepub__full__s0",
+  "idea": "Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model training typically uses isolated head‑relation‑tail triples, depriving the model of the surrounding context that supports multi‑step inference. We propose to enrich each target triple (or path) with additional triples drawn from the same source passage, forming a local context subgraph that is presented together with the primary supervision signal. The model will be fine‑tuned under two regimes: one using only the target triple/path and another that also incorporates the supporting context. To improve the reliability of the base facts, we will introduce an adaptive repair loop that detects one‑hop failures, generates corrective examples, and iteratively refines the model. After this cleaning stage, we will apply reinforcement‑learning‑based optimization on lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.",
+  "created_at": "2026-09-30T07:28:21.441910Z",
+  "updated_at": "2026-09-30T08:56:25.270808Z",
+  "status": "incomplete",
+  "dsh_session_id": "session-972877b3-faa7-44df-bfa3-943174502ba3",
+  "provider": "ollama-cloud",
+  "model": "nemotron-3-super",
+  "phases": [
+    {
+      "name": "formalize",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T07:28:21.444240Z",
+      "finished_at": "2026-09-30T07:32:49.512596Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 16,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "literature",
+      "status": "complete",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": "2026-09-30T07:32:49.514647Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "analysis",
+      "status": "complete",
+      "attempts": 6,
+      "started_at": "2026-09-30T07:33:27.588562Z",
+      "finished_at": "2026-09-30T07:39:59.477704Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 167,
+      "failed_tool_calls": 14
+    },
+    {
+      "name": "landscape",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T07:39:59.496661Z",
+      "finished_at": "2026-09-30T07:41:04.396001Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 3,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "critique",
+      "status": "complete",
+      "attempts": 3,
+      "started_at": "2026-09-30T07:41:04.414976Z",
+      "finished_at": "2026-09-30T07:46:24.388834Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 27,
+      "failed_tool_calls": 6
+    },
+    {
+      "name": "gaps",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T07:58:13.973433Z",
+      "finished_at": "2026-09-30T08:01:03.625953Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 10,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "modifications",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T07:58:13.973453Z",
+      "finished_at": "2026-09-30T08:01:03.626039Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 10,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "experiments",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least one experiment plan (call record_experiment_plan)"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "report",
+      "status": "complete",
+      "attempts": 0,
+      "started_at": "2026-09-30T08:56:25.234783Z",
+      "finished_at": "2026-09-30T08:56:25.270804Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    }
+  ],
+  "error": null,
+  "loop_phase": "FINALIZE",
+  "current_action": "FINALIZE",
+  "current_focus": null,
+  "budget": {
+    "iterations": 14,
+    "tool_calls": 223,
+    "failed_tool_calls": 22,
+    "runtime_failures": 0,
+    "seconds": 5282.68,
+    "tokens": 27643119
+  },
+  "decisions": [
+    {
+      "iteration": 0,
+      "phase": "INTAKE",
+      "action": "INTAKE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Research idea received.",
+      "evidence": "idea: Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model training typically uses isolated head‑relation‑tail triples, depriving the",
+      "expected_outcome": "",
+      "outcome": "idea stored in the workspace",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:28:21.442460Z"
+    },
+    {
+      "iteration": 1,
+      "phase": "FORMALIZE",
+      "action": "FORMALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been formalized into a testable research question.",
+      "evidence": "0 papers from 0 searches, 0 analyzed, 0 claims (0 verified), 0 open uncertainties",
+      "expected_outcome": "Problem, hypothesis, variables, assumptions and search queries recorded.",
+      "outcome": "+105 papers; +5 searches; +3 uncertainties; idea formalized",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "record_idea_analysis",
+        "record_uncertainty",
+        "search_paper_text",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 105,
+        "relevant_papers": 95,
+        "searches": 5,
+        "uncertainties_created": 3,
+        "idea_formalized": 1
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:28:21.443856Z"
+    },
+    {
+      "iteration": 2,
+      "phase": "PLAN",
+      "action": "PLAN",
+      "focus": null,
+      "focus_id": null,
+      "reason": "No investigation plan exists yet, so it is unclear what must be determined.",
+      "evidence": "105 papers from 5 searches, 0 analyzed, 0 claims (0 verified), 3 open uncertainties",
+      "expected_outcome": "Questions to answer, search topics and initial uncertainties recorded.",
+      "outcome": "+2 uncertainties; investigation plan recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_investigation_plan",
+        "record_uncertainty"
+      ],
+      "state_changes": {
+        "uncertainties_created": 2,
+        "plan_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:32:49.523864Z"
+    },
+    {
+      "iteration": 3,
+      "phase": "INVESTIGATE",
+      "action": "READ",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Retrieved papers have not been analyzed enough to judge overlap.",
+      "evidence": "105 papers from 5 searches, 0 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Structured analyses of the most relevant papers.",
+      "outcome": "+6 analyses",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "list_papers",
+        "record_paper_analysis",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "analyses": 6
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:33:27.580895Z"
+    },
+    {
+      "iteration": 4,
+      "phase": "SYNTHESIZE",
+      "action": "SYNTHESIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Analyses exist but the field has not been mapped.",
+      "evidence": "105 papers from 5 searches, 6 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "A landscape placing the idea among approaches.",
+      "outcome": "landscape recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_records",
+        "record_landscape"
+      ],
+      "state_changes": {
+        "landscape_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:39:59.488818Z"
+    },
+    {
+      "iteration": 5,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been challenged yet.",
+      "evidence": "105 papers from 5 searches, 6 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Strongest objections recorded as critique and uncertainties.",
+      "outcome": "+3 claims; +1 verified claims; critique recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_paper",
+        "record_claim",
+        "record_critique"
+      ],
+      "state_changes": {
+        "claims": 3,
+        "verified_claims": 1,
+        "critique_recorded": 1
+      },
+      "info_gain": 2.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:41:04.407148Z"
+    },
+    {
+      "iteration": 6,
+      "phase": "CHALLENGE",
+      "action": "CHALLENGE",
+      "focus": "U006: Does published work contradict the current assessment: Our method uniquely augments each training triple with a locally extracted subgraph from the same source passage, applies an adaptive repair loop to iteratively refine the model based on one‑hop failures, and only then applies RL transfer, whereas prior work injects auxiliary signals directly into the RL policy or uses trajectory‑based supervision without an explicit repair stage.?",
+      "focus_id": "U006",
+      "reason": "The critique's assessment has not been challenged yet (U006); look for published work that contradicts it before investing in anything that builds on it.",
+      "evidence": "105 papers from 5 searches, 6 analyzed, 3 claims (1 verified), 6 open uncertainties",
+      "expected_outcome": "Evidence that confirms, weakens or refutes the assessment (U006).",
+      "outcome": "+1 claims; +1 uncertainties; +1 resolved uncertainties",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_challenge_result",
+        "record_claim",
+        "record_uncertainty",
+        "search_paper_text",
+        "search_papers",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 1,
+        "uncertainties_created": 1,
+        "uncertainties_resolved": 1
+      },
+      "info_gain": 2.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:42:56.304065Z"
+    },
+    {
+      "iteration": 7,
+      "phase": "UNCERTAINTY",
+      "action": "COMPARE",
+      "focus": "U004: Has the idea of enriching each target triple with a local context subgraph from the same source passage been previously studied in the literature?",
+      "focus_id": "U004",
+      "reason": "Most valuable next step for high-importance novelty question U004: score 1.2 = importance 3 x expected gain 0.6 x relevance 1 x evidence deficiency 1 / cost 1.5. Next best: READ on U004 (1.125).",
+      "evidence": "105 papers from 5 searches, 6 analyzed, 4 claims (1 verified), 6 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U004.",
+      "outcome": "+1 claims; uncertainties updated: U004",
+      "candidates": [
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U004",
+          "target": "Has the idea of enriching each target triple with a local context subgraph from the same source passage been previously studied in the literature?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.2
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U004",
+          "target": "Has the idea of enriching each target triple with a local context subgraph from the same source passage been previously studied in the literature?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.125
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U005",
+          "target": "To what extent do existing subgraph-aware language model training methods (e.g., subgraph-aware contrastive learning) overlap with our proposed local context subgraph enrichment?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.8
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U005",
+          "target": "To what extent do existing subgraph-aware language model training methods (e.g., subgraph-aware contrastive learning) overlap with our proposed local context subgraph enrichment?",
+          "importance": 2.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.75
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.56
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U002",
+          "target": "Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.56
+        }
+      ],
+      "expected_gain": 0.6,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "record_claim",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 1
+      },
+      "info_gain": 0.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:46:24.403647Z"
+    },
+    {
+      "iteration": 8,
+      "phase": "UNCERTAINTY",
+      "action": "READ",
+      "focus": "U005: To what extent do existing subgraph-aware language model training methods (e.g., subgraph-aware contrastive learning) overlap with our proposed local context subgraph enrichment?",
+      "focus_id": "U005",
+      "reason": "Most valuable next step for medium-importance overlap question U005: score 0.75 = importance 2 x expected gain 0.75 x relevance 1 x evidence deficiency 1 / cost 2. Next best: REFINE on U004 (0.63).",
+      "evidence": "105 papers from 5 searches, 6 analyzed, 5 claims (1 verified), 6 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U005.",
+      "outcome": "+11 analyses; +1 claims; uncertainties updated: U005",
+      "candidates": [
+        {
+          "action": "READ",
+          "uncertainty_id": "U005",
+          "target": "To what extent do existing subgraph-aware language model training methods (e.g., subgraph-aware contrastive learning) overlap with our proposed local context subgraph enrichment?",
+          "importance": 2.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.75
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U004",
+          "target": "Has the idea of enriching each target triple with a local context subgraph from the same source passage been previously studied in the literature?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.63
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.525
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U002",
+          "target": "Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+          "importance": 2.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.525
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Which pre‑trained language model architecture and size (e.g., BERT‑base, BERT‑large, RoBERTa, T5) should be used as the encoder for the triple‑only and triple‑plus‑context regimes?",
+          "importance": 2.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.525
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U004",
+          "target": "Has the idea of enriching each target triple with a local context subgraph from the same source passage been previously studied in the literature?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.472
+        }
+      ],
+      "expected_gain": 0.75,
+      "estimated_cost": 2.0,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "list_papers",
+        "record_claim",
+        "record_paper_analysis",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "analyses": 11,
+        "claims": 1
+      },
+      "info_gain": 5.5,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:47:52.151770Z"
+    },
+    {
+      "iteration": 9,
+      "phase": "UNCERTAINTY",
+      "action": "REFINE",
+      "focus": "U004: Has the idea of enriching each target triple with a local context subgraph from the same source passage been previously studied in the literature?",
+      "focus_id": "U004",
+      "reason": "Most valuable next step for high-importance novelty question U004: score 0.63 = importance 3 x expected gain 0.5 x relevance 1 x evidence deficiency 0.42 / cost 1. Next best: READ on U001 (0.583).",
+      "evidence": "105 papers from 5 searches, 17 analyzed, 6 claims (1 verified), 6 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U004.",
+      "outcome": "+3 gaps; +3 modifications; +1 directions",
+      "candidates": [
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U004",
+          "target": "Has the idea of enriching each target triple with a local context subgraph from the same source passage been previously studied in the literature?",
+          "importance": 3.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.63
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.833,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.583
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U002",
+          "target": "Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+          "importance": 2.0,
+          "expected_gain": 0.833,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.583
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Which pre‑trained language model architecture and size (e.g., BERT‑base, BERT‑large, RoBERTa, T5) should be used as the encoder for the triple‑only and triple‑plus‑context regimes?",
+          "importance": 2.0,
+          "expected_gain": 0.833,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.583
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U004",
+          "target": "Has the idea of enriching each target triple with a local context subgraph from the same source passage been previously studied in the literature?",
+          "importance": 3.0,
+          "expected_gain": 0.833,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.525
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U005",
+          "target": "To what extent do existing subgraph-aware language model training methods (e.g., subgraph-aware contrastive learning) overlap with our proposed local context subgraph enrichment?",
+          "importance": 2.0,
+          "expected_gain": 0.5,
+          "gain_basis": "prior 0.5",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.42
+        }
+      ],
+      "expected_gain": 0.5,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "record_direction",
+        "record_gap",
+        "record_modification"
+      ],
+      "state_changes": {
+        "gaps": 3,
+        "modifications": 3,
+        "directions": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T07:58:13.965251Z"
+    },
+    {
+      "iteration": 10,
+      "phase": "UNCERTAINTY",
+      "action": "READ",
+      "focus": "U001: What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+      "focus_id": "U001",
+      "reason": "Most valuable next step for medium-importance feasibility question U001: score 0.583 = importance 2 x expected gain 0.833 x relevance 0.7 x evidence deficiency 1 / cost 2. Next best: READ on U002 (0.583).",
+      "evidence": "105 papers from 5 searches, 17 analyzed, 6 claims (1 verified), 9 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U001.",
+      "outcome": "+6 analyses",
+      "candidates": [
+        {
+          "action": "READ",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.833,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.583
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U002",
+          "target": "Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+          "importance": 2.0,
+          "expected_gain": 0.833,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.583
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Which pre‑trained language model architecture and size (e.g., BERT‑base, BERT‑large, RoBERTa, T5) should be used as the encoder for the triple‑only and triple‑plus‑context regimes?",
+          "importance": 2.0,
+          "expected_gain": 0.833,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.583
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U005",
+          "target": "To what extent do existing subgraph-aware language model training methods (e.g., subgraph-aware contrastive learning) overlap with our proposed local context subgraph enrichment?",
+          "importance": 2.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.35
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.3,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.28
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U002",
+          "target": "Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+          "importance": 2.0,
+          "expected_gain": 0.3,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.28
+        }
+      ],
+      "expected_gain": 0.833,
+      "estimated_cost": 2.0,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "list_papers",
+        "record_paper_analysis",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "analyses": 6
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T08:01:03.643018Z"
+    },
+    {
+      "iteration": 11,
+      "phase": "UNCERTAINTY",
+      "action": "READ",
+      "focus": "U002: Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+      "focus_id": "U002",
+      "reason": "Most valuable next step for medium-importance feasibility question U002: score 0.612 = importance 2 x expected gain 0.875 x relevance 0.7 x evidence deficiency 1 / cost 2. Next best: READ on U003 (0.612).",
+      "evidence": "105 papers from 5 searches, 23 analyzed, 6 claims (1 verified), 9 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U002.",
+      "outcome": "+6 analyses; +1 claims; +1 verified claims; uncertainties updated: U002",
+      "candidates": [
+        {
+          "action": "READ",
+          "uncertainty_id": "U002",
+          "target": "Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+          "importance": 2.0,
+          "expected_gain": 0.875,
+          "gain_basis": "prior 0.5, observed mean over 3 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.612
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Which pre‑trained language model architecture and size (e.g., BERT‑base, BERT‑large, RoBERTa, T5) should be used as the encoder for the triple‑only and triple‑plus‑context regimes?",
+          "importance": 2.0,
+          "expected_gain": 0.875,
+          "gain_basis": "prior 0.5, observed mean over 3 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.612
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U005",
+          "target": "To what extent do existing subgraph-aware language model training methods (e.g., subgraph-aware contrastive learning) overlap with our proposed local context subgraph enrichment?",
+          "importance": 2.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.35
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.438,
+          "gain_basis": "prior 0.5, observed mean over 3 earlier READ steps, halved for 1 earlier attempt on U001",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.307
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.3,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.28
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U002",
+          "target": "Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+          "importance": 2.0,
+          "expected_gain": 0.3,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.28
+        }
+      ],
+      "expected_gain": 0.875,
+      "estimated_cost": 2.0,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "list_papers",
+        "record_claim",
+        "record_paper_analysis",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "analyses": 6,
+        "claims": 1,
+        "verified_claims": 1
+      },
+      "info_gain": 4.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T08:07:51.305386Z"
+    },
+    {
+      "iteration": 12,
+      "phase": "UNCERTAINTY",
+      "action": "READ",
+      "focus": "U003: Which pre‑trained language model architecture and size (e.g., BERT‑base, BERT‑large, RoBERTa, T5) should be used as the encoder for the triple‑only and triple‑plus‑context regimes?",
+      "focus_id": "U003",
+      "reason": "Most valuable next step for medium-importance feasibility question U003: score 0.63 = importance 2 x expected gain 0.9 x relevance 0.7 x evidence deficiency 1 / cost 2. Next best: REFINE on U005 (0.35).",
+      "evidence": "105 papers from 5 searches, 29 analyzed, 7 claims (2 verified), 9 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U003.",
+      "outcome": "+5 analyses",
+      "candidates": [
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Which pre‑trained language model architecture and size (e.g., BERT‑base, BERT‑large, RoBERTa, T5) should be used as the encoder for the triple‑only and triple‑plus‑context regimes?",
+          "importance": 2.0,
+          "expected_gain": 0.9,
+          "gain_basis": "prior 0.5, observed mean over 4 earlier READ steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.63
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U005",
+          "target": "To what extent do existing subgraph-aware language model training methods (e.g., subgraph-aware contrastive learning) overlap with our proposed local context subgraph enrichment?",
+          "importance": 2.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.35
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.45,
+          "gain_basis": "prior 0.5, observed mean over 4 earlier READ steps, halved for 1 earlier attempt on U001",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.315
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.3,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.28
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U003",
+          "target": "Which pre‑trained language model architecture and size (e.g., BERT‑base, BERT‑large, RoBERTa, T5) should be used as the encoder for the triple‑only and triple‑plus‑context regimes?",
+          "importance": 2.0,
+          "expected_gain": 0.3,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.28
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U002",
+          "target": "Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+          "importance": 2.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 0.7,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.245
+        }
+      ],
+      "expected_gain": 0.9,
+      "estimated_cost": 2.0,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "list_papers",
+        "record_paper_analysis",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "analyses": 5
+      },
+      "info_gain": 2.5,
+      "closes_investigation": null,
+      "at": "2026-09-30T08:13:09.674928Z"
+    },
+    {
+      "iteration": 13,
+      "phase": "UNCERTAINTY",
+      "action": "REFINE",
+      "focus": "U005: To what extent do existing subgraph-aware language model training methods (e.g., subgraph-aware contrastive learning) overlap with our proposed local context subgraph enrichment?",
+      "focus_id": "U005",
+      "reason": "Most valuable next step for medium-importance overlap question U005: score 0.35 = importance 2 x expected gain 0.417 x relevance 1 x evidence deficiency 0.42 / cost 1. Next best: READ on U001 (0.311).",
+      "evidence": "105 papers from 5 searches, 34 analyzed, 7 claims (2 verified), 9 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U005.",
+      "outcome": "+1 directions",
+      "candidates": [
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U005",
+          "target": "To what extent do existing subgraph-aware language model training methods (e.g., subgraph-aware contrastive learning) overlap with our proposed local context subgraph enrichment?",
+          "importance": 2.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.35
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.444,
+          "gain_basis": "prior 0.5, observed mean over 5 earlier READ steps, halved for 1 earlier attempt on U001",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.311
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.3,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.28
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U002",
+          "target": "Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+          "importance": 2.0,
+          "expected_gain": 0.417,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier REFINE steps",
+          "relevance": 0.7,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.245
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Which pre‑trained language model architecture and size (e.g., BERT‑base, BERT‑large, RoBERTa, T5) should be used as the encoder for the triple‑only and triple‑plus‑context regimes?",
+          "importance": 2.0,
+          "expected_gain": 0.444,
+          "gain_basis": "prior 0.5, observed mean over 5 earlier READ steps, halved for 1 earlier attempt on U003",
+          "relevance": 0.7,
+          "deficiency": 0.6,
+          "cost": 2.0,
+          "score": 0.186
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U005",
+          "target": "To what extent do existing subgraph-aware language model training methods (e.g., subgraph-aware contrastive learning) overlap with our proposed local context subgraph enrichment?",
+          "importance": 2.0,
+          "expected_gain": 0.444,
+          "gain_basis": "prior 0.5, observed mean over 5 earlier READ steps, halved for 1 earlier attempt on U005",
+          "relevance": 1.0,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.186
+        }
+      ],
+      "expected_gain": 0.417,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "get_research_state",
+        "record_direction"
+      ],
+      "state_changes": {
+        "directions": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T08:20:09.717688Z"
+    },
+    {
+      "iteration": 14,
+      "phase": "UNCERTAINTY",
+      "action": "READ",
+      "focus": "U001: What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+      "focus_id": "U001",
+      "reason": "Most valuable next step for medium-importance feasibility question U001: score 0.311 = importance 2 x expected gain 0.444 x relevance 0.7 x evidence deficiency 1 / cost 2. Next best: COMPARE on U001 (0.28).",
+      "evidence": "105 papers from 5 searches, 34 analyzed, 7 claims (2 verified), 9 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U001.",
+      "outcome": "+4 analyses; runtime note: phase exceeded 1200.0s and was stopped",
+      "candidates": [
+        {
+          "action": "READ",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.444,
+          "gain_basis": "prior 0.5, observed mean over 5 earlier READ steps, halved for 1 earlier attempt on U001",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 0.311
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+          "importance": 2.0,
+          "expected_gain": 0.3,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.7,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 0.28
+        },
+        {
+          "action": "REFINE",
+          "uncertainty_id": "U002",
+          "target": "Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+          "importance": 2.0,
+          "expected_gain": 0.389,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier REFINE steps",
+          "relevance": 0.7,
+          "deficiency": 0.42,
+          "cost": 1.0,
+          "score": 0.229
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U003",
+          "target": "Which pre‑trained language model architecture and size (e.g., BERT‑base, BERT‑large, RoBERTa, T5) should be used as the encoder for the triple‑only and triple‑plus‑context regimes?",
+          "importance": 2.0,
+          "expected_gain": 0.444,
+          "gain_basis": "prior 0.5, observed mean over 5 earlier READ steps, halved for 1 earlier attempt on U003",
+          "relevance": 0.7,
+          "deficiency": 0.6,
+          "cost": 2.0,
+          "score": 0.186
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U003",
+          "target": "Which pre‑trained language model architecture and size (e.g., BERT‑base, BERT‑large, RoBERTa, T5) should be used as the encoder for the triple‑only and triple‑plus‑context regimes?",
+          "importance": 2.0,
+          "expected_gain": 0.3,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.7,
+          "deficiency": 0.6,
+          "cost": 1.5,
+          "score": 0.168
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U002",
+          "target": "Which reinforcement learning algorithm (e.g., DeepPath, PPO, REINFORCE) is most suitable for optimizing lower-hop QA instances to improve multi-hop reasoning?",
+          "importance": 2.0,
+          "expected_gain": 0.444,
+          "gain_basis": "prior 0.5, observed mean over 5 earlier READ steps, halved for 1 earlier attempt on U002",
+          "relevance": 0.7,
+          "deficiency": 0.42,
+          "cost": 2.0,
+          "score": 0.131
+        }
+      ],
+      "expected_gain": 0.444,
+      "estimated_cost": 2.0,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "list_papers",
+        "record_paper_analysis",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "analyses": 4
+      },
+      "info_gain": 2.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T08:20:56.456292Z"
+    },
+    {
+      "iteration": 15,
+      "phase": "FINALIZE",
+      "action": "FINALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Stopping: time budget reached (3600 s).",
+      "evidence": "105 papers from 5 searches, 38 analyzed, 7 claims (2 verified), 8 open uncertainties",
+      "expected_outcome": "Report what was established and what remains open.",
+      "outcome": "finalizing",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T08:56:25.214524Z"
+    }
+  ],
+  "no_progress": {},
+  "blocked_actions": [],
+  "critiques": 1,
+  "papers_at_last_critique": 105,
+  "finalize_reason": "Stopping: time budget reached (3600 s).",
+  "awaiting_approval": [],
+  "investigation_closed": null,
+  "investigation_closed_at": null,
+  "challenged_refs": [
+    "critique",
+    "G001",
+    "G002",
+    "G003",
+    "D001",
+    "D002"
+  ],
+  "research_decision": "INSUFFICIENT_EVIDENCE",
+  "research_decision_basis": "high-importance questions remain unresolved (U004, U006, U008, U009, U010, U011, U012)"
+}

@@ -1,0 +1,47 @@
+{
+  "paper_id": "arxiv:2107.06325",
+  "relevance_tier": "high",
+  "problem": "Visual Question Answering (VQA) requires understanding and reasoning over image and language, but existing methods lack explicit reasoning capabilities for complex questions requiring long reasoning chains.",
+  "method": "Graphhopper: derive a scene graph describing objects, attributes, and relationships from an image; train a reinforcement learning agent to autonomously navigate in a multi-hop manner over the extracted scene graph to generate reasoning paths, which are used to derive answers.",
+  "key_assumptions": [
+    "The scene graph accurately captures the objects and their relationships in the image.",
+    "The RL agent can learn an effective navigation policy to reach correct answers.",
+    "Reasoning paths over the scene graph correspond to valid reasoning chains for answering the question."
+  ],
+  "main_contribution": "Graphhopper keeps up with human performance on manually curated scene graphs and outperforms another state-of-the-art scene graph reasoning model (NSM) by a significant margin on both manually curated and automatically generated scene graphs.",
+  "datasets": [
+    "GQA (manually curated scene graphs)",
+    "GQA (automatically generated scene graphs)"
+  ],
+  "benchmarks": [
+    "GQA"
+  ],
+  "baselines": [
+    "Human performance, Neural State Machine (NSM)"
+  ],
+  "metrics": [
+    "Accuracy (Hits@1)",
+    "Binary accuracy",
+    "Open accuracy",
+    "Consistency",
+    "Validity",
+    "Plausibility"
+  ],
+  "results": "On manually curated scene graphs: Graphhopper Accuracy 92.30, Human 89.3, NSM 34.5; Binary 92.18 vs Human 91.2 vs NSM 51.03; Open 92.40 vs Human 87.4 vs NSM 18.79; Consistency 91.92 vs Human 98.4 vs NSM 81.36; Validity 93.68 vs Human 98.9 vs NSM 83.69; Plausibility 93.13 vs Human 97.2 vs NSM 79.12.\nOn automatically generated scene graphs: Graphhopper outperforms NSM by a significant margin (exact numbers not given in abstract).",
+  "limitations": [
+    "Not explicitly stated in the paper."
+  ],
+  "future_work": [
+    "Not explicitly stated in the paper."
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.1,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.1,
+    "conceptual_difference": "Graphhopper addresses visual question answering using scene graphs and reinforcement learning, while the idea focuses on training data enrichment for textual knowledge graph question answering. Overlap is minimal as they target different modalities and reasoning settings.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T08:17:23.584584Z"
+}

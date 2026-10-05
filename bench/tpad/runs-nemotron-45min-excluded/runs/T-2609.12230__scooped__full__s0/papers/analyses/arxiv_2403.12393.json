@@ -1,0 +1,43 @@
+{
+  "paper_id": "arxiv:2403.12393",
+  "relevance_tier": "high",
+  "problem": "Large Language Models (LLMs) may generate off-topic answers when attempting to solve Open Domain Multi-Hop Question Answering (ODMHQA), where generated answers are irrelevant to the original questions. This issue of off-topic answers accounts for approximately one-third of incorrect answers, yet remains underexplored despite its significance.",
+  "method": "Proposes the Discriminate→Re-Compose→Re-Solve→Re-Decompose (Dr3) mechanism consisting of two key modules: the Discriminator and the Corrector. The Discriminator leverages intrinsic LLM capabilities to judge whether generated answers are on-topic by prompting the LLM to conceptualize candidate answers and assess whether the generated answer falls within available options (binary YES/NO judgment). When an off-topic answer is detected, the Corrector performs step-wise revisions along the reversed reasoning chain in three stages: Re-Compose→Re-Solve→Re-Decompose, which mirrors the original ReAct+ order of reasoning, composition, sub-question generation, and decomposition. This process continues until the Discriminator confirms the answer is on-topic.",
+  "key_assumptions": [
+    "LLMs can be used to discriminate on-topic vs off-topic answers through self-assessment",
+    "Step-wise revisions along reversed reasoning chain can correct off-topic answers",
+    "Off-topic answers significantly impact ODMHQA performance (approx. 1/3 of incorrect answers)",
+    "Re-Compose→Re-Solve→Re-Decompose order effectively reverses the reasoning process to correct errors"
+  ],
+  "main_contribution": "Dr3 mechanism that reduces off-topic answers in ODMHQA by nearly 13% and improves Exact Match (EM) by nearly 3% compared to baseline methods like ReAct, without relying on voting-based mechanisms or additional fact-checking tools.",
+  "datasets": [
+    "HotpotQA",
+    "2WikiMultiHopQA"
+  ],
+  "benchmarks": [],
+  "baselines": [
+    "Zero-Shot",
+    "Few-Shot",
+    "Chain-of-Thought (CoT)",
+    "ReAct",
+    "ReAct+"
+  ],
+  "metrics": [
+    "Exact Match (EM)",
+    "Token F1 score",
+    "Cover Exact Match (Cover EM)"
+  ],
+  "results": "Experimental results demonstrate that Dr3 mechanism considerably reduces the occurrence of off-topic answers by nearly 13%, improving EM by nearly 3% compared to baseline method without Dr3. The approach effectively harnesses intrinsic LLM capabilities for detection and correction.",
+  "limitations": [],
+  "future_work": [],
+  "code_availability": "Code and data will be available at https://github.com/Gy915/Dr3.",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "Dr3 focuses on detecting and correcting off-topic answers in LLM-based ODMHQA through a discrimination-correction loop, while our idea focuses on enriching triples with local context and adaptive repair loops for KGQA training. Both involve iterative improvement but Dr3 works on LLM answer post-processing while our idea works on training data enrichment.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T06:08:47.928571Z"
+}

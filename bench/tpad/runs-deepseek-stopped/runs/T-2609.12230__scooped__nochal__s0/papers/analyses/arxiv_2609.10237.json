@@ -1,0 +1,50 @@
+{
+  "paper_id": "arxiv:2609.10237",
+  "relevance_tier": "high",
+  "problem": "Which of four GraphRAG design choices — which triples go in the prompt, serialization syntax, triple order, and the grounding instruction — measurably affect answer accuracy of LLMs answering questions over knowledge-graph subgraphs.",
+  "method": "A controlled sweep over four prompt design dimensions across six LLMs (three vendors) and two KGQA benchmarks, with depth-stratified analysis; subgraphs are constructed from gold SPARQL (an oracle 50-triple subgraph), not from a learned retriever. 16 experiments, 30,841 trials. A precision experiment holds the prompt at 50 triples, retains the answer chain in every condition, and replaces all non-chain ('distractor') triples with triples from an unrelated entity neighbourhood.",
+  "key_assumptions": [
+    "Answer accuracy is measured by token-level F1 against gold labels",
+    "Gold SPARQL chains are available to build oracle subgraphs, so retrieval quality is not a variable",
+    "Depth is a property of the question; in this corpus depth is perfectly aliased with source benchmark (all 1/2-hop from LC-QuAD, all 3/4-hop from QALD)"
+  ],
+  "main_contribution": "A negative/controlled result: the presence of the answer path (chain triples) is what matters; replacing every non-chain triple with unrelated material changes F1 by +0.003; syntax, triple order and subgraph size produce no measurable effect at multi-hop depth. The paper also reports and retracts a spurious artifact caused by applying a grounding instruction to a context arm but not its no-context baseline, and identifies the KG write path as an attack surface.",
+  "datasets": [
+    "LC-QuAD 2.0 (82 one- or two-hop questions)",
+    "QALD-10 (43 questions of at least three hops)",
+    "Wikidata-grounded corpus of 125 questions total; 46 one-hop, 36 two-hop, 29 three-hop, 12 four-hop, 2 five/six-hop"
+  ],
+  "benchmarks": [
+    "LC-QuAD 2.0",
+    "QALD-10"
+  ],
+  "baselines": [
+    "the paper's own controlled arms (chain present vs removed; strict vs permissive grounding prompt; precision 1.00 vs reduced; 7 RDF serialization formats; multiple triple orderings; subgraph sizes) rather than external systems"
+  ],
+  "metrics": [
+    "token-level F1 (token precision/recall harmonic mean)",
+    "95% bootstrap confidence intervals",
+    "permutation test p-values"
+  ],
+  "results": "Replacing every distractor slot with triples from an unrelated entity neighbourhood changes answer F1 by +0.003 (95% CI [-0.019, +0.031], permutation p = 0.812, 125 questions); the null also holds within depth (+0.030 at one hop, -0.021 at two hops, -0.007 at three hops, -0.001 at four hops). Removing the chain \"costs most of what the graph was worth\". Telling a model to answer using only the provided facts when no facts are present drops F1 from 0.299 to 0.035 (factor 8.63). Syntax, triple order and subgraph size show no measurable effect at multi-hop depth.",
+  "limitations": [
+    "No retriever: subgraphs come from gold SPARQL, so findings describe properties of the constructed context, not a deployable retrieval system.",
+    "The corpus is small (125 questions) and depth is perfectly confounded with benchmark, so depth-stratified effects cannot be separated from benchmark effects.",
+    "The comparison that would price the grounding instruction against correct context is reported as an open contrast rather than a number because a format-sensitive scorer is confounded by response format.",
+    "It is an inference-time prompting study, not a fine-tuning study, so it cannot directly rule out that passage-coherent context helps during training."
+  ],
+  "future_work": [
+    "The paper explicitly leaves the grounding-instruction-vs-correct-context comparison as an open contrast requiring a different scorer.",
+    "It flags the KG write path as an attack surface that needs a defence (write-side provenance), which is a stated open problem rather than future work proper."
+  ],
+  "code_availability": "No public repository was found by search_github for this paper (query on answer path / grounding instruction / graph QA returned no repositories), and no code URL is listed in the record. Code availability: not stated.",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.55,
+    "conceptual_difference": "This is the most directly threatening paper for the idea's premise, but the overlap is not total: it tests inference-time prompt composition (chain triples vs distractor triples from an unrelated entity neighbourhood), whereas the idea proposes training-time fine-tuning with triples drawn from the SAME source passage. The paper's distractor triples are genuine triples from the question's entity neighbourhood that are off the answer path, which is close to but not identical to 'passage-coherent local context'. It therefore does not refute the idea outright, but it establishes a strong prior that non-chain triples carry ~no measurable signal, and it is a model for the token-matched control the idea must run.",
+    "basis": "Problem overlap 0.7: both ask which triples around a target chain matter for multi-hop KGQA, and both use hop-stratified evaluation. Method overlap 0.5: both hold the triple count fixed and swap in non-chain material, but one varies a frozen LLM's prompt while the idea fine-tunes and adds a repair loop and RL stage. Evaluation overlap 0.55: same goal (answer F1 at varying hop depth), different corpora (LC-QuAD/QALD vs the idea's likely MetaQA/WebQSP/CWQ) and different regime (prompting vs training)."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:07:08.896845Z"
+}

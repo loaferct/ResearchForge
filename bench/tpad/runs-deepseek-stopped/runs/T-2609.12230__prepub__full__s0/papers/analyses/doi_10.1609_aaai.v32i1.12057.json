@@ -1,0 +1,47 @@
+{
+  "paper_id": "doi:10.1609/aaai.v32i1.12057",
+  "relevance_tier": "medium",
+  "problem": "Question answering over a knowledge graph from question-answer pairs alone is hard because user questions are noisy (typos, pronunciation variation) and many require multi-hop logical reasoning to retrieve the answer.",
+  "method": "A unified deep learning architecture with a variational learning algorithm that jointly handles noise in questions (entity matching) and multi-hop logical reasoning over the knowledge graph; trained end-to-end from question-answer pairs.",
+  "key_assumptions": [
+    "Multi-hop reasoning can be learned end-to-end from question-answer pairs via latent variables.",
+    "Questions are noisy (typos, pronunciation variants) and entity linking to the KG is unreliable.",
+    "A unified deep architecture with variational learning can handle noise and multi-hop reasoning simultaneously."
+  ],
+  "main_contribution": "A unified deep architecture with an end-to-end variational learning algorithm that handles question noise and learns multi-hop reasoning over a KG from QA pairs alone, plus new benchmark datasets for multi-hop, paraphrased, and human-voice questions.",
+  "datasets": [
+    "derived multi-hop benchmark dataset (from an existing benchmark)",
+    "neural-machine-translation-paraphrased questions",
+    "human-voice questions"
+  ],
+  "benchmarks": [
+    "multi-hop QA over KG",
+    "paraphrased QA",
+    "spoken QA"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract (state-of-the-art performance reported)"
+  ],
+  "results": "Achieves state-of-the-art performance on a recent benchmark dataset and promising results on the derived multi-hop, paraphrased, and human-voice datasets. Exact numbers are not stated in the abstract.",
+  "limitations": [
+    "No explicit reasoning-chain/context supervision; latent paths may be unfaithful.",
+    "Pre-LLM architecture; not applicable to instruction-tuned LLM fine-tuning directly.",
+    "not stated in abstract regarding hop-depth generalization."
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.45,
+    "conceptual_difference": "Zhang et al. supervise with QA pairs and latent KG paths via variational inference; they do not compare triple-only vs context-enriched supervision, have no passage-context subgraph, no repair loop, and no RL or hop-transfer study. It is early evidence that multi-hop KGQA can be trained without explicit reasoning-chain supervision, which is relevant context for the idea's premise.",
+    "basis": "Problem overlap high: multi-hop reasoning over a KG for QA. Method overlap low: a latent-variable variational model, not LLM fine-tuning on context-enriched triples. Evaluation overlap moderate: multi-hop QA benchmarks, but pre-LLM datasets differ from MetaQA/WebQSP/CWQ."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:10:57.225245Z"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.62527/joiv.10.3.4122",
+  "title": "A Multi-Dimensional Framework for Bias Assessment in Indonesia Question-Answering Datasets",
+  "authors": [
+    "Feliks Victor Parningotan Samosir",
+    "Marta Diana",
+    "Kelvin Wiriyatama"
+  ],
+  "year": 2026,
+  "published": "2026-05-31",
+  "venue": "JOIV: International Journal on Informatics Visualization",
+  "url": "https://www.semanticscholar.org/paper/b675551654dcf7a230a2abb813f72611a97136b4",
+  "pdf_url": "https://doi.org/10.62527/joiv.10.3.4122",
+  "abstract": "We aim to develop and validate an Indonesian, fairness-oriented audit for question answering (QA) datasets and to demonstrate its utility on FacQA. Materials comprise ~5,000 question–passage pairs from FacQA and a publicly released IndoBERT-QA checkpoint used without additional fine-tuning. Methodologically, the audit integrates five bias dimensions: (i) topical/entity representation via NER to assess geo-regional and temporal coverage; (ii) question-category imbalance using a 5W+1H scheme; (iii) answer-position effects via a relative-location metric; (iv) length/complexity sensitivity from token-length profiles; and (v) robustness under controlled passage perturbations (front/end relocation, masking, deletion, shuffling). We tokenize with truncation (max length 512) and report EM/F1 with paired significance tests (McNemar for EM; paired bootstrap for F1) across conditions. Results indicate representational skew—GPE dominated by “Indonesia/Jakarta” and dates largely pre-2005—and structural imbalance—“What/How many” far outnumber other types, with no “Why/How.” Answers concentrate early in passages (41.45% early; 32.63% middle; 25.92% late) and are short (≥70% have 1–3 tokens). Perturbations show a small, non-significant early-position advantage (Δ≈1.2 pp EM), consistent with lead bias in the sources. Implications for practice include curating more balanced Indonesian QA resources (diversifying time periods and regions, adding “Why/How,” and documenting length-/position-stratified coverage) and standardizing evaluations that report Original vs. front/end variants with robustness checks and paired testing. For further research, we outline extending probes to Indonesian social-bias axes, evaluating zero-/few-shot LLMs under the same audit, and auditing retrieval choices in RAG pipelines to mitigate corpus-induced skew.",
+  "doi": "10.62527/joiv.10.3.4122",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "b675551654dcf7a230a2abb813f72611a97136b4",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T07:29:31.839556Z",
+  "relevance": 0.2143,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering dataset evaluation metric Hits@1 EM F1"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

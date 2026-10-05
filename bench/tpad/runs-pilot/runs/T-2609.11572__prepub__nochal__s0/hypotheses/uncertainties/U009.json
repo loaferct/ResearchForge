@@ -1,0 +1,34 @@
+{
+  "id": "U009",
+  "question": "How can we mitigate the confound where retrieval systems match semantic meaning rather than temporal correctness, ensuring that temporal weighting actually influences version selection in open-domain question answering?",
+  "description": "Existing work indicates that retrieval often matches meaning rather than time (C006), which could obscure the true impact of temporal relevance. We need to explore strategies (e.g., architectural changes, training objectives, or evaluation designs) that isolate temporal effects.",
+  "category": "confounder",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "READ",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": 0.7,
+  "confidence_basis": "Based on explicit descriptions of the hard date gate in TIDE (arxiv:2608.08512) and specialized training approach in TPOUR (arxiv:2606.17664), plus logical inference about how retrieval-level temporal weighting could address the confound.",
+  "rationale": "Addressing this confounder is crucial for valid experimental evaluation of the temporal relevance component.",
+  "resolution": "The confound where retrieval systems match semantic meaning rather than temporal correctness is a recognized challenge in temporal QA (C005, C006). Existing work like TIDE mitigates this through evaluation design using a \"hard date gate\" that separates correct meaning from correct time (C013, C014). Retrieval-level approaches such as our proposed temporal relevance framework may address this confound earlier in the pipeline by directly influencing which passages are retrieved based on temporal proximity (C016), unlike specialized methods that require specific training or architectures (C017).",
+  "paper_ids": [
+    "arxiv:2608.08512",
+    "arxiv:2606.17664"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2608.08512",
+    "arxiv:2606.17664"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "CRITIQUE",
+  "created_at": "2026-09-30T10:47:39.434646Z",
+  "updated_at": "2026-09-30T10:55:43.630843Z"
+}

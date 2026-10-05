@@ -1,0 +1,242 @@
+{
+  "field_name": "Multi-hop reasoning over knowledge graphs with language models: context construction, supervision design, and RL",
+  "categories": [
+    {
+      "name": "Multi-hop KGQA",
+      "parent": null,
+      "description": "Answering natural-language questions that require traversing several edges of a knowledge graph, typically MetaQA/WebQSP/CWQ. The umbrella category for the idea's target domain.",
+      "paper_ids": [
+        "arxiv:2212.00959",
+        "arxiv:2101.03737",
+        "doi:10.18653/v1/2025.findings-acl.856",
+        "doi:10.18653/v1/2020.acl-main.412"
+      ]
+    },
+    {
+      "name": "Retrieve-then-reason subgraph pipelines",
+      "parent": "Multi-hop KGQA",
+      "description": "Retrieve a question-specific subgraph, then reason over it; includes GNN node classification, relation-matching propagation, and path-based reasoning. Context is a retrieved subgraph, not a source passage.",
+      "paper_ids": [
+        "arxiv:2212.00959",
+        "arxiv:2101.03737",
+        "doi:10.18653/v1/2025.findings-acl.856"
+      ]
+    },
+    {
+      "name": "Embedding-based KGQA",
+      "parent": "Multi-hop KGQA",
+      "description": "Use KG embeddings trained for link prediction to reduce KG sparsity and relax neighborhood-constrained answer selection, instead of relying on external text.",
+      "paper_ids": [
+        "doi:10.18653/v1/2020.acl-main.412"
+      ]
+    },
+    {
+      "name": "Knowledge-aware LM reasoning modules",
+      "parent": "Multi-hop KGQA",
+      "description": "Equip a pretrained LM with an explicit multi-hop, multi-relational module that consumes an extracted KG subgraph at inference (path-based reasoning unified with GNNs).",
+      "paper_ids": [
+        "doi:10.18653/v1/2020.emnlp-main.99"
+      ]
+    },
+    {
+      "name": "Graph RAG (inference-time context construction)",
+      "parent": null,
+      "description": "Build and verbalize graph context for an LLM at inference/prompt time; the model is not trained to use co-occurring triples as supervision.",
+      "paper_ids": [
+        "doi:10.18653/v1/2025.findings-naacl.232",
+        "doi:10.20944/preprints202505.1992.v1",
+        "doi:10.18653/v1/2025.findings-acl.856"
+      ]
+    },
+    {
+      "name": "Subgraph retrieval with ordering/merging",
+      "parent": "Graph RAG (inference-time context construction)",
+      "description": "Retrieve a subgraph (often via queries or divide-and-conquer), then merge/reduce redundancy and impose an order on the triplets before prompting the LLM.",
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1",
+        "doi:10.18653/v1/2025.findings-naacl.232"
+      ]
+    },
+    {
+      "name": "GNN-based graph retrieval",
+      "parent": "Graph RAG (inference-time context construction)",
+      "description": "Use lightweight GNNs to score nodes and retrieve shortest paths or candidate subgraphs as LLM context, avoiding costly LLM-based path generation.",
+      "paper_ids": [
+        "doi:10.18653/v1/2025.findings-acl.856"
+      ]
+    },
+    {
+      "name": "Subgraph-conditioned LLM fine-tuning",
+      "parent": null,
+      "description": "Inject a query-specific retrieved subgraph into an LLM via a GCN adapter and structural embeddings as part of LLM fine-tuning. This is the closest retrieved work to training-time structural context, though for the KGC task.",
+      "paper_ids": [
+        "arxiv:2506.00708"
+      ]
+    },
+    {
+      "name": "RL over KG traversal for LLMs",
+      "parent": null,
+      "description": "Train an LLM with reinforcement learning to internalize KG traversal into a unified thinking stage, replacing fixed step-by-step pipelines.",
+      "paper_ids": [
+        "arxiv:2603.21440",
+        "arxiv:2604.12487"
+      ]
+    },
+    {
+      "name": "Supervision-signal design for multi-hop reasoning",
+      "parent": null,
+      "description": "Design of what signal supervises multi-hop reasoning, as opposed to how context is retrieved.",
+      "paper_ids": [
+        "arxiv:2101.03737"
+      ]
+    },
+    {
+      "name": "Intermediate/teacher-student supervision",
+      "parent": "Supervision-signal design for multi-hop reasoning",
+      "description": "Learn intermediate entity distributions with a teacher-student, forward+backward scheme to reduce spurious intermediate reasoning when gold paths are unavailable.",
+      "paper_ids": [
+        "arxiv:2101.03737"
+      ]
+    },
+    {
+      "name": "Passage-derived context-subgraph supervision (proposed idea, not found)",
+      "parent": null,
+      "description": "Attach triples co-occurring in the same source passage to each target triple/path as the supervision signal, compare isolated vs. context regimes under matched budgets, repair one-hop failures, then RL on lower-hop instances. No retrieved paper occupies this category.",
+      "paper_ids": []
+    },
+    {
+      "name": "KG incompleteness remedies",
+      "parent": null,
+      "description": "Approaches that respond to KG incompleteness or missing links: embeddings for sparsity, subgraph completion, or candidate restriction.",
+      "paper_ids": [
+        "doi:10.18653/v1/2020.acl-main.412",
+        "arxiv:2506.00708"
+      ]
+    }
+  ],
+  "idea_position": "The idea sits across two categories that are currently separate: it takes the 'context beyond an isolated triple/path' motivation from subgraph-conditioned LLM fine-tuning (DrKGC, closest mechanism) and the 'supervision signal is insufficient for multi-hop reasoning' motivation from intermediate-supervision design (NSM), but it changes the source of context to the *source passage* of the supervision triple and moves context construction from inference/prompt time into the *training supervision signal*. Its repair loop and lower-hop RL components place it near RL-over-KG-traversal work (KG-Hopper), but the retrieval/RAG family (GNN-RAG, GRAG, SG-RAG MOT) and the retrieve-then-reason family (UniKGQA, NSM) are the direct comparison points.",
+  "dominant_approaches": [
+    "Retrieve-then-reason: retrieve a question-specific subgraph, then reason with a GNN, path module, or LLM (UniKGQA, NSM, GNN-RAG).",
+    "Graph RAG: construct and verbalize subgraph/path context for an LLM at inference, increasingly with lightweight GNN retrieval rather than LLM path generation (GNN-RAG, GRAG, SG-RAG MOT).",
+    "Subgraph-conditioned fine-tuning: inject a query-specific retrieved subgraph into the LLM via structural embeddings/GCN adapter (DrKGC).",
+    "RL over KG traversal: train an LLM with RL to internalize multi-step traversal (KG-Hopper, KG-Reasoner).",
+    "Embedding-based sparsity reduction: use link-prediction embeddings instead of external text (EmbedKGQA).",
+    "Supervision redesign: learn intermediate supervision with a teacher-student scheme (NSM)."
+  ],
+  "common_assumptions": [
+    "A question-specific subgraph can be retrieved and contains the answer entity; reported subgraph coverage is 94.9% on WebQSP, 79.3% on CWQ and ~99-100% on MetaQA (NSM Table 1).",
+    "Entity linking from question to KG entities is correct; failures break the context.",
+    "Question-answer pairs are available but gold reasoning paths are not, so intermediate supervision must be inferred (NSM, GNN-RAG).",
+    "KG facts/triples can be verbalized as text or serialized for an LLM.",
+    "More or better-structured graph context improves multi-hop answering (shared by all Graph RAG work).",
+    "Multi-hop performance on MetaQA/WebQSP/CWQ is the right proxy for multi-hop reasoning ability."
+  ],
+  "common_datasets": [
+    "MetaQA (1/2/3-hop, movie domain)",
+    "WebQSP (Freebase, up to 2-hop)",
+    "CWQ (Freebase, up to 4-hop)",
+    "CommonsenseQA and OpenbookQA (knowledge-aware QA outside KGQA)",
+    "General-domain and biomedical KGC benchmarks (DrKGC)"
+  ],
+  "common_benchmarks": [
+    "MetaQA",
+    "WebQSP",
+    "CWQ",
+    "CommonsenseQA",
+    "OpenbookQA",
+    "Eight KG reasoning benchmarks (KG-Hopper, names not stated)"
+  ],
+  "common_metrics": [
+    "Hits@1 (standard multi-hop KGQA, as referenced for the benchmark suite)",
+    "Answer F1 (GNN-RAG; multi-hop/multi-entity breakdown)",
+    "KG reasoning benchmark metrics (KG-Hopper, not stated in abstract)",
+    "KGC ranking metrics (DrKGC, not stated in abstract)",
+    "Answer accuracy (SG-RAG MOT, metaQA)"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Retrieval-based context construction silently assumes the retrieved subgraph contains the answer; it fails under entity-linking errors and for some questions. Stated explicitly for GNN-RAG, and quantified as 79.3% CWQ subgraph coverage in NSM.",
+      "paper_ids": [
+        "doi:10.18653/v1/2025.findings-acl.856",
+        "arxiv:2101.03737"
+      ]
+    },
+    {
+      "description": "Fine-tuning an LLM to use graph structure is computationally intensive and bounded by the base LLM's capability.",
+      "paper_ids": [
+        "arxiv:2506.00708"
+      ]
+    },
+    {
+      "description": "Long or redundant graph context introduces noise and cost; overly long inputs harm rather than help.",
+      "paper_ids": [
+        "arxiv:2506.00708",
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    },
+    {
+      "description": "Missing intermediate supervision produces spurious reasoning paths even when the final answer is correct.",
+      "paper_ids": [
+        "arxiv:2101.03737"
+      ]
+    },
+    {
+      "description": "Fixed step-by-step pipelines cause error cascades because each step is reasoned about in isolation, with no global view of cross-step dependencies.",
+      "paper_ids": [
+        "arxiv:2603.21440"
+      ]
+    },
+    {
+      "description": "Evaluations are dominated by Freebase-based benchmarks without source provenance, and metrics/benchmark names are often under-specified in abstracts (UniKGQA, GRAG, EmbedKGQA, DrKGC report unnamed benchmark sets).",
+      "paper_ids": [
+        "arxiv:2212.00959",
+        "doi:10.18653/v1/2025.findings-naacl.232",
+        "doi:10.18653/v1/2020.acl-main.412",
+        "arxiv:2506.00708"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Using passage provenance (co-occurring triples from one source passage) to construct training supervision, rather than retrieving a subgraph at inference.",
+    "A matched-budget isolated-vs-context regime comparison that equalizes number of examples and supervision tokens, so the context effect is separable from seeing more triples.",
+    "An explicit held-out-hop transfer protocol (train on shallow hops, test on deeper hops) reported as a first-class metric rather than incidental per-hop accuracy.",
+    "Adaptive repair loop driven by one-hop failure diagnosis, with attribution of failures to bad base facts vs. retrieval/entity-linking errors.",
+    "Combining context-enriched supervision with RL on lower-hop instances, and testing whether the two components interact or substitute for each other.",
+    "Context provenance and context quantity as joint design variables (which co-passage triples, how many, in what order)."
+  ],
+  "contradictions": [
+    {
+      "description": "More context helps vs. more context hurts. SG-RAG MOT reports that merging highly overlapping subgraphs (up to a point) and BFS-ordering triplets improves answer precision, while DrKGC argues that long/noisy graph context ('overly long inputs introduce noise and increase computational costs') is a failure mode and motivates compact query-specific subgraphs. This is a direct tension about how much and what kind of context to present.",
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1",
+        "arxiv:2506.00708"
+      ]
+    },
+    {
+      "description": "Where context should enter: at inference/prompt time (GNN-RAG, GRAG, SG-RAG MOT) vs. inside training/fine-tuning with structural adapters (DrKGC). Each claims its stage is the effective locus; none of the retrieved works compares the two stages under matched conditions.",
+      "paper_ids": [
+        "doi:10.18653/v1/2025.findings-acl.856",
+        "doi:10.18653/v1/2025.findings-naacl.232",
+        "arxiv:2506.00708"
+      ]
+    },
+    {
+      "description": "Whether decomposing reasoning into steps is harmful: KG-Hopper and KG-Reasoner argue fixed isolated-step pipelines cause error cascades and should be replaced by internalized traversal, whereas the retrieve-then-reason family (UniKGQA, NSM) keeps a staged decomposition and reports strong multi-hop QA results.",
+      "paper_ids": [
+        "arxiv:2603.21440",
+        "arxiv:2604.12487",
+        "arxiv:2212.00959",
+        "arxiv:2101.03737"
+      ]
+    },
+    {
+      "description": "External text/subgraph context vs. embedding-based sparsity reduction: EmbedKGQA motivates its approach by noting that relevant external text 'isn't always readily available', while the Graph RAG line makes external/graph context the central mechanism.",
+      "paper_ids": [
+        "doi:10.18653/v1/2020.acl-main.412",
+        "doi:10.18653/v1/2025.findings-acl.856",
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    }
+  ],
+  "recorded_at": "2026-09-30T05:18:48.738535Z"
+}

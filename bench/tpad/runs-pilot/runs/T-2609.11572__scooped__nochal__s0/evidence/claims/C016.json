@@ -1,0 +1,35 @@
+{
+  "id": "C016",
+  "statement": "Unlike TempRALM's inverse time difference scoring which gradually prefers more recent passages within the valid temporal window, our proposed temporal relevance component could be designed to primarily filter out future information (passages with timestamps > query target date) while treating all past passages more equally, reducing recency bias confound when the goal is to find the version in effect at a specific time point rather than the most recent version overall.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score)",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 5",
+      "quote": "Figure 4: Questions asking about the winner, runner-up, finalists and score asked at different timestamps, where the right answer corresponds to the most recent tennis match that occurred before the query timestamp",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "temporal relevance component",
+    "recency bias",
+    "TempRALM",
+    "comparison",
+    "filtering approach"
+  ],
+  "recorded_at": "2026-09-30T10:20:26.125240Z"
+}

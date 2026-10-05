@@ -1,0 +1,30 @@
+{
+  "id": "M003",
+  "title": "Text-graph supervision with an explicit passage-to-KG alignment audit",
+  "description": "Reposition the mechanism explicitly as text-graph supervision: treat same-passage triples as graph edges extracted from text rather than assumed KG facts, run an alignment audit quantifying how often extracted triples map to KG facts (and at what specificity), and compare text-graph context supervision against KG-neighborhood context supervision at matched budget. Drop the assumption that passage context is directly available as KG triples.",
+  "why_differs": "It abandons the unverified assumption that same-passage triples are KG facts, and unlike SG-RAG MOT (KG retrieval) or the KG-construction literature (which builds graphs but does not use them as QA training supervision), it measures alignment quality and its effect on downstream supervision.",
+  "technical_mechanism": "Extract relational triples from source passages, link their arguments to KG entities where possible, quantify the mapping rate and specificity gap, then use the linked subset (and, separately, the unlinked text graph) as supervision context; report results for both to show sensitivity to alignment quality.",
+  "expected_benefit": "Removes the weakest assumption in the original plan (that same-passage triples are KG-aligned) and converts an unresolved feasibility issue into a measured contribution. It also produces a clear statement of which knowledge each compared model sees, avoiding non-like-for-like comparisons.",
+  "potential_novelty": "Hedged: text-graph construction and OIE-KB alignment are established (Seq2KG; OIE-KB alignment case study), so novelty would lie in using an audited text graph as supervision for multi-hop QA - a combination not found in the retrieved set but adjacent to existing work.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Requires an extraction/alignment pipeline over source passages and a procedure to link extracted triples to KG entities/relations, none of which is off-the-shelf for MetaQA (which is not passage-aligned).",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Needs construction and validation of text-graph triples plus an alignment audit, which requires additional annotation or manual sampling to judge mapping quality.",
+  "main_risk": "MetaQA has no source passages, so the text-graph variant may only be runnable on other corpora, forcing a benchmark change that weakens comparability with the standard KGQA literature.",
+  "required_baselines": [
+    "KG-neighborhood context supervision at matched budget",
+    "Text-graph context supervision (this arm)",
+    "Unsupervised co-occurrence / text-graph retrieval baseline"
+  ],
+  "related_paper_ids": [
+    "doi:10.24963/kr.2020/77",
+    "doi:10.18653/v1/2020.eval4nlp-1.14",
+    "arxiv:2607.23278",
+    "doi:10.20944/preprints202505.1992.v1"
+  ],
+  "addresses_gap_ids": [
+    "G003"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:26:11.450106Z"
+}

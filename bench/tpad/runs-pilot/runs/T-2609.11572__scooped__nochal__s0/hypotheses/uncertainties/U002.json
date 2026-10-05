@@ -1,0 +1,32 @@
+{
+  "id": "U002",
+  "question": "How similar is our proposed method to Re3 (arxiv:2509.01306) which balances relevance and recency via a query-aware gating mechanism?",
+  "description": "Assess overlap between our framework and Re3 to differentiate contribution.",
+  "category": "overlap",
+  "importance": "high",
+  "status": "unresolved",
+  "next_action": "VERIFY",
+  "possible_actions": [
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "High overlap may diminish novelty.",
+  "resolution": "Both Re3 and our idea combine semantic and temporal information to improve retrieval/temporal reasoning. However, Re3 uses a query-aware gating mechanism to dynamically balance relevance and recency in general temporal information retrieval, while our idea proposes a retrieval-agnostic temporal relevance component that adjusts passage ranks based on elapsed time between query target date and version timestamp, targeting open-domain QA over continuously amended regulatory documents where amendments create dense semantic overlap. The core concept of integrating temporal signals overlaps, but the mechanisms, evaluation settings, and application specifics differ.",
+  "paper_ids": [
+    "arxiv:2509.01306"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2509.01306",
+    "arxiv:2401.13222"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 2,
+  "source": "PLAN",
+  "created_at": "2026-09-30T09:44:59.554563Z",
+  "updated_at": "2026-09-30T10:28:50.177845Z"
+}

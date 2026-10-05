@@ -1,0 +1,28 @@
+{
+  "id": "U001",
+  "question": "What is the optimal size (in hops) of the local context subgraph extracted from the source passage to enrich target triples for multi-hop QA training?",
+  "description": "The idea proposes enriching each target triple with additional triples from the same source passage forming a local context subgraph, but does not specify how many hops or which triples to include.",
+  "category": "feasibility",
+  "importance": "medium",
+  "status": "unresolved",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "The size of the context subgraph affects computational cost and the amount of auxiliary signal provided; too small may not provide enough context, too large may introduce noise.",
+  "resolution": "Not resolved within the investigation's attempt budget.",
+  "paper_ids": [],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 2,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T07:32:09.085674Z",
+  "updated_at": "2026-09-30T08:56:25.193234Z"
+}

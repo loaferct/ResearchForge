@@ -1,0 +1,24 @@
+{
+  "id": "C001",
+  "statement": "The MRE framework uses prompt engineering to guide LLMs in generating diverse reasoning trajectories, selects valid trajectories for supervised fine-tuning, and introduces Tree-Group Relative Policy Optimization (T-GRPO) to address sparse rewards via tree-structured exploration and evaluation.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2601.01195",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "To address these challenges, we propose the multi-hop reasoning enhanced (MRE) framework, which enhances both forward and backward reasoning to improve the identification of globally optimal reasoning trajectories. Specifically, MRE begins with prompt engineering to guide the LLM in generating diverse reasoning trajectories for a given question. Valid reasoning trajectories are then selected for supervised fine-tuning, serving as a cold-start strategy. Finally, we introduce Tree-Group Relative Policy Optimization (T-GRPO), a recursive, tree-structured learning-by-exploration approach. At each hop, exploration establishes strong causal dependencies on the previous hop, while evaluation is informed by multi-path exploration feedback from subsequent hops.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "high",
+  "phase": "critique",
+  "tags": [
+    "existing work",
+    "RL enhancement",
+    "trajectory sampling"
+  ],
+  "recorded_at": "2026-09-30T07:41:27.346996Z"
+}

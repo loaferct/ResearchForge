@@ -1,0 +1,43 @@
+{
+  "id": "C032",
+  "statement": "The published decay hybrid reports 99.8% temporal accuracy on its own benchmark, which shows decay-based ranking can be near-ceiling when the temporally correct evidence is also the recent evidence, but it does not show decay is sufficient when the in-force version is old: the discriminating case (an old in-force clause coexisting with a recent near-duplicate version of the same clause) is not isolated by that figure, and the metric's definition is not verifiable from the accessible record. The decisive test for whether recency is a sufficient proxy is therefore restricted to non-latest-authoritative queries, where decay and valid-time gating make opposite predictions by construction.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "doi:10.2139/ssrn.7174868",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "achieves 99.8% temporal accuracy and 50.8% entity precision across all three languages",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "temporal evidence leakage",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.1109/iri69576.2026.00090",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "Layer 2 integrates learnable exponential decay functions into graph-based retrieval",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "decay",
+    "deciding case",
+    "metric interpretation",
+    "recency proxy"
+  ],
+  "recorded_at": "2026-09-30T04:40:18.147488Z"
+}

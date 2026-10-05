@@ -1,0 +1,33 @@
+{
+  "id": "U007",
+  "question": "Can a temporal relevance component based on elapsed time be effectively applied to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to their core algorithms, given differences in score distributions and normalization?",
+  "description": "Need to examine how temporal scores combine with semantic scores from different retriever types.",
+  "category": "feasibility",
+  "importance": "high",
+  "status": "unresolved",
+  "next_action": "VERIFY",
+  "possible_actions": [
+    "COMPARE",
+    "VERIFY"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "TempRALM works with a specific dense retriever (Contriever); Re3 uses a gating mechanism that may be retriever-specific.",
+  "resolution": "Existing work shows TempRALM is designed for dense retrievers (Contriever-based) with no mention of sparse retrievers, while Re3 demonstrates generalization across diverse dense encoders but not sparse. No evidence demonstrates application to both dense (e.g., DPR) and sparse (e.g., BM25) retrievers without modification to core algorithms, leaving the feasibility of a truly retrieval-agnostic temporal relevance component unresolved.",
+  "paper_ids": [],
+  "supporting_paper_ids": [
+    "arxiv:2401.13222",
+    "arxiv:2509.01306"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C018",
+    "C017"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 2,
+  "source": "CRITIQUE",
+  "created_at": "2026-09-30T09:53:57.193168Z",
+  "updated_at": "2026-09-30T10:26:53.919698Z"
+}

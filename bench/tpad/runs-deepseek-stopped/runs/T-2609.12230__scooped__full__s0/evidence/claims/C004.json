@@ -1,0 +1,24 @@
+{
+  "id": "C004",
+  "statement": "The closest existing work, arxiv:2609.12230, overlaps the idea at the level of problem, method and evaluation: it proposes exactly the same context-augmented vs KG-grounded supervision comparison, adds the same LLM-judged one-hop repair loop, applies lower-hop RL, and evaluates 3-5-hop transfer (see C002, C003). The only remaining differences are evaluation rigor and scope (matched-token/matched-example controls, an untouched held-out evaluation set, standard-benchmark generalization, seed-level significance), not mechanism.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "We propose a context-augmented KG supervision framework that attaches supporting triples from the same source text chunk to each primary KG triple, producing CG-grounded supervision alongside standard KG-grounded supervision.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "critique",
+  "tags": [
+    "critique",
+    "overlap",
+    "scooped"
+  ],
+  "recorded_at": "2026-09-30T05:12:53.150007Z"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2506.09414",
+  "title": "PGDA-KGQA: A Prompt-Guided Generative Framework with Multiple Data Augmentation Strategies for Knowledge Graph Question Answering",
+  "authors": [
+    "Xiujun Zhou",
+    "Pingjian Zhang",
+    "Deyou Tang"
+  ],
+  "year": 2025,
+  "published": "2025-06-11",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2506.09414",
+  "pdf_url": "https://arxiv.org/pdf/2506.09414v1",
+  "abstract": "Knowledge Graph Question Answering (KGQA) is a crucial task in natural language processing that requires reasoning over knowledge graphs (KGs) to answer natural language questions. Recent methods utilizing large language models (LLMs) have shown remarkable semantic parsing capabilities but are limited by the scarcity of diverse annotated data and multi-hop reasoning samples. Traditional data augmentation approaches are focus mainly on single-hop questions and prone to semantic distortion, while LLM-based methods primarily address semantic distortion but usually neglect multi-hop reasoning, thus limiting data diversity. The scarcity of multi-hop samples further weakens models' generalization. To address these issues, we propose PGDA-KGQA, a prompt-guided generative framework with multiple data augmentation strategies for KGQA. At its core, PGDA-KGQA employs a unified prompt-design paradigm: by crafting meticulously engineered prompts that integrate the provided textual content, it leverages LLMs to generate large-scale (question, logical form) pairs for model training. Specifically, PGDA-KGQA enriches its training set by: (1) generating single-hop pseudo questions to improve the alignment of question semantics with KG relations; (2) applying semantic-preserving question rewriting to improve robustness against linguistic variations; (3) employing answer-guided reverse path exploration to create realistic multi-hop questions. By adopting an augment-generate-retrieve semantic parsing pipeline, PGDA-KGQA utilizes the augmented data to enhance the accuracy of logical form generation and thus improve answer retrieval performance. Experiments demonstrate that outperforms state-of-the-art methods on standard KGQA datasets, achieving improvements on WebQSP by 2.8%, 1.2%, and 3.1% and on ComplexWebQuestions by 1.8%, 1.1%, and 2.4% in F1, Hits@1, and Accuracy, respectively.",
+  "doi": null,
+  "arxiv_id": "2506.09414",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T06:11:41.009538Z",
+  "relevance": 0.4118,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "data augmentation multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

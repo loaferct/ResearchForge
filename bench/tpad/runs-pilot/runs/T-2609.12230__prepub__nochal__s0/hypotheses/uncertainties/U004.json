@@ -1,0 +1,33 @@
+{
+  "id": "U004",
+  "question": "Is the adaptive repair loop that detects one-hop failures and generates corrective examples practical to implement and likely to converge?",
+  "description": "Examine iterative reasoning frameworks like KGEIR and see if they use similar repair loops.",
+  "category": "feasibility",
+  "importance": "medium",
+  "status": "partially_resolved",
+  "next_action": "READ",
+  "possible_actions": [
+    "READ",
+    "SEARCH"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Assess implementation complexity and potential pitfalls.",
+  "resolution": "Feasibility of the adaptive repair loop is supported by works showing iterative refinement improves performance (IterCOMP, DynaSearcher, CacheRAG). Reinforcement learning lower-hop transfer has been explored in multi-hop KGQA (e.g., the RL-based methods in the analyzed papers), indicating that optimizing on lower-hop QA instances can transfer to deeper multi-hop queries. However, direct evidence combining an adaptive repair loop that detects one-hop failures, generates corrective examples, and then applies RL lower-hop transfer is not present in the literature.",
+  "paper_ids": [
+    "arxiv:2608.13588",
+    "arxiv:2507.17365",
+    "arxiv:2604.26176",
+    "doi:10.1016/j.eswa.2024.124652",
+    "doi:10.1016/j.ins.2022.11.042"
+  ],
+  "supporting_paper_ids": [],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "PLAN",
+  "created_at": "2026-09-30T07:35:57.675587Z",
+  "updated_at": "2026-09-30T09:28:43.624139Z"
+}

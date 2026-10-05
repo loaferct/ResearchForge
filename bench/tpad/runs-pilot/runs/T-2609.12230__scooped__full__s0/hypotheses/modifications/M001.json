@@ -1,0 +1,29 @@
+{
+  "id": "M001",
+  "title": "Cross‑passage context subgraph enrichment",
+  "description": "Instead of restricting supporting triples to the same source text chunk, collect triples from multiple related passages (e.g., via TF‑IDF or dense retrieval) that share entities with the target triple, forming a broader context subgraph that captures multi‑document evidence.",
+  "why_differs": "The proposed idea and arXiv:2609.12230 limit context to triples from the same source passage; UniKGQA and Co‑E do not enrich training triples with any contextual triples. Expanding to cross‑passage context leverages wider evidence while still staying grounded in the source corpus.",
+  "technical_mechanism": "For each target triple, retrieve top‑k passages containing its entities using a dense retriever (e.g., DPR), extract triples from those passages, and add them to the context graph. The resulting subgraph is used alongside the target triple in both KG‑grounded and CG‑grounded supervision settings.",
+  "expected_benefit": "Increased recall of relevant facts, reduced dependence on single‑passage completeness, and improved robustness to passage‑level noise.",
+  "potential_novelty": "Combining cross‑passage context extraction with adaptive repair and RL transfer has not been explicitly explored in multi‑hop QA training frameworks.",
+  "implementation_difficulty": "moderate",
+  "implementation_difficulty_basis": "Requires integrating a passage retriever and triple extraction pipeline, but builds on existing tools (DPR, OpenIE).",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Experiments involve varying k and measuring impact on EM/F1; ablation studies are straightforward.",
+  "main_risk": "Increased noise from irrelevant passages may degrade performance if not filtered properly.",
+  "required_baselines": [
+    "isolated triples",
+    "same‑passage context enrichment (as in arXiv:2609.12230)"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2212.00959",
+    "arxiv:2607.23278",
+    "doi:10.5753/sbbd.2025.247297"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T07:10:37.305893Z"
+}

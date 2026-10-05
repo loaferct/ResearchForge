@@ -1,0 +1,36 @@
+{
+  "paper_id": "doi:10.1145/3572405",
+  "relevance_tier": "medium",
+  "problem": "not stated in abstract",
+  "method": "Proposes ColBERT-PRF, a pseudo-relevance feedback technique for dense retrieval that enhances effectiveness by extracting representative feedback embeddings from pseudo-relevant documents and adding them to query representation.",
+  "key_assumptions": [
+    "Pseudo-relevant documents contain useful feedback for query expansion.",
+    "Dense retrieval models like ColBERT can be improved with pseudo-relevance feedback."
+  ],
+  "main_contribution": "ColBERT-PRF improves MAP significantly on MSMARCO and TREC datasets; can be made more efficient with approximate scoring.",
+  "datasets": [
+    "MSMARCO passage ranking",
+    "MSMARCO document ranking",
+    "TREC Robust04 document ranking"
+  ],
+  "benchmarks": [],
+  "baselines": [
+    "ColBERT E2E model"
+  ],
+  "metrics": [
+    "MAP"
+  ],
+  "results": "[\"MAP improved by up to 26% on TREC 2019 query set and 10% on TREC 2020 query set for passage ranking; up to 21% and 14% improvement for document ranking.\"]",
+  "limitations": [],
+  "future_work": [],
+  "code_availability": "[]",
+  "relation_to_idea": {
+    "problem_overlap": 0.3,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "Focuses on pseudo-relevance feedback for dense retrieval, while our idea focuses on temporal relevance weighting based on version timestamps for regulatory document QA.",
+    "basis": "Abstract describes ColBERT-PRF method."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T10:57:07.501966Z"
+}

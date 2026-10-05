@@ -1,0 +1,37 @@
+{
+  "id": "doi:10.18653/v1/2021.emnlp-main.341",
+  "title": "TransferNet: An Effective and Transparent Framework for Multi-hop Question Answering over Relation Graph",
+  "authors": [
+    "Jiaxin Shi",
+    "Shulin Cao",
+    "Lei Jing Hou",
+    "Juanzi Li",
+    "Hanwang Zhang"
+  ],
+  "year": 2021,
+  "published": "2021-01-01",
+  "venue": "Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing",
+  "url": "https://doi.org/10.18653/v1/2021.emnlp-main.341",
+  "pdf_url": "https://aclanthology.org/2021.emnlp-main.341.pdf",
+  "abstract": "Multi-hop Question Answering (QA) is a challenging task because it requires precise reasoning with entity relations at every step towards the answer.The relations can be represented in terms of labels in knowledge graph (e.g., spouse) or text in text corpus (e.g., they have been married for 26 years).Existing models usually infer the answer by predicting the sequential relation path or aggregating the hidden graph features.The former is hard to optimize, and the latter lacks interpretability.In this paper, we propose Trans-ferNet, an effective and transparent model for multi-hop QA, which supports both label and text relations in a unified framework.Trans-ferNet jumps across entities at multiple steps.At each step, it attends to different parts of the question, computes activated scores for relations, and then transfer the previous entity scores along activated relations in a differentiable way.We carry out extensive experiments on three datasets and demonstrate that TransferNet surpasses the state-of-the-art models by a large margin.In particular, on MetaQA, it achieves 100% accuracy in 2-hop and 3-hop questions.By qualitative analysis, we show that TransferNet has transparent and interpretable intermediate results.",
+  "doi": "10.18653/v1/2021.emnlp-main.341",
+  "arxiv_id": null,
+  "openalex_id": "W3156128319",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 107,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T07:31:56.475308Z",
+  "relevance": 0.6,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "\"Exact Match\" multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

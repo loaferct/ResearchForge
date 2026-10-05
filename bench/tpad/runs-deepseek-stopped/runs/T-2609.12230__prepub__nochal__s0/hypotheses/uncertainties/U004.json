@@ -1,0 +1,36 @@
+{
+  "id": "U004",
+  "question": "What is the correct evaluation protocol for 'transfer to deeper multi-hop queries' — is there an established held-out-hop split (e.g. train 1-2 hop, test 3 hop) on MetaQA/WebQSP/CWQ, or must a new hop-controlled split be constructed, and does the field report it?",
+  "description": "MetaQA is naturally stratified by hop count (1/2/3-hop), which suggests a natural transfer protocol; WebQSP/CWQ are ~2-hop. Whether prior work reports train-on-shallow/test-on-deep transfer determines if the central claim is comparable to existing numbers or needs a bespoke setup.",
+  "category": "evaluation",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE",
+    "REFINE"
+  ],
+  "confidence": 0.6,
+  "confidence_basis": "Based on the 9 analyzed papers and abstracts; no dedicated search for hop-generalization protocols was run, so absence of evidence is not strong evidence of absence.",
+  "rationale": "If no established hop-transfer protocol exists, the headline finding has no baseline to compare against and the evaluation must be designed from scratch, changing the contribution substantially.",
+  "resolution": "Partially resolved: MetaQA is naturally hop-stratified (1/2/3-hop) and NSM reports separate results per hop level, but no retrieved work reports an explicit train-on-shallow/test-on-deeper-hop transfer protocol as a headline result. So the idea's central transfer claim currently has no directly comparable published baseline and would need a bespoke, pre-registered split. A targeted search for length/hop generalization protocols in KGQA and multi-hop reasoning is still needed.",
+  "paper_ids": [
+    "arxiv:2101.03737",
+    "arxiv:2603.21440"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2101.03737"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C009"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "PLAN",
+  "created_at": "2026-09-30T05:10:43.276752Z",
+  "updated_at": "2026-09-30T05:22:15.746723Z"
+}

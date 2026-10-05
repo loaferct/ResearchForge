@@ -1,0 +1,219 @@
+{
+  "field_name": "Multi-hop knowledge graph question answering (KGQA) with subgraph/context supervision and LLM fine-tuning",
+  "categories": [
+    {
+      "name": "Multi-hop KGQA over knowledge graphs",
+      "parent": null,
+      "description": "Answering questions requiring chaining of facts over a knowledge graph; the shared problem framing of all analyzed work.",
+      "paper_ids": []
+    },
+    {
+      "name": "Subgraph-centric reasoning",
+      "parent": "Multi-hop KGQA over knowledge graphs",
+      "description": "Methods that restrict reasoning to a retrieved/induced subgraph rather than the whole KG.",
+      "paper_ids": [
+        "arxiv:2202.13296",
+        "doi:10.20944/preprints202505.1992.v1",
+        "doi:10.3390/computers14090382"
+      ]
+    },
+    {
+      "name": "Learned / trainable subgraph retrieval",
+      "parent": "Subgraph-centric reasoning",
+      "description": "Training a retriever (often decoupled from the reasoner) to induce a question-relevant subgraph, then reasoning over it with an embedding-based model.",
+      "paper_ids": [
+        "arxiv:2202.13296"
+      ]
+    },
+    {
+      "name": "Inference-time GraphRAG retrieval and triplet ordering",
+      "parent": "Subgraph-centric reasoning",
+      "description": "Retrieving a subgraph at inference via KG queries/path finding, optionally merging and ordering triplets, and conditioning an LLM prompt; no training-signal change.",
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1",
+        "doi:10.3390/computers14090382"
+      ]
+    },
+    {
+      "name": "Supervision-signal design for multi-hop training",
+      "parent": "Multi-hop KGQA over knowledge graphs",
+      "description": "Methods whose primary contribution is how the training signal is constructed or augmented, rather than the inference architecture.",
+      "paper_ids": [
+        "arxiv:2101.03737",
+        "arxiv:2609.12230"
+      ]
+    },
+    {
+      "name": "Intermediate-step supervision",
+      "parent": "Supervision-signal design for multi-hop training",
+      "description": "Generating or learning supervision at intermediate reasoning steps (e.g., intermediate entity distributions) when only the final answer is labeled.",
+      "paper_ids": [
+        "arxiv:2101.03737"
+      ]
+    },
+    {
+      "name": "Context-augmented triple supervision",
+      "parent": "Supervision-signal design for multi-hop training",
+      "description": "Attaching surrounding context (supporting triples from the same source passage, forming a context graph) to each target triple/path and fine-tuning an LLM under KG-grounded vs CG-grounded regimes. This is the idea's own category.",
+      "paper_ids": [
+        "arxiv:2609.12230",
+        "arxiv:2406.09994"
+      ]
+    },
+    {
+      "name": "Adaptive repair / data-cleaning loops",
+      "parent": "Supervision-signal design for multi-hop training",
+      "description": "Detecting unresolved one-hop failures with an LLM judge, generating targeted corrective examples, continually fine-tuning, and quarantining noisy triples before downstream training.",
+      "paper_ids": [
+        "arxiv:2609.12230"
+      ]
+    },
+    {
+      "name": "RL-based KG reasoning and lower-hop RL transfer",
+      "parent": "Supervision-signal design for multi-hop training",
+      "description": "Reinforcement-learning optimization over KG paths or QA items, including RL on lower-hop items to improve generalization to deeper-hop queries.",
+      "paper_ids": [
+        "arxiv:2609.12230",
+        "doi:10.1016/j.knosys.2023.110760"
+      ]
+    },
+    {
+      "name": "Architecture-centric relational reasoning",
+      "parent": "Multi-hop KGQA over knowledge graphs",
+      "description": "Improving multi-hop QA mainly by architectural design (graph networks, syntactic-semantic augmentation) rather than by supervision or retrieval.",
+      "paper_ids": [
+        "doi:10.3390/electronics13081436",
+        "arxiv:2202.13296"
+      ]
+    },
+    {
+      "name": "Knowledge-context quantity in multimodal QA",
+      "parent": null,
+      "description": "Supplying a variable (question-dependent) number of KG triples as model context in knowledge-based multimodal QA, with explicit findings about context quantity (precision vs distraction).",
+      "paper_ids": [
+        "arxiv:2406.09994"
+      ]
+    }
+  ],
+  "idea_position": "The idea sits in the 'Context-augmented triple supervision' leaf under 'Supervision-signal design for multi-hop training', and additionally spans the sibling leaf 'Adaptive repair / data-cleaning loops' and the RL branch 'RL-based KG reasoning and lower-hop RL transfer'. Its closest neighbor, arxiv:2609.12230, occupies the same three leaves simultaneously with method and evaluation overlap ~1.0/0.9, making the idea's intended position already populated rather than adjacent to it; the subgraph-context framing it shares with 'Subgraph-centric reasoning' is where it connects to the broader field, and arxiv:2406.09994 supplies the only contextual-quantity evidence (from multimodal QA) that bears on the idea's context-volume assumption.",
+  "dominant_approaches": [
+    "Retrieve-or-induce a question-relevant subgraph, then reason over it with an embedding model or an LLM prompt (arxiv:2202.13296, SG-RAG MOT, GraphTrace).",
+    "Augment the model's input with KG triples or subgraph text (GraphRAG-style prompting) rather than changing the training objective (SG-RAG MOT, GraphTrace, arxiv:2406.09994).",
+    "Augment the training signal when only final answers are available, e.g. intermediate entity supervision (arxiv:2101.03737) or passage-local context triples attached to each target triple (arxiv:2609.12230).",
+    "Iterative data-centric training loops: detect failures, generate corrective examples, refine; optionally followed by RL on easier items (arxiv:2609.12230).",
+    "Path-based RL over KGs for compositional reasoning (doi:10.1016/j.knosys.2023.110760, and the RL stage of arxiv:2609.12230).",
+    "Architectural graph/syntactic-semantic encoders for relational reasoning (DSSAGN doi:10.3390/electronics13081436)."
+  ],
+  "common_assumptions": [
+    "Multi-hop reasoning should be restricted to a retrieved or induced (sub)graph rather than the full KG (arxiv:2202.13296, SG-RAG MOT, GraphTrace).",
+    "Adding relevant context or intermediate supervision improves multi-hop reasoning relative to isolated facts/final-answer-only feedback (arxiv:2609.12230, arxiv:2101.03737, arxiv:2406.09994).",
+    "WebQSP, CWQ and MetaQA are representative multi-hop KBQA benchmarks (arxiv:2202.13296, arxiv:2101.03737, SG-RAG MOT).",
+    "Answer accuracy / Hits@1 / Exact Match is the appropriate primary metric (all analyzed work).",
+    "Subgraph/context size must be bounded, since larger contexts trade answer coverage against noise (arxiv:2202.13296, arxiv:2406.09994).",
+    "Synthetically generated QA items with verification filters are adequate supervision and evaluation for domain KGQA (arxiv:2609.12230)."
+  ],
+  "common_datasets": [
+    "Freebase (via WebQSP/CWQ topic-centric subgraphs)",
+    "MetaQA movies KG",
+    "WebQSP",
+    "CWQ",
+    "Gastroparesis and Diabetes KGs (GraphMERT-extracted, arxiv:2609.12230)",
+    "KVQA, CRIC-VQA, FVQA (arxiv:2406.09994)",
+    "COVID-19 economic KG (GraphTrace)"
+  ],
+  "common_benchmarks": [
+    "WebQSP",
+    "ComplexWebQuestions (CWQ)",
+    "MetaQA",
+    "In-house disease-specific 1-5-hop MCQ benchmark (arxiv:2609.12230)",
+    "KVQA / CRIC-VQA / FVQA (multimodal, arxiv:2406.09994)",
+    "In-domain COVID-19 economic multi-hop query set (GraphTrace)"
+  ],
+  "common_metrics": [
+    "Hits@1 (QA accuracy)",
+    "Answer accuracy / Exact Match",
+    "Answer coverage rate of retrieved subgraphs (arxiv:2202.13296)",
+    "Retriever Hits@1 (arxiv:2202.13296)",
+    "Multiple-choice accuracy per hop depth (arxiv:2609.12230)",
+    "Robustness to option shuffling (arxiv:2609.12230)",
+    "Retrieval and generation metrics incl. directness (GraphTrace)"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Context/subgraph size is a trade-off: too small excludes the answer, too large introduces noise that degrades QA (arxiv:2202.13296); supplying a fixed larger number of triples is worse than a dynamic, question-fitted number, and the work title explicitly frames excess context as distracting (arxiv:2406.09994). This directly qualifies the idea's assumption that same-passage context helps.",
+      "paper_ids": [
+        "arxiv:2202.13296",
+        "arxiv:2406.09994",
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    },
+    {
+      "description": "Retrieval/prompting methods (GraphRAG-style) perform no training, no supervision-design comparison, no data repair, and no RL, leaving the training-side questions open (SG-RAG MOT, GraphTrace, arxiv:2202.13296).",
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1",
+        "doi:10.3390/computers14090382",
+        "arxiv:2202.13296"
+      ]
+    },
+    {
+      "description": "Evaluation is domain-specific and/or synthetic rather than on established public benchmarks, limiting external validity (disease-specific KGs in arxiv:2609.12230; COVID-19 economic KG in GraphTrace; synthetic QA items per arxiv:2609.12230 Section 6).",
+      "paper_ids": [
+        "arxiv:2609.12230",
+        "doi:10.3390/computers14090382"
+      ]
+    },
+    {
+      "description": "Claims are unverifiable from the retrieved artifact: DSSAGN reports no datasets, baselines, metrics or numbers in its abstract, and the path-based adversarial RL record has neither abstract nor accessible full text.",
+      "paper_ids": [
+        "doi:10.3390/electronics13081436",
+        "doi:10.1016/j.knosys.2023.110760"
+      ]
+    },
+    {
+      "description": "The evaluation set is modified by the method being evaluated: adaptive repair removes/quarantines triples and refreshes the validation set, after which models reach 100% on the 'cleaned retained' one-hop set (arxiv:2609.12230), creating a selection/cleaning confound.",
+      "paper_ids": [
+        "arxiv:2609.12230"
+      ]
+    },
+    {
+      "description": "No public code or data release could be found for the closest and most complex method (arxiv:2609.12230) or for GraphMERT, whereas the simpler subgraph-retrieval and intermediate-supervision baselines do release code (arxiv:2202.13296, arxiv:2101.03737).",
+      "paper_ids": [
+        "arxiv:2609.12230",
+        "arxiv:2202.13296",
+        "arxiv:2101.03737"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Context-augmented LLM supervision evaluated on standard public benchmarks (WebQSP/CWQ/MetaQA) instead of only synthetic domain MCQ — but note this requires text-grounded KGs with passage provenance that Freebase-based benchmarks lack.",
+    "Matched-token / matched-context-size controls that isolate passage localization from raw supervision volume, plus a context-size sweep to test the inverted-U (precision vs excess) in LLM KGQA supervision.",
+    "A component-wise decomposition (context vs repair vs RL) with an untouched, never-edited held-out test set and seed-level variance reporting.",
+    "Combining intermediate-step supervision (arxiv:2101.03737) with context-triple supervision (arxiv:2609.12230), which are alternative answers to the same missing-signal problem and have not been compared.",
+    "Applying the repair loop to retrieved/prompted context (GraphRAG pipelines: SG-RAG MOT, GraphTrace) rather than only to KG-extraction triples.",
+    "Cross-corpus transfer of context-augmented supervision (train on one text corpus/KG, test on another) to test whether the mechanism is domain-general."
+  ],
+  "contradictions": [
+    {
+      "description": "The idea's H1/H4 assume more same-passage context is (at least weakly) beneficial, but retrieved work in adjacent settings reports the opposite direction at high context volume: arxiv:2406.09994 is framed as 'Precision Empowers, Excess Distracts' and shows dynamic (question-fitted) triples beat fixed larger amounts, while arxiv:2202.13296 shows larger subgraphs introduce noise and reduce QA Hits@1 even as answer coverage rises. SG-RAG MOT likewise finds merging helps 'up to some point'.",
+      "paper_ids": [
+        "arxiv:2406.09994",
+        "arxiv:2202.13296",
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    },
+    {
+      "description": "arxiv:2609.12230 claims the repair stage yields 100% accuracy on the cleaned retained one-hop validation sets, presenting this as a strengthened factual foundation; because the same loop quarantines triples and refreshes the validation set, this claim is in tension with the standard requirement that evaluation data be independent of the method — accuracy gains and evaluation-set editing are not separable as reported.",
+      "paper_ids": [
+        "arxiv:2609.12230"
+      ]
+    },
+    {
+      "description": "Two distinct remedies are offered for the same 'missing multi-hop supervision' problem without being compared: learned intermediate-step supervision for an embedding state machine (arxiv:2101.03737) versus passage-local context triples for LLM SFT (arxiv:2609.12230). Which added signal (intermediate reasoning distributions vs surrounding factual context) drives multi-hop gains is unresolved.",
+      "paper_ids": [
+        "arxiv:2101.03737",
+        "arxiv:2609.12230"
+      ]
+    }
+  ],
+  "recorded_at": "2026-09-30T05:11:43.232790Z"
+}

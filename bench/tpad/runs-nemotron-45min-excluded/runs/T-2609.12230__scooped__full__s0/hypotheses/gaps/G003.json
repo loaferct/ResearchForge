@@ -1,0 +1,25 @@
+{
+  "id": "G003",
+  "gap": "Quantifying the computational cost of training with local context subgraphs compared to isolated triples to assess feasibility for large-scale knowledge graphs.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2605.16598",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2605.16598",
+    "arxiv:2202.13296"
+  ],
+  "why_unaddressed": "Existing work on agentic retrieval and context-aware methods discusses computational costs but does not provide a direct comparison between training with enriched local context subgraphs versus isolated triples in the context of multi-hop QA model training.",
+  "research_question": "What is the computational overhead (training time, memory usage) of incorporating local context subgraphs into multi-hop QA training compared to training on isolated triples, and how does this scale with knowledge graph size?",
+  "potential_experiment": "Measure training time and memory consumption for varying sizes of local context subgraphs (0, 2, 5, 10 additional triples) on a subset of a large knowledge graph (e.g., Wikidata) using a standard multi-hop QA model architecture.",
+  "confidence": "medium",
+  "verification_required": "Benchmarking experiments on realistic knowledge graph sizes to establish practical feasibility.",
+  "recorded_at": "2026-09-30T06:19:41.366482Z"
+}

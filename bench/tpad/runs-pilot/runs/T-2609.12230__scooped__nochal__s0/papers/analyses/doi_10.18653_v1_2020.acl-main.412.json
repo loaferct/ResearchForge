@@ -1,0 +1,43 @@
+{
+  "paper_id": "doi:10.18653/v1/2020.acl-main.412",
+  "relevance_tier": "high",
+  "problem": "Multi-hop KGQA is challenged by KG incompleteness and sparsity; existing methods rely on external text (which may be unavailable) or impose heuristic neighborhood limits that can exclude the true answer.",
+  "method": "EmbedKGQA uses a KG embedding module (ComplEx) to generate entity and relation embeddings, a question embedding module to encode the natural language question, and an answer selection module that combines the ComplEx score φ(e_h, e_q, e_a′) with a relation score (intersection of relation sets) via a linear combination with hyperparameter γ. This approach relaxes the requirement of answer selection from a pre-specified neighborhood by leveraging the link prediction property of KG embeddings to capture implicit links.",
+  "key_assumptions": [
+    "KG embeddings can capture missing links and semantic similarity in incomplete KGs.",
+    "Combining embedding scores with relation scores improves answer selection accuracy."
+  ],
+  "main_contribution": "EmbedKGQA, a novel method that effectively performs multi-hop KGQA over sparse KGs, achieving state-of-the-art accuracy (e.g., 29.9% vs 20.1% for ComplEx on MetaQA 1-hop with missing links) and outperforming baseline methods that rely on external text or neighborhood constraints.",
+  "datasets": [
+    "MetaQA (1-hop, 2-hop, 3-hop partitions)",
+    "WebQuestionsSP"
+  ],
+  "benchmarks": [
+    "MetaQA",
+    "WebQuestionsSP"
+  ],
+  "baselines": [
+    "State-of-the-art baselines (not explicitly named in abstract; likely include KG completion methods and prior KGQA approaches)"
+  ],
+  "metrics": [
+    "Accuracy (exact match or hit@1 implied)",
+    "Specifically reported: Accuracy on MetaQA 1-hop with missing links: ComplEx 20.1%, EmbedKGQA 29.9%"
+  ],
+  "results": "[\"On MetaQA 1-hop with missing links, EmbedKGQA achieves 29.9% accuracy compared to 20.1% for ComplEx; on MetaQA and WebQuestionsSP datasets, EmbedKGQA demonstrates effectiveness over state-of-the-art baselines.\"]",
+  "limitations": [
+    "Availability and identification of relevant external text corpora is a challenge for methods that rely on them; heuristic neighborhood size limitations can exclude true answers."
+  ],
+  "future_work": [
+    "Not stated in abstract or full text."
+  ],
+  "code_availability": "[\"Available at https://github.com/malllabiisc/EmbedKGQA\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.9,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "EmbedKGQA combines KG embeddings with question embeddings and uses a linear scoring function for answer selection, relaxing neighborhood limits. Our idea enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than a specific embedding‑based scoring mechanism.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T07:16:26.309800Z"
+}

@@ -1,0 +1,153 @@
+{
+  "field_name": "Temporal Retrieval for Evolving Documents in Question Answering",
+  "categories": [
+    {
+      "name": "Temporal Decay Analysis in Legal/Statutory Context",
+      "parent": null,
+      "description": "Studies measuring temporal degradation of retrieval signals in legal statutes over time, often using citation proxies.",
+      "paper_ids": [
+        "arxiv:2605.17639"
+      ]
+    },
+    {
+      "name": "Temporal Weighting Applications in Other Modalities",
+      "parent": null,
+      "description": "Application of temporal decay or weighting to video retrieval, recommendation systems, and knowledge graphs.",
+      "paper_ids": [
+        "doi:10.1109/lsp.2022.3207620",
+        "doi:10.33480/jitk.v12i1.8240",
+        "arxiv:2604.26970"
+      ]
+    },
+    {
+      "name": "Open-Domain QA Retrieval Efficiency",
+      "parent": null,
+      "description": "Work focused on improving retrieval efficiency (speed/accuracy trade-off) for open-domain question answering, without explicit temporal handling.",
+      "paper_ids": [
+        "doi:10.3390/app132413177"
+      ]
+    },
+    {
+      "name": "Preference Optimization / LLM Alignment with Temporal Decay",
+      "parent": null,
+      "description": "Incorporating temporal decay into preference optimization methods for aligning large language models with human feedback.",
+      "paper_ids": [
+        "arxiv:2502.14340"
+      ]
+    },
+    {
+      "name": "Temporal Relevance Weighting for Retrieval-Augmented Question Answering over Evolving Regulatory Texts",
+      "parent": null,
+      "description": "Proposed approach: retrieval-agnostic framework adding temporal relevance component based on version timestamps to improve QA over continuously amended documents.",
+      "paper_ids": []
+    }
+  ],
+  "idea_position": "Temporal Relevance Weighting for Retrieval-Augmented Question Answering over Evolving Regulatory Texts",
+  "dominant_approaches": [
+    "BM25 retrieval",
+    "Dense retrieval (ColBERT, BERT-based)",
+    "Co-citation analysis",
+    "Uniform temporal decay weighting",
+    "Adaptive temporal decay surfaces",
+    "Stochastic selection with temporal weighting"
+  ],
+  "common_assumptions": [
+    "Temporal proximity between document version timestamp and query target date correlates with relevance.",
+    "Standard retriever provides a semantic similarity score that can be combined with temporal weight.",
+    "Version timestamps are available or can be inferred from document metadata.",
+    "Answer accuracy can be measured using standard QA metrics (Exact Match, F1)."
+  ],
+  "common_datasets": [
+    "UA-StatuteRetrieval (Ukrainian court decisions)",
+    "Goodreads Poetry dataset",
+    "Korean QA dataset (AI-Hub corpora)",
+    "AlpacaEval 2",
+    "Arena-Hard",
+    "MMLU",
+    "GSM8K",
+    "MATH",
+    "Synthetic temporal knowledge graphs",
+    "107 Wikipedia articles",
+    "1,163 patient records (Synthea EHR)"
+  ],
+  "common_benchmarks": [
+    "UA-StatuteRetrieval (own benchmark)",
+    "BSARD (Belgian statutory)",
+    "SCALE",
+    "LeSICiN (Indian legal)",
+    "Deterministic Top-N selection (recognition)",
+    "Vanilla DPO",
+    "SimPO",
+    "SamPO",
+    "Uniform decay baseline",
+    "No temporal weighting"
+  ],
+  "common_metrics": [
+    "MRR (Mean Reciprocal Rank)",
+    "Hit@1",
+    "Hit@5",
+    "Hit@10",
+    "Hit@20",
+    "Exact Match (EM)",
+    "F1 score",
+    "Catalog Coverage",
+    "Recall",
+    "Gini-index",
+    "Novelty scores",
+    "AlpacaEval score",
+    "Arena-Hard score",
+    "HDBSCAN ARI"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Evaluation is a proxy (e.g., citation prediction) rather than end-user question answering.",
+      "paper_ids": [
+        "arxiv:2605.17639"
+      ]
+    },
+    {
+      "description": "Focuses on a specific modality (video, recommendation, knowledge graphs) not textual document retrieval or QA.",
+      "paper_ids": [
+        "doi:10.1109/lsp.2022.3207620",
+        "doi:10.33480/jitk.v12i1.8240",
+        "arxiv:2604.26970"
+      ]
+    },
+    {
+      "description": "Limited to a specific language or domain (e.g., Korean QA, Ukrainian legal system).",
+      "paper_ids": [
+        "doi:10.3390/app132413177",
+        "arxiv:2605.17639"
+      ]
+    },
+    {
+      "description": "Does not address evolving document collections or versioned texts.",
+      "paper_ids": [
+        "arxiv:2502.14340",
+        "doi:10.3390/app132413177"
+      ]
+    },
+    {
+      "description": "Does not propose or test mitigation strategies for temporal decay.",
+      "paper_ids": [
+        "arxiv:2605.17639"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Temporal relevance weighting combined with dense retrievers (e.g., ColBERT, DPR) for open-domain QA over versioned regulatory texts.",
+    "Hybrid graph-text temporal retrieval approaches for legal statutes (combining co-citation signals with textual relevance and temporal weighting).",
+    "Benchmark construction for temporal QA using publicly available versioned regulatory corpora (e.g., US Code, Federal Regulations, international equivalents) with time-stamped queries.",
+    "Evaluation of temporal relevance component using end-to-end QA pipelines (retriever + reader) rather than retrieval-only metrics."
+  ],
+  "contradictions": [
+    {
+      "description": "Some works find uniform temporal decay performs poorly compared to no temporal weighting (arxiv:2604.26970), while others apply uniform temporal decay weighting with positive results in recommendation (doi:10.33480/jitk.v12i1.8240) - suggesting effectiveness may depend on domain and signal type.",
+      "paper_ids": [
+        "arxiv:2604.26970",
+        "doi:10.33480/jitk.v12i1.8240"
+      ]
+    }
+  ],
+  "recorded_at": "2026-09-30T10:43:08.297407Z"
+}

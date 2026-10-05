@@ -1,0 +1,44 @@
+{
+  "paper_id": "arxiv:2507.13625",
+  "relevance_tier": "high",
+  "problem": "Information retrieval and question answering from safety regulations are hindered by linguistic and structural complexity of regulatory text; many queries are multi-hop, requiring synthesis across interlinked clauses.",
+  "method": "BifrostRAG, a dual-graph retrieval-augmented generation (RAG) system that models both linguistic relationships (Entity Network Graph) and document structure (Document Navigator Graph). It uses a hybrid retrieval mechanism combining structured graph traversal (Cypher queries on Document Navigator Graph) with vector-based semantic search (on Entity Network Graph) to enable LLMs to reason over both content and structure of the text.",
+  "key_assumptions": [
+    "Dual graph representation captures both explicit and implicit relationships in regulatory text.",
+    "Hybrid retrieval improves answer quality by leveraging structural and semantic signals.",
+    "LLMs can effectively utilize retrieved subgraphs for answer generation."
+  ],
+  "main_contribution": "BifrostRAG achieves 92.8% precision, 85.5% recall, and F1 87.3% on a multi-hop construction safety question dataset, significantly outperforming vector-only and graph-only RAG baselines, offering a transferable blueprint for LLM-driven compliance checking in complex technical domains.",
+  "datasets": [
+    "Construction safety multi-hop question dataset (not named in abstract)"
+  ],
+  "benchmarks": [
+    "Same construction safety multi-hop question dataset"
+  ],
+  "baselines": [
+    "Vector-only RAG",
+    "Graph-only RAG"
+  ],
+  "metrics": [
+    "precision",
+    "recall",
+    "F1-score"
+  ],
+  "results": "[\"92.8% precision, 85.5% recall, F1 87.3%\"]",
+  "limitations": [
+    "Traditional methods are vulnerable to subjective interpretations and compromise completeness and consistency; vector-based RAG systems that segment documents by fixed token limits often separate parent-child provisions, harming contextual understanding; evaluation limited to a single domain (construction safety) with specific regulatory text."
+  ],
+  "future_work": [
+    "Future work should explore generalizability beyond OSHA 1926 to broader regulatory documents (building codes, technical specs) and investigate more adaptive RAG paradigms for dynamic, real-world scenarios."
+  ],
+  "code_availability": "\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "The paper focuses on dual-graph RAG with hybrid retrieval for inference, while the idea enriches target triples with local context subgraphs from source passages during training, adds an adaptive repair loop for factual reliability, and applies RL transfer from lower-hop QA.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T06:13:12.808203Z"
+}

@@ -1,0 +1,44 @@
+{
+  "paper_id": "arxiv:2401.13222",
+  "relevance_tier": "medium",
+  "problem": "Ensuring that users receive the most relevant and up-to-date information, especially in the presence of multiple versions of web content from different time points remains a critical challenge for information retrieval. This challenge has recently been compounded by the increased use of question answering tools trained on Wikipedia or web content and powered by large language models (LLMs) which have been found to make up information (or hallucinate), and in addition have been shown to struggle with the temporal dimensions of information. Even Retriever Augmented Language Models (RALMs) which incorporate a document database to reduce LLM hallucination are unable to handle temporal queries correctly.",
+  "method": "We propose TempRALM, a temporally-aware Retriever Augmented Language Model (RALM) with few-shot learning extensions, which takes into account both semantically and temporally relevant documents relative to a given query, rather than relying on semantic similarity alone. We introduce a temporal score 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 (𝑞𝑡−𝑑𝑡) where 𝑞𝑡 is query timestamp, 𝑑𝑡 is document timestamp, and the temporal score is inversely proportional to the time difference (smaller time difference → larger score). The temporal score is normalized and combined with semantic score.",
+  "key_assumptions": [
+    "Temporal score is inversely proportional to the time difference between query and document timestamps.",
+    "Temporal and semantic scores can be normalized and combined via a scaling factor.",
+    "Document timestamps are available."
+  ],
+  "main_contribution": "TempRALM, a temporally-aware RALM with few-shot learning extensions, demonstrating up to 74% improvement over baseline RALM model without requiring pre-training, index replacement, or other computationally intensive elements.",
+  "datasets": [
+    "TPQ-2019 and TPQ-2020 test sets (temporal question answering datasets)"
+  ],
+  "benchmarks": [
+    "TPQ-2019",
+    "TPQ-2020"
+  ],
+  "baselines": [
+    "Baseline RALM model (Atlas-large)"
+  ],
+  "metrics": [
+    "Exact match",
+    "Recall@1",
+    "Recall@5"
+  ],
+  "results": "\"Our approach results in up to 74% improvement in performance over the baseline RALM model, without requiring model pre-training, recalculating or replacing the RALM document index, or adding other computationally intensive elements.\"",
+  "limitations": [
+    "Not explicitly stated in abstract; may include dependence on accurate timestamp availability and the assumption that temporal proximity correlates with relevance."
+  ],
+  "future_work": [
+    "Not explicitly stated in abstract."
+  ],
+  "code_availability": "\"Not stated in abstract\"",
+  "relation_to_idea": {
+    "problem_overlap": 0.85,
+    "method_overlap": 0.8,
+    "evaluation_overlap": 0.7,
+    "conceptual_difference": "TempRALM is a specific RALM extension that adds temporal scoring to retrieval, whereas the proposed idea is a retrieval-agnostic framework that can be added to any retriever. Both use temporal distance weighting, but the proposed idea emphasizes overlapping-evolving documents with amendments (e.g., statutes) where semantic overlap is high.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T09:18:07.862829Z"
+}

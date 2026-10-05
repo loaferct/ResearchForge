@@ -1,0 +1,47 @@
+{
+  "paper_id": "arxiv:2202.13296",
+  "relevance_tier": "high",
+  "problem": "Multi-hop KBQA needs a question-relevant subgraph as the reasoning scope, but a small subgraph may exclude the answer while a large one adds noise; existing retrieval is either heuristic or interwoven with reasoning, causing reasoning over partial subgraphs and bias when intermediate supervision is missing.",
+  "method": "A trainable subgraph retriever (SR) decoupled from the reasoner: a question-path encoder scores candidate paths, top paths are expanded and induced into a question-relevant subgraph, and the retriever is pre-trained (weakly supervised and unsupervised) then fine-tuned end-to-end with feedback from the downstream reasoner (NSM). Plug-and-play with any subgraph-oriented KBQA model.",
+  "key_assumptions": [
+    "Reasoning should be performed on a retrieved subgraph rather than the full KB.",
+    "Retriever quality can be improved by end-to-end feedback from the reasoner.",
+    "WebQSP and CWQ topic-centric subgraphs (2-hop / 4-hop) are representative reasoning scopes."
+  ],
+  "main_contribution": "A decoupled, trainable subgraph retriever that improves both retrieval and QA performance and reaches state of the art when combined with NSM for embedding-based KBQA, with analyses of how subgraph size trades answer coverage against noise.",
+  "datasets": [
+    "WebQuestionSP (WebQSP)",
+    "ComplexWebQuestions (CWQ)",
+    "Freebase (whole KB; 2-hop/4-hop topic-centric subgraphs per question)"
+  ],
+  "benchmarks": [
+    "WebQSP",
+    "CWQ"
+  ],
+  "baselines": [
+    "NSM (He et al., 2021) with existing retrieval methods",
+    "Prior heuristic / interwoven subgraph retrieval methods",
+    "Embedding-based KBQA methods (e.g., embeddings over the whole KB, per related-work comparison)"
+  ],
+  "metrics": [
+    "Hits@1 for QA (also answer coverage rate of retrieved subgraphs, retriever Hits@1)"
+  ],
+  "results": "SR achieves significantly better retrieval and QA performance than existing retrieval methods, and new state-of-the-art when combined with NSM for embedding-based KBQA; Figure 1 shows subgraph size strongly affects answer coverage and QA Hits@1 on WebQSP and CWQ. Exact numbers not extracted here.",
+  "limitations": [
+    "No dedicated limitations or error-analysis section was found in the retrieved full text (searches for 'limitation', 'future work', 'error analysis' returned no passages).",
+    "Reasoning remains over an induced subgraph rather than an LLM trained with textual context; retrieval is question-centric, not passage-local to each training triple."
+  ],
+  "future_work": [
+    "Not stated in the retrieved text (no future-work section located)."
+  ],
+  "code_availability": "Public code: https://github.com/RUCKBReasoning/SubgraphRetrievalKBQA (118 stars, Python, last push 2022-10-01); README gives WebQSP/CWQ run scripts, Freebase/Virtuoso setup, and data downloads. Repository inspection links it to this paper.",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.55,
+    "evaluation_overlap": 0.35,
+    "conceptual_difference": "SR selects a question-relevant subgraph at inference to reduce the reasoning space for an embedding-based reasoner; the idea instead attaches passage-local supporting triples to each target triple as an LLM supervised-fine-tuning signal. Both use a 'context subgraph', but SR's subgraph is question-centric and retrieved, whereas the idea's context graph is passage-local to the supervised triple and used as training supervision, with no repair or RL stage in SR.",
+    "basis": "Problem overlap 0.7 because both address limited/noisy context for multi-hop KGQA and explicitly discuss the trade-off between too-small and too-large subgraphs; method overlap 0.55 because subgraph construction is central to both but SR trains a retriever+embedding reasoner rather than an LLM, and does not attach context to a target triple's supervision; evaluation overlap 0.35 because it uses standard WebQSP/CWQ with Hits@1 while the idea's closest comparable setting is generated per-hop MCQ accuracy (and the idea leaves the benchmark open)."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:08:14.285168Z"
+}

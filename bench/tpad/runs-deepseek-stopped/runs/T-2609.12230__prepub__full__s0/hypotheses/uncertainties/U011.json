@@ -1,0 +1,35 @@
+{
+  "id": "U011",
+  "question": "What is the correct control to isolate a training-time supervision effect from an inference-time context effect?",
+  "description": "The planned comparison is triple-only training vs context-enriched training. But the field's strongest results come from inference-time context; the fair and decisive comparison is context-enriched training evaluated with the same inference-time context as a triple-only model, plus a training-free context baseline at matched budget. Comparing models that receive different context at test time conflates the training effect with the inference-context effect.",
+  "category": "evaluation",
+  "importance": "high",
+  "status": "open",
+  "next_action": "REFINE",
+  "possible_actions": [
+    "REFINE",
+    "COMPARE",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Given that inference-time context methods dominate the landscape and a training-free system is competitive with trained systems (C006), a supervision effect can only be claimed if the inference-time context is held constant or included as a factor.",
+  "resolution": "",
+  "paper_ids": [
+    "arxiv:2607.23278",
+    "arxiv:2509.21035",
+    "arxiv:2609.10237"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2607.23278",
+    "arxiv:2609.10237"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "CRITIQUE",
+  "created_at": "2026-09-30T05:16:37.592242Z",
+  "updated_at": "2026-09-30T05:16:37.592482Z"
+}

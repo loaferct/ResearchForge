@@ -1,0 +1,42 @@
+{
+  "paper_id": "arxiv:2604.12487",
+  "relevance_tier": "high",
+  "problem": "Performing precise multi-hop reasoning over knowledge graphs is challenging because existing approaches decompose the reasoning process into isolated steps via fixed pipelines, which constrain reasoning flexibility and lose critical intermediate information from earlier steps.",
+  "method": "Introduces KG-Reasoner, an end-to-end framework that integrates multi-step reasoning into a unified \"thinking\" phase of a Reasoning LLM. Through reinforcement learning, the LLM is trained to internalize the KG traversal process, enabling dynamic exploration of reasoning paths and backtracking when necessary. The model uses a custom retrieval tool to fetch triples during reasoning.",
+  "key_assumptions": [
+    "Reinforcement learning can effectively train an LLM to internalize knowledge graph traversal.",
+    "An end-to-end reasoning process preserves critical intermediate information that pipeline‑based approaches lose.",
+    "The retrieval tool provides relevant triples to support reasoning steps."
+  ],
+  "main_contribution": "KG-Reasoner achieves competitive or superior performance compared to state‑of‑the‑art methods on eight multi‑hop and knowledge‑intensive reasoning benchmarks (Freebase‑based: CWQ, WebQuestionsSP, WebQuestions, GrailQA; WikiData‑based: QALD10‑en, T‑ReX, Zero‑Shot RE, Creak) by unifying retrieval and reasoning within a single LLM thinking stage via RL.",
+  "datasets": [
+    "Freebase‑based: ComplexWebQuestions (CWQ), WebQuestionsSP (WebQSP), WebQuestions, GrailQA",
+    "WikiData‑based: QALD10‑en, T‑ReX (Elsahar et al., 2018), Zero‑Shot RE (Petroni et al., 2021), Creak (Onoe et al.)"
+  ],
+  "benchmarks": [
+    "Same eight datasets"
+  ],
+  "baselines": [
+    "state‑of‑the‑art methods (not specified in abstract)"
+  ],
+  "metrics": [
+    "Hit@1"
+  ],
+  "results": "[\"KG‑Reasoner achieves competitive or superior performance compared to state‑of‑the‑art methods on the eight benchmarks.\"]",
+  "limitations": [
+    "Improving reasoning capability during the \"think\" stage often requires reinforcement learning (e.g., GRPO), which incurs substantial computational overhead; the method does not directly address incompleteness and noise in the underlying knowledge graph."
+  ],
+  "future_work": [
+    "Investigate more resource‑efficient optimization strategies; directly address knowledge graph incompleteness and noise."
+  ],
+  "code_availability": "[\"https://github.com/Wangshuaiia/KG-Reasoner\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "KG-Reasoner uses end‑to‑end RL to train an LLM to internalize KG traversal, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:17:49.987761Z"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "doi:10.18653/v1/2025.findings-naacl.232",
+  "title": "GRAG: Graph Retrieval-Augmented Generation",
+  "authors": [
+    "Yuntong Hu",
+    "Zhihan Lei",
+    "Zheng Zhang",
+    "Bo Pan",
+    "Chen Ling",
+    "Liang Zhao"
+  ],
+  "year": 2025,
+  "published": "2025-01-01",
+  "venue": null,
+  "url": "https://doi.org/10.18653/v1/2025.findings-naacl.232",
+  "pdf_url": "https://aclanthology.org/2025.findings-naacl.232.pdf",
+  "abstract": "Naive Retrieval-Augmented Generation (RAG) focuses on individual documents during retrieval and, as a result, falls short in handling networked documents which are very popular in many applications such as citation graphs, social media, and knowledge graphs.To overcome this limitation, we introduce Graph Retrieval-Augmented Generation (GRAG), which tackles the fundamental challenges in retrieving textual subgraphs and integrating the joint textual and topological information into Large Language Models (LLMs) to enhance its generation.To enable efficient textual subgraph retrieval, we propose a novel divide-and-conquer strategy that retrieves the optimal subgraph structure in linear time.To achieve graph context-aware generation, incorporate textual graphs into LLMs through two complementary views-the text view and the graph view-enabling LLMs to more effectively comprehend and utilize the graph context.Extensive experiments on graph reasoning benchmarks demonstrate that in scenarios requiring multi-hop reasoning on textual graphs, our GRAG approach significantly outperforms current state-of-the-art RAG methods.Our datasets as well as codes of GRAG are available at https://github.com/HuieL/GRAG.",
+  "doi": "10.18653/v1/2025.findings-naacl.232",
+  "arxiv_id": null,
+  "openalex_id": "W4411120544",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 77,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T05:06:11.756728Z",
+  "relevance": 0.25,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "subgraph context enhanced knowledge graph embedding training beyond isolated triples",
+    "ablation study contribution of knowledge graph context retrieval augmented generation no-context baseline"
+  ],
+  "code_urls": [
+    "https://github.com/HuieL/GRAG"
+  ],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

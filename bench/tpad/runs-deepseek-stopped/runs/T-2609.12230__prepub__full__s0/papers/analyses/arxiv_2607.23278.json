@@ -1,0 +1,50 @@
+{
+  "paper_id": "arxiv:2607.23278",
+  "relevance_tier": "medium",
+  "problem": "Multi-hop QA needs coordinated relational and textual evidence across reasoning steps; graph-augmented RAG uses a pre-built/query-updated graph, KGQA systems search topic-centered subgraphs, and memory-augmented agents evolve memory without reconciling graph and text - each addresses only part of the loop.",
+  "method": "Co-E is a training-free system built on synchronized bidirectional graph-text working memory: a synchronization cycle consolidates textual memory, extracts relational triples into graph memory, and injects graph facts back into the generation context, so both memories shape subsequent retrieval and generation.",
+  "key_assumptions": [
+    "Textual and relational evidence must revise each other during reasoning.",
+    "Triples extracted from retrieved text can be trusted as graph memory without a repair loop.",
+    "A training-free system can be competitive with trained systems.",
+    "A pre-existing KG is not required (graph memory is built from text)."
+  ],
+  "main_contribution": "A training-free co-evolving graph-text memory system for multi-hop QA that synchronizes textual and relational working memory bidirectionally during reasoning; code released.",
+  "datasets": [
+    "six multi-hop QA benchmarks (names not enumerated in the abstract; full text mentions Wikidata-scale evaluation)"
+  ],
+  "benchmarks": [
+    "multi-hop text QA",
+    "KGQA (including full-Wikidata evaluation)"
+  ],
+  "baselines": [
+    "training-free open-backbone baselines",
+    "larger or trained systems",
+    "graph-augmented RAG",
+    "ToG / ToG 2.0",
+    "MCTS-KBQA",
+    "ReKG-MCTS"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "Co-E improves over comparable training-free open-backbone baselines and is competitive with larger or trained systems on six multi-hop QA benchmarks.",
+  "limitations": [
+    "Training-free: no learned supervision, so gains may not transfer to a fine-tuned model setting.",
+    "Noisy edges and incomplete paths require the memory synchronization to correct them at inference; no offline repair.",
+    "No hop-depth breakdown reported in the abstract."
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "Codebase stated in full text: https://github.com/hieum98/wemg (repository could not be inspected: GitHub tools unavailable).",
+  "relation_to_idea": {
+    "problem_overlap": 0.55,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.35,
+    "conceptual_difference": "Co-E is training-free inference-time memory synchronization between text and graph; it never trains the model on triples or context-enriched supervision, has no repair loop, and does not study hop-depth transfer. It shares the premise that surrounding relational context matters for multi-hop reasoning but implements it as dynamic retrieval rather than supervision.",
+    "basis": "Problem overlap moderate: both concern multi-hop reasoning with graph and text evidence. Method overlap moderate: both build triple/graph context around a query, but Co-E's memory is updated at inference and pairs text with graph, whereas the idea fixes supervision examples offline. Evaluation overlap low-moderate: six multi-hop QA benchmarks vs the idea's MetaQA/WebQSP/CWQ, and no training-regime comparison."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:09:51.305488Z"
+}

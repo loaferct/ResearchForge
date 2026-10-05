@@ -1,0 +1,45 @@
+{
+  "id": "G001",
+  "gap": "No retrieved work causally separates the relevance of added KG context from its quantity under matched supervision budgets. Evidence exists that KG context can help (SG-RAG MOT), hurt when imprecisely selected (IKG/KGSweetSpot), and that scope trades recall against precision (IKG), and DrKGC warns that long graph context adds noise — but these are prompt/inference-time observations or design rationales, not a matched-example, matched-token, equal-length-irrelevant-context comparison of context used as training supervision.",
+  "evidence": [
+    {
+      "paper_id": "doi:10.1109/ickg66886.2025.00020",
+      "experiment_run_id": null,
+      "location": "Abstract",
+      "quote": "While KG-based knowledge can enhance LLM reasoning, imprecise selection of relevant knowledge can degrade performance below the zero-shot baseline (where no additional context is provided), highlighting the challenge of integrating KG knowledge without task-specific selection strategies.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2506.00708",
+      "experiment_run_id": null,
+      "location": "p. 1, Introduction (contribution 1)",
+      "quote": "While graph paths or subgraphs can be encoded as text prompts, overly long inputs introduce noise and increase computational costs.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "doi:10.20944/preprints202505.1992.v1",
+      "experiment_run_id": null,
+      "location": "Abstract",
+      "quote": "We also find out that merging (up to some point) highly overlapping subgraphs and defining an order among the triplets helps the LLM to generate more precise answers.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "related_paper_ids": [
+    "doi:10.1109/ickg66886.2025.00020",
+    "arxiv:2506.00708",
+    "doi:10.20944/preprints202505.1992.v1",
+    "doi:10.18653/v1/2025.findings-acl.856"
+  ],
+  "why_unaddressed": "The closest study (IKG/KGSweetSpot) evaluates knowledge representation and relevance filtering in prompts for multiple-choice QA without training a model, so it cannot speak to training supervision. DrKGC optimizes context compactness as a design choice rather than testing it against matched controls. SG-RAG MOT varies context by merging but has no no-context or irrelevant-context arm and no token matching. None isolates relevance from quantity in the training signal.",
+  "research_question": "Holding the number of training examples and total supervision tokens fixed, does the benefit of adding co-passage context triples to triple/path supervision come from the relevance of those triples (B &gt; C) rather than from the mere presence of additional context, and does explicit relevance selection (D) change the effect?",
+  "potential_experiment": "A factorial supervision-budget study on a single base model and KG: arms = (A) isolated triple/path, (B) target + passage-derived context triples, (C) target + equal-length irrelevant/random triples, (D) target + relevance-selected context triples (same token count as B), held at matched example counts, matched total supervision tokens, matched prompt template and optimization steps; primary contrast B-vs-C tests relevance, B-vs-D tests selection, A-vs-C tests any extra-context effect. Report one-hop and held-out deeper-hop accuracy plus an error-type decomposition; include a no-fine-tuning LLM baseline. Pre-register the primary metric and the hop split.",
+  "confidence": "high",
+  "verification_required": "Verify no recent work already runs a matched-budget context-relevance ablation for KGQA training (targeted search on 2025-2026 KGQA/graph-fine-tuning literature), and confirm that a provenance-bearing dataset with a usable train/dev/test hop split exists.",
+  "recorded_at": "2026-09-30T05:27:29.086248Z"
+}

@@ -1,0 +1,50 @@
+{
+  "paper_id": "arxiv:2512.09487",
+  "relevance_tier": "high",
+  "problem": "Existing retrieval-augmented generation (RAG) systems rely on fixed or handcrafted retrieval pipelines, lacking the ability to integrate supplementary evidence as reasoning unfolds, and graph-based retrieval is expensive, hindering effective multi-hop question answering over hybrid text-graph sources.",
+  "method": "Introduces RouteRAG, an RL-based framework that jointly optimizes the entire generation process via reinforcement learning, enabling the model to learn when to reason, what to retrieve from texts or graphs, and when to produce final answers. Uses a two-stage training framework balancing task outcome and retrieval efficiency, with an efficiency reward to minimize unnecessary retrieval turns.",
+  "key_assumptions": [
+    "Reinforcement learning can effectively learn a retrieval policy for hybrid text-graph sources.",
+    "An efficiency reward encourages the model to reduce retrieval turns without sacrificing accuracy.",
+    "Graph and text retrieval are complementary for multi-hop reasoning."
+  ],
+  "main_contribution": "RouteRAG enables adaptive multi-turn graph-text retrieval-augmented generation via RL, significantly outperforming existing RAG baselines on five QA benchmarks (PopQA, NQ, HotpotQA, 2WikiMultihopQA, MuSiQue) in terms of Exact Match and F1 scores.",
+  "datasets": [
+    "PopQA",
+    "Natural Questions (NQ)",
+    "HotpotQA",
+    "2WikiMultihopQA",
+    "MuSiQue"
+  ],
+  "benchmarks": [
+    "PopQA",
+    "NQ",
+    "HotpotQA",
+    "2WikiMultihopQA",
+    "MuSiQue"
+  ],
+  "baselines": [
+    "existing graph-based and multi-turn RAG systems (e.g., HippoRAG 2, etc.)"
+  ],
+  "metrics": [
+    "Exact Match (EM)",
+    "F1 score"
+  ],
+  "results": "[\"RouteRAG-7B achieves EM scores: PopQA 50.6, NQ 56.4, HotpotQA 51.5, 2Wiki 60.4, MuSiQue 60.8; RouteRAG-3B shows similar trends, with Stage 1 training already providing strong reasoning ability.\"]",
+  "limitations": [
+    "RL training and evaluation limited to 3B and 7B LLMs due to computational constraints; experiments rely on HippoRAG 2 as graph retriever; may not generalize to larger models or different retrievers."
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"https://github.com/YucanGuo/RouteRAG\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "RouteRAG uses RL to learn adaptive retrieval decisions in hybrid RAG, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:16:42.819898Z"
+}

@@ -1,0 +1,27 @@
+{
+  "id": "D006",
+  "direction": "Drop all novelty claims for the framework, the temporal relevance term and the plug-in architecture; present them as adopted components. Frame the study as a comparative measurement on clause-versioned amended regulatory text whose central question is whether the already-published recency-decay hybrid is sufficient or whether valid-time (as-of) gating is necessary, reported at clause-version granularity with recency-decoupled queries. Adopt the published three-signal hybrid as the strongest baseline rather than as a straw man, and treat a finding that decay suffices as a publishable negative result about the proposed mechanism.",
+  "hypothesis": "On clause-versioned amended regulatory text, the published recency-decay hybrid is insufficient relative to valid-time (as-of) gating specifically for queries whose in-force version is not the latest or which involve long-lived in-force clauses that decay would demote; valid-time gating reduces clause-level version contamination and point-in-time retrieval failures on those strata, while the two are equivalent on queries whose in-force version is the latest.",
+  "rationale": "The comparison shows every ingredient of the original framework is already published: a three-signal lexical+dense+exponential-decay hybrid evaluated for temporal accuracy, learnable decay with explicit temporal-validity evaluation, hard as-of gating with a leakage metric, and a legal benchmark encoding temporal validity. What is not published is the comparison that would matter for amended statutes - whether decay-based hybrid ranking, which is the state of the art, actually selects the correct clause version when versions are near-duplicates and the correct version is not the latest. This direction deserves investigation next because it survives the overlap evidence with a falsifiable claim, uses the strongest existing system as the baseline instead of a weaker one, and is informative in both outcomes.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": "D005",
+  "research_question": "On clause-versioned amended regulatory text with recency-decoupled time-stamped queries, does valid-time (as-of) gating reduce clause-level version contamination and point-in-time retrieval failures relative to the published lexical+dense+recency-decay hybrid, or does the decay hybrid already match it because the correct clause version is usually the most recent?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.3390/sym18091498",
+    "arxiv:2608.21409",
+    "arxiv:2606.09724",
+    "doi:10.3390/computers15080471"
+  ],
+  "uncertainty_ids": [
+    "U001",
+    "U005",
+    "U015",
+    "U019",
+    "U007"
+  ],
+  "recorded_at": "2026-09-30T04:38:03.008292Z"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "doi:10.59232/dst-v5i1p101",
+  "title": "Integrating Knowledge Graph with Retrieval-Augmented Generation for Vietnamese Legal Question Answering",
+  "authors": [
+    "V. Pham",
+    "Minh C. Phan"
+  ],
+  "year": 2025,
+  "published": "2025-03-31",
+  "venue": "DS Journal of Digital Science and Technology",
+  "url": "https://www.semanticscholar.org/paper/5f76798b33056ba04c2662ffcecb757c6bd7bda9",
+  "pdf_url": null,
+  "abstract": "Large Language Models (LLMs) are increasingly used for question answering, but legal applications require grounded answers with article-level citations and minimal unsupported statements. This paper presents a framework that integrates an ontology-driven Knowledge Graph (KG) with Retrieval-Augmented Generation (RAG) for Vietnamese legal question answering. The method builds a document-aware KG that preserves the hierarchical structure of statutes (Document → Chapter → Section → Article → Clause → Point) and encodes semantic and cross-reference relations. Graph-aware retrieval is combined with a hybrid ranking function that balances semantic similarity and graph-derived confidence, and the retrieved legal provisions are provided to an LLM using a constrained prompting template to generate answers with explicit citations. Experiments on three Vietnamese law domains (Electronic Transaction Law, Land Law, and Labor Law) report 85.7% answer accuracy, outperforming BM25 keyword search (62.3%) and a pure LLM baseline (71.5%), while improving citation quality. The framework is intended to increase traceability by grounding generation in retrieved statutory provisions.",
+  "doi": "10.59232/dst-v5i1p101",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "5f76798b33056ba04c2662ffcecb757c6bd7bda9",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 1,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:07:46.354197Z",
+  "relevance": 0.3261,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "TimeR4 time-aware retrieval augmented LLM temporal knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

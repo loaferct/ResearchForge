@@ -1,0 +1,29 @@
+{
+  "id": "M004",
+  "title": "Structured triples versus raw source passage as the context unit",
+  "description": "Instead of attaching other extracted triples, attach the raw source text span (or paragraph) from which the target triple was extracted, and compare three context forms at a matched token budget: no context, same-passage triples, and the raw source passage. The paper that already implements the idea explicitly lists richer evidence such as source-text passages as future work, so this is a stated open point rather than a re-derivation.",
+  "why_differs": "Both the proposed idea and the implementing work confine context augmentation to structured triples (same-chunk supporting triples). The implementing paper's own limitations section proposes richer forms of evidence including source-text passages as the next step, so this modification targets a documented opening rather than repeating the covered mechanism.",
+  "technical_mechanism": "For each target triple/path, retrieve the text span it was extracted from and build a prose-context supervision item alongside the structured-triple item. Fine-tune three models (no context, structured context, prose context) with identical budgets and question sets, and evaluate hop-stratified accuracy plus KG-path alignment of the reasoning traces.",
+  "expected_benefit": "Distinguishes whether the benefit comes from structured relational context or from natural-language context. If the raw passage matches or beats the structured context graph, the 'triple as supervision unit' premise in its current form is weakened and the effective supervision unit becomes the passage; if structured triples win, that supports keeping structured context.",
+  "potential_novelty": "Moderate, hedged. The implementing paper names this as future work but does not run it; a search for passage-versus-triple context comparisons in KG-grounded fine-tuning is required before claiming that nobody has tested it.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "The source chunk for each primary triple is already available in the published pipeline's provenance; the modification is to serialize the raw span instead of the extracted triples in one arm.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "One additional training arm plus token-budget matching between structured triples and raw text, and evaluation of whether the model's reasoning traces still follow KG paths when given prose.",
+  "main_risk": "Raw passages leak answer-relevant sentences more readily than triples, so the comparison may favour prose for the wrong reason; the mitigation is to hold the token budget and to strip or mask direct answer mentions in both arms.",
+  "required_baselines": [
+    "No context (isolated triple/path)",
+    "Same-passage extracted triples",
+    "Raw source passage span at matched tokens"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2609.10237"
+  ],
+  "addresses_gap_ids": [
+    "G001",
+    "G002"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:27:52.349047Z"
+}

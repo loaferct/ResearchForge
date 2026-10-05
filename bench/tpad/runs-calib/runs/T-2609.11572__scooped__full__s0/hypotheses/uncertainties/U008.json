@@ -1,0 +1,35 @@
+{
+  "id": "U008",
+  "question": "Does published work contradict the current assessment: Three distinctions are claimed: (i) the temporal term is attached post hoc to an arbitrary base retriever, whereas the closest systems hard-code temporal handling in a fixed pipeline; (ii) it targets continuously amended statutes/regulations with near-duplicate successive versions and validity intervals, whereas existing temporal benchmarks are ESG disclosures, financial filings and date-annotated web QA, and existing regulatory retrieval work is static; (iii) it can express validity/as-of membership, whereas the published hybrids use recency decay. Each distinction is plausible but each is currently only an untested framing or an absent resource, not a demonstrated finding.?",
+  "description": "Assessment: substantial_overlap. The problem framing and the temporal-decay mechanism are already published, and the benchmark/evaluation recipe is established in adjacent domains; the residual contribution exists but is currently framed as the part that is most pre-empted. Evidence is sufficient to judge overlap (two closest methods plus a full-text survey and a full-text temporal-decay system) but only abstract-level for the two closest papers, and the decisive experiment (cross-retriever, validity-aware, amended-statute benchmark) has not been run. Hence 'substantial_overlap' rather than 'weak_or_flawed' (the idea is coherent and testable) or 'promising_needs_validation' (the mechanism is not novel enough to warrant that label without reframing).",
+  "category": "contradiction",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [],
+  "confidence": 0.75,
+  "confidence_basis": "Direct full-text evidence from a legal-retrieval review that names clause-granularity versioning as an unaddressed failure mode, states that diachronic failure is least integrated into mainstream practice, and asserts that solutions are stronger at representation than at retrieval-time enforcement; corroborated by earlier findings that the same source reports no empirical comparison.",
+  "rationale": "The assessment was formed from work found around the initial idea; look for work that would invalidate it.",
+  "resolution": "Resolved: the three distinctions should not be presented as independent novelty claims. (iii) validity/as-of semantics is conceptually pre-empted - legal retrieval already requires distinguishing valid time from transaction time and names point-in-time resolution a legality-critical operation. (ii) clause-granularity versioning is a recognized but explicitly unaddressed gap ('versioned only at document granularity, producing whole-document snapshots that obscure structural-unit differentials'), so the benchmark is valuable but identifying the gap is not novel. (i) retrieval-time enforcement is described as under-explored ('most solutions remain stronger at representation than at retrieval-time enforcement'), which rationalizes a post-hoc ranking layer but is still an untested framing until measured. Consequence: the contribution must be the implementation and measurement - valid-time gating enforced at retrieval time, evaluated across base retrievers with clause-level contamination and point-in-time recovery - not the identification of the problem or the naming of the signal.",
+  "paper_ids": [
+    "arxiv:2606.09724",
+    "arxiv:2608.21409",
+    "doi:10.3390/computers15080471",
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.2139/ssrn.7087840"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2606.09724",
+    "arxiv:2608.21409",
+    "doi:10.3390/computers15080471"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": "holds",
+  "target_ref": "critique",
+  "attempts": 2,
+  "source": "controller",
+  "created_at": "2026-09-30T04:31:46.985335Z",
+  "updated_at": "2026-09-30T04:36:27.136791Z"
+}

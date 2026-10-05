@@ -1,0 +1,36 @@
+{
+  "id": "arxiv:2605.30465",
+  "title": "Knowledge Graph-Enhanced Zero-Shot Topic Classification: A Multi-Strategy Comparative Study",
+  "authors": [
+    "Shahana Akter",
+    "Yatharth Vohra",
+    "Ankita Shukla",
+    "Souvika Sarkar"
+  ],
+  "year": 2026,
+  "published": "2026-05-28",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2605.30465",
+  "pdf_url": "https://arxiv.org/pdf/2605.30465v2",
+  "abstract": "Multi-label topic classification without labeled training data is a challenging task, specially when documents contain complex relational information. We present a zero-shot multi-label topic classification framework and systematically investigate how per-article knowledge graph augmentation affects its performance. The base framework classifies topics in documents without labeled training data and has four variants: article-only classification, keyword-enhanced classification, and self-consistency decoding variants of both. Then, we augment each base variant with per article knowledge graph. This graph is extracted from the input document through a pipeline similar to KGGen based on subject-predicate-object triples. We test all eight methods, four base and four graph augmented on fifteen LLMs and eight multi-label datasets across different domains. For the base framework, keyword-enhanced classification (AK) is the best performing method, and six out of fifteen LLMs surpass the sentence-encoder baseline. Graph augmentation has positive and negative impacts on small and large models, respectively. This shows that larger models already contain enough relational information from pretraining. Furthermore, the self-consistency decoding variant does not show performance improvements in any experiment while increasing computation costs about fivefold.",
+  "doi": null,
+  "arxiv_id": "2605.30465",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:00:07.309878Z",
+  "relevance": 0.3125,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "knowledge graph augmented language model pretraining triple knowledge injection"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

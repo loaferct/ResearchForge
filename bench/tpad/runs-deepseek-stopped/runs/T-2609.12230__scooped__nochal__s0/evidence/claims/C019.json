@@ -1,0 +1,34 @@
+{
+  "id": "C019",
+  "statement": "The main technical risk has moved from 'the premise is false' to 'the premise is already demonstrated but not attributed'. The fine-tuning evidence supports context-augmented supervision (+1.5 to +3.8 points at 3/4/5 hops), but the design has equal example counts and matched hyperparameters without a token-matched random-distractor arm, and the same paper's limitations list synthetic data, LLM judges and only two disease settings, so the effect could be context volume rather than passage coherence and may not port outside biomedical multiple-choice QA.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "arxiv:2609.10237",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "technical-risk",
+    "attribution",
+    "external-validity",
+    "revision"
+  ],
+  "recorded_at": "2026-09-30T05:24:47.544449Z"
+}

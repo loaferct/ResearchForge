@@ -1,0 +1,41 @@
+{
+  "paper_id": "arxiv:2212.00959",
+  "relevance_tier": "high",
+  "problem": "Multi-hop KGQA over large-scale KGs must cope with a vast search space; existing work uses a two-stage retrieve-then-reason pipeline whose retrieval and reasoning stages use very different technical solutions, neglecting their relatedness in task essence.",
+  "method": "Two stages unified: a PLM-based semantic matching module matches question and relation, and a matching information propagation module spreads that matching information along directed KG edges. A shared pre-training task based on question-relation matching trains both retrieval and reasoning models, followed by retrieval-oriented and reasoning-oriented fine-tuning.",
+  "key_assumptions": [
+    "Retrieval and reasoning are related enough that they should share model architecture and parameter learning.",
+    "Question-relation semantic matching is a useful shared pre-training task.",
+    "A question-specific subgraph can be retrieved to bound the search space."
+  ],
+  "main_contribution": "UniKGQA, which unifies retrieval and reasoning for multi-hop KGQA in both architecture (PLM semantic matching module plus matching information propagation over directed KG edges) and parameter learning (shared question-relation matching pre-training, then retrieval- and reasoning-oriented fine-tuning), with public code and data.",
+  "datasets": [
+    "Three benchmark datasets (names not stated in abstract)"
+  ],
+  "benchmarks": [
+    "Three benchmark datasets (names not stated in abstract; standard multi-hop KGQA benchmarks are MetaQA, WebQSP, CWQ)"
+  ],
+  "baselines": [
+    "Not stated in abstract (previous two-stage retrieval/reasoning approaches)"
+  ],
+  "metrics": [
+    "Not stated in abstract"
+  ],
+  "results": "Extensive experiments on three benchmark datasets demonstrate effectiveness on the multi-hop KGQA task.",
+  "limitations": [
+    "Not stated in abstract"
+  ],
+  "future_work": [
+    "Not stated in abstract"
+  ],
+  "code_availability": "Code and data publicly available per abstract at https://github.com/RUCAIBox/UniKGQA; repository inspection unavailable in this investigation.",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.35,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "UniKGQA's intervention is architectural and in parameter sharing between retrieval and reasoning; the KG context is still the standard retrieved question subgraph. The idea's intervention is in what supervision context accompanies a triple/path and in iterative repair plus lower-hop RL; it does not unify retrieval and reasoning.",
+    "basis": "Problem overlap 0.8: multi-hop KGQA over KGs is the exact task. Method overlap 0.35: relation-matching propagation over a retrieved subgraph is not context-subgraph supervision, and there is no repair loop or RL. Evaluation overlap 0.8: three standard multi-hop KGQA benchmarks."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:17:19.068630Z"
+}

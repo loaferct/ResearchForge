@@ -1,0 +1,33 @@
+{
+  "id": "C002",
+  "statement": "For time-sensitive statutory QA, treating temporal validity as a hard constraint (filtering retrieval to the version valid at the query's as-of date) is reported as the effective mitigation, and the retrieved timeframe matters more than the retrieval method.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 8",
+      "quote": "existing legal RAG systems should not simply retrieve \"relevant\" semantic matches but must also take into account the temporal validity of a statute as a hard constraint",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 8",
+      "quote": "what is retrieved (the correct timeframe) matters more than how it is retrieved (embeddings vs. table of contents)",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "analysis",
+  "tags": [
+    "temporal-validity",
+    "legal-qa",
+    "hard-constraint"
+  ],
+  "recorded_at": "2026-09-30T05:10:27.652106Z"
+}

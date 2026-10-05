@@ -1,0 +1,27 @@
+{
+  "id": "M002",
+  "title": "Repair-blind frozen held-out evaluation protocol",
+  "description": "Separate the repair loop from the evaluation it is judged on: freeze a held-out test split before any repair begins, and let the repair loop operate only on a disjoint development split (including its triple quarantine, question regeneration, and validation-set updates). Report accuracy on the frozen test split after every repair round, and also report how many test-set triples would have been quarantined had they been visible to the judge.",
+  "why_differs": "The closest work allows the repair stage to delete invalid triples from, and regenerate questions in, the validation set on which it reports near-perfect accuracy; making the test set unreachable to the loop turns the repair claim into an out-of-sample claim and directly measures the size of the cleaning artifact.",
+  "technical_mechanism": "Partition each hop depth into train, repair-dev, and frozen test splits with disjoint triples. The repair loop may read and regenerate questions only within repair-dev. After each round, evaluate the same frozen test questions and triples, recording accuracy and the count of test triples that the judge independently (blindly) flags as noisy, to bound the selection effect.",
+  "expected_benefit": "Removes the selection/cleaning confound from the repair claim and quantifies how much of the reported 100% one-hop accuracy depends on editing the evaluation data; also yields a reusable protocol for data-cleaning loops generally.",
+  "potential_novelty": "Moderate and hedged: the confound is documented in the closest work (it removes invalid triples from and regenerates validation questions) but no retrieved paper quantifies repair gains on a split the loop never edits.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "A data-splitting and logging change to an existing pipeline; the main care needed is auditing that no test triple or question enters repair example generation.",
+  "experimental_difficulty": "low",
+  "experimental_difficulty_basis": "Requires only splitting and freezing data plus per-round evaluation on the frozen split; no new training method, and the repair loop is otherwise unchanged.",
+  "main_risk": "If a large share of the repair gain disappears on the frozen split, the repair component may need to be re-motivated or dropped; the frozen split also reduces data available for repair, which could understate the method's benefit.",
+  "required_baselines": [
+    "Repair with evaluation-set editing (closest-work protocol)",
+    "Repair with frozen test split",
+    "No-repair SFT on the frozen test split"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:20:48.716275Z"
+}

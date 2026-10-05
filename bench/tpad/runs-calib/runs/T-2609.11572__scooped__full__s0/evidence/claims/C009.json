@@ -1,0 +1,42 @@
+{
+  "id": "C009",
+  "statement": "Main technical risk: the temporal signal specified in the idea (elapsed time between the query target date and the passage version timestamp, i.e. decay/recency) is likely the wrong inductive bias for point-in-time legal queries. Under supersession the authoritative text is the version in force at the target date, and a superseded clause can be temporally nearer than an older still-in-force clause; the survey lists recency bias as a documented failure mode, Chronofy's own framing cites legal supersession as motivation for decay, and TempFinRAG instead enforces a hard as-of boundary. A recency-weighted term can therefore actively demote the correct version, meaning the hypothesis could fail while the benchmark is valid.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2505.20243",
+      "experiment_run_id": null,
+      "location": "p. 7",
+      "quote": "Retrieval can fail due to noisy or missing timestamps, recency bias, or mismatches between document creation time and the event time described in the text.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "doi:10.1109/iri69576.2026.00090",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "In financial analytics, market data decays within hours; in legal compliance, regulatory interpretations are superseded by new rulings.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "deliberately asymmetric access across time",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "technical risk",
+    "recency vs validity",
+    "confounder"
+  ],
+  "recorded_at": "2026-09-30T04:31:31.130338Z"
+}

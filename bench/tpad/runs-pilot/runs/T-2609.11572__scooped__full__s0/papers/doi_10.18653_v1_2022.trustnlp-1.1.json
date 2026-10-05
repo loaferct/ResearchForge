@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.18653/v1/2022.trustnlp-1.1",
+  "title": "An Encoder Attribution Analysis for Dense Passage Retriever in Open-Domain Question Answering",
+  "authors": [
+    "Minghan Li",
+    "Xueguang Ma",
+    "Jimmy Lin"
+  ],
+  "year": 2022,
+  "published": "2022-01-01",
+  "venue": null,
+  "url": "https://doi.org/10.18653/v1/2022.trustnlp-1.1",
+  "pdf_url": "https://aclanthology.org/2022.trustnlp-1.1.pdf",
+  "abstract": "The bi-encoder design of dense passage retriever (DPR) is a key factor to its success in open-domain question answering (QA), yet it is unclear how DPR's question encoder and passage encoder individually contributes to overall performance, which we refer to as the encoder attribution problem.The problem is important as it helps us identify the factors that affect individual encoders to further improve overall performance.In this paper, we formulate our analysis under a probabilistic framework called encoder marginalization, where we quantify the contribution of a single encoder by marginalizing other variables.First, we find that the passage encoder contributes more than the question encoder to indomain retrieval accuracy.Second, we demonstrate how to find the affecting factors for each encoder, where we train DPR with different amounts of data and use encoder marginalization to analyze the results.We find that positive passage overlap and corpus coverage of training data have big impacts on the passage encoder, while the question encoder is mainly affected by training sample complexity under this setting.Based on this framework, we can devise data-efficient training regimes: for example, we manage to train a passage encoder on SQuAD using 60% less training data without loss of accuracy.",
+  "doi": "10.18653/v1/2022.trustnlp-1.1",
+  "arxiv_id": null,
+  "openalex_id": "W4287888903",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 7,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T09:39:34.961663Z",
+  "relevance": 0.2333,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "retriever agnostic temporal relevance"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

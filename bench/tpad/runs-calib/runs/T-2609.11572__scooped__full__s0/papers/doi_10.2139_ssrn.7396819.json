@@ -1,0 +1,33 @@
+{
+  "id": "doi:10.2139/ssrn.7396819",
+  "title": "Privacy-Aware Redaction for Reducing Sensitive Information Leakage in Retrieval-Augmented Biomedical Question Answering",
+  "authors": [
+    "Divya Dadi"
+  ],
+  "year": 2026,
+  "published": null,
+  "venue": null,
+  "url": "https://doi.org/10.2139/ssrn.7396819",
+  "pdf_url": null,
+  "abstract": "Retrieval-Augmented Generation (RAG) enables language models to generate responses using information retrieved from external knowledge sources. Although retrieval can improve grounding, it also introduces privacy risks when the underlying knowledge base contains sensitive information. A RAG system may retrieve documents containing personally identifiable information and subsequently reproduce that information in generated responses. This study evaluates sensitive-information leakage and redaction-based privacy protection in a controlled biomedical RAG environment. <div> A privacy benchmark was constructed using the 1,000-example labeled subset of PubMedQA by augmenting a fixed subset of 178 documents with synthetic patient records containing fictitious names, phone numbers, email addresses, Social Security number-like identifiers, and medical record numbers. No real patient information was used. A total of 890 targeted extraction attacks were generated to evaluate whether a RAG pipeline could disclose these synthetic identifiers. The baseline system used Sentence-BERT embeddings, FAISS dense retrieval, and FLAN T5-base for answer generation. </div> <div> Under the initial controlled privacy benchmark, the standard RAG configuration disclosed the exact synthetic secret in 60.11% of extraction attacks. The target document was retrieved at rank 1 in 98.20% of attacks, and leakage among attacks with correct rank-1 retrieval was 61.21%. Deterministic redaction designed for the known synthetic identifier formats reduced exact-secret leakage to 0.00% while preserving retrieval and question-answering utility on the 178 modified documents. </div> <div> A second robustness experiment evaluated 250 balanced extraction attacks after sensitive identifiers were transformed into alternative formatting variants not recognized by the original format-specific redactor. Under this format shift, standard RAG and the original format-specific redaction both produced a 63.20% exact-secret leakage rate. In contrast, a broader rule-based privacy-aware redaction mechanism reduced measured exact-secret leakage to 0.00%. Retrieval performance remained effectively unchanged: Recall@5 was 99.44% and MRR was 99.16% for both basic and privacy-aware redaction in the final utility evaluation. Answer accuracy changed from 41.57% to 42.70%.&nbsp; </div> <div> These results demonstrate, within the controlled synthetic benchmark, that format-specific redaction can be brittle under representation changes even when it performs perfectly on known formats. Broader privacy-aware redaction substantially reduced exact disclosure without measurable retrieval degradation in the evaluated setting. The findings provide an empirical framework for studying privacy–utility tradeoffs in retrieval-augmented biomedical question answering. &nbsp; </div>",
+  "doi": "10.2139/ssrn.7396819",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T04:14:50.458292Z",
+  "relevance": 0.375,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal question answering retrieval time-sensitive documents versioned statutes"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

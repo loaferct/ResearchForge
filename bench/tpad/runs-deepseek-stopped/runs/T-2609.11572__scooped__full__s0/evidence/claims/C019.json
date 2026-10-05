@@ -1,0 +1,33 @@
+{
+  "id": "C019",
+  "statement": "Correction to C007's scope: retrieval-layer metrics are not absent from the literature in general, since TempRALM reports recall@1 and recall@5 of the gold passage. What is absent is version-selection accuracy (the fraction of top-k passages belonging to the version in force at the query date) for legal amendment retrieval, and Prior et al. themselves report no retrieval ranking metrics, only end-answer scores with k=6 embedding retrieval. Confidence in C007 is retained for its scoped legal-amendment claim, but the unqualified reading that no work reports retrieval metrics is withdrawn.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 6",
+      "quote": "In addition, we evaluate the retrievers of both models using a recall@1 and recall@5 metrics",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 6",
+      "quote": "utilizing cosine similarity over the embeddings",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "correction",
+    "evaluation",
+    "C007"
+  ],
+  "recorded_at": "2026-09-30T05:23:31.656636Z"
+}

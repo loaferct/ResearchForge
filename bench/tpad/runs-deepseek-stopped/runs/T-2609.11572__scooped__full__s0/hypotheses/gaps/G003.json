@@ -1,0 +1,33 @@
+{
+  "id": "G003",
+  "gap": "The claim that a temporal re-ranking wrapper is retrieval-agnostic is asserted but untested: TempRALM states it could extend any numeric-similarity retriever yet instantiates only the Atlas/Contriever dense retriever, and no retrieved work evaluates the same temporal wrapper across sparse and dense retrievers under matched budgets.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "our approach could be used to extend any retriever that ranks documents using a numerical similarity score between a query and a document corpus",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 5",
+      "quote": "The TempRALM retriever uses the standard Atlas-large",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2401.13222"
+  ],
+  "why_unaddressed": "Retrieval-agnosticism is stated as a design property rather than tested as an empirical claim, and the only instantiation reported is a single dense retriever on a non-legal corpus.",
+  "research_question": "Is the effect of a temporal re-ranking wrapper stable across sparse and dense retrievers under matched budgets, or specific to one embedding space?",
+  "potential_experiment": "Apply the identical temporal re-ranking wrapper to BM25 and at least two dense encoders on the same benchmark, with matched passage segmentation, top-k and generator, and report whether the sign and size of the effect are stable across retrievers.",
+  "confidence": "medium",
+  "verification_required": "Requires the cross-retriever experiment; also a search for retriever-agnostic temporal wrappers in other domains.",
+  "recorded_at": "2026-09-30T05:24:06.056336Z"
+}

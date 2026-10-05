@@ -1,0 +1,39 @@
+{
+  "paper_id": "doi:10.18653/v1/d18-1259",
+  "relevance_tier": "high",
+  "problem": "Existing QA datasets fail to train systems to perform complex reasoning and provide explanations for answers.",
+  "method": "Introduces HotpotQA, a dataset with 113k Wikipedia-based QA pairs featuring: (1) questions requiring reasoning over multiple supporting documents; (2) diverse questions not tied to predefined KBs/schemas; (3) sentence-level supporting facts for strong supervision and explainability; (4) factoid comparison questions to test fact extraction and comparison.",
+  "key_assumptions": [
+    "Providing sentence-level supporting facts enables models to learn multi-hop reasoning and explain predictions."
+  ],
+  "main_contribution": "HotpotQA dataset for diverse, explainable multi-hop question answering, showing it is challenging for latest QA systems and that supporting facts improve performance and explainability.",
+  "datasets": [
+    "HotpotQA (113k Wikipedia-based question-answer pairs)"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"HotpotQA is challenging for latest QA systems; supporting facts enable models to improve performance and make explainable predictions.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.3,
+    "method_overlap": 0.05,
+    "evaluation_overlap": 0.7,
+    "conceptual_difference": "HotpotQA provides a benchmark dataset for multi-hop reasoning with supporting facts, whereas the idea focuses on training LMs with enriched context subgraphs, adaptive repair loops, and RL transfer to improve multi-hop KGQA performance.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T06:21:05.125098Z"
+}

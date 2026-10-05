@@ -1,0 +1,42 @@
+{
+  "paper_id": "doi:10.1145/3589335.3651895",
+  "relevance_tier": "medium",
+  "problem": "Temporal QA benchmarks under-represent questions with implicit time constraints (e.g. \"during the Cold War\"), use hand-crafted templates with low diversity, and draw answers from a single source type (KB or text).",
+  "method": "TIQ (Temporal Implicit Questions): automatic question construction with systematic control of topical diversity, timeframe, and head vs. tail entities; questions formulated from diverse snippets and paraphrased by an LLM; supporting snippets drawn from KB, text and infoboxes.",
+  "key_assumptions": [
+    "Implicit temporal constraints can be generated systematically and answered from multi-source snippets",
+    "Wikipedia-style knowledge sources are representative of temporal QA"
+  ],
+  "main_contribution": "A 10,000-question benchmark for temporal QA with implicit time constraints, with ground-truth answers and supporting evidence snippets.",
+  "datasets": [
+    "TIQ benchmark (10,000 questions with ground-truth answers and supporting snippets)"
+  ],
+  "benchmarks": [
+    "TIQ"
+  ],
+  "baselines": [
+    "Not stated in abstract"
+  ],
+  "metrics": [
+    "Not stated in abstract"
+  ],
+  "results": "Not stated in abstract.",
+  "limitations": [
+    "QA benchmark rather than a retrieval-version benchmark: snippets are not successive revisions of the same provision with dense semantic overlap",
+    "No version/validity timestamps at passage granularity are described",
+    "Baselines and metrics are not available from the abstract, so benchmark comparability cannot be judged"
+  ],
+  "future_work": [
+    "Not stated in abstract"
+  ],
+  "code_availability": "Not stated in abstract.",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.45,
+    "conceptual_difference": "TIQ tests whether a model can interpret and use implicit time constraints across KB/text snippets; the proposed benchmark would test version selection among overlapping amendments with per-passage version timestamps.",
+    "basis": "Relevant mainly as an evaluation resource: it is a temporal QA benchmark with supporting evidence, but it does not model overlapping successive document revisions. Basis is the abstract only."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:11:08.162231Z"
+}

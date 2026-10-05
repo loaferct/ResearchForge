@@ -1,0 +1,46 @@
+{
+  "paper_id": "arxiv:2501.16350",
+  "relevance_tier": "high",
+  "problem": "Answering multi-hop complex questions in Persian is challenging due to the difficulty of accurately understanding and transforming these questions into semantically equivalent SPARQL queries for precise KG retrieval.",
+  "method": "Proposes a four-component architecture: (1) Question Decomposition Component (fine-tuned mT5 on MRDCPQ dataset) breaks complex questions into simpler semantic segments; (2) Named Entity Recognition component (fine-tuned ParsBERT) extracts entities; (3) MRDCPQ to SPARQL Query Generator Component (fine-tuned mT5) converts decomposed questions into SPARQL queries; (4) SPARQL Query Execution and Response Composition executes hierarchical SPARQL queries on the FarsBase KG and merges results. The method leverages the MRDCPQ dataset (5,600 questions) derived from PeCoQ.",
+  "key_assumptions": [
+    "Complex questions can be reliably decomposed into simpler semantic units.",
+    "Decomposed segments can be accurately converted to SPARQL queries.",
+    "Executing generated SPARQL queries on FarsBase yields correct answers."
+  ],
+  "main_contribution": "A Persian multi-hop KGQA framework that achieves 75.55% F1 and 74.81% accuracy on PeCoQ, improving over the best comparable method (Etezadi’s) by 12.57% F1 and 12.06% accuracy, via question decomposition, NER, SPARQL generation, and execution.",
+  "datasets": [
+    "Persian MRDCPQ dataset (5,600 complex questions with decompositions)",
+    "PeCoQ dataset (10,000 complex questions over FarsBase KG)",
+    "FarsBase knowledge graph"
+  ],
+  "benchmarks": [
+    "PeCoQ dataset"
+  ],
+  "baselines": [
+    "Etezadi’s Method (presumably a baseline KGQA approach)"
+  ],
+  "metrics": [
+    "F1-score",
+    "Accuracy",
+    "Precision",
+    "Recall"
+  ],
+  "results": "[\"Our Method: Precision 84.36%, Recall 68.41%, F1 75.55%, Accuracy 74.81%; Etezadi’s Method: Precision 71.24%, Recall 56.45%, F1 62.98%, Accuracy 62.75%\"]",
+  "limitations": [
+    "not stated in full text"
+  ],
+  "future_work": [
+    "Expand the question decomposition dataset for broader domain coverage; improve language models (e.g., incorporate larger transformers); explore zero-shot entity linking for unseen entities."
+  ],
+  "code_availability": "\"not stated in full text\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.75,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "The paper focuses on question decomposition and SPARQL generation for Persian KGQA, whereas the idea enriches target triples with local context subgraphs from source passages, adds an adaptive repair loop for factual reliability, and applies RL transfer from lower-hop QA.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:51:44.419259Z"
+}

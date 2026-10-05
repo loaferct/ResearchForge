@@ -1,0 +1,133 @@
+{
+  "id": "E001",
+  "title": "Experimental Evaluation of Dynamic Context Enrichment with Adaptive Repair and RL Optimization for Multi-hop KGQA",
+  "research_question": "Does training with dynamically sized and relevance-filtered local context subgraphs, combined with an adaptive repair loop that incorporates verification mechanisms and RL optimization on lower-hop QA instances, improve multi-hop QA performance and transfer to deeper hops compared to training on isolated triples or fixed-context enrichment?",
+  "hypothesis": "The proposed method will achieve higher Exact Match and F1 scores on multi-hop QA benchmarks (HotpotQA, 2WikiMultiHopQA) and demonstrate positive transfer from lower-hop to higher-hop performance compared to baselines, due to better contextual supervision, reliable error correction, and learned transferable policies.",
+  "proposed_method": "For each target triple (or path) extracted from a source passage in the knowledge graph, we first retrieve additional triples from the same passage. A dynamic context sizing mechanism determines the optimal number of additional triples based on passage-level features (e.g., length, entity density). A relevance filtering mechanism then selects the most relevant triples using embedding-based similarity to the target triple. The resulting local context subgraph (target triple + selected context triples) is used as the training supervision signal. The model is fine-tuned on these enriched triples. An adaptive repair loop detects one-hop failures via model uncertainty signals (e.g., diagnostic messages from the language model) or backward consistency verification, generates corrective examples, and refines the model, with a verification step (e.g., consistency check with source passage or reflection mechanism) to ensure corrections are grounded before adding them to the training set. After this cleaning stage, reinforcement learning (specifically PPO) is applied on lower-hop QA instances to optimize a policy for transferring to deeper multi-hop queries, using a reward based on QA correctness. The final model is evaluated on held-out multi-hop QA test sets.",
+  "baselines": [
+    "Isolated triples: training on target triples only without any context enrichment",
+    "Fixed-size context: training with a fixed number of additional triples (e.g., 2) per target triple, no dynamic sizing or filtering",
+    "Context without repair: training with dynamic sizing and relevance filtering but without the adaptive repair loop",
+    "Repair without verification: adaptive repair loop without the verification step for corrective examples",
+    "Repair without RL: full method but without the RL optimization stage on lower-hop QA",
+    "Subgraph Retrieval Enhanced Model (SR): inference-time subgraph retrieval method from arxiv:2202.13296 combined with a standard KGQA reasoner",
+    "GRASP: agentic retrieval method from arxiv:2605.16598 for comparison",
+    "S-Path-RAG: semantic-aware shortest-path RAG from arxiv:2603.23512 for comparison"
+  ],
+  "datasets": [
+    "HotpotQA",
+    "2WikiMultiHopQA",
+    "MuSiQue (optional for broader evaluation)"
+  ],
+  "workloads": [
+    "Standard multi-hop question answering evaluation"
+  ],
+  "hardware": "\"Single GPU with at least 24GB memory (e.g., RTX 3090 or A6000)\"",
+  "software_environment": "\"Python 3.8+, PyTorch 1.9+, HuggingFace Transformers 4.20+, DGL or PyG for graph operations, CUDA 11.0+\"",
+  "metrics": [
+    "Exact Match (EM)",
+    "F1 score",
+    "Transfer gain"
+  ],
+  "ablations": [
+    "Ablate dynamic sizing (use fixed context size)",
+    "Ablate relevance filtering (use all retrieved context triples)",
+    "Ablate verification in repair loop (no verification of corrective examples)",
+    "Ablate RL optimization stage (remove RL optimization on lower-hop QA)"
+  ],
+  "controls": [
+    "Base language model architecture (BERT-base or RoBERTa-base)",
+    "Training data size (controlled by sub-sampling to match baseline when enrichment increases count)",
+    "Random seeds (fixed across runs)",
+    "Evaluation procedure and metrics",
+    "Negative sampling strategy for KGQA training"
+  ],
+  "confounders_addressed": [
+    "Training data size effects: by controlling the number of training triples through sub-sampling when context enrichment increases the count",
+    "Model architecture variability: using the same base model across all conditions",
+    "Random seed variability: fixing seeds for reproducibility",
+    "Evaluation procedure consistency: using identical evaluation scripts and metrics"
+  ],
+  "expected_outcomes": "[\"The proposed method will achieve statistically significant improvements in EM and F1 over the isolated triples baseline and at least one of the fixed-context baselines.\", \"Ablation studies will show that each component (dynamic sizing, relevance filtering, verification, RL) contributes positively to performance.\", \"Transfer from lower-hop to higher-hop QA will be positive and significant compared to baselines lacking the RL optimization stage.\"]",
+  "failure_conditions": [
+    "The proposed method does not significantly outperform the isolated triples baseline (p>0.05) on both HotpotQA and 2WikiMultiHopQA.",
+    "Ablation studies reveal that removing any core component does not lead to a statistically significant decrease in performance.",
+    "Transfer gain is not significant or negative when comparing the full method to the method without RL optimization."
+  ],
+  "reproducibility_notes": "\"All code, data splits, and hyperparameters will be made publicly available. Experiments will be run with fixed random seeds (e.g., 42) and repeated at least three times to report mean and standard deviation. Detailed training logs and checkpoint saving will be enabled.\"",
+  "related_modification_id": "M001",
+  "related_paper_ids": [
+    "arxiv:2407.13101",
+    "arxiv:2506.09414",
+    "doi:10.1117/12.3120384",
+    "doi:10.1109/iccc68654.2025.11437995",
+    "arxiv:2202.13296",
+    "arxiv:2605.16598",
+    "arxiv:2603.23512"
+  ],
+  "execution": {
+    "repo_url": null,
+    "repo_ref": "main",
+    "setup": [
+      "conda create -n multi-hop-qa python=3.8 -y",
+      "conda activate multi-hop-qa",
+      "pip install torch==1.9.0 torchvision==0.10.0 torchaudio==0.9.0",
+      "pip install transformers==4.20.0 dgl==0.9.0",
+      "pip install numpy pandas scipy",
+      "git clone https://github.com/example/multi-hop-qa-context-enrichment.git",
+      "cd multi-hop-qa-context-enrichment",
+      "pip install -e ."
+    ],
+    "arms": [
+      {
+        "name": "Baseline_Isolated",
+        "role": "baseline",
+        "command": "python train.py --config configs/baseline_isolated.json --seed 42 --output_dir results/baseline_isolated",
+        "config": {}
+      },
+      {
+        "name": "Method_Full",
+        "role": "method",
+        "command": "python train.py --config configs/method_full.json --seed 42 --output_dir results/method_full",
+        "config": {}
+      },
+      {
+        "name": "Ablation_NoDynamic",
+        "role": "ablation",
+        "command": "python train.py --config configs/ablation_no_dynamic.json --seed 42 --output_dir results/ablation_no_dynamic",
+        "config": {}
+      },
+      {
+        "name": "Ablation_NoFilter",
+        "role": "ablation",
+        "command": "python train.py --config configs/ablation_no_filter.json --seed 42 --output_dir results/ablation_no_filter",
+        "config": {}
+      },
+      {
+        "name": "Ablation_NoVerify",
+        "role": "ablation",
+        "command": "python train.py --config configs/ablation_no_verify.json --seed 42 --output_dir results/ablation_no_verify",
+        "config": {}
+      },
+      {
+        "name": "Ablation_NoRL",
+        "role": "ablation",
+        "command": "python train.py --config configs/ablation_no_rl.json --seed 42 --output_dir results/ablation_no_rl",
+        "config": {}
+      }
+    ],
+    "expected_metrics": [
+      "Exact Match",
+      "F1"
+    ],
+    "higher_is_better": {
+      "Exact Match": true,
+      "F1": true
+    },
+    "sample_count_key": "num_examples",
+    "timeout_s": 86400.0,
+    "docker_image": null
+  },
+  "status": "awaiting_approval",
+  "recorded_at": "2026-09-30T06:24:40.422622Z"
+}

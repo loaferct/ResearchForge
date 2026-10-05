@@ -1,0 +1,52 @@
+{
+  "paper_id": "arxiv:2509.01306",
+  "relevance_tier": "high",
+  "problem": "Temporal Information Retrieval (TIR) requires balancing relevance (alignment with query's temporal constraints) and recency (preferring freshest version) which existing methods address in isolation.",
+  "method": "Re3 framework comprising Time Extraction, Time Encoding, and Time Enhancement modules, using a query-aware gating mechanism to dynamically balance semantic and temporal information during re-ranking.",
+  "key_assumptions": [
+    "Explicit or reliably extractable timestamps are available for documents.",
+    "Semantic similarity and temporal signals can be combined via a learnable gate."
+  ],
+  "main_contribution": "(1) Re3, a unified lightweight framework for temporal-aware retrieval; (2) Re2Bench benchmark to disentangle relevance, recency, and their combination.",
+  "datasets": [
+    "Re2Bench (including Re2-Rel from TSQA-Human, Re2-Rec from HoH, Re2-Hyb from NOAA)"
+  ],
+  "benchmarks": [
+    "Re2Bench"
+  ],
+  "baselines": [
+    "BGE-M3 (semantic-only)",
+    "tempRALM",
+    "TempRetriever",
+    "TSM"
+  ],
+  "metrics": [
+    "Recall@K",
+    "MRR",
+    "TimeVar@K",
+    "MFG@K"
+  ],
+  "results": "[\"Re3 achieves state-of-the-art R@1 on all Re2Bench subsets: 0.920 on Re2-Rel, 0.649 on Re2-Rec, 0.742 on Re2-Hyb.\"]",
+  "limitations": [
+    "Assumes explicit or reliably extractable timestamps.",
+    "Evaluation limited to three subsets; generalization to other domains (e.g., scientific literature, social media) needed.",
+    "Latency may increase with large candidate pools."
+  ],
+  "future_work": [
+    "Relax timestamp assumptions.",
+    "Optimize for low-latency retrieval.",
+    "Expand Re2Bench to broader domains and tasks.",
+    "Extend Re3 toward generative and multi-source datasets.",
+    "Add interpretability tools."
+  ],
+  "code_availability": "[\"Available online at https://anonymous.4open.science/r/Re3-0C5A\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.6,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "Re3 focuses on general temporal IR benchmarks; our idea targets versioned regulatory documents for open-domain QA, proposing a retrieval-agnostic temporal relevance component adaptable to any retriever.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T10:21:31.137436Z"
+}

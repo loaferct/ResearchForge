@@ -1,0 +1,37 @@
+{
+  "id": "doi:10.18653/v1/2022.emnlp-main.90",
+  "title": "Language Models of Code are Few-Shot Commonsense Learners",
+  "authors": [
+    "Aman Madaan",
+    "Shuyan Zhou",
+    "Uri Alon",
+    "Yiming Yang",
+    "Graham Neubig"
+  ],
+  "year": 2022,
+  "published": "2022-01-01",
+  "venue": null,
+  "url": "https://doi.org/10.18653/v1/2022.emnlp-main.90",
+  "pdf_url": "https://aclanthology.org/2022.emnlp-main.90.pdf",
+  "abstract": "We address the general task of structured commonsense reasoning: given a natural language input, the goal is to generate a graph such as an event or a reasoning-graph.To employ large language models (LMs) for this task, existing approaches \"serialize\" the output graph as a flat list of nodes and edges.Although feasible, these serialized graphs strongly deviate from the natural language corpora that LMs were pre-trained on, hindering LMs from generating them correctly.In this paper, we show that when we instead frame structured commonsense reasoning tasks as code generation tasks, pre-trained LMs of code are better structured commonsense reasoners than LMs of natural language, even when the downstream task does not involve source code at all.We demonstrate our approach across three diverse structured commonsense reasoning tasks.In all these natural language tasks, we show that using our approach, a code generation LM (CODEX) outperforms natural-LMs that are fine-tuned on the target task (e.g., T5) and other strong LMs such as GPT-3 in the few-shot setting.Our code and data are available at https: //github.com/madaan/CoCoGen .",
+  "doi": "10.18653/v1/2022.emnlp-main.90",
+  "arxiv_id": null,
+  "openalex_id": "W4385567216",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 112,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T09:39:34.961864Z",
+  "relevance": 0.0,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "retriever agnostic temporal relevance"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

@@ -1,0 +1,33 @@
+{
+  "id": "C013",
+  "statement": "The two evaluation regimes are not interchangeable, so replication of the context-supervision effect under standard-benchmark methodology is untested rather than likely or unlikely. The closest work's metric is four-way answer selection over synthetically generated options whose hop depth is controlled by construction, on KGs built for the purpose; the standard regime is Hits@1 entity ranking on naturally occurring questions over Freebase with no passage provenance. A selection-accuracy gain among four generated options need not appear in Hits@1 ranking, and the standard benchmarks cannot host the mechanism at all because their triples are not traceable to source passages; conversely, the standard regime's deepest standard tier is 3 hops, whereas the idea's claim is specifically about 3-5 hops. The appropriate methodology for the refined question is therefore per-hop accuracy on a frozen split plus open-ended exact match/F1 on a text-attributed corpus, retaining multiple choice only for comparability with the published number.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2202.13296",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "the QA performance drops dramatically when the subgraph includes more than 5,000 nodes",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 30",
+      "quote": "after option shuffling, the average absolute change remains below one percentage point across models",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "evaluation",
+    "comparison",
+    "methodology"
+  ],
+  "recorded_at": "2026-09-30T05:25:33.518523Z"
+}

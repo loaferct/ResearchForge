@@ -1,0 +1,24 @@
+{
+  "id": "D001",
+  "direction": "MODIFY_METHOD",
+  "hypothesis": "Training with dynamically sized and relevance-filtered local context subgraphs, combined with an adaptive repair loop that incorporates verification mechanisms and RL optimization on lower-hop QA instances, improves multi-hop QA performance and transfer to deeper hops compared to training on isolated triples or fixed-context enrichment.",
+  "rationale": "The original idea faces key gaps: optimal context size determination (G001), context noise sensitivity (G004), and need for reliable repair mechanisms (related to G002/G003). The proposed modifications address these by: (1) dynamically sizing context per triple based on passage properties (M001), (2) filtering context triples by relevance to reduce noise (M002), and (3) integrating verification into the repair loop to ensure correction quality (M003). These changes are supported by evidence on context overload (arxiv:2407.13101), data augmentation challenges (arxiv:2506.09414), and verification techniques in closed-loop QA (doi:10.1117/12.3120384) and knowledge rewriting (doi:10.1109/iccc68654.2025.11437995). The modifications preserve the core innovation of training-level context enrichment while making it more robust and effective.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": null,
+  "research_question": null,
+  "confidence": "medium",
+  "modification_id": "M001",
+  "paper_ids": [
+    "arxiv:2407.13101",
+    "arxiv:2506.09414",
+    "doi:10.1117/12.3120384",
+    "doi:10.1109/iccc68654.2025.11437995",
+    "arxiv:2202.13296"
+  ],
+  "uncertainty_ids": [
+    "U001",
+    "U004",
+    "U005"
+  ],
+  "recorded_at": "2026-09-30T06:22:26.462394Z"
+}

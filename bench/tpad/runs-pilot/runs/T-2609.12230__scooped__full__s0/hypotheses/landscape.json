@@ -1,0 +1,119 @@
+{
+  "field_name": "Multi-hop Question Answering Approaches",
+  "categories": [
+    {
+      "name": "Training-free methods",
+      "parent": null,
+      "description": "Methods that do not require model training, relying on retrieval or memory synchronization at inference time.",
+      "paper_ids": [
+        "arxiv:2607.23278",
+        "doi:10.5753/sbbd.2025.247297",
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    },
+    {
+      "name": "Unified retrieval-reasoning",
+      "parent": null,
+      "description": "Approaches that jointly model retrieval and reasoning through shared architecture or pre-training.",
+      "paper_ids": [
+        "arxiv:2212.00959"
+      ]
+    },
+    {
+      "name": "Context-aware KG integration",
+      "parent": null,
+      "description": "Methods that incorporate context-aware knowledge graphs to reduce token overhead and improve reasoning.",
+      "paper_ids": [
+        "arxiv:2406.06027"
+      ]
+    },
+    {
+      "name": "Triple extraction",
+      "parent": null,
+      "description": "Focus on extracting structured triples from unstructured text to construct or enrich knowledge graphs.",
+      "paper_ids": [
+        "doi:10.1109/kse50997.2020.9287471"
+      ]
+    },
+    {
+      "name": "Context-enriched triple training with adaptive repair and RL transfer",
+      "parent": null,
+      "description": "Proposed approach that enriches training triples with local context subgraphs, employs an adaptive repair loop for fact correction, and applies reinforcement learning transfer from lower-hop to higher-hop QA.",
+      "paper_ids": []
+    }
+  ],
+  "idea_position": "Context-enriched triple training with adaptive repair and RL transfer",
+  "dominant_approaches": [
+    "Training-free methods",
+    "Unified retrieval-reasoning"
+  ],
+  "common_assumptions": [
+    "Triples can be reliably extracted from source passages.",
+    "Contextual information (e.g., local subgraphs, distilled KGs) improves multi-hop reasoning.",
+    "Unified modeling of retrieval and reasoning enhances performance.",
+    "Hybrid retrieval of KG triples and textual evidence improves QA recall and ranking."
+  ],
+  "common_datasets": [
+    "WebQSP",
+    "CWQ",
+    "HotpotQA",
+    "MuSiQue",
+    "MetaQA"
+  ],
+  "common_benchmarks": [
+    "WebQSP",
+    "CWQ",
+    "HotpotQA",
+    "MuSiQue",
+    "MetaQA"
+  ],
+  "common_metrics": [
+    "Hits@1",
+    "Exact Match (EM)",
+    "F1",
+    "MRR",
+    "nDCG@10",
+    "BERTScore",
+    "Human Evaluation"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Limitations not explicitly stated or discussed in the paper.",
+      "paper_ids": [
+        "doi:10.1109/kse50997.2020.9287471",
+        "doi:10.20944/preprints202505.1992.v1",
+        "arxiv:2212.00959",
+        "arxiv:2406.06027",
+        "doi:10.5753/sbbd.2025.247297"
+      ]
+    },
+    {
+      "description": "Performance limited by the quality of retrieved evidence or knowledge graph; errors in retrieval propagate and cannot be easily corrected.",
+      "paper_ids": [
+        "arxiv:2607.23278",
+        "doi:10.5753/sbbd.2025.247297",
+        "arxiv:2406.06027"
+      ]
+    },
+    {
+      "description": "Method evaluated on limited datasets or domains, raising questions about generalizability.",
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1",
+        "arxiv:2406.06027"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Combining context-enriched triple training with adaptive repair loops for fact correction.",
+    "Integrating unified retrieval-reasoning frameworks with local context subgraph enrichment.",
+    "Applying reinforcement learning transfer from lower-hop to higher-hop QA in training-free methods.",
+    "Using adaptive repair to improve the quality of extracted triples from text."
+  ],
+  "contradictions": [
+    {
+      "description": "No direct contradictions found; differences lie in whether approaches rely on training the model (fine-tuning) versus inference-time mechanisms (retrieval, memory synchronization).",
+      "paper_ids": []
+    }
+  ],
+  "recorded_at": "2026-09-30T06:43:34.147189Z"
+}

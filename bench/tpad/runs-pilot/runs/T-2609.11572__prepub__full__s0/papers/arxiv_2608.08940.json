@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2608.08940",
+  "title": "Difficulty-Gated Fusion of Reasoning Views for Temporal Retrieval",
+  "authors": [
+    "Jamie Holdcroft",
+    "Abdelrahman Abdallah",
+    "Adam Jatowt"
+  ],
+  "year": 2026,
+  "published": "2026-08-09",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2608.08940",
+  "pdf_url": "https://arxiv.org/pdf/2608.08940v1",
+  "abstract": "Reasoning-intensive temporal retrieval requires matching a query to documents whose relevance depends on shared temporal reasoning rather than lexical overlap. Expanding a query into several reformulations that make its temporal intent explicit, and retrieving with each, supplies this reasoning, but fusing the resulting rankings with equal weights wastes accuracy: for any single query, only some reformulations are reliable. We propose query-difficulty-gated fusion of reasoning views. From each view we read an eight-dimensional signature of its score distribution, built from query-performance-prediction quantities such as softmax entropy, score gaps, and dispersion, and a gate of roughly one thousand parameters maps these signatures to per-query view weights. The fused ranking uses no relevance labels at inference, no re-ranking, and no fine-tuning of the retriever; the gate is trained leave-one-task-out. On the \\textsc{Tempo} benchmark, the method improves all six retrievers we evaluate, from BERT encoders to 7B decoder retrievers, with the largest gains on the weaker backbones. The strongest retrievers reach $0.297$ and $0.303$ nDCG@10, and the per-query gain over the original query is significant under a paired bootstrap ($p<0.001$). A per-query oracle reaches $0.364$ against our realized $0.297$, exposing headroom that identifies per-query view selection as a concrete next step.",
+  "doi": null,
+  "arxiv_id": "2608.08940",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T10:11:24.008705Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal relevance weighting document retrieval"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

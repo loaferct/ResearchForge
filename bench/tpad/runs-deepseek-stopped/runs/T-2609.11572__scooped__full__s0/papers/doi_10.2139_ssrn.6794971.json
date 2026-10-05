@@ -1,0 +1,37 @@
+{
+  "id": "doi:10.2139/ssrn.6794971",
+  "title": "EntropyRAG: Entropy-Aware Retrieval-Augmented Generation for Knowledge Graph Question Answering",
+  "authors": [
+    "Donglin Qi",
+    "Long Cheng",
+    "Haofei Wang",
+    "Yan Zhang",
+    "Dayan Wan"
+  ],
+  "year": 2026,
+  "published": null,
+  "venue": null,
+  "url": "https://doi.org/10.2139/ssrn.6794971",
+  "pdf_url": null,
+  "abstract": "Large language models (LLMs) have shown strong performance in natural lan-guage understanding and generation. However, their knowledge is mainly derived from pre-training corpora, making it difficult to capture emerging domain knowledge in a timely man-ner, and they are prone to hallucinations when evidence is insufficient. Retrieval-augmentedgeneration (RAG) mitigates this issue by leveraging the updatable and auditable structuredfacts in knowledge graphs, thereby improving faithfulness and interpretability. However,existing knowledge graph retrieval methods often underutilize graph-structured informationand lack adaptive control over subgraph expansion during retrieval. To address these issues,we propose an entropy-aware retrieval-augmented generation method for knowledge graphquestion answering. Our framework consists of two stages. In the retrieval stage, we designa GNN-based retriever with an entropy-aware mechanism over edge attention distributionsto adaptively control subgraph expansion, reducing subgraph size while improving the qual-ity of candidate answers and reasoning paths. In the generation stage, we fuse graph-siderepresentations with structured prompts by encoding the retrieved subgraph into a structure-aware graph vector and injecting it into the LLM as a soft prompt to support final answergeneration. Experiments on WebQSP and CWQ show that EntropyRAG achieves com-petitive performance against representative LLM-based and graph-based retrieval baselines,with clearer gains over representative GNN-based retrieval methods on the multi-hop CWQbenchmark.",
+  "doi": "10.2139/ssrn.6794971",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T05:07:18.304124Z",
+  "relevance": 0.2391,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "TimeR4 time-aware retrieval augmented LLM temporal knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

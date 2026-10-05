@@ -1,0 +1,34 @@
+{
+  "id": "doi:10.62710/qw0ytn73",
+  "title": "Agnostic Multi-Source Retrieval-Augmented Generation for Documents and Database Question Answering",
+  "authors": [
+    "Krisna Dwi Setya Adi",
+    "Ivan Michael Siregar"
+  ],
+  "year": 2026,
+  "published": "2026-07-29",
+  "venue": "Jurnal Ragam Pengabdian",
+  "url": "https://doi.org/10.62710/qw0ytn73",
+  "pdf_url": null,
+  "abstract": "Key personnel turnover creates knowledge gaps in document-based service organizations, where information is distributed across technical specifications, operational databases, and team discussions. This study develops a multi-source Retrieval-Augmented Generation (RAG) based Question Answering (QA) system that automatically integrates heterogeneous knowledge sources through a unified source parameter. Using the Adapter Pattern, the system converts PDF/TXT documents and PostgreSQL tables into a common representation, builds a FAISS vector index, retrieves relevant context, and generates grounded answers with Gemini 2.5 Flash. Evaluation employs eight metrics and three composite scores: Knowledge Transfer Effectiveness (KTE), Multi-Source Retrieval Score (MSRS), and Answer Quality Index (AQI). Experiments were conducted on the BOND_SYS dataset using 25 Indonesian questions covering specification documents, an 8-table PostgreSQL database, and 908 developer discussion messages. Results show perfect retrieval performance (Precision@K = 1.000; MRR = 1.000) across all scenarios. The full hybrid configuration achieves the highest Overall score (0.373), while Scenario C records the highest MSRS (0.825). Scenario E obtains ROUGE-L = 0.181 and BLEU-1 = 0.196 using five manually curated reference answers. Two baseline comparisons further support this contribution: a zero-shot LLM without retrieval correctly answered only 8% of questions, while a BM25 keyword-search baseline, competitive on single-source scenarios, was outperformed on cross-referencing tasks, underscoring the added value of dense multi-source retrieval. The findings demonstrate that integrating formal documents, structured databases, and discussion logs enhances knowledge transfer and question answering for organizational support and employee onboarding.",
+  "doi": "10.62710/qw0ytn73",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T09:54:37.138097Z",
+  "relevance": 0.3462,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "retrieval agnostic temporal relevance question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

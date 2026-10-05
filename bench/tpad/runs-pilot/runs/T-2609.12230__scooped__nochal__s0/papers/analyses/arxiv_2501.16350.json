@@ -1,0 +1,42 @@
+{
+  "paper_id": "arxiv:2501.16350",
+  "relevance_tier": "high",
+  "problem": "Multi-hop complex question answering in Persian suffers from challenges in accurately understanding and transforming questions into semantically equivalent SPARQL queries for precise answer retrieval from knowledge graphs.",
+  "method": "Constructed a dataset of 5,600 Persian multi-hop complex questions with decomposed forms based on semantic representation. Trained Persian language models on this dataset and proposed an architecture for answering complex questions using a Persian knowledge graph.",
+  "key_assumptions": [
+    "Decomposing multi-hop questions into simpler components aids semantic parsing.",
+    "Persian language models can effectively capture question semantics for KGQA."
+  ],
+  "main_contribution": "A Persian multi-hop KGQA dataset and architecture that achieve 12.57% F1-score and 12.06% accuracy improvements over the best comparable method on the PeCoQ dataset.",
+  "datasets": [
+    "Persian multi-hop complex question dataset (5,600 questions)",
+    "PeCoQ evaluation dataset"
+  ],
+  "benchmarks": [
+    "PeCoQ"
+  ],
+  "baselines": [
+    "Best comparable method (not specified)"
+  ],
+  "metrics": [
+    "F1-score",
+    "accuracy"
+  ],
+  "results": "[\"Improvement of 12.57% in F1-score and 12.06% in accuracy over the best comparable method.\"]",
+  "limitations": [
+    "Not stated in abstract or available text."
+  ],
+  "future_work": [
+    "Not stated in abstract or available text."
+  ],
+  "code_availability": "[\"Not stated in abstract or available text.\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.9,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "This work focuses on question decomposition and Persian language models for Persian KGQA. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting general KGQA with language models and knowledge graph embeddings.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T06:37:19.166858Z"
+}

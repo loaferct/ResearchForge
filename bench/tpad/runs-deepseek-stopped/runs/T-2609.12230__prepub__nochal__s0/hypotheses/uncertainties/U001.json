@@ -1,0 +1,33 @@
+{
+  "id": "U001",
+  "question": "Can the context-enrichment mechanism even be instantiated on standard multi-hop KGQA benchmarks (MetaQA/WebQSP/CWQ), which use Freebase/Wikidata where triples lack source-passage provenance? If not, the idea's core mechanism is undefined for the strongest baselines and scope must narrow to text-grounded KGs.",
+  "description": "The idea requires 'additional triples drawn from the same source passage'. Standard KGQA benchmarks use structured KGs without passages. Either (a) provenance-bearing text-grounded KGs must be adopted (e.g. HotpotQA supporting paragraphs, text-derived graphs), or (b) 'context' must be redefined as graph-neighborhood (k-hop around the target), which is very different and likely already explored.",
+  "category": "feasibility",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "REFINE",
+    "COMPARE"
+  ],
+  "confidence": 0.65,
+  "confidence_basis": "Based on reading the dataset descriptions of one benchmark paper (NSM) and abstracts of several KGQA papers; not an exhaustive survey of provenance-bearing KGs.",
+  "rationale": "If provenance is unavailable, the proposed mechanism cannot be evaluated against the field's standard baselines and the contribution is at risk of being untestable as stated.",
+  "resolution": "Partially resolved: the standard multi-hop KGQA benchmarks are structured-KG benchmarks. NSM's full text states that WebQSP questions are 'answerable using Freebase as the knowledge base', and CWQ is generated from WebQSP, so neither carries source passages from which co-passage triples could be drawn; MetaQA is a synthetic movie KG. Therefore the mechanism cannot be evaluated on the standard benchmark suite without (a) switching to text-grounded KGs with provenance or (b) redefining context as graph neighbourhood, which is largely covered by subgraph retrieval work. A targeted search for provenance-bearing / text-derived KGs with co-passage triples is still needed.",
+  "paper_ids": [
+    "arxiv:2101.03737"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2101.03737"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T05:09:01.548913Z",
+  "updated_at": "2026-09-30T05:17:51.048326Z"
+}

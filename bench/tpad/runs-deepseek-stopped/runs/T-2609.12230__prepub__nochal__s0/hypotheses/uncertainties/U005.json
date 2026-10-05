@@ -1,0 +1,39 @@
+{
+  "id": "U005",
+  "question": "Are one-hop failures actually diagnostic of incorrect base facts, or does error propagate from composition/retrieval failures that a corrective-example loop cannot fix?",
+  "description": "The repair loop assumes a one-hop failure localizes a bad base triple. If most one-hop errors come from entity linking, relation ambiguity, or question parsing rather than false triples, the repair signal is mis-specified and the loop may generate harmful corrective examples.",
+  "category": "validity",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "CHALLENGE",
+  "possible_actions": [
+    "READ",
+    "SEARCH",
+    "COMPARE",
+    "VERIFY"
+  ],
+  "confidence": 0.6,
+  "confidence_basis": "Grounded in two documented failure sources (GNN-RAG limitation; NSM spurious-path motivation) but not in an error-type breakdown from any paper.",
+  "rationale": "This determines whether the repair-loop component is well-founded or a built-in failure mode, and it is a prerequisite for any claim about 'reliability of base facts'.",
+  "resolution": "Partially resolved against the idea: the evidence indicates that one-hop failures are attributable at least as much to retrieval coverage and entity-linking errors (GNN-RAG: the retrieved subgraph may not contain the answer) and to missing intermediate supervision (NSM: spurious paths) as to incorrect base facts. If that holds, a one-hop-failure repair loop mis-targets its corrective examples. The hypothesis is weakened but not refuted, since no paper reports the needed error-type decomposition.",
+  "paper_ids": [
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "arxiv:2101.03737"
+  ],
+  "supporting_paper_ids": [
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "arxiv:2101.03737"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C002",
+    "C007",
+    "C010"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "PLAN",
+  "created_at": "2026-09-30T05:10:43.283829Z",
+  "updated_at": "2026-09-30T05:22:15.754739Z"
+}

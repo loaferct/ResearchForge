@@ -1,0 +1,34 @@
+{
+  "id": "arxiv:2605.25183",
+  "title": "Knowledge Graph-Driven Expert-Level Reasoning for Neuroscience",
+  "authors": [
+    "Jake Stephen",
+    "Niraj K. Jha"
+  ],
+  "year": 2026,
+  "published": "2026-05-24",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2605.25183",
+  "pdf_url": "https://arxiv.org/pdf/2605.25183v2",
+  "abstract": "Knowledge graph (KG) is an abstraction that can be extracted from text corpora and used for in-depth reasoning. Prior work has leveraged KGs to fine-tune language models (LMs), enabling domain-specific superintelligence. In this work, we explore whether KG-driven in-depth reasoning capabilities can emerge in neuroscience using only information contained within a single authoritative textbook. The central hypothesis is that structured knowledge, when distilled into a high-quality KG and converted into KG-grounded question-answer (QA) supervision, is sufficient to produce expert-level reasoning through a fine-tuned LM that surpasses large language models (LLMs) in accuracy, while employing orders of magnitude fewer parameters. We construct a textbook-derived KG via a dual-LLM validation pipeline, expand it with a masked LM trained on the KG topology, generate multi-hop QA items, which include QA pairs and reasoning traces, to fine-tune an LM exclusively on KG-derived supervision, and apply reinforcement learning using path-derived KG signals as implicit reward models. Our results demonstrate that deep, mechanistic neuroscience understanding can be induced in the model without reliance on large, heterogeneous web-scale corpora. The KG-based synthetic neuroscience curriculum that readers can quiz themselves on, and the fine-tuned LM, are available at the following GitHub location: https://kg-bottom-up-superintelligence.github.io/neuro-bench.",
+  "doi": null,
+  "arxiv_id": "2605.25183",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T06:04:54.888265Z",
+  "relevance": 0.2692,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "curriculum reinforcement learning multi-hop knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

@@ -1,0 +1,33 @@
+{
+  "id": "C001",
+  "statement": "A retrieval-agnostic combination of semantic similarity with an elapsed-time temporal score, added to an existing retriever without retraining or re-indexing, was already published as TempRALM.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "we define an auxiliary retrieval scoring function𝑇𝑒𝑚𝑝𝑅𝑒𝑡 𝑡 , which is the sum of the semantic score 𝑠(𝑞,𝑑) and the temporal score𝜏(𝑞𝑡,𝑑𝑡)",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "our approach could be used to extend any retriever that ranks documents using a numerical similarity score between a query and a document corpus",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "analysis",
+  "tags": [
+    "novelty",
+    "temporal-retrieval",
+    "overlap"
+  ],
+  "recorded_at": "2026-09-30T05:10:27.634172Z"
+}

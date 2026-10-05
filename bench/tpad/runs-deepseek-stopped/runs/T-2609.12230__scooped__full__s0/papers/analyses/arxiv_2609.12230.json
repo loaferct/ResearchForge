@@ -1,0 +1,51 @@
+{
+  "paper_id": "arxiv:2609.12230",
+  "relevance_tier": "high",
+  "problem": "LLMs trained on isolated KG head-relation-tail triples may not learn the surrounding context needed for multi-hop reasoning, and unreliable lower-hop facts compound through deeper reasoning chains.",
+  "method": "Context-augmented KG supervision over disease-specific KGs (Gastroparesis, Diabetes) extracted with GraphMERT. Each primary triple is augmented with supporting triples from the same source text chunk (tracked via a path_idx chunk identifier) selected by SapBERT triple-embedding cosine similarity and thresholding, forming a context graph (CG). Qwen3-14B is SFT'd under two regimes (KG-grounded vs CG-grounded), then an LLM-judged, history-aware adaptive repair stage targets unresolved one-hop failures (failure categorization, targeted QA regeneration, regression tracking, quarantine review, validation-set refresh), and finally RL on lower-hop QA items is applied from repaired vs unrepaired checkpoints, with evaluation on 3-5-hop items.",
+  "key_assumptions": [
+    "Supporting context for a triple can be identified by same-source-chunk co-occurrence plus triple-embedding similarity. [p. 8]",
+    "Unresolved one-hop failures are a good proxy for missing knowledge that should drive targeted repair. [p. 2, p. 6]",
+    "SFT learns format/imitation while RL improves generalization, motivating lower-hop RL for deeper-hop transfer. [p. 2]",
+    "Synthetically generated MCQ QA items with triple-grounded correctness filtering are adequate supervision and evaluation. [p. 30]"
+  ],
+  "main_contribution": "Proposes and empirically compares context-augmented (CG-grounded) vs standard KG-grounded supervision for LLM multi-hop QA, plus an LLM-judged adaptive repair pipeline applied before RL; reports that context augmentation improves multi-hop performance and that RL from repaired checkpoints gives larger, more stable gains.",
+  "datasets": [
+    "Gastroparesis KG (GraphMERT-extracted; Table 1: 6,900 rows, 6,018 unique triples, 4,790 concepts, 20 relation types)",
+    "Diabetes KG (GraphMERT-extracted subset; Table 1: 6,000 rows, 5,954 unique triples, 4,397 concepts, 28 relation types)",
+    "Generated multiple-choice QA items spanning 1-hop to 5-hop reasoning"
+  ],
+  "benchmarks": [
+    "In-house disease-specific 1-5-hop MCQ benchmark (no standard public benchmark used)"
+  ],
+  "baselines": [
+    "KGModel (KG-grounded SFT)",
+    "CGModel (CG-grounded SFT)",
+    "Repaired SFT checkpoints vs unrepaired SFT checkpoints before RL",
+    "Full combined variant: context-augmented + repaired + RL"
+  ],
+  "metrics": [
+    "Multiple-choice answer accuracy (per hop depth, incl. 3-hop/4-hop/5-hop)",
+    "One-hop retained validation accuracy",
+    "Robustness to option shuffling (average absolute change in accuracy)"
+  ],
+  "results": "Across both diseases context-augmented supervision consistently improves multi-hop performance over KG-only supervision; adaptive repair brings models to 100% accuracy on the cleaned retained one-hop validation sets; RL initialized from repaired SFT checkpoints yields larger and more stable gains than from unrepaired checkpoints; option shuffling changes accuracy by under one percentage point on average (p. 30). Exact per-hop numbers are in the paper's tables and were not extracted here.",
+  "limitations": [
+    "QA datasets used for SFT, repair, RL, and evaluation are synthetically generated. [p. 30]",
+    "Validation on only two disease-specific KGs; standard multi-hop benchmarks not used. [p. 30]",
+    "Retained/cleaned validation sets are modified by the repair loop that is being evaluated (reaching 100% on the cleaned retained set), which risks selection artifacts."
+  ],
+  "future_work": [
+    "Not fully extracted; the paper dedicates Section 6 to limitations and future extensions (synthetic-data and domain-generalization concerns). [p. 30]"
+  ],
+  "code_availability": "No code or data repository URL was found in the full text, and GitHub searches for the framework and for GraphMERT returned no matching repositories. Code availability: not stated in the paper.",
+  "relation_to_idea": {
+    "problem_overlap": 1.0,
+    "method_overlap": 1.0,
+    "evaluation_overlap": 0.9,
+    "conceptual_difference": "Effectively none at the level of idea formulation: this paper implements the same context-graph supervision, adaptive one-hop repair, and lower-hop RL with deeper-hop evaluation. The only conceptual space left for a distinct contribution is methodological rigor rather than mechanism: matched-token/matched-example controls to isolate context from supervision volume, an untouched held-out evaluation set that the repair loop cannot edit, seed-level significance, and generalization beyond two disease-specific KGs.",
+    "basis": "Method overlap 1.0 because the paper's contribution bullet and Section 3.3 describe attaching same-source-chunk supporting triples to each primary triple (KG- vs CG-grounded supervision) exactly as the idea proposes, plus the same LLM-judged repair and lower-hop RL stages; evaluation overlap 0.9 because it also evaluates transfer to 3-5-hop queries, differing only in using generated domain MCQ items instead of the standard benchmarks the idea leaves open (Assumption 5)."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:08:14.257388Z"
+}

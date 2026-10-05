@@ -1,0 +1,29 @@
+{
+  "id": "C013",
+  "statement": "Our idea of enriching each target triple with local context subgraphs from the same passage overlaps with PullNet's goal of incorporating more contextual information for reasoning, but differs in that PullNet introduces a graph retrieval module using shortest path as supervised signal during retrieval, whereas our idea modifies the training data itself by adding context triples before fine-tuning.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2110.12679",
+      "experiment_run_id": null,
+      "location": "p. 22",
+      "quote": "PullNet [10] improves GraftNet on the retrieval subgraph by introducing the graph retrieval module which utilizes shortest path from the topic entity to answer as the additional supervised signal.",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2501.15378",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [],
+  "recorded_at": "2026-09-30T07:07:21.552106Z"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "U001",
+  "question": "Is there existing work that combines temporal relevance with semantic similarity in a retrieval-agnostic way for QA over versioned regulatory text?",
+  "description": "Determine if the proposed retrieval-agnostic temporal relevance component is novel compared to existing temporal-aware retrieval methods.",
+  "category": "novelty",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "SEARCH",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Novelty is crucial for contribution.",
+  "resolution": "No existing work explicitly combines temporal relevance with semantic similarity in a retrieval-agnostic way for QA over versioned regulatory text. Related work includes Re3 (arxiv:2509.01306) which balances semantic and temporal information via a query-aware gating mechanism for general temporal information retrieval, and TempRALM (arxiv:2401.13222) which adds a temporal score to a specific RALM, but neither targets retrieval-agnostic application to versioned regulatory QA. Policy document QA studies (e.g., arxiv:2601.15457) focus on RAG architectures without temporal components. Thus the gap remains.",
+  "paper_ids": [
+    "arxiv:2509.01306",
+    "arxiv:2401.13222"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2509.01306",
+    "arxiv:2401.13222",
+    "arxiv:2601.15457"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "PLAN",
+  "created_at": "2026-09-30T09:44:51.845237Z",
+  "updated_at": "2026-09-30T09:58:36.848700Z"
+}

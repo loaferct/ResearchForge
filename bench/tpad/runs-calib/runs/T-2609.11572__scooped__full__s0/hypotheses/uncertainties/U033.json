@@ -1,0 +1,35 @@
+{
+  "id": "U033",
+  "question": "Do version-level point-in-time metrics reorder retrieval systems relative to answer accuracy and recency-style temporal metrics, or do they simply reproduce the established ordering?",
+  "description": "If version-level metrics rank retrieval systems exactly as answer accuracy and recency-style temporal metrics do, the new benchmark would have no diagnostic value and the measurement contribution would fail on its own terms. No retrieved work compares rankings induced by version-contamination metrics against rankings induced by answer accuracy or recency-style temporal accuracy, so this is unknown.",
+  "category": "evaluation",
+  "importance": "medium",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "COMPARE"
+  ],
+  "confidence": 0.55,
+  "confidence_basis": "Two verified quantitative patterns support partial overlap, including a slice-dependent ranking reversal and near-complete temporal compliance with imperfect accuracy, but neither measures version-level contamination directly, so the specific ordering claim awaits plan E004.",
+  "rationale": "This is the operational form of the sufficiency question: a measurement contribution earns its place by changing conclusions, and plan E004 makes the rank comparison the decisive test.",
+  "resolution": "Partially resolved in direction, unresolved in specifics. Verified patterns argue for partial rather than complete overlap: system ordering in this literature is slice-dependent - hybrid retrieval achieves the highest overall performance while BM25 outperforms hybrid on multihop queries - so a version-level slice can plausibly reorder systems that an aggregate metric ranks identically; and the one point-in-time system with published numbers reports leakage reduced to 1.7% alongside 78.9% answer accuracy, showing temporal compliance is neither sufficient for correctness nor implied by it, so a version-level metric is not redundant with accuracy. No retrieved work compares version-contamination rankings against accuracy or recency-style rankings directly, so the question remains open and is now the explicit target of plan E004, revised to add a redundancy component - correlation and partial correlation of contamination with correctness, and the paired probability of a correct answer after a contaminated versus clean retrieval - alongside the rank-agreement and discordance tests, with a pre-registered minimum discordant-pair count and a leave-one-system-out robustness check.",
+  "paper_ids": [
+    "arxiv:2109.06157",
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.2139/ssrn.7087840",
+    "doi:10.3390/sym18091498"
+  ],
+  "supporting_paper_ids": [
+    "doi:10.3390/sym18091498",
+    "doi:10.2139/ssrn.7087840"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "UNCERTAINTY",
+  "created_at": "2026-09-30T04:41:11.622726Z",
+  "updated_at": "2026-09-30T04:43:52.370487Z"
+}

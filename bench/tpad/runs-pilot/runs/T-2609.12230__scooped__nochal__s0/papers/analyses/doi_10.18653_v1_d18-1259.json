@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.18653/v1/d18-1259",
+  "relevance_tier": "high",
+  "problem": "Existing QA datasets lack support for training models to perform complex multi-hop reasoning and provide explanations for answers.",
+  "method": "Introduce HotpotQA, a new dataset with 113k Wikipedia-based question-answer pairs featuring four key features: (1) questions require finding and reasoning over multiple supporting documents; (2) questions are diverse and not constrained to any pre-existing knowledge bases or schemas; (3) sentence-level supporting facts are provided for reasoning, enabling models to learn explainable predictions; (4) factoid comparison questions test ability to extract relevant facts and perform necessary comparisons.",
+  "key_assumptions": [
+    "Providing sentence-level supporting facts enables QA systems to learn reasoning and generate explainable predictions.",
+    "Diverse, multi-hop questions based on Wikipedia support training of complex reasoning abilities."
+  ],
+  "main_contribution": "HotpotQA dataset that is challenging for latest QA systems and supports training and evaluation of explainable multi-hop question answering, providing strong supervision via supporting facts.",
+  "datasets": [
+    "HotpotQA (113k Wikipedia-based question-answer pairs)"
+  ],
+  "benchmarks": [
+    "HotpotQA (distractor and full wiki settings)"
+  ],
+  "baselines": [
+    "Baseline model reimplemented from Clark and Gardner (2017) architecture"
+  ],
+  "metrics": [
+    "Joint EM/F1, Answer EM/F1, Supporting Fact EM/F1"
+  ],
+  "results": "[\"On the distractor setting: Answer EM 45.46, F1 58.99; Supporting Fact EM 22.24, F1 41.37. On the full wiki setting: Answer EM 25.23, F1 34.40; Supporting Fact EM 2.63, F1 17.85.\"]",
+  "limitations": [
+    "Not stated in abstract or full text."
+  ],
+  "future_work": [
+    "Not stated in abstract or full text."
+  ],
+  "code_availability": "[\"Not stated in abstract or full text.\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "HotpotQA provides a benchmark dataset with supporting facts for explainable multi-hop QA. Our idea enriches training triples with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than providing a dataset with supporting facts.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:18:21.564036Z"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "C005",
+  "statement": "Assumptions underlying the proposed framework: (1) Version timestamps are available for each passage in regulatory documents. (2) Queries have an associated target date indicating when the information should be valid. (3) Semantic similarity from a retriever (e.g., dense or sparse) is a relevant baseline for measuring document relevance to queries. (4) Temporal relevance can be modeled as a decreasing function of elapsed time between query target date and version timestamp. (5) The framework can be applied to both dense and sparse retrievers without modification to their core ranking algorithms.",
+  "kind": "assumption",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "Temporal Score We introduce a new method called TempRALM, which augments the retriever with a temporal score𝜏(𝑞𝑡,𝑑𝑡), where𝑞𝑡 is the timestamp of the query𝑞, and𝑑𝑡 is the timestamp of document𝑑. To calculate 𝜏(𝑞𝑡,𝑑𝑡), we take the reciprocal of the time difference between𝑞𝑡 and𝑑𝑡 to ensure that the temporal score is inversely proportional to the time difference (and thus smaller differences in time result in a larger score), and use a scaling factor𝛼 to tune the temporal score’s importance relative to the importance of the semantic score. The temporal score formulation is as follows: 𝜏(𝑞𝑡,𝑑𝑡) = 𝛼𝑠𝑐𝑎𝑙𝑒 𝑞𝑡−𝑑𝑡",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2509.01306",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "To address this gap, we introduce Re2Bench, a benchmark specifically designed to disentangle and evaluate Relevance, Recency, and their hybrid combination. Building on this foundation, we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "assumptions",
+    "version timestamps",
+    "target date",
+    "semantic similarity",
+    "temporal decay",
+    "retrieval-agnostic"
+  ],
+  "recorded_at": "2026-09-30T09:53:14.287368Z"
+}

@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2110.12679",
+  "relevance_tier": "high",
+  "problem": "Multi-hop knowledge graph question answering suffers from (i) neglecting explicit relational chain order and types in user questions, and (ii) failing to consider implicit relations in the knowledge graph due to limited neighborhood size in subgraph retrieval.",
+  "method": "Proposes Relational Chain-based Embedded KGQA (Rce-KGQA) that simultaneously utilizes explicit relational chains described in natural language questions and implicit relational chains from the structured knowledge graph. The model includes an Answer Filtering Module to capture explicit relational mappings and a Relational Chain Reasoning Module to integrate implicit KG knowledge.",
+  "key_assumptions": [
+    "Explicit relational chains from questions and implicit chains from the KG are complementary and can be jointly utilized for better reasoning.",
+    "An end-to-end embedding-based pipeline can effectively fuse both sources of information."
+  ],
+  "main_contribution": "Rce-KGQA model that combines explicit and implicit relational chains for multi-hop KGQA, comprising Answer Filtering and Relational Chain Reasoning modules, and demonstrates significant improvement over state-of-the-art baselines.",
+  "datasets": [
+    "two widely adopted KGQA benchmarks (e.g., MetaQA and another open-domain benchmark)"
+  ],
+  "benchmarks": [
+    "MetaQA (1-hop, 2-hop, 3-hop)"
+  ],
+  "baselines": [
+    "GraftNet, PullNet, EmbedKGQA"
+  ],
+  "metrics": [
+    "Hits@1"
+  ],
+  "results": "[\"Significantly outperforms state-of-the-art counterparts; ablation study shows Hits@1 of 98.3% on 1-hop MetaQA, 99.7% on 2-hop, and 97.9% on 3-hop for the full model.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"Available at GitHub: https://github.com/albert-jin/Rce-KGQA\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.75,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "The paper focuses on integrating explicit and implicit relational chains via embedding modules, while our idea proposes enriching triple supervision with local context subgraphs from source passages, adding an adaptive repair loop, and applying RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T07:39:52.179851Z"
+}

@@ -1,0 +1,32 @@
+{
+  "id": "C005",
+  "statement": "When using learned mechanisms to combine semantic and temporal signals (like Re3's query-aware gating), it becomes difficult to disentangle whether performance gains come from better temporal modeling or from the learned mechanism's ability to adjust semantic weighting, posing a challenge for ablation studies.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2509.01306",
+      "experiment_run_id": null,
+      "location": "method",
+      "quote": "we propose Re3, a unified and lightweight framework that dynamically balances semantic and temporal information through a query-aware gating mechanism.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2509.01306",
+      "experiment_run_id": null,
+      "location": "future_work",
+      "quote": "Add interpretability tools.",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote not found in retrieved abstract/full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "learned combination",
+    "interpretability"
+  ],
+  "recorded_at": "2026-09-30T10:28:07.761115Z"
+}

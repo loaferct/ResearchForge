@@ -1,0 +1,41 @@
+{
+  "paper_id": "arxiv:2605.12313",
+  "relevance_tier": "high",
+  "problem": "Multi-hop question answering in the biomedical domain is challenging due to the need to integrate information across multiple sources, and there is a lack of dedicated benchmarks to evaluate systems for such reasoning.",
+  "method": "Introduces the MedHopQA dataset (1,000 QA pairs requiring two-hop reasoning over Wikipedia) and benchmarks systems using surface string comparison and conceptual accuracy (MedCPT). Finds that retrieval-augmented generation (RAG) and related retrieval-based strategies are critical for strong performance.",
+  "key_assumptions": [
+    "Retrieval-augmented generation can effectively integrate information from multiple sources for biomedical multi-hop QA.",
+    "Concept-level evaluation (MedCPT) better assesses correctness when surface forms differ."
+  ],
+  "main_contribution": "MedHopQA dataset and benchmark; empirical finding that RAG/retrieval-based strategies are critical for strong multi-hop QA performance in the biomedical domain.",
+  "datasets": [
+    "MedHopQA dataset (1,000 challenging QA pairs spanning diseases, genes, chemicals, emphasizing rare diseases)"
+  ],
+  "benchmarks": [
+    "MedHopQA benchmark (surface string EM and MedCPT F1)"
+  ],
+  "baselines": [
+    "zero-shot baseline LLMs"
+  ],
+  "metrics": [
+    "Exact Match (EM)",
+    "MedCPT F1 score"
+  ],
+  "results": "[\"Top-ranked submission achieved 89.30% F1 on MedCPT and 87.30% EM, compared to 67.40% F1 and 60.20% EM for zero-shot baseline.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "The paper focuses on providing a biomedical multi-hop QA benchmark and evaluating retrieval-augmented generation, while our idea proposes enriching triple supervision with local context subgraphs from source passages and applying an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:21:47.677747Z"
+}

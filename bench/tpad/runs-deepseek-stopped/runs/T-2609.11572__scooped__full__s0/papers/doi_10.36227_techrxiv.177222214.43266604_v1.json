@@ -1,0 +1,33 @@
+{
+  "id": "doi:10.36227/techrxiv.177222214.43266604/v1",
+  "title": "Controllable Evidence Selection in Retrieval-Augmented Question Answering via Deterministic Utility Gating",
+  "authors": [
+    "Victor P. Unda"
+  ],
+  "year": 2026,
+  "published": "2026-02-27",
+  "venue": null,
+  "url": "https://doi.org/10.36227/techrxiv.177222214.43266604/v1",
+  "pdf_url": null,
+  "abstract": "Many modern AI question-answering systems convert text into vectors and retrieve the closest matches to a user’s question. This works well for finding text on the same topic. However, similarity scores alone do not explain why some retrieved text is usable as evidence while other, equally similar text is not. When multiple candidates receive similar scores, the system may retrieve sentences that repeat the same idea, sentences that are incomplete, or sentences that state a fact but answer a different question than the one being asked. Each candidate is treated as a single evidence unit, such as one sentence from unstructured text or one record from structured data. These units may be well-formed and factually correct, but similarity alone does not determine whether they can support the specific question or task. Prior RAG work describes limits of naive retrieval pipelines and common mitigations such as query rewriting, reranking, and context compression (Gao et al., 2024). In the prototype presented here, the same issue appears in a concrete form: many candidates score similarly, but no single sentence independently states the condition the question depends on. This limitation becomes most visible when a question depends on specific facts rather than semantic similarity alone. In the prototype evaluation, this occurred most often when a question turns on when something applies, who it applies to, or under what conditions it holds. In such cases, many retrieved sentences appear equally similar because they use the same general language. They may mention the same law, concept, or subject, even though only some clearly state the specific detail required by the question. Other sentences may describe related context or different conditions that do not answer the question being asked. The system can still generate a fluent answer by combining this material. However, it becomes difficult to explain why certain sentences were used and others were not. From an inspection or audit perspective, there is no explicit rule separating sentences that function as evidence from sentences that are merely relevant to the query. This paper presents a deterministic alternative based on a working prototype. The framework introduces Meaning–Utility Estimation (MUE) and Diversity–Utility Estimation (DUE), fixed scoring and redundancy-control procedures that determine evidence admissibility before the system produces an answer. Rather than treating the most similar text as usable by default, the system 2 explicitly evaluates whether a sentence or record can serve as evidence. In the prototype, a unit of text is used only if it clearly contains the fact, definition, rule, or condition required by the task. Units are not merged, expanded, or supplemented by nearby context. If no unit in the dataset independently contains the required information, no answer is produced. Evidence is evaluated one sentence or record at a time using a small set of visible, deterministic signals. These signals measure semantic relatedness, explicit term coverage, dataset-level conceptual distinctiveness, and redundancy relative to already selected evidence. All scoring rules are fixed in advance and require no training or fine-tuning. Given the same data and input, the system produces the same result. In practice, this approach produces small evidence sets in which each selected unit independently satisfies the task requirements. Redundant material is suppressed, and sentences that do not clearly express the required condition or rule are excluded. As a result, every output corresponds directly to specific sentences in the dataset, and the absence of an output corresponds to the absence of such sentences. Before any answer is produced, the system applies an explicit evidence gate. The gate passes only when at least one evidence unit independently states the information required by the task. When the gate fails, the system returns no answer.",
+  "doi": "10.36227/techrxiv.177222214.43266604/v1",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T05:08:35.452248Z",
+  "relevance": 0.1818,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "time-aware evidence retrieval health question answering Vladika Matthes"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

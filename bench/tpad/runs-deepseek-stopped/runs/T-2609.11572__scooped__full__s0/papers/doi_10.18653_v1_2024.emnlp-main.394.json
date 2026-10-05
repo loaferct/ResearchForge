@@ -1,0 +1,44 @@
+{
+  "id": "doi:10.18653/v1/2024.emnlp-main.394",
+  "title": "TimeR4 : Time-aware Retrieval-Augmented Large Language Models for Temporal Knowledge Graph Question Answering",
+  "authors": [
+    "Xinying Qian",
+    "Ying Zhang",
+    "Yu Zhao",
+    "Baohang Zhou",
+    "Xuhui Sui",
+    "Li Zhang",
+    "Kehui Song"
+  ],
+  "year": 2024,
+  "published": "2024-01-01",
+  "venue": "Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing",
+  "url": "https://doi.org/10.18653/v1/2024.emnlp-main.394",
+  "pdf_url": "https://aclanthology.org/2024.emnlp-main.394.pdf",
+  "abstract": "Temporal Knowledge Graph Question Answering (TKGQA) aims to answer temporal questions using knowledge in Temporal Knowledge Graphs (TKGs).Previous works employ pre-trained TKG embeddings or graph neural networks to incorporate the knowledge of TKGs.However, these methods fail to fully understand the complex semantic information of time constraints.In contrast, Large Language Models (LLMs) have shown exceptional performance in knowledge graph reasoning, unifying both semantic understanding and structural reasoning.To further enhance LLMs' temporal reasoning ability, this paper aims to integrate temporal knowledge from TKGs into LLMs through a Time-aware Retrieve-Rewrite-Retrieve-Rerank framework, which we named TimeR 4 .Specifically, to reduce temporal hallucination in LLMs, we propose a retrieve-rewrite module to rewrite questions using background knowledge stored in the TKGs, thereby acquiring explicit time constraints.Then, we implement a retrievererank module aimed at retrieving semantically and temporally relevant facts from the TKGs and reranking according to the temporal constraints.To achieve this, we fine-tune a retriever using the contrastive time-aware learning framework.Our approach achieves great improvements, with relative gains of 47.8% and 22.5% on two datasets, underscoring its effectiveness in boosting the temporal reasoning abilities of LLMs.Our code is available at https://github.com/qianxinying/TimeR4 .",
+  "doi": "10.18653/v1/2024.emnlp-main.394",
+  "arxiv_id": null,
+  "openalex_id": "W4404782541",
+  "s2_id": "4cf85f9436bb8b5b1c68715f44d6b67254413ef8",
+  "source": "crossref",
+  "sources": [
+    "crossref",
+    "openalex",
+    "semantic_scholar"
+  ],
+  "citation_count": 25,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T04:59:32.335667Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "time-aware retrieval temporal relevance document versions question answering",
+    "TimeR4 time-aware retrieval augmented LLM temporal knowledge graph question answering"
+  ],
+  "code_urls": [
+    "https://github.com/qianxinying/TimeR4"
+  ],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

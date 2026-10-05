@@ -1,0 +1,36 @@
+{
+  "id": "U007",
+  "question": "Is answer accuracy sensitive enough to detect version confusion in amended statutes, or is a dedicated temporal-contamination metric required to validate the mechanism?",
+  "description": "Success is defined partly by answer accuracy, but near-duplicate clauses across versions can yield identical answers from the wrong version. Without a version-level metric (fraction of retrieved passages in force at target date, and superseded/not-yet-in-force contamination rate) the intervention's actual mechanism cannot be validated and gains may be spurious.",
+  "category": "evaluation",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "REFINE"
+  ],
+  "confidence": 0.7,
+  "confidence_basis": "Direct evidence that a temporal-correctness metric is reported separately from answer quality in point-in-time work, plus the structural argument that wording reuse can make answers invariant to version. Tempered because accuracy is demonstrably sensitive when the gold answers genuinely differ across temporal contexts (SituatedQA).",
+  "rationale": "Point-in-time financial QA explicitly tracks temporal evidence leakage because answer accuracy alone did not capture it; regulatory QA benchmarks report only answer-quality metrics.",
+  "resolution": "Resolved with a design consequence: a version-level metric is required as the primary outcome, but answer accuracy is not useless - it is only sensitive where the gold answer actually differs between versions. Point-in-time financial QA reports answer accuracy and temporal evidence leakage as separate metrics and adds a temporal-validity verifier, which indicates accuracy alone did not capture temporal correctness; the regulatory retrieval benchmark reports only answer-quality metrics but has no temporal dimension at all; and the temporal QA survey treats retrieval quality as the bottleneck and lists temporal mismatch as a failure mode that answer accuracy does not directly expose. Concrete requirement: report version-level contamination (fraction of retrieved/cited passages not in force at the target date) and version confusion as primary, and use answer accuracy as co-primary only on an answer-differential stratum - queries screened so that retrieving the superseded or not-yet-in-force version would produce a different reference answer.",
+  "paper_ids": [
+    "doi:10.3390/sym18091498",
+    "doi:10.2139/ssrn.7087840",
+    "arxiv:2109.06157",
+    "arxiv:2505.20243"
+  ],
+  "supporting_paper_ids": [
+    "doi:10.3390/sym18091498",
+    "arxiv:2109.06157",
+    "arxiv:2505.20243"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "CRITIQUE",
+  "created_at": "2026-09-30T04:31:31.183449Z",
+  "updated_at": "2026-09-30T04:35:57.263848Z"
+}

@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2512.23483",
+  "title": "TV-RAG: A Temporal-aware and Semantic Entropy-Weighted Framework for Long Video Retrieval and Understanding",
+  "authors": [
+    "Zongsheng Cao",
+    "Yangfan He",
+    "Anran Liu",
+    "Feng Chen",
+    "Zepeng Wang",
+    "Jun Xie"
+  ],
+  "year": 2025,
+  "published": "2025-12-29",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2512.23483",
+  "pdf_url": "https://arxiv.org/pdf/2512.23483v1",
+  "abstract": "Large Video Language Models (LVLMs) have rapidly emerged as the focus of multimedia AI research. Nonetheless, when confronted with lengthy videos, these models struggle: their temporal windows are narrow, and they fail to notice fine-grained semantic shifts that unfold over extended durations. Moreover, mainstream text-based retrieval pipelines, which rely chiefly on surface-level lexical overlap, ignore the rich temporal interdependence among visual, audio, and subtitle channels. To mitigate these limitations, we propose TV-RAG, a training-free architecture that couples temporal alignment with entropy-guided semantics to improve long-video reasoning. The framework contributes two main mechanisms: \\emph{(i)} a time-decay retrieval module that injects explicit temporal offsets into the similarity computation, thereby ranking text queries according to their true multimedia context; and \\emph{(ii)} an entropy-weighted key-frame sampler that selects evenly spaced, information-dense frames, reducing redundancy while preserving representativeness. By weaving these temporal and semantic signals together, TV-RAG realises a dual-level reasoning routine that can be grafted onto any LVLM without re-training or fine-tuning. The resulting system offers a lightweight, budget-friendly upgrade path and consistently surpasses most leading baselines across established long-video benchmarks such as Video-MME, MLVU, and LongVideoBench, confirming the effectiveness of our model. The code can be found at https://github.com/AI-Researcher-Team/TV-RAG.",
+  "doi": null,
+  "arxiv_id": "2512.23483",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T10:32:23.832185Z",
+  "relevance": 0.375,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal decay weighting retrieval"
+  ],
+  "code_urls": [
+    "https://github.com/AI-Researcher-Team/TV-RAG"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

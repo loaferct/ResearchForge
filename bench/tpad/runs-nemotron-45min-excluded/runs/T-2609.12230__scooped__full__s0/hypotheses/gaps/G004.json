@@ -1,0 +1,34 @@
+{
+  "id": "G004",
+  "gap": "Assessing how the quality of extracted local context (e.g., noise from irrelevant triples) affects the final multi-hop QA performance and determining robust methods for context extraction.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2407.13101",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "arxiv:2506.09414",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2407.13101",
+    "arxiv:2506.09414"
+  ],
+  "why_unaddressed": "While data augmentation techniques exist for KGQA, few studies examine the impact of noisy or irrelevant contextual information in training data enrichment for multi-hop reasoning, particularly when leveraging local context from source passages.",
+  "research_question": "How does the precision and recall of local context extraction (proportion of relevant vs. irrelevant triples) influence multi-hop QA performance, and what extraction strategies maximize benefit while minimizing noise?",
+  "potential_experiment": "Systematically inject controlled levels of noise (irrelevant triples) into the local context subgraph and measure impact on Exact Match and F1 scores, comparing different context extraction strategies (e.g., proximity-based, attention-based, random).",
+  "confidence": "medium",
+  "verification_required": "Experiments with controlled noise injection to establish sensitivity thresholds and robust extraction methods.",
+  "recorded_at": "2026-09-30T06:19:54.686073Z"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "C004",
+  "statement": "The paper arXiv:2609.12230 proposes a context-augmented training framework that enriches each target KG triple with supporting triples from the same source text chunk to form a context graph, uses an LLM-judged history-aware adaptive repair pipeline to fix one-hop failures, and applies reinforcement learning from lower-hop QA to improve higher-hop generalization.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "For each primary KG triple, we attach supporting triples extracted from the same source text chunk to form a context graph (CG).",
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "quote found only in a flagged abstract (abstract (from semantic_scholar) never mentions 'Repair Before Reinforce'; it may belong to another work)"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "context enrichment",
+    "adaptive repair",
+    "RL transfer"
+  ],
+  "recorded_at": "2026-09-30T06:51:44.036770Z"
+}

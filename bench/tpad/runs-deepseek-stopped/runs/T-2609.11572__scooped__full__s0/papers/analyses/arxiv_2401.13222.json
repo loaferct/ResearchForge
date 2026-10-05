@@ -1,0 +1,49 @@
+{
+  "paper_id": "arxiv:2401.13222",
+  "relevance_tier": "high",
+  "problem": "Retrieval-augmented language models cannot handle temporal queries when multiple versions of content from different time points co-exist; they retrieve semantically related passages but cannot differentiate them by recency (e.g. \"Who won the Wimbledon Championship?\").",
+  "method": "TempRALM augments a retriever's semantic score s(q,d) = <f(q),f(d)> with a temporal score tau(q_t,d_t) = alpha^{scale * (q_t - d_t)} (exponential in the query-document time difference), normalizes it to the semantic score's mean and standard deviation, and sums them: TempRet_t = s(q,d) + tau(q_t,d_t), masking to -infinity any passage whose timestamp exceeds the query timestamp. No retraining or index recomputation is required.",
+  "key_assumptions": [
+    "Every document and query carries a usable timestamp",
+    "Temporal proximity (smaller |q_t - d_t|) is the right relevance signal, monotonically favouring the most recent valid document before the query time",
+    "Passages dated after the query timestamp should be masked entirely",
+    "The temporal score can be linearly added to a normalized semantic score and tuned with one scaling factor"
+  ],
+  "main_contribution": "A temporally-aware retriever (TempRALM) that combines semantic and elapsed-time temporal relevance in the retrieval score, reported to improve over the unmodified Atlas RALM by up to 74% without pre-training, re-indexing, or extra computation.",
+  "datasets": [
+    "Time-sensitive passage QA experiments TPQ-2019 and TPQ-2020 (few-shot settings: 32/64/128 shots)"
+  ],
+  "benchmarks": [
+    "TPQ-2019",
+    "TPQ-2020"
+  ],
+  "baselines": [
+    "Unmodified Atlas-large RALM (Contriever retriever + T5 Fusion-in-Decoder)"
+  ],
+  "metrics": [
+    "Answer-generation performance under few-shot learning",
+    "Recall@1",
+    "Recall@5"
+  ],
+  "results": "Up to 74% improvement over unmodified Atlas at 128 few-shot learning on TPQ-2020 (49% at 32 shots, 67% at 64 shots); Recall@1 improved by a factor of 165% on TPQ-2020. The authors attribute the gain to the temporal augmentation when query years and passage years no longer match.",
+  "limitations": [
+    "Evaluated on Wikipedia/tennis-style time-sensitive questions, not amended legal or regulatory texts",
+    "Requires reliable timestamps on queries and documents",
+    "The decay term is monotone toward the most recent version and does not model validity intervals, so it could favour a version that is not the legally applicable one",
+    "Only one retriever (Atlas/Contriever) is instantiated despite the retrieval-agnostic claim",
+    "No hard-constraint validity baseline is compared"
+  ],
+  "future_work": [
+    "The paper contains a 'Conclusions and Future Work' section (p. 7); specific directions were not read in the retrieved passages"
+  ],
+  "code_availability": "No repository found: search_github for \"TempRALM\" returned no results, and no code URL is listed in the paper record.",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.95,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "TempRALM uses elapsed time to prefer the most recent relevant passage (plus masking future passages), while the proposed idea frames the same temporal term as selecting the version in force at the query date for amended regulatory texts; the retrieval mechanism itself, however, is already published and retrieval-agnostic.",
+    "basis": "Closest methodological match: the proposed score = semantic similarity + elapsed-time temporal term added to an existing index without recomputation is essentially TempRALM's Eqs. 4-5. Overlap is lower on problem (web/Wikipedia versions vs statutes) and evaluation (TPQ vs regulatory benchmark)."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:11:08.115600Z"
+}

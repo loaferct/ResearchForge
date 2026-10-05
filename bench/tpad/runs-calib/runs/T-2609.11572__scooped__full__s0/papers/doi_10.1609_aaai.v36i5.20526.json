@@ -1,0 +1,40 @@
+{
+  "id": "doi:10.1609/aaai.v36i5.20526",
+  "title": "TempoQR: Temporal Question Reasoning over Knowledge Graphs",
+  "authors": [
+    "Costas Mavromatis",
+    "Prasanna Lakkur Subramanyam",
+    "Vassilis N. Ioannidis",
+    "Adeshina, Adesoji",
+    "Phillip Howard",
+    "Grinberg, Tetiana",
+    "Nagib Hakim",
+    "George Karypis"
+  ],
+  "year": 2022,
+  "published": "2022-06-28",
+  "venue": "AAAI Publications (The Association for the Advancement of Artificial Intelligence (AAAI))",
+  "url": "https://ojs.aaai.org/index.php/AAAI/article/view/20526",
+  "pdf_url": "https://ojs.aaai.org/index.php/AAAI/article/download/20526/20285",
+  "abstract": "Knowledge Graph Question Answering (KGQA) involves retrieving facts from a Knowledge Graph (KG) using natural language queries. A KG is a curated set of facts consisting of entities linked by relations. Certain facts include also temporal information forming a Temporal KG (TKG). Although many natural questions involve explicit or implicit time constraints, question answering (QA) over TKGs has been a relatively unexplored area. Existing solutions are mainly designed for simple temporal questions that can be answered directly by a single TKG fact. This paper puts forth a comprehensive embedding-based framework for answering complex questions over TKGs. Our method termed temporal question reasoning (TempoQR) exploits TKG embeddings to ground the question to the specific entities and time scope it refers to. It does so by augmenting the question embeddings with context, entity and time-aware information by employing three specialized modules. The first computes a textual representation of a given question, the second combines it with the entity embeddings for entities involved in the question, and the third generates question-specific time embeddings. Finally, a transformer-based encoder learns to fuse the generated temporal information with the question representation, which is used for answer predictions. Extensive experiments show that TempoQR improves accuracy by 25--45 percentage points on complex temporal questions over state-of-the-art approaches and it generalizes better to unseen question types.",
+  "doi": "10.1609/aaai.v36i5.20526",
+  "arxiv_id": null,
+  "openalex_id": "W4283793506",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 67,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T04:23:32.348268Z",
+  "relevance": 0.175,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "Fusing Temporal Graphs into Transformers for Time-Sensitive Question Answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

@@ -1,0 +1,127 @@
+raw_idea: 'The reliability of open‑domain question answering drops sharply when source
+  texts are continuously amended, as in statutes, policies, or regulations. In such
+  settings each new amendment supersedes earlier clauses while retaining much of the
+  original wording, creating a dense semantic overlap across successive versions.
+  Existing time‑aware retrieval techniques treat each version as an isolated snapshot
+  and therefore cannot distinguish which revision best matches a time‑specific query.
+  We propose to develop a retrieval‑agnostic framework that enriches any standard
+  document retriever with a temporal relevance component: the rank of a candidate
+  passage will be adjusted according to the elapsed time between the query’s target
+  date and the passage’s version timestamp, while still leveraging its semantic similarity
+  to the query. To evaluate the approach, we will construct a benchmark comprising
+  regulatory documents with overlapping revisions and time‑stamped queries, measuring
+  how well the combined temporal‑semantic ranking improves answer accuracy.'
+analysis:
+  raw_idea: 'The reliability of open‑domain question answering drops sharply when
+    source texts are continuously amended, as in statutes, policies, or regulations.
+    In such settings each new amendment supersedes earlier clauses while retaining
+    much of the original wording, creating a dense semantic overlap across successive
+    versions. Existing time‑aware retrieval techniques treat each version as an isolated
+    snapshot and therefore cannot distinguish which revision best matches a time‑specific
+    query. We propose to develop a retrieval‑agnostic framework that enriches any
+    standard document retriever with a temporal relevance component: the rank of a
+    candidate passage will be adjusted according to the elapsed time between the query’s
+    target date and the passage’s version timestamp, while still leveraging its semantic
+    similarity to the query. To evaluate the approach, we will construct a benchmark
+    comprising regulatory documents with overlapping revisions and time‑stamped queries,
+    measuring how well the combined temporal‑semantic ranking improves answer accuracy.'
+  problem: The reliability of open-domain question answering declines when source
+    texts undergo continuous amendments (e.g., statutes, policies, regulations) because
+    each new amendment supersedes earlier clauses while retaining much of the original
+    wording, creating dense semantic overlap across versions. Existing time-aware
+    retrieval techniques treat each version as an isolated snapshot and cannot determine
+    which revision best matches a time-specific query.
+  target_domain: Open-domain question answering over dynamically updated regulatory
+    documents such as laws, policies, and institutional regulations.
+  proposed_method: A retrieval-agnostic framework that enriches any standard document
+    retriever with a temporal relevance component. For each candidate passage, compute
+    a temporal relevance score based on the elapsed time between the query's target
+    date (or referenced event time) and the passage's version timestamp (or effective
+    interval). Combine this temporal relevance with semantic similarity (e.g., via
+    weighted sum) to produce a final ranking score.
+  hypothesis: Incorporating temporal relevance into retrieval improves the alignment
+    of retrieved passages with the temporally valid version of the answer, thereby
+    increasing answer accuracy (as measured by Exact Match and F1, or win rate via
+    LLM judge) compared to baseline time-aware retrieval approaches that ignore fine-grained
+    temporal overlaps.
+  research_question: In open-domain QA over overlapping-evolving regulatory documents,
+    does a retrieval-agnostic temporal relevance component improve answer accuracy
+    compared to existing time-aware retrieval methods that treat document versions
+    as independent snapshots?
+  expected_contribution: (1) A generic temporal relevance module that can be plugged
+    into any retriever (e.g., BM25, dense retrievers) to handle overlapping-evolving
+    texts; (2) A benchmark corpus of regulatory documents with version histories and
+    time-stamped questions to evaluate temporal QA systems; (3) Insights into effective
+    temporal modeling for clause-level validity in legal and regulatory domains.
+  assumptions:
+  - Temporal relevance can be modeled as a decreasing function of temporal distance
+    (e.g., inverse or exponential decay) between query time and document version timestamp.
+  - Semantic similarity and temporal relevance can be linearly combined with a tunable
+    hyperparameter.
+  - Version timestamps or effective intervals are available at the passage level (e.g.,
+    via document metadata or extraction).
+  - The benchmark can be constructed from publicly available regulatory document version
+    histories (e.g., US Code, EU regulations).
+  - Retrieval performance improvements translate to better QA generation outcomes
+    when using an LLM reader.
+  variables:
+    independent:
+    - Retrieval approach (baseline time-aware vs. proposed temporal-semantic fusion)
+    dependent:
+    - Retrieval metrics (nDCG@10, MAP@10, Recall@10, Hit@10)
+    - QA metrics (Exact Match, F1, or LLM-judged win rate)
+    controls:
+    - Same base retriever (e.g., BM25, BGE-M3)
+    - Same document corpus
+    - Same query set
+    - Same LLM reader (if applicable)
+  target_system: ''
+  expected_benefits:
+  - Improved accuracy in time-sensitive QA applications like legal compliance, policy
+    analysis.
+  - Minimal computational overhead as a reranking component.
+  - Compatibility with existing retrievers without retraining.
+  potential_risks:
+  - Temporal metadata may be noisy or incomplete in real-world regulatory corpora.
+  - The temporal relevance function may not capture complex temporal logic (e.g.,
+    retroactive amendments).
+  - Benchmark construction may be labor-intensive and may not cover all regulatory
+    domains.
+  ambiguities:
+  - question: Which specific time-aware retrieval techniques should be used as baselines
+      for comparison?
+    resolution: Based on literature survey (e.g., TimelyRAG paper), we will compare
+      against Temporal Query Rewriting, Rule-based Effective-Date Filtering, LLM-based
+      Temporal Reranking, and standard time-agnostic retrievers (BM25, dense retrievers).
+    resolved_by: literature
+  - question: What is the exact formulation of the temporal relevance score?
+    resolution: We adopt an interpretable temporal distance function that returns
+      a high score when the query time falls within the document version's effective
+      interval and decays as the query time moves outside this interval, similar to
+      TimelyRAG.
+    resolved_by: literature
+  - question: How to combine temporal and semantic scores?
+    resolution: We will use a weighted sum (or product) of normalized semantic similarity
+      and temporal relevance, with the weight tuned on a validation set.
+    resolved_by: assumption
+  - question: Which metrics to use for evaluating answer accuracy?
+    resolution: We will use Exact Match and F1 score for extractive QA, and win rate
+      from LLM pairwise comparison for generative QA, following common practice in
+      RAG evaluation.
+    resolved_by: literature
+  - question: What type of regulatory documents to use in the benchmark?
+    resolution: We will focus on United States Code (USC) and Code of Federal Regulations
+      (CFR) as representative examples of continuously amended legal texts.
+    resolved_by: assumption
+  keywords:
+  - temporal retrieval
+  - question answering
+  - overlapping-evolving documents
+  - regulatory texts
+  - versioned documents
+  - semantic-temporal hybrid ranking
+  search_queries:
+  - temporal retrieval question answering versioned documents
+  - overlapping evolving documents question answering
+  - semantic temporal hybrid retrieval regulatory
+  recorded_at: '2026-09-30T09:08:25.320920Z'

@@ -1,0 +1,24 @@
+# TPAD pilot (docs/paper/research_plan.md §5). All systems share these caps; only the switches in
+# researchforge.evaluation.bench.SYSTEMS differ between them. Caps were set after one calibration run
+# (bench/tpad/runs-calib, excluded from analysis): 26 turns took 30 min and spent turns 11-26 on repeated
+# experiment plans, so the turn cap is 20. The agent model is nemotron-3-super (switched from
+# deepseek-v4.1-flash for cost; the stopped DeepSeek runs are in runs-deepseek-stopped and excluded).
+dataset: items.yaml
+out: runs-pilot
+systems: [full, nochal, pipe]
+conditions: [scooped, prepub]
+seeds: 1
+settings:
+  model:
+    model: nemotron-3-super          # cheapest reliable tool caller on the account (see paper §5)
+  literature:
+    cache_dir: cache                  # relative to this file; shared, so every system sees the same API responses
+  investigation:
+    max_iterations: 16
+    papers_to_analyze: 6
+    max_tool_calls: 250
+    max_searches: 14
+    max_papers: 90
+    time_limit_s: 3600
+  dsh:
+    phase_timeout_s: 1200

@@ -1,0 +1,37 @@
+{
+  "id": "arxiv:2604.16422",
+  "title": "Injecting Structured Biomedical Knowledge into Language Models: Continual Pretraining vs. GraphRAG",
+  "authors": [
+    "Jaafer Klila",
+    "Sondes Bannour Souihi",
+    "Rahma Boujelben",
+    "Nasredine Semmar",
+    "Lamia Hadrich Belguith"
+  ],
+  "year": 2026,
+  "published": "2026-04-03",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2604.16422",
+  "pdf_url": "https://arxiv.org/pdf/2604.16422v1",
+  "abstract": "The injection of domain-specific knowledge is crucial for adapting language models (LMs) to specialized fields such as biomedicine. While most current approaches rely on unstructured text corpora, this study explores two complementary strategies for leveraging structured knowledge from the UMLS Metathesaurus: (i) Continual pretraining that embeds knowledge into model parameters, and (ii) Graph Retrieval-Augmented Generation (GraphRAG) that consults a knowledge graph at inference time. We first construct a large-scale biomedical knowledge graph from UMLS (3.4 million concepts and 34.2 million relations), stored in Neo4j for efficient querying. We then derive a ~100-million-token textual corpus from this graph to continually pretrain two models: BERTUMLS (from BERT) and BioBERTUMLS (from BioBERT). We evaluate these models on six BLURB (Biomedical Language Understanding and Reasoning Benchmark) datasets spanning five task types and evaluate GraphRAG on the two QA (Question Answering) datasets (PubMedQA, BioASQ). On BLURB tasks, BERTUMLS improves over BERT, with the largest gains on knowledge-intensive QA. Effects on BioBERT are more nuanced, suggesting diminishing returns when the base model already encodes substantial biomedical text knowledge. Finally, augmenting LLaMA 3-8B with our GraphRAG pipeline yields over than 3 points accuracy on PubMedQA and 5 points on BioASQ without any retraining, delivering transparent, multi-hop, and easily updated knowledge access. We release the processed UMLS Neo4j graph to support reproducibility.",
+  "doi": null,
+  "arxiv_id": "2604.16422",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T04:59:31.728221Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "knowledge graph augmented language model pretraining multi-hop question answering context triples"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

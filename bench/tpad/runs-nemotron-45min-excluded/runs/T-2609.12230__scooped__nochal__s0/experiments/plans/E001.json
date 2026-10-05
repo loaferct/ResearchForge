@@ -1,0 +1,57 @@
+{
+  "id": "E001",
+  "title": "Context Subgraph Enrichment for Multi-hop KGQA: An Ablation Study",
+  "research_question": "Does enriching target triples with local context subgraphs from the same source passage improve multi-hop question answering performance over training on isolated triples alone?",
+  "hypothesis": "Providing local context subgraph alongside the target triple improves the language model's multi-hop reasoning ability, leading to higher Hits@1 on multi-hop QA benchmarks compared to triple-only fine-tuning.",
+  "proposed_method": "Fine-tune a language model (e.g., BERT-base) on a KGQA dataset under two conditions: (1) baseline: input consists only of the target triple (head, relation, tail) textualized as a sentence; (2) method: input consists of the target triple plus additional triples extracted from the same source passage that generated the QA pair, using an OpenIE tool (e.g., Stanford OpenIE) to extract triples, then concatenating or structuring them as a subgraph (e.g., via a simple textualization: \"head relation tail . head2 relation2 tail2 ...\") and feeding to the LM. The LM is trained to predict the answer entity given the question and the enriched context. Optionally, a graph neural network can be used to encode the subgraph, but the primary ablation uses textualization for simplicity.",
+  "baselines": [
+    "Triple-only fine-tuning (same LM architecture)",
+    "TransferNet (arxiv:2104.07302)",
+    "Rce-KGQA (arxiv:2110.12679)"
+  ],
+  "datasets": [
+    "MetaQA (1-hop, 2-hop, 3-hop subsets)",
+    "WebQuestionsSP-tiny"
+  ],
+  "workloads": [
+    "Multi-hop question answering over knowledge graphs"
+  ],
+  "hardware": "[\"GPU: NVIDIA RTX 3090 or equivalent (>=24GB VRAM)\", \"CPU: Intel Xeon or AMD equivalent\", \"RAM: 64GB\"]",
+  "software_environment": "[\"Python 3.9+\", \"PyTorch 2.0+\", \"Transformers 4.30+\", \"Stanford OpenIE (or spaCy for dependency-based extraction)\"]",
+  "metrics": [
+    "Hits@1",
+    "Exact Match (EM)",
+    "F1-score"
+  ],
+  "ablations": [
+    "Amount of context: 1-hop vs 2-hop extracted triples",
+    "Triple extraction method: OpenIE vs dependency parsing",
+    "Encoding strategy: plain concatenation vs GNN-based subgraph encoding",
+    "Context position: prepended vs appended to question"
+  ],
+  "controls": [
+    "Same random seed across runs",
+    "Identical preprocessing (lowercasing, tokenization)",
+    "Identical training hyperparameters (learning rate, batch size, number of epochs)",
+    "Same knowledge graph (e.g., the one provided with MetaQA)",
+    "Same evaluation protocol (official splits)"
+  ],
+  "confounders_addressed": [
+    "Knowledge graph incompleteness: using a fixed, complete KG subset from the dataset ensures that any improvement is not due to varying KG coverage.",
+    "Passage length variability: controlling for input length by truncating or padding to a fixed maximum length."
+  ],
+  "expected_outcomes": "[\"The method condition will achieve statistically significant higher Hits@1 than the baseline, particularly on 2-hop and 3-hop questions (e.g., +2-5% absolute improvement).\", \"Ablations will show that meaningful context (more than random triples) is necessary for improvement.\"]",
+  "failure_conditions": [
+    "If the method condition does not outperform the triple-only baseline by a statistically significant margin (p<0.05, paired t-test) on Hits@1 for 2-hop or 3-hop MetaQA, the hypothesis is falsified."
+  ],
+  "reproducibility_notes": "[\"Code will be released under an open-source license (MIT).\", \"Configuration files, data splits, and random seeds will be provided.\", \"The experiment will be conducted on a single GPU to ensure accessibility.\"]",
+  "related_modification_id": null,
+  "related_paper_ids": [
+    "arxiv:2110.12679",
+    "doi:10.20944/preprints202505.1992.v1",
+    "arxiv:2104.07302"
+  ],
+  "execution": null,
+  "status": "planned",
+  "recorded_at": "2026-09-30T06:09:41.221588Z"
+}

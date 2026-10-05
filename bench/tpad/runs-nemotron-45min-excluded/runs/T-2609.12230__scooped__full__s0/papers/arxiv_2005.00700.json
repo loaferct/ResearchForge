@@ -1,0 +1,41 @@
+{
+  "id": "arxiv:2005.00700",
+  "title": "UNIFIEDQA: Crossing Format Boundaries with a Single QA System",
+  "authors": [
+    "Daniel Khashabi",
+    "Sewon Min",
+    "Tushar Khot",
+    "Ashish Sabharwal",
+    "Oyvind Tafjord",
+    "Peter E. Clark",
+    "Hannaneh Hajishirzi"
+  ],
+  "year": 2020,
+  "published": "2020-01-01",
+  "venue": null,
+  "url": "https://doi.org/10.18653/v1/2020.findings-emnlp.171",
+  "pdf_url": "https://aclanthology.org/2020.findings-emnlp.171.pdf",
+  "abstract": "Question answering (QA) tasks have been posed using a variety of formats, such as extractive span selection, multiple choice, etc.This has led to format-specialized models, and even to an implicit division in the QA community.We argue that such boundaries are artificial and perhaps unnecessary, given the reasoning abilities we seek to teach are not governed by the format.As evidence, we use the latest advances in language modeling to build a single pre-trained QA model, UNIFIEDQA, that performs well across 20 QA datasets spanning 4 diverse formats.UNIFIEDQA performs on par with 8 different models that were trained on individual datasets themselves.Even when faced with 12 unseen datasets of observed formats, UNIFIEDQA performs surprisingly well, showing strong generalization from its out-offormat training data.Finally, fine-tuning this pre-trained QA model into specialized models results in a new state of the art on 10 factoid and commonsense QA datasets, establishing UNIFIEDQA as a strong starting point for building QA systems. 1 1 https://github.com/allenai/unifiedqaExtractive [SQuAD] Question: At what speed did the turbine operate?Context: (Nikola_Tesla) On his 50th birthday in 1906, Tesla demonstrated his 200 horsepower (150 kilowatts) 16,000 rpm bladeless turbine.... Gold answer: 16,000 rpm Multiple-Choice [ARC-challenge] Question: What does photosynthesis produce that helps plants grow?Candidate Answers: (A) water (B) oxygen (C) protein (D) sugar Gold answer: sugar Yes/No [BoolQ]Question: Was America the first country to have a president?Context: (President) The first usage of the word president to denote the highest official in a government was during the Commonwealth of England ... Gold answer: no Abstractive [NarrativeQA]Question: What does a drink from narcissus's spring cause the drinker to do? Context: Mercury has awakened Echo, who weeps for Narcissus, and states that a drink from Narcissus's spring causes the drinkers to \"Grow dotingly enamored of themselves.\"... Gold answer: fall in love with themselves",
+  "doi": "10.18653/v1/2020.findings-emnlp.171",
+  "arxiv_id": "2005.00700",
+  "openalex_id": "W3020908159",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 500,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T05:44:13.957343Z",
+  "relevance": 0.1176,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "Exact Match F1 multi-hop QA"
+  ],
+  "code_urls": [
+    "https://github.com/allenai/unifiedqaExtractive"
+  ],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

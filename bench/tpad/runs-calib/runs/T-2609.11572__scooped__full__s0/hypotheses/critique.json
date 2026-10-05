@@ -1,0 +1,173 @@
+{
+  "strongest_for": "The problem is real and documented: retrieval-based QA fails to adapt to updated evidence even with an updated corpus (~15-point drop), and a temporal QA survey states that legal QA datasets are static and do not address the temporal dynamics of legal knowledge, while no retrieved work supplies a benchmark of amended statutes with near-duplicate versions. The intervention also has demonstrated precedent for large effects in adjacent settings (a three-signal semantic+temporal hybrid reaching 99.8% temporal accuracy versus 65.1% for dense-only; point-in-time financial RAG lifting answer accuracy from 66.7% to 78.9% and cutting temporal leakage from 10.8% to 1.7%), so a careful legal adaptation with validity-aware semantics and cross-retriever evaluation has a plausible, if narrower, contribution.",
+  "strongest_against": "The core mechanism is already published as a semantic-plus-exponential-temporal-decay retrieval framework with a purpose-built temporal benchmark, and a second system embeds learnable temporal decay directly in retrieval, so the idea currently reads as applying an existing mechanism to a new domain. Worse, the specific temporal signal the idea specifies (elapsed time / recency) is plausibly the wrong inductive bias for point-in-time legal questions, where a superseded clause can be temporally nearest; the literature itself is split between graded decay and hard as-of boundaries, and the survey lists recency bias as a documented failure mode. Combined with a primary metric (answer accuracy) that may be blind to version confusion because amended clauses share wording, the headline hypothesis could fail or succeed for reasons unrelated to temporal relevance.",
+  "most_important_unresolved_question": "What is the correct temporal signal for amended normative text - elapsed-time decay (recency) or validity/as-of membership - and has anyone already built a benchmark of amended statutes with near-duplicate successive versions and time-stamped queries that would settle it and pre-empt the benchmark contribution? The literature is split (graded decay in two systems versus a hard as-of boundary in a third, with the survey warning about recency bias), and no directly matching legal benchmark was found in the retrieved set.",
+  "most_dangerous_confounder": "Version confusion is invisible to the primary metric. Because an amendment retains much of the original wording, retrieving a superseded or not-yet-in-force version can produce the same answer string and the same answer-accuracy score as retrieving the in-force version. A temporal term might then show an accuracy gain (or show none) for reasons unrelated to selecting the correct revision, and if the benchmark's authoritative version is usually the latest, a trivial recency prior would match the proposed temporal term. Attributing any improvement to temporal relevance requires a version-level contamination metric plus queries whose in-force version is deliberately not the most recent.",
+  "closest_paper_ids": [
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.3390/sym18091498"
+  ],
+  "closest_work_explanation": "'Bridging the Temporal-Semantic Gap' is the closest: it proposes exactly a three-signal framework combining lexical matching, dense embeddings and exponential temporal decay, builds a temporal retrieval benchmark with validated temporal queries, reports temporal accuracy, and even declares the finding 'extends to ... legal, medical, and regulatory retrieval'. Chronofy is next: explicit exponential decay integrated into retrieval, motivated by legal supersession, with five decay families compared and evaluation on TimE temporal QA. TempFinRAG is closest on evaluation semantics: point-in-time QA with an as-of boundary, answer accuracy, temporal evidence leakage and hallucination, on multimodal SEC filings.",
+  "potential_contribution": "If reframed, a defensible contribution is: (1) a retrieval-agnostic temporal re-ranking component demonstrated across sparse, dense and hybrid base retrievers on the same corpus (the cross-retriever interaction is untested anywhere); (2) a benchmark of amended statutes/regulations with near-duplicate successive revisions, passage-level validity intervals and time-stamped queries, including queries whose in-force version is not the latest; (3) evidence on when recency fails and validity/as-of semantics are required for legal text, with a temporally-contaminated retrieval metric. Any of (1)-(3) alone is a useful, publishable increment; the original framing (temporal decay improves legal QA) is not.",
+  "overlap_summary": "The problem (time-aligned evidence retrieval where semantic similarity alone fails on temporal constraints) and the mechanism (semantic score plus explicit temporal decay) are both already published, and the evaluation recipe (domain temporal benchmark, temporal accuracy plus answer quality) is established. Overlap is high on problem and method (0.9/0.85 against the closest paper) and high on evaluation against the point-in-time financial framework (0.85); the idea's distinct elements are a retrieval-agnostic form, a legal versioning corpus, and validity-vs-recency semantics.",
+  "distinction_summary": "Three distinctions are claimed: (i) the temporal term is attached post hoc to an arbitrary base retriever, whereas the closest systems hard-code temporal handling in a fixed pipeline; (ii) it targets continuously amended statutes/regulations with near-duplicate successive versions and validity intervals, whereas existing temporal benchmarks are ESG disclosures, financial filings and date-annotated web QA, and existing regulatory retrieval work is static; (iii) it can express validity/as-of membership, whereas the published hybrids use recency decay. Each distinction is plausible but each is currently only an untested framing or an absent resource, not a demonstrated finding.",
+  "novelty": [
+    {
+      "question": "Has essentially the same idea been proposed?",
+      "finding": "The same mechanism has already been proposed: semantic retrieval plus an explicit exponential temporal decay term, evaluated on a purpose-built temporal benchmark, is published in the closest retrieved work, and learnable exponential decay in retrieval is published in a second. Novelty cannot rest on 'add a temporal relevance component to retrieval'.",
+      "severity": "high",
+      "claim_ids": [
+        "C004",
+        "C005",
+        "C008"
+      ],
+      "paper_ids": [
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.1109/iri69576.2026.00090"
+      ]
+    },
+    {
+      "question": "Is the difference only implementation-level?",
+      "finding": "For the temporal term itself the difference is implementation-level (where the decay is multiplied in); the differences that are not implementation-level are the retrieval-agnostic packaging, the cross-retriever transfer study, and the amended-statute corpus - none of which is yet demonstrated. The idea risks being read as an ablation of the closest paper in a new domain.",
+      "severity": "high",
+      "claim_ids": [
+        "C008"
+      ],
+      "paper_ids": [
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.3390/sym18091498"
+      ]
+    },
+    {
+      "question": "Is the residual contribution (retrieval-agnostic term + amended-statute benchmark) genuinely unoccupied?",
+      "finding": "No directly matching work was found in the searched literature for a retrieval-agnostic temporal re-ranking term on amended statutes with validity intervals; the closest work's own abstract leaves legal/regulatory transfer open. This is the defensible novelty claim, but it rests on an absence of evidence from a limited search (arXiv, OpenAlex, Crossref) rather than a proven gap.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C006",
+        "C008"
+      ],
+      "paper_ids": [
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.1109/bigdata66926.2025.11402566",
+        "arxiv:2505.20243"
+      ]
+    }
+  ],
+  "technical_validity": [
+    {
+      "question": "Does the temporal relevance term identify the correct passage?",
+      "finding": "The temporal term as specified may be wrong rather than merely weak: with supersession, the correct passage is the version in force at the target date, which need not be the temporally nearest one. A decay term can demote a long-standing in-force clause in favour of a recent but irrelevant amendment. The hypothesis is falsifiable in a way that would refute the mechanism, not just the idea.",
+      "severity": "high",
+      "claim_ids": [
+        "C003",
+        "C009"
+      ],
+      "paper_ids": [
+        "arxiv:2505.20243",
+        "doi:10.3390/sym18091498",
+        "doi:10.1109/iri69576.2026.00090"
+      ]
+    },
+    {
+      "question": "Does re-ranking retrieval alone address the observed failure?",
+      "finding": "Fixing retrieval ranking is necessary but possibly not sufficient: the evidence that retrievers fail on updated facts even with an updated corpus shows the failure is not solely about which passage is ranked first; it also involves how the reader uses updated evidence. A retrieval-only intervention may therefore under-deliver unless the reader is controlled.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C007"
+      ],
+      "paper_ids": [
+        "arxiv:2109.06157"
+      ]
+    },
+    {
+      "question": "Is the required metadata available at the right granularity?",
+      "finding": "The mechanism presumes passage-level timestamps and, ideally, validity intervals. If only document-level dates are available, near-duplicate clauses inside one document cannot be distinguished temporally, and the term degenerates to a document-level filter. This assumption is untested for legal corpora.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C011"
+      ],
+      "paper_ids": [
+        "arxiv:2505.20243"
+      ]
+    }
+  ],
+  "experimental_validity": [
+    {
+      "question": "Is the metric sensitive to version confusion?",
+      "finding": "Answer accuracy is confounded by wording reuse across versions: the same answer can be extracted from the wrong version, so a null or positive result may not reflect temporal correctness. Temporal evidence leakage (used in point-in-time financial QA) is the metric that isolates the mechanism and must be primary or co-primary.",
+      "severity": "high",
+      "claim_ids": [
+        "C010"
+      ],
+      "paper_ids": [
+        "doi:10.3390/sym18091498",
+        "arxiv:2109.06157"
+      ]
+    },
+    {
+      "question": "Can a pure recency prior reproduce the gains?",
+      "finding": "If the query set's authoritative version is usually the newest, recency and correctness coincide and a trivial 'prefer latest' baseline matches the temporal term, so the claimed effect is not identified. The benchmark must contain mid-chain and historical target dates and report a recency-only baseline.",
+      "severity": "high",
+      "claim_ids": [
+        "C009",
+        "C010"
+      ],
+      "paper_ids": [
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.3390/sym18091498"
+      ]
+    },
+    {
+      "question": "Are baselines strong and budgets matched?",
+      "finding": "Baseline strength and matching are non-trivial: the essential baseline is the same retriever with a hard as-of filter and the published fixed three-signal hybrid, not just 'semantic-only'. One regulatory comparison also shows hybrid RRF is not uniformly best (BM25 better on multihop), so base-retriever choice must be controlled rather than assumed.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C004",
+        "C005"
+      ],
+      "paper_ids": [
+        "doi:10.2139/ssrn.7087840",
+        "doi:10.2139/ssrn.7174868",
+        "doi:10.3390/sym18091498"
+      ]
+    }
+  ],
+  "practicality": [
+    {
+      "question": "Is the benchmark feasible at acceptable cost?",
+      "finding": "The benchmark depends on passage-level validity metadata (in-force start/end) for a statute corpus and on time-stamped queries with ground-truth in-force versions. No retrieved work confirms such a resource exists; constructing it is the largest cost and the main reason the project could stall. Public legal corpora with amendment tracking exist in principle, but the annotation effort is unverified.",
+      "severity": "high",
+      "claim_ids": [
+        "C011"
+      ],
+      "paper_ids": [
+        "arxiv:2505.20243",
+        "doi:10.2139/ssrn.7087840"
+      ]
+    },
+    {
+      "question": "Are the retrievers, models and evaluation tooling available?",
+      "finding": "The other components are practically easy: base retrievers (BM25, bge-small, hybrid RRF) and evaluation harnesses are public and cheap to run, and one regulatory benchmark provides a reproducible harness pattern (verified repository with pinned requirements and live-computed metrics).",
+      "severity": "low",
+      "claim_ids": [],
+      "paper_ids": [
+        "doi:10.2139/ssrn.7087840"
+      ]
+    },
+    {
+      "question": "Will there be enough near-tie cases for the effect to be measurable?",
+      "finding": "The interesting subset (near-tied semantic similarity across versions) may be small: if semantic similarity already separates most versions, measured gains will be negligible, and if it does not, answer accuracy may be too coarse to detect the difference. The benchmark must deliberately sample near-duplicate version pairs.",
+      "severity": "moderate",
+      "claim_ids": [
+        "C010"
+      ],
+      "paper_ids": [
+        "arxiv:2505.20243"
+      ]
+    }
+  ],
+  "overall_status": "substantial_overlap",
+  "status_rationale": "The problem framing and the temporal-decay mechanism are already published, and the benchmark/evaluation recipe is established in adjacent domains; the residual contribution exists but is currently framed as the part that is most pre-empted. Evidence is sufficient to judge overlap (two closest methods plus a full-text survey and a full-text temporal-decay system) but only abstract-level for the two closest papers, and the decisive experiment (cross-retriever, validity-aware, amended-statute benchmark) has not been run. Hence 'substantial_overlap' rather than 'weak_or_flawed' (the idea is coherent and testable) or 'promising_needs_validation' (the mechanism is not novel enough to warrant that label without reframing).",
+  "recorded_at": "2026-09-30T04:31:44.776530Z"
+}

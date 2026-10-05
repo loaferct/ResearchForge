@@ -1,0 +1,35 @@
+{
+  "id": "U014",
+  "question": "Does the isolated-triple versus same-passage-context effect hold on open-answer, general-domain multi-hop benchmarks rather than synthetic biomedical multiple-choice QA?",
+  "description": "The only evidence that context-augmented training helps comes from two synthetic biomedical disease KGs with multiple-choice items (arxiv:2609.12230), and its own limitations section says broader validation is needed. The standard multi-hop benchmarks that the original research question names (MetaQA 1/2/3-hop with Hits@1, WebQSP/CWQ, 2WikiMultiHopQA or MoreHopQA with EM/F1 and gold evidence paths) are Freebase- or Wikipedia-based and use open answers, so nobody has tested whether the KG-grounded vs CG-grounded contrast survives there. Doing so requires solving the passage-provenance problem for those KGs as well.",
+  "category": "evaluation",
+  "importance": "medium",
+  "status": "open",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "SEARCH",
+    "REFINE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "External validity is the difference between reporting a domain-specific effect and a general finding about KgQA training, and the benchmark and metric choices needed to test it are already identified in the investigation plan.",
+  "resolution": "",
+  "paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2011.01060",
+    "arxiv:2406.13397",
+    "arxiv:2101.03737"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "CRITIQUE",
+  "created_at": "2026-09-30T05:24:47.558880Z",
+  "updated_at": "2026-09-30T05:24:47.559072Z"
+}

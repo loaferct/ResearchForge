@@ -1,0 +1,44 @@
+{
+  "paper_id": "doi:10.20944/preprints202505.1992.v1",
+  "relevance_tier": "high",
+  "problem": "LLMs hallucinate on domain-specific and reasoning-heavy tasks; multi-hop question answering over a knowledge graph needs the right subgraph, and naive RAG is insufficient.",
+  "method": "SG-RAG MOT: uses Cypher queries to search the KG and retrieve the necessary subgraph (SG-RAG), then adds a Merging and Ordering Triplets (MOT) step that hierarchically merges retrieved subgraphs to reduce triplet redundancy and orders triplets along a BFS traversal before presentation to the LLM.",
+  "key_assumptions": [
+    "The relevant subgraph is retrievable via Cypher queries from the KG.",
+    "Redundancy in retrieved triplets hurts; merging and BFS ordering help.",
+    "The LLM can exploit merged, ordered triplets as context."
+  ],
+  "main_contribution": "Evidence that merging overlapping retrieved subgraphs (up to a point) and imposing an order on the retrieved triplets improves answer precision over Chain-of-Thought and Graph Chain-of-Thought on MetaQA.",
+  "datasets": [
+    "MetaQA (movies domain)"
+  ],
+  "benchmarks": [
+    "MetaQA"
+  ],
+  "baselines": [
+    "Chain-of-Thought prompting",
+    "Graph Chain-of-Thought",
+    "traditional RAG (from prior SG-RAG work)"
+  ],
+  "metrics": [
+    "Not stated in abstract (accuracy of answers)"
+  ],
+  "results": "SG-RAG MOT gives more accurate answers than Chain-of-Thought and Graph Chain-of-Thought on MetaQA; merging highly overlapping subgraphs (up to some point) and ordering triplets helps the LLM generate more precise answers.",
+  "limitations": [
+    "Not stated in abstract",
+    "Preprint (not peer-reviewed as retrieved)"
+  ],
+  "future_work": [
+    "Not stated in abstract"
+  ],
+  "code_availability": "No code URL recorded; GitHub tools unavailable in this investigation.",
+  "relation_to_idea": {
+    "problem_overlap": 0.75,
+    "method_overlap": 0.6,
+    "evaluation_overlap": 0.7,
+    "conceptual_difference": "SG-RAG MOT constructs and orders a subgraph of triplets at inference time to condition an LLM's answer; it does not train the model, does not use source-passage provenance, and has no repair loop or RL stage. The idea's context-subgraph idea is similar in spirit (triplets beyond the path, merged and ordered) but applied to the training supervision signal rather than to prompting, which is the key distinction.",
+    "basis": "Problem overlap 0.75: multi-hop KGQA over subgraphs, same MetaQA benchmark. Method overlap 0.6: subgraph triplets as LLM context plus merging/ordering is mechanistically close to context-subgraph construction. Evaluation overlap 0.7: shared MetaQA but no training-time regime comparison."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:16:11.335937Z"
+}

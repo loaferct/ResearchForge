@@ -1,0 +1,114 @@
+{
+  "field_name": "Temporal Question Answering over Evolving Documents",
+  "categories": [
+    {
+      "name": "Temporal relevance weighting for overlapping-evolving documents",
+      "parent": null,
+      "description": "Approaches that adjust retrieval scores based on temporal distance between query and document timestamps to handle versions with high semantic overlap.",
+      "paper_ids": [
+        "arxiv:2609.11572",
+        "arxiv:2401.13222"
+      ]
+    },
+    {
+      "name": "External memory / knowledge organization for evolving knowledge",
+      "parent": null,
+      "description": "Building structured external memory from source documents to enable temporally filtered retrieval without retraining.",
+      "paper_ids": [
+        "arxiv:2506.07270"
+      ]
+    },
+    {
+      "name": "Verification and drift detection for living guidelines",
+      "parent": null,
+      "description": "Systems that detect updates in guidelines and provide verification reports to ensure use of current version.",
+      "paper_ids": [
+        "arxiv:2609.08364"
+      ]
+    },
+    {
+      "name": "Summarization-augmented question answering",
+      "parent": null,
+      "description": "Integrating text summarization with question answering to improve information retrieval performance.",
+      "paper_ids": [
+        "doi:10.3390/info17040372"
+      ]
+    }
+  ],
+  "idea_position": "Temporal relevance weighting for overlapping-evolving documents",
+  "dominant_approaches": [
+    "Temporal relevance weighting for overlapping-evolving documents",
+    "External memory / knowledge organization for evolving knowledge",
+    "Verification and drift detection for living guidelines"
+  ],
+  "common_assumptions": [
+    "Temporal relevance can be modeled as a decreasing function of temporal distance between query and document timestamps.",
+    "Semantic and temporal scores can be combined via a weighted sum or scaling factor.",
+    "Version timestamps or effective intervals are available at the passage level.",
+    "Document timestamps are available.",
+    "Guideline updates are reflected in versioned documents and detectable via temporal metadata.",
+    "Incrementally building a structured external memory from source documents captures evolving knowledge without retraining.",
+    "Summarization improves the quality of retrieved information and answer generation in a RAG pipeline."
+  ],
+  "common_datasets": [
+    "TimelyQABench",
+    "ASCOBENCH",
+    "Temporal Wiki",
+    "Unified Clark",
+    "TPQ-2019",
+    "TPQ-2020",
+    "NIPS dataset"
+  ],
+  "common_benchmarks": [
+    "TimelyQABench",
+    "ASCOBENCH",
+    "Temporal Wiki",
+    "Unified Clark",
+    "TPQ-2019",
+    "TPQ-2020",
+    "NIPS dataset"
+  ],
+  "common_metrics": [
+    "nDCG@10",
+    "MAP@10",
+    "Recall@10",
+    "Hit@10",
+    "Exact match",
+    "Recall@1",
+    "Recall@5",
+    "text similarity",
+    "BERT scores",
+    "accuracy",
+    "LLM-as-judge evaluation"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Temporal signals may be noisy or incomplete in real-world corpora, affecting the reliability of temporal metadata.",
+      "paper_ids": [
+        "arxiv:2609.11572",
+        "arxiv:2609.08364"
+      ]
+    },
+    {
+      "description": "Dependence on the quality of source documents or guideline versioning for accurate temporal modeling.",
+      "paper_ids": [
+        "arxiv:2506.07270",
+        "arxiv:2609.08364"
+      ]
+    },
+    {
+      "description": "Evaluation limited to specific datasets, raising concerns about generalizability to other domains or evolving documents.",
+      "paper_ids": [
+        "doi:10.3390/info17040372",
+        "arxiv:2609.11572"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "Combining temporal relevance weighting with verification and drift detection mechanisms.",
+    "Integrating external memory organization with temporal relevance weighting for hybrid approaches.",
+    "Applying temporal relevance weighting to multimodal evolving documents (e.g., regulations with figures/tables)."
+  ],
+  "contradictions": [],
+  "recorded_at": "2026-09-30T09:19:35.967622Z"
+}

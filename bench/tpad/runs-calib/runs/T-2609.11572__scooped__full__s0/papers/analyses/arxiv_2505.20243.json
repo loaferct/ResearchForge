@@ -1,0 +1,41 @@
+{
+  "paper_id": "arxiv:2505.20243",
+  "relevance_tier": "high",
+  "problem": "Time plays a critical role in how information is generated, retrieved and interpreted; TQA must handle temporal intent detection, time-expression normalization, event ordering, and reasoning over evolving or ambiguous facts.",
+  "method": "Literature survey; no proposed method. Organizes work by corpus temporality, question temporality, and model capabilities; reviews temporal language models, temporal RAG, and temporal reasoning; catalogues datasets and evaluation strategies.",
+  "key_assumptions": [
+    "The unified perspective of corpus temporality, question temporality and model capabilities captures the TQA landscape"
+  ],
+  "main_contribution": "A unified survey of Temporal Question Answering organizing datasets, tasks and approaches (temporal language models, temporal RAG, temporal reasoning) and articulating open challenges.",
+  "datasets": [
+    "Reviews temporal document collections and TQA datasets; introduces none"
+  ],
+  "benchmarks": [
+    "Reviews existing benchmarks (e.g., RealTimeQA, SituatedQA, TimeQA, RecencyQA); introduces none"
+  ],
+  "baselines": [
+    "not applicable (survey)"
+  ],
+  "metrics": [
+    "Discusses evaluation of temporal robustness, recency awareness and generalization rather than reporting metrics"
+  ],
+  "results": "Qualitative synthesis: temporal RAG systems are most effective when knowledge is volatile; retrieval quality is a primary bottleneck; retrieval can fail from noisy/missing timestamps, recency bias, or mismatch between document creation time and described event time; legal QA datasets are largely static and do not address temporal dynamics of legal knowledge.",
+  "limitations": [
+    "A survey: no new method or empirical results",
+    "Most existing datasets are static snapshots and do not capture answer drift or temporal volatility"
+  ],
+  "future_work": [
+    "Section 5 'Future Research Directions' and Appendix F list open directions",
+    "Notes that robust temporal retrieval remains an open challenge, especially for queries with implicit temporal intent"
+  ],
+  "code_availability": "Public survey repository: https://github.com/DataScienceUIBK/TemporalQA-Survey",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "A survey, not a retrieval method or benchmark; it catalogues and critiques existing temporal QA work. Its value here is as positioning evidence: it identifies the legality/versioning gap and lists temporal RAG systems as an active but incompletely solved area.",
+    "basis": "Full text reviewed: the survey frames temporally aligned retrieval as the bottleneck and states legal QA datasets are static, but it proposes no method and no benchmark, so method overlap is minimal while problem and evaluation relevance is moderate."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T04:29:58.615937Z"
+}

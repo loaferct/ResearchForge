@@ -1,0 +1,39 @@
+{
+  "id": "doi:10.21203/rs.3.rs-4721418/v1",
+  "title": "LLM-KGMQA: Large Language Model-Augmented Multi-Hop Question-Answering System based on Knowledge Graph in Medical Field",
+  "authors": [
+    "FeiLong Wang",
+    "Donghui Shi",
+    "Jose Aguilar",
+    "Xinyi Cui",
+    "Jinsong Jiang",
+    "Longjian Shen",
+    "Mengya Li"
+  ],
+  "year": 2024,
+  "published": "2024-08-05",
+  "venue": null,
+  "url": "https://doi.org/10.21203/rs.3.rs-4721418/v1",
+  "pdf_url": null,
+  "abstract": "Abstract In response to the problems of poor performance of large language models in specific domains, limited research on knowledge graphs and question-answering systems incorporating large language models, this paper proposed a multi-hop question-answering system framework based on a knowledge graph in the medical field, which was fully augmented by large language models (LLM-KGMQA). The method primarily addressed the problems of entity linking and multi-hop knowledge path reasoning. To address the entity linking problem, an entity fast-linking algorithm was proposed, which categorized entities based on multiple attributes. Then, it used user mentions to obtain the target attribute set of attributes and further narrowed the entity search scope through attribute intersection operations. Finally, for entities that remained too numerous after the intersection, the method suggested using a pre-trained model for similarity calculation and ranking, and to determine the final entity through construction instructions. Regarding multi-hop knowledge path reasoning, the paper proposed a three-step reasoning framework that included an n-hop subgraph construction algorithm, a knowledge fusion algorithm, and a semantics-based knowledge pruning algorithm. In the entity fast-linking experiments, the maximum computational complexity was reduced by 99.9% through intersection operations. Additionally, a new evaluation metric, top@n, was introduced. When using the Roberta model for similarity calculations, the top@n score reached a maximum of 96.4, and the entity fast-linking accuracy was 96.6%. In multi-hop knowledge path reasoning, the paper first validated the need for knowledge fusion by constructing three different forms of instructions. Subsequently, experiments were conducted with several large language models, concluded that the GLM4 model showed the best performance in Chinese semantic reasoning. The accuracy rates for GLM4 after pruning were 99.9%, 83.3%, and 86.6% for 1-hop, 2-hop, and 3-hop, respectively, compared to 95.0%, 6.6%, and 5.0% before pruning. The average response time was reduced by 1.36s, 6.21s and 27.07s after pruning compared to before pruning.",
+  "doi": "10.21203/rs.3.rs-4721418/v1",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 4,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T06:26:49.345048Z",
+  "relevance": 0.6429,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering knowledge graph language model"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

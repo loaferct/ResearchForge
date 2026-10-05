@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.1007/s10994-023-06475-x",
+  "title": "Temporal graph learning for dynamic link prediction with text in online social networks",
+  "authors": [
+    "Manuel Dileo",
+    "Matteo Zignani",
+    "Sabrina Gaito"
+  ],
+  "year": 2023,
+  "published": "2023-11-29",
+  "venue": "Machine Learning",
+  "url": "https://doi.org/10.1007/s10994-023-06475-x",
+  "pdf_url": "https://link.springer.com/content/pdf/10.1007/s10994-023-06475-x.pdf",
+  "abstract": "Abstract Link prediction in Online Social Networks—OSNs—has been the focus of numerous studies in the machine learning community. A successful machine learning-based solution for this task needs to (i) leverage global and local properties of the graph structure surrounding links; (ii) leverage the content produced by OSN users; and (iii) allow their representations to change over time, as thousands of new links between users and new content like textual posts, comments, images and videos are created/uploaded every month. Current works have successfully leveraged the structural information but only a few have also taken into account the textual content and/or the dynamicity of network structure and node attributes. In this paper, we propose a methodology based on temporal graph neural networks to handle the challenges described above. To understand the impact of textual content on this task, we provide a novel pipeline to include textual information alongside the structural one with the usage of BERT language models, dense preprocessing layers, and an effective post-processing decoder. We conducted the evaluation on a novel dataset gathered from an emerging blockchain-based online social network, using a live-update setting that takes into account the evolving nature of data and models. The dataset serves as a useful testing ground for link prediction evaluation because it provides high-resolution temporal information on link creation and textual content, characteristics hard to find in current benchmark datasets. Our results show that temporal graph learning is a promising solution for dynamic link prediction with text. Indeed, combining textual features and dynamic Graph Neural Networks—GNNs—leads to the best performances over time. On average, the textual content can enhance the performance of a dynamic GNN by 3.1% and, as the collection of documents increases in size over time, help even models that do not consider the structural information of the network.",
+  "doi": "10.1007/s10994-023-06475-x",
+  "arxiv_id": null,
+  "openalex_id": "W4389132760",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 36,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T04:17:45.006660Z",
+  "relevance": 0.1875,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "recency-aware dense retrieval temporal decay document version timestamp"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

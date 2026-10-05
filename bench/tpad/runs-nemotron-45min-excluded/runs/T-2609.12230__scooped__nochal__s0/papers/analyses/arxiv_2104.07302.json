@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2104.07302",
+  "relevance_tier": "high",
+  "problem": "Multi-hop QA requires precise reasoning with entity relations at every step; existing models either predict sequential relation paths (hard to optimize) or aggregate hidden graph features (lacks interpretability).",
+  "method": "TransferNet unified framework for label and text relations; jumps across entities at multiple steps; at each step attends to different parts of the question, computes activated scores for relations, and transfers previous entity scores along activated relations in a differentiable way, enabling effective and interpretable multi-hop reasoning.",
+  "key_assumptions": [
+    "Relation-level attention and transfer can capture multi-hop reasoning effectively.",
+    "Unified handling of label and text relations improves coverage."
+  ],
+  "main_contribution": "TransferNet achieves state-of-the-art performance on multi-hop QA datasets, with 100% accuracy on 2-hop and 3-hop MetaQA, and provides transparent intermediate results via relation attention and transfer mechanisms.",
+  "datasets": [
+    "Three unspecified datasets (including MetaQA)"
+  ],
+  "benchmarks": [
+    "Three datasets (including MetaQA)"
+  ],
+  "baselines": [
+    "State-of-the-art multi-hop QA models (unspecified)"
+  ],
+  "metrics": [
+    "accuracy"
+  ],
+  "results": "[\"TransferNet surpasses state-of-the-art models by a large margin; achieves 100% accuracy on 2-hop and 3-hop MetaQA.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.75,
+    "method_overlap": 0.35,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "TransferNet focuses on relation-aware jumping and attention-based transfer, while the idea enriches target triples with local context subgraphs from source passages, adds an adaptive repair loop for factual reliability, and applies RL transfer from lower-hop QA.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:53:49.644486Z"
+}

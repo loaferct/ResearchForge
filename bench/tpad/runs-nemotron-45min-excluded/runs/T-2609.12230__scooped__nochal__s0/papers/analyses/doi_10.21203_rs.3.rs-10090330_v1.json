@@ -1,0 +1,43 @@
+{
+  "paper_id": "doi:10.21203/rs.3.rs-10090330/v1",
+  "relevance_tier": "high",
+  "problem": "Existing agricultural benchmarks focus on image classification or short-form QA, lacking evaluation of multi-session conversational memory and structured multi-hop reasoning.",
+  "method": "Presents AgriMemSynth, a synthetic benchmark with AgriConvMem (500 advisory conversations) for conversational memory and AgriMultiHop (2,000 reasoning questions) for multi-hop reasoning. Evaluates five retrieval organizations under a shared answer-generation pipeline.",
+  "key_assumptions": [
+    "Synthetic benchmark can effectively evaluate conversational memory and multi-hop reasoning in agricultural QA.",
+    "Retrieval organization impacts performance on these tasks."
+  ],
+  "main_contribution": "AgriMemSynth benchmark reveals that lexical metrics underestimate correctness, conversational memory is harder than multi-hop reasoning, and retrieval organization is task-dependent (RAG best for conversational memory, MemoryGraph best for multi-hop).",
+  "datasets": [
+    "AgriConvMem (500 generated advisory conversations)",
+    "AgriMultiHop (2,000 generated reasoning questions)"
+  ],
+  "benchmarks": [
+    "AgriMemSynth (held-out test splits)"
+  ],
+  "baselines": [
+    "five retrieval organizations: retrieval-augmented generation, neuroscientific memory system, hybrid retriever, BM25 with semantic reranking, graph-based memory system"
+  ],
+  "metrics": [
+    "conversational-memory score",
+    "multi-hop score",
+    "hop score"
+  ],
+  "results": "[\"RAG: highest conversational-memory score (85.6%); MemoryGraph: highest multi-hop score (97.0%).\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.2,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "AgriMemSynth focuses on agricultural QA benchmark with memory and multi-hop reasoning, while the idea targets KGQA via context subgraph enrichment, adaptive repair loop, and RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T06:21:52.071687Z"
+}

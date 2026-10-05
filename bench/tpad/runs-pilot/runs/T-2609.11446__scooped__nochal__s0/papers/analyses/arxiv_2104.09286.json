@@ -1,0 +1,48 @@
+{
+  "paper_id": "arxiv:2104.09286",
+  "relevance_tier": "high",
+  "problem": "The problem is that while confidence calibration methods exist to make model confidence scores match accuracy, it is unclear whether these calibrated confidence scores can improve the performance of systems that use confidence scores, specifically cascade inference systems. The paper focuses on cascade inference systems and discusses the desired confidence score to improve system performance in terms of inference accuracy and computational cost.",
+  "method": "The proposed method is Learning to Cascade (LtC), a confidence calibration method for cascade inference. LtC introduces a new loss term to output confidence scores suitable for cascade inference; it simultaneously optimizes this loss term and the original loss term. LtC simply adds just a single new loss term and does not require any changes to the network architecture or optimization method used. The method is evaluated using two datasets (CIFAR-100 and ImageNet) in two system settings (model cascading and model splitting).",
+  "key_assumptions": [
+    "The desired accuracy in cascade inference is assumed to be that of the expensive model.",
+    "An acceptable accuracy degradation (ϵ) can be set to suit application requirements (in this paper, ϵ = 0).",
+    "The validation set can be used to search for the threshold δ with the highest cascade accuracy."
+  ],
+  "main_contribution": "The main contributions are: (1) discussing confidence scores suitable for cascade inference and introducing a new loss term for confidence calibration, (2) proposing a simple calibration method (LtC) that simultaneously optimizes the original loss term and the loss term for cascade inference, which is easily applied to existing implementations, and (3) showing in experiments with various settings that LtC achieves a better trade-off between inference accuracy and computational cost.",
+  "datasets": [
+    "CIFAR-100",
+    "ImageNet"
+  ],
+  "benchmarks": [
+    "CIFAR-100",
+    "ImageNet"
+  ],
+  "baselines": [
+    "Baseline (no calibration)",
+    "IDK (I Don't Know)",
+    "ConfNet",
+    "Temperature Scaling"
+  ],
+  "metrics": [
+    "Accuracy in cascade inference (Acccasc)",
+    "Multiply-accumulate (MACs) for cascade inference (MACscasc)"
+  ],
+  "results": "[\"In the CIFAR-100 model cascading setting with AlexNet as fast model and ResNet152 as expensive model: Baseline accuracy 722.56±50.70 MACs, LtC accuracy 617.88±8.92 MACs (better accuracy-cost trade-off).\", \"In the three-element cascade on CIFAR-100 (MobileNetV2 fast, ResNet18 middle, ResNet152 expensive): LtC reduces computational cost by 55% while improving accuracy of ResNet152 (Baseline: 77.22±0.10% accuracy, 8.36±0.65 GMACs; LtC: 77.24±0.08% accuracy, 8.08±0.21 GMACs).\", \"In the ImageNet model cascading setting (MobileNetV2 fast, ResNet152 expensive): LtC reduces MACs of ResNet152 by about 30% with no accuracy degradation.\"]",
+  "limitations": [
+    "The paper does not explicitly discuss limitations in the abstract or easily identifiable conclusion section.",
+    "Future work mentioned includes elucidating the cause of high confidence scores in certain cases and improving the loss term, showing effectiveness for other architectures and tasks."
+  ],
+  "future_work": [
+    "In future work, we would like to elucidate the cause of the high confidence score in the case of 'mexp Only Correct' and improve the loss term. We will also show the effectiveness of LtC for other architectures and tasks."
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.7,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "The paper focuses on improving cascade inference systems through a novel calibration method that optimizes a new loss term simultaneously with the original loss term. Our idea focuses on post-hoc calibration (temperature scaling) using held-out validation data to align confidence scores with true likelihoods, then defining common thresholds for routing decisions. While both address confidence calibration for cascade systems, the proposed method (Learning to Cascade) is a training-time method that modifies the loss function, whereas our idea proposes a post-hoc calibration approach. The evaluation overlap is moderate as both use accuracy and computational cost metrics on similar benchmarks (CIFAR-100, ImageNet).",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T11:40:21.430598Z"
+}

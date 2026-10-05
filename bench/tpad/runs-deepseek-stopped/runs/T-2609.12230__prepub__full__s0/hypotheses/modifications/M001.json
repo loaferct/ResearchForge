@@ -1,0 +1,31 @@
+{
+  "id": "M001",
+  "title": "Hop-depth-conditional chain-vs-peripheral supervision experiment (superseded)",
+  "description": "SUPERSEDED by M005 after U015 was resolved: chain/path supervision is established prior art (MHGRN, Variational Reasoning) and must be treated as a control, not a contribution. This earlier formulation is retained for traceability but no longer recommended; its four-arm structure (isolated triple/path; chain; chain + peripheral; chain + shuffled at matched budget) is carried forward into M005.",
+  "why_differs": "Superseded framing; see M005 for the version that credits chain supervision to prior art.",
+  "technical_mechanism": "As M005: four matched-budget supervision views over the same targets, byte-identical templates, identical test-time context.",
+  "expected_benefit": "Retained only as a record of the pre-U015 framing; M005 supersedes it by demoting the chain arm to a prior-art control and centering the test on peripheral context.",
+  "potential_novelty": "Hedged: superseded - the chain effect is not novel, and the residual peripheral-context question is addressed in M005.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "Same as M005: existing datasets, LoRA on an off-the-shelf model, no RL infrastructure.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Same as M005: matched-budget arms, shuffled-context control, hop-depth split, format-controlled scorer, multiple seeds.",
+  "main_risk": "Presenting chain supervision as a contribution when it is prior art; M005 corrects this framing.",
+  "required_baselines": [
+    "Isolated triple/path supervision",
+    "Chain supervision (prior-art control)",
+    "Shuffled/unrelated-context arm at matched token budget",
+    "Training-free inference-time context baseline"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.10237",
+    "doi:10.18653/v1/2020.emnlp-main.99",
+    "doi:10.1609/aaai.v32i1.12057"
+  ],
+  "addresses_gap_ids": [
+    "G001",
+    "G003"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:28:54.271191Z"
+}

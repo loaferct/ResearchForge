@@ -1,0 +1,34 @@
+{
+  "id": "G005",
+  "gap": "No retrieved work studies temporal version selection when validity metadata is incomplete, unofficial or noisy. Existing hard-filter pipelines assume per-version in-force dates are available and that the query's as-of date can be extracted reliably, and no work measures degradation when either assumption fails.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 3",
+      "quote": "Germany does not provide a public, legally authoritative database of historical consolidated statutes in machine-readable form",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 6",
+      "quote": "a regex pattern extracts the",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2605.23497",
+    "arxiv:2401.13222"
+  ],
+  "why_unaddressed": "The retrieved hard-filter work assumes clean metadata and a regex-extractable as-of date, and reports no ablation in which either input is corrupted. The soft-score work (TempRALM) does not model validity intervals at all, so it cannot address metadata noise for legal applicability.",
+  "research_question": "When per-version in-force dates are incomplete or noisy and query as-of dates must be inferred, does a graded interval-membership temporal score retain higher version-selection accuracy than a hard in-force filter, and at what level of metadata noise do they cross over?",
+  "potential_experiment": "A noise-injection robustness study: progressively corrupt version effective dates (drop, jitter, conflict) and degrade as-of date extraction (paraphrased or implicit dates), then compare a hard in-force filter against a graded interval-membership score on version-selection accuracy and end-answer accuracy, reporting the crossover point where the hard filter collapses.",
+  "confidence": "medium",
+  "verification_required": "Requires measuring metadata completeness and noise in at least two real regulatory corpora; the present search budget is exhausted, so the prevalence of missing or unofficial effective dates is itself unverified beyond one anecdotal report.",
+  "recorded_at": "2026-09-30T05:26:37.046239Z"
+}

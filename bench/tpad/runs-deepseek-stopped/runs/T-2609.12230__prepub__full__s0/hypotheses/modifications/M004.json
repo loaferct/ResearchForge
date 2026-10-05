@@ -1,0 +1,30 @@
+{
+  "id": "M004",
+  "title": "Replace the repair loop and RL stage with a one-hop failure diagnostic (and optional diagnostic-driven curriculum)",
+  "description": "Drop the RL stage and the iterative repair loop from the primary contribution because the repair loop closely matches existing process-supervision self-bootstrapping. Replace it with a diagnostic-only contribution: define and measure a one-hop failure rate and a hop-depth transfer gap, and only then, optionally, use the diagnostic to build a targeted curriculum (train on the specific one-hop relations that fail). Keep any RL as a secondary, clearly labeled experiment.",
+  "why_differs": "KnowTrace and Self-Refine already cover reflective process-supervision self-bootstrapping and iterative refinement, so this cannot be claimed as novel; a measured one-hop failure rate and hop-depth transfer gap have no precedent in the retrieved multi-hop KGQA set, and the diagnostic is directly tied to the idea's stated problem of error propagation.",
+  "technical_mechanism": "For each multi-hop test item, identify the gold first hop and probe the model on the corresponding one-hop sub-question; define one-hop failure rate as the fraction of multi-hop errors whose first hop is answered incorrectly, and the transfer gap as shallow-hop minus deep-hop accuracy. Use the failing relation set to select additional one-hop training examples.",
+  "expected_benefit": "Removes two large, confounded, compute-heavy components from the critical path, focuses the study on the measurable question, and turns an already-occupied mechanism into a measurement that is itself a gap (no per-hop failure/transfer metric convention found in the retrieved literature).",
+  "potential_novelty": "Hedged: per-hop failure attribution and a transfer gap are not reported in the retrieved multi-hop KGQA works; the novelty is a measurement/diagnostic contribution rather than a method.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "Can be computed from existing model outputs and gold paths without new training infrastructure; the curriculum variant is a data-selection change on top of the same fine-tuning setup.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Defining and computing a one-hop failure metric requires held-out one-hop probes per relation and a way to attribute multi-hop errors to a first hop; the curriculum variant adds a training condition.",
+  "main_risk": "A diagnostic alone may be judged insufficiently substantive as a contribution, and error attribution to a first hop can be ambiguous for questions with multiple valid paths.",
+  "required_baselines": [
+    "Triple-only fine-tuning (diagnostic reference)",
+    "Chain-supervision arm",
+    "Optionally: diagnostic-driven curriculum vs random curriculum at matched budget"
+  ],
+  "related_paper_ids": [
+    "arxiv:2505.20245",
+    "arxiv:2303.17651",
+    "arxiv:2506.21575",
+    "doi:10.18653/v1/2020.acl-main.412"
+  ],
+  "addresses_gap_ids": [
+    "G002"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:26:11.453692Z"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "C014",
+  "statement": "In the fine-tuning study that matches the proposed idea, the isolated-triple and context-augmented arms share the base model, LoRA setup, optimizer, sequence length, batch size, epochs and learning-rate schedule, and there are equal numbers of QA items per regime.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 14 (§3.5)",
+      "quote": "all four models are initialized from the same base model and trained using the same fine-tuning configuration, LoRA setup, optimizer, sequence length, batch size, number of epochs, and learning-rate schedule.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "matched-controls",
+    "confounder",
+    "experimental-design"
+  ],
+  "recorded_at": "2026-09-30T05:20:31.647239Z"
+}

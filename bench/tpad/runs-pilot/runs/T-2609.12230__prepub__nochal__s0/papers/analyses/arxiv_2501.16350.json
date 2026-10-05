@@ -1,0 +1,41 @@
+{
+  "paper_id": "arxiv:2501.16350",
+  "relevance_tier": "high",
+  "problem": "Accurate understanding and transformation of Persian multi-hop complex questions into semantically equivalent SPARQL queries is a major challenge for Persian knowledge graph question answering (KGQA).",
+  "method": "Developed a dataset of 5,600 Persian multi-hop complex questions with decomposed forms based on semantic representation (MRDCPQ); trained Persian language models using this dataset; proposed an architecture comprising question decomposition component, MRDCPQ to SPARQL query generator component, and SPARQL query execution and response composition for answering complex questions using a Persian knowledge graph.",
+  "key_assumptions": [
+    "Not explicitly stated in the paper."
+  ],
+  "main_contribution": "The proposed method achieves an improvement of 12.57% in F1-score and 12.06% in accuracy over the best comparable method (Etezadi’s Method) on the PeCoQ dataset, demonstrating superiority in answering complex Persian questions via knowledge graph-based semantic decomposition and SPARQL generation.",
+  "datasets": [
+    "PeCoQ",
+    "Persian MRDCPQ dataset (5,600 questions)"
+  ],
+  "benchmarks": [
+    "PeCoQ"
+  ],
+  "baselines": [
+    "Best comparable method (Etezadi’s Method)"
+  ],
+  "metrics": [
+    "F1-score",
+    "Accuracy"
+  ],
+  "results": "Our Method: Precision 84.36%, Recall 68.41%, F1 75.55%, Accuracy 74.81%; Etezadi’s Method: Precision 71.24%, Recall 56.45%, F1 62.98%, Accuracy 62.75%.",
+  "limitations": [
+    "Not explicitly stated in the paper."
+  ],
+  "future_work": [
+    "Not explicitly stated in the paper."
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "Both aim to improve multi-hop QA performance: the idea enriches training triples with local context subgraphs from the same passage and uses an adaptive repair loop to generate corrective examples from one‑hop failures followed by RL lower‑hop transfer, while this paper focuses on question decomposition, semantic representation conversion to SPARQL, and execution on a Persian knowledge graph for Persian KGQA. Overlap in addressing multi‑hop challenges; differences in mechanism (training data enrichment + failure‑driven RL vs decomposition + SPARQL generation) and language/domain specificity (general vs Persian).",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T09:21:00.609619Z"
+}

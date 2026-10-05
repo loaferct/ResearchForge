@@ -1,0 +1,51 @@
+{
+  "paper_id": "arxiv:2505.09246",
+  "relevance_tier": "high",
+  "problem": "Question answering over semi-structured knowledge bases (SKBs) requires integrating relational reasoning over structured elements and contextual interpretation of unstructured texts, yet existing methods often focus on isolated techniques and fail to leverage complementary strategies.",
+  "method": "FocusedRetriever: a modular SKB-based framework integrating (1) VSS-based entity search, (2) LLM-based generation of Cypher queries from natural language, (3) node set joins to filter answer candidates using extracted triplets and constraints, (4) vector similarity search to retrieve and rank relevant unstructured content, and (5) LLM-based reranking (point-wise, pair-wise, list-wise) to rank top-k answers.",
+  "key_assumptions": [
+    "Not explicitly stated in the paper."
+  ],
+  "main_contribution": "FocusedRetriever outperforms state-of-the-art methods across all three STaRK benchmark datasets (AMAZON, MAG, PRIME) in hit@1, hit@5, hit@20, and MRR, with an average first-hit rate exceeding the second-best method by 25.7%, demonstrating that integrating complementary retrieval and ranking strategies improves multi-hop QA over SKBs.",
+  "datasets": [
+    "AMAZON",
+    "MAG",
+    "PRIME"
+  ],
+  "benchmarks": [
+    "AMAZON",
+    "MAG",
+    "PRIME"
+  ],
+  "baselines": [
+    "Vector Similarity Search (VSS)",
+    "Dense Passage Retriever (DPR)",
+    "QA-GNN",
+    "VSS+[pointwise]Reranker",
+    "DERIVE_CYPHER",
+    "Other baselines from STaRK benchmark"
+  ],
+  "metrics": [
+    "hit@1",
+    "hit@5",
+    "hit@20",
+    "MRR (Mean Reciprocal Rank)"
+  ],
+  "results": "FocusedRetriever achieves state-of-the-art performance across all three STaRK benchmarks, outperforming baselines in hit@1, hit@5, hit@20, and MRR; average first-hit rate exceeds second-best by 25.7% (exact per-dataset values: see Table 4 in paper).",
+  "limitations": [
+    "List-wise reranking may exceed context window when including relational information, preventing evaluation in some cases; evaluation uses base LLMs without fine-tuning, leaving room for improvement."
+  ],
+  "future_work": [
+    "Explore fine-tuning components such as Cypher generation and reranking for further gains; extend framework to support more expressive logical reasoning."
+  ],
+  "code_availability": "https://github.com/kramerlab/FocusedRetriever",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "Both aim to improve multi-hop question answering: the idea enriches training triples with local context subgraphs from the same passage and uses an adaptive repair loop to generate corrective examples from one‑hop failures followed by RL lower‑hop transfer, while FocusedRetriever focuses on inference‑time retrieval and re‑ranking over semi‑structured knowledge bases using LLMs for entity search, query generation, and ranking. Overlap in using LLMs to extract relational facts; differences in stage (training vs inference), mechanism (training data enrichment + failure‑driven RL vs retrieval + ranking), and output format (triple enrichment vs answer ranking).",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T09:32:15.237156Z"
+}

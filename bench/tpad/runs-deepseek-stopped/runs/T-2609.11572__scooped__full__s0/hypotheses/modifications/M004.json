@@ -1,0 +1,34 @@
+{
+  "id": "M004",
+  "title": "Clause-level versioned-revision benchmark with version-selection metrics and cross-retriever arms",
+  "description": "Build and release a clause-level benchmark of overlapping successive revisions from an amended regulatory corpus: archived version snapshots, per-clause effective and expiry dates, time-stamped queries with target dates, gold in-force version labels per query, and published retrieval-layer metrics (version-selection accuracy@k, Recall@k, MRR, nDCG@k) alongside end-answer accuracy. Include arms using BM25 and at least two dense encoders under matched segmentation and top-k to test the retrieval-agnosticism claim.",
+  "why_differs": "Prior et al.'s benchmark is evaluated only through LLM-judged end answers with no retrieval metrics and no per-passage version labels, TIQ tests temporal reasoning over non-versioned snippets, and TempRALM evaluates gold-passage recall on Wikipedia rather than regulatory amendments.",
+  "technical_mechanism": "Corpus construction pipeline that snapshots statute versions, aligns clauses across amendments, records effective/expiry dates, and derives per-passage version labels used to compute version-selection accuracy at query target dates.",
+  "expected_benefit": "Supplies the missing measurement instrument for the whole line of work, makes version-selection accuracy comparable across methods, and allows the retrieval-agnosticism claim to be tested rather than asserted.",
+  "potential_novelty": "Hedged: no retrieved resource provides clause-level overlapping revisions with in-force labels and retrieval metrics, but this is a bounded negative finding since the search budget was exhausted and some venues were unreachable.",
+  "implementation_difficulty": "high",
+  "implementation_difficulty_basis": "Amended statute corpora are large and versioning metadata is often incomplete; clause-level alignment across versions and effective/expiry dates must be reconstructed, and exact reproduction requires archiving snapshots because legislation changes.",
+  "experimental_difficulty": "high",
+  "experimental_difficulty_basis": "Requires curating version history and validity intervals, query construction with expert checking, and cross-retriever runs; the effort is dominated by data curation and annotation rather than compute.",
+  "main_risk": "High curation cost with construct-validity risk: if queries are synthesised by an LLM, measured gains may not transfer to real legal queries, and a small benchmark limits statistical power for per-regime analysis.",
+  "required_baselines": [
+    "Semantic-only BM25",
+    "Semantic-only dense encoders (at least two)",
+    "Hard in-force filter",
+    "Monotone elapsed-time decay",
+    "Oracle in-force filter"
+  ],
+  "related_paper_ids": [
+    "arxiv:2605.23497",
+    "doi:10.1145/3589335.3651895",
+    "arxiv:2401.13222",
+    "doi:10.1080/08839514.2026.2626097"
+  ],
+  "addresses_gap_ids": [
+    "G001",
+    "G003",
+    "G004"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:24:30.103113Z"
+}

@@ -1,0 +1,9 @@
+HTTP Request: GET https://arxiv.org/pdf/2505.09246v1 "HTTP/1.1 200 OK"
+HTTP Request: GET https://arxiv.org/pdf/2506.00491v1 "HTTP/1.1 200 OK"
+Tool 'fetch_paper_text' failed: "Error executing tool fetch_paper_text: full text unavailable for doi:10.1007/s10618-026-01203-0: no open-access PDF is known for doi:10.1007/s10618-026-01203-0. Work from the abstract and mark analyzed_from='abstract'."
+Tool 'search_papers' failed: 'Error executing tool search_papers: paper budget reached (90 papers). Analyze and compare the retrieved papers instead of searching.'
+Tool 'fetch_paper_text' failed: "Error executing tool fetch_paper_text: unknown paper id 'arxiv:2204.09140'; use ids returned by search_papers or list_papers"
+HTTP Request: GET https://arxiv.org/pdf/2204.09140v1 "HTTP/1.1 200 OK"
+HTTP Request: GET https://www.aclweb.org/anthology/2020.emnlp-main.710.pdf "HTTP/1.1 301 Moved Permanently"
+HTTP Request: GET https://aclanthology.org/2020.emnlp-main.710.pdf "HTTP/1.1 200 OK"
+Impossible to decode XFormObject /Fm2: unsupported operand type(s) for +: 'float' and 'IndirectObject'

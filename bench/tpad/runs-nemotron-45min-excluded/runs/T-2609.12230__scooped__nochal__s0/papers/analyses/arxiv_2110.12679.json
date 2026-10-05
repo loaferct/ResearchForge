@@ -1,0 +1,49 @@
+{
+  "paper_id": "arxiv:2110.12679",
+  "relevance_tier": "high",
+  "problem": "Multi-hop KGQA suffers from: i) absence of explicit relational chain order in user questions, ii) incorrect relational type capture due to weak supervision and missing intermediate annotations, iii) failure to consider implicit relations in KG due to limited neighborhood size in subgraph retrieval.",
+  "method": "Proposes Relational Chain based Embedded KGQA (Rce-KGQA) comprising two modules: Answer Filtering Module (uses KG embedding to score candidate entities) and Relational Chain Reasoning Module (uses Siamese network to measure semantic similarity between question and KG relational chains). The model simultaneously leverages explicit relational chains from questions and implicit relational chains from KG, employing KG embedding and training with weak supervision.",
+  "key_assumptions": [
+    "Explicit relational chains can be parsed from natural language questions.",
+    "Implicit relational chains exist in the KG and can be captured via embedding similarity.",
+    "Combining explicit and implicit chain signals improves multi-hop reasoning."
+  ],
+  "main_contribution": "Rce-KGQA framework that integrates explicit and implicit relational chain reasoning, achieving new state-of-the-art hit@1 scores on MetaQA (98.3, 99.7, 97.9 for 1/2/3-hop) and WebQuestionsSP-tiny (70.4), outperforming baselines like GraftNet, PullNet, EmbedKGQA.",
+  "datasets": [
+    "MetaQA (1-hop, 2-hop, 3-hop subsets)",
+    "WebQuestionsSP-tiny",
+    "Complex-WebQSP"
+  ],
+  "benchmarks": [
+    "MetaQA",
+    "WebQuestionsSP-tiny",
+    "Complex-WebQSP"
+  ],
+  "baselines": [
+    "GraftNet",
+    "PullNet",
+    "EmbedKGQA",
+    "SRN",
+    "KVMem"
+  ],
+  "metrics": [
+    "hit@1"
+  ],
+  "results": "[\"MetaQA 1-hop: 98.3, 2-hop: 99.7, 3-hop: 97.9; WebQuestionsSP-tiny: 70.4; Complex-WebQSP: not specified in excerpt\"]",
+  "limitations": [
+    "Performance may still be constrained by incomplete KG (as noted in comparison to GraftNet's low recall on incomplete KG); potential cascaded error propagation from separate modules; model not suited for questions solvable by simple hand-crafted rules."
+  ],
+  "future_work": [
+    "Integrate the Answer Filtering Module and Relational Chain Reasoning Module into a joint module to reduce error propagation; explore more advanced reasoning capabilities for questions amenable to hand-crafted rules."
+  ],
+  "code_availability": "\"Source code available at https://github.com/albert-jin/Rce-KGQA (MIT license, includes modules and README with architecture details).\"",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.15,
+    "evaluation_overlap": 0.85,
+    "conceptual_difference": "The paper focuses on extracting explicit and implicit relational chains via dedicated modules, whereas the idea enriches target triples with local context subgraphs from the same source passage, adds an adaptive repair loop for factual reliability, and applies RL transfer from lower-hop QA.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:48:55.889510Z"
+}

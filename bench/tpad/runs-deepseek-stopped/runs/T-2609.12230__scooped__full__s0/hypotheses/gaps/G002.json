@@ -1,0 +1,46 @@
+{
+  "id": "G002",
+  "gap": "Passage-local context-triple supervision has not been evaluated on standard multi-hop KGQA benchmarks, because those benchmarks (WebQSP and CWQ over Freebase, MetaQA over a movies KG, as used in the analyzed retrieval and intermediate-supervision works) are not packaged with source-passage provenance for their triples. Text-attributed resources that would make the mechanism constructible do exist elsewhere - triple-to-source-text traceability in GraphMERT-extracted KGs and large-scale KG-text alignment datasets such as CDTP - but they are used for KG completion and text generation rather than for measuring whether context-triple supervision transfers beyond a single synthetic, domain-specific MCQ setting.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 8",
+      "quote": "A useful property of the GraphMERT pipeline is that extracted triples are traceable to their originating source text sequence [22].",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2510.06039",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Each instance pairs a Chinese-language text with one or more textually supported KG triples, totaling 15 million triples.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 30",
+      "quote": "First, the QA datasets used for SFT, repair, RL, and evaluation are synthetically generated.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2510.06039",
+    "arxiv:2202.13296",
+    "arxiv:2101.03737",
+    "doi:10.18653/v1/2025.findings-acl.856"
+  ],
+  "why_unaddressed": "The works that use standard benchmarks do retrieval or intermediate supervision rather than context-triple supervision, and the work that uses context-triple supervision deliberately avoided standard benchmarks by constructing its own disease-specific, synthetically generated MCQ data with GraphMERT. No retrieved paper attempts the cross-setting transfer, so the external validity of the mechanism is untested rather than refuted.",
+  "research_question": "Does context-triple supervision improve multi-hop KGQA when evaluated with open-ended metrics on a text-attributed KG other than the two disease-specific ones, rather than only on synthetic domain multiple-choice items?",
+  "potential_experiment": "Rebuild the context-graph supervision on a text-attributed corpus that ships triple-to-text provenance (e.g., a GraphMERT-style extraction from an open corpus, or a KG-text alignment dataset such as CDTP), generate or reuse open-ended multi-hop questions over it, and evaluate per-hop-depth exact match/F1 against the isolated-triple baseline, a retrieval-based baseline (subgraph retrieval, GNN-RAG-style), and the closest work's MCQ-style protocol.",
+  "confidence": "medium",
+  "verification_required": "Whether an English-language text-attributed multi-hop KGQA benchmark with triple-level passage provenance exists was not established: the literature search budget was exhausted before this could be searched, so this must be verified by a further search (e.g., text-attributed knowledge graph QA datasets, document-grounded KGQA) before designing the experiment.",
+  "recorded_at": "2026-09-30T05:19:56.119132Z"
+}

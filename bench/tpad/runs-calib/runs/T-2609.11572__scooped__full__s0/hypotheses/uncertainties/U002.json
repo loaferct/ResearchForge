@@ -1,0 +1,43 @@
+{
+  "id": "U002",
+  "question": "Does adjusting rank by elapsed time between the query target date and the passage version timestamp (a recency-like signal) actually identify the legally correct passage, or is the correct signal validity/as-of membership (the version in force at the target date), which recency can get wrong?",
+  "description": "For statutes/regulations the authoritative clause is the one in force at the query's target date. A superseded version may be temporally closer (more 'recent-looking') than an older version still in force, and a not-yet-in-force version may be nearest of all. If the framework conflates recency with validity, the temporal term could systematically select wrong revisions. Retrieved point-in-time work instead enforces an as-of information boundary.",
+  "category": "confounder",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "READ",
+    "COMPARE",
+    "VERIFY",
+    "REFINE"
+  ],
+  "confidence": 0.7,
+  "confidence_basis": "Convergent but indirect evidence: a legal-retrieval framework deriving bitemporal valid-time correctness from legal theory, a survey listing recency bias as a documented retrieval failure mode, and a point-in-time system enforcing a hard as-of boundary. No experiment on amended statutes has yet compared the two signals, which is why confidence is not high.",
+  "rationale": "TempFinRAG enforces an as-of temporal boundary defined by filing availability rather than mere recency, indicating the field distinguishes validity from closeness in time.",
+  "resolution": "Answered at the conceptual level in favour of validity, not elapsed time: the legal-retrieval literature states that legal knowledge is bitemporal and requires distinguishing valid time (when a norm produces legal effect) from transaction time, the temporal QA survey lists recency bias as a documented cause of retrieval failure, and TempFinRAG enforces a hard as-of boundary rather than a graded decay. Elapsed-time decay is therefore not an acceptable substitute for valid-time membership in point-in-time legal queries. The remaining empirical question - how much valid-time gating actually changes retrieval and answer outcomes on amended statutes - is now tracked by the experimental uncertainties U006 and U007.",
+  "paper_ids": [
+    "doi:10.3390/sym18091498",
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.2139/ssrn.7174868",
+    "arxiv:2505.20243",
+    "arxiv:2606.09724"
+  ],
+  "supporting_paper_ids": [
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.1109/iri69576.2026.00090",
+    "arxiv:2606.09724",
+    "arxiv:2505.20243",
+    "doi:10.3390/sym18091498"
+  ],
+  "contradicting_paper_ids": [
+    "doi:10.3390/sym18091498"
+  ],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T04:18:33.816482Z",
+  "updated_at": "2026-09-30T04:34:29.562785Z"
+}

@@ -1,0 +1,52 @@
+{
+  "id": "C036",
+  "statement": "Sufficiency assessment for U017: a benchmark-and-measurement contribution is an established form in this area, but the precedents were accepted because each delivered a diagnostic result that changed conclusions - a roughly 15-point accuracy drop under context shifts, a counter-intuitive reversal where BM25 beats hybrid on multihop regulatory queries, legal overconfidence under perturbed citations - not merely because they built a resource. The legal-retrieval review names the gap and its detection criterion yet reports no empirical comparison, so the measurement is genuinely missing, but the gap being named means the write-up cannot rest on identifying it. The contribution is therefore sufficient only if Stage 0/Stage 1 yields a non-obvious quantitative result: a material version-contamination rate for the strongest published system, a decay-versus-validity divergence on non-latest-authoritative queries, or evidence that version-level scoring reorders systems that established metrics rank differently. That is contingent on the planned measurements and cannot be settled from the literature.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "an open-retrieval QA dataset where systems must produce the correct answer to a question given the temporal or geographical context",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2109.06157",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "a roughly 15 point drop in accuracy",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.2139/ssrn.7087840",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "BM25 outperforms hybrid on multihop queries",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 3",
+      "quote": "The paper does not report a benchmarked empirical comparison of existing systems; its contribution is formal and diagnostic",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [
+    "sufficiency",
+    "contribution",
+    "diagnostic result",
+    "contingent"
+  ],
+  "recorded_at": "2026-09-30T04:41:11.559690Z"
+}

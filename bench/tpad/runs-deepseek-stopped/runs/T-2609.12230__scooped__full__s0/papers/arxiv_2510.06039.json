@@ -1,0 +1,38 @@
+{
+  "id": "arxiv:2510.06039",
+  "title": "A Large-Scale Chinese Knowledge Graph-Text Alignment Dataset for Benchmarking Knowledge-Grounded LLMs",
+  "authors": [
+    "Chengwei Wu",
+    "Xingrui Zhuo",
+    "Mingyang Gao",
+    "Xinghe Cheng",
+    "Zhichao Yan",
+    "Jiapu Wang"
+  ],
+  "year": 2025,
+  "published": "2025-10-07",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2510.06039",
+  "pdf_url": "https://arxiv.org/pdf/2510.06039v2",
+  "abstract": "Reliable evaluation of knowledge-grounded Large Language Models (LLMs) in Chinese requires resources that explicitly align Chinese-language text with verifiable Knowledge Graph (KG) facts. Yet existing Chinese benchmarks primarily assess general language understanding and offer limited support for structured reasoning under Chinese-specific linguistic phenomena. We introduce the Chinese Data-Text Pair (CDTP), a large-scale Chinese KG-text alignment dataset comprising more than 7 million aligned instances across four broad domains. Each instance pairs a Chinese-language text with one or more textually supported KG triples, totaling 15 million triples. A multi-stage construction pipeline combining alignment filtering, manual verification, and external evidence validation improves semantic consistency and factual reliability. CDTP supports Knowledge Graph Completion (KGC), Question Answering (QA), and Triple-to-Text Generation (T2T). Across all three tasks, the benchmark design accounts for Chinese-specific phenomena, including polysemy, word-segmentation ambiguity, and context-dependent entity interpretation, enabling the evaluation of structured reasoning, ambiguity-aware factual understanding, and knowledge-grounded generation. Experiments with diverse open-source and proprietary LLMs show that model scale alone does not guarantee reliable performance on these Chinese knowledge-intensive tasks, whereas supervised fine-tuning on CDTP consistently improves in-domain performance and out-of-distribution robustness. The publicly accessible dataset, code, and evaluation protocols provide a reusable resource for developing and evaluating knowledge-grounded LLMs in Chinese.",
+  "doi": null,
+  "arxiv_id": "2510.06039",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:00:04.033650Z",
+  "relevance": 0.4167,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "fine-tuning large language models on knowledge graph triples with context passage multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

@@ -1,0 +1,42 @@
+{
+  "paper_id": "doi:10.3390/computers15080471",
+  "relevance_tier": "high",
+  "problem": "Standard RAG over legal corpora does not guarantee that retrieved sources are legally valid, up to date, applicable to the correct jurisdiction, or safe, so answers may hallucinate authority or rely on outdated rules.",
+  "method": "Use a legal ontology as an active control layer: pre-retrieval filtering of legal sources by jurisdiction, topic, lifecycle status and temporal validity; post-generation validation of evidential support, citation validity, jurisdictional boundaries and safety/privacy; audit-trail logging.",
+  "key_assumptions": [
+    "A legal ontology can act as an active control layer over retrieval rather than only as background knowledge",
+    "Jurisdiction, topic, lifecycle status and temporal validity are computable properties of legal sources"
+  ],
+  "main_contribution": "An ontology-governed legal RAG architecture that filters sources by jurisdiction, topic, lifecycle status and temporal validity before retrieval, validates answers against approved, valid legal sources after generation, and records an audit trail.",
+  "datasets": [
+    "curated legal document corpus (details not stated in abstract)"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "not stated in abstract",
+  "limitations": [
+    "Full text not accessible (publisher returned HTTP 403); judged from abstract only",
+    "Ontology- and rule-based governance rather than a scored temporal relevance term",
+    "No empirical metrics or benchmark reported in the abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.75,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "Implements validity as a hard ontology-driven admission filter plus post-hoc rule validation for governance and audit, not as a graded temporal relevance term combined with semantic similarity, and it targets trustworthy/auditable legal QA rather than measuring time-specific retrieval accuracy on amended versions.",
+    "basis": "Abstract states that sources are filtered by 'temporal validity' before retrieval as an active control layer, which overlaps with the proposal's legality/validity component and its pluggable-layer framing; however it is ontology/rule based and reports no retrieval scoring or benchmark."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T04:33:39.104012Z"
+}

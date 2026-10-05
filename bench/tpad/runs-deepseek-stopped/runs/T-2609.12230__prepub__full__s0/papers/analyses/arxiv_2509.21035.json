@@ -1,0 +1,52 @@
+{
+  "paper_id": "arxiv:2509.21035",
+  "relevance_tier": "high",
+  "problem": "Multi-hop KGQA systems must balance answer accuracy against strict latency and token-cost targets while preserving provenance; static k-hop expansion and 'think-longer' prompting over-retrieve, inflate context, and give unpredictable runtime.",
+  "method": "CLAUSE treats context construction as a sequential decision process over the KG and learns it with Lagrangian-Constrained Multi-Agent PPO (LC-MAPPO). Three agents - Subgraph Architect, Path Navigator, Context Curator - jointly decide what to expand, which paths to follow/backtrack, which evidence to keep, and when to stop, subject to per-query budgets on edge edits, interaction steps, and selected tokens; budgets/prices are exposed at inference without retraining.",
+  "key_assumptions": [
+    "Context construction can be modeled as an MDP over the symbolic KG state.",
+    "Compact, provenance-preserving context is better than large fixed-k-hop expansion.",
+    "Latency and token cost can be exposed as per-query budgets/prices.",
+    "Compact neural scorers can prioritize entities, relations, and neighborhoods."
+  ],
+  "main_contribution": "An agentic neuro-symbolic KGQA framework with the LC-MAPPO constrained multi-agent RL algorithm that jointly optimizes subgraph construction, path discovery, and evidence curation under per-query resource budgets, yielding compact contexts and predictable runtime.",
+  "datasets": [
+    "HotpotQA",
+    "MetaQA",
+    "FactKG"
+  ],
+  "benchmarks": [
+    "HotpotQA",
+    "MetaQA",
+    "FactKG"
+  ],
+  "baselines": [
+    "GraphRAG (strongest RAG baseline)",
+    "RAG"
+  ],
+  "metrics": [
+    "EM@1",
+    "end-to-end latency",
+    "edge growth",
+    "selected-token budget"
+  ],
+  "results": "Across HotpotQA, MetaQA, and FactKG, CLAUSE yields higher EM@1 while reducing subgraph growth and end-to-end latency at equal or lower token budgets. On MetaQA-2-hop, relative to GraphRAG, it achieves +39.3 EM@1 with 18.6% lower latency and 40.9% lower edge growth.",
+  "limitations": [
+    "Reports only MetaQA-2-hop headline improvement; deeper-hop behavior not emphasized in the abstract.",
+    "Optimizes context selection, not the language model's training supervision.",
+    "Requires an RL training pipeline for the agent policies."
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.85,
+    "method_overlap": 0.6,
+    "evaluation_overlap": 0.7,
+    "conceptual_difference": "CLAUSE trains the context-selection policy (agents) with constrained RL under latency/token budgets; it does not change the reader model's training supervision, does not compare triple-only vs context-enriched supervision, has no adaptive one-hop repair loop, and does not train only on shallow hops to test transfer to deeper hops. The proposed idea is training-time supervision enrichment rather than inference-time context engineering.",
+    "basis": "Problem overlap high: both are about constructing a local subgraph of KG triples as context for multi-hop QA. Method overlap moderate-high: both use RL and subgraph construction, but the RL target differs (context policy vs the answering model) and CLAUSE is inference-time. Evaluation overlap high: shared MetaQA benchmark, but CLAUSE reports EM@1 under token budgets, whereas the idea compares training regimes and hop depths."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:09:51.274839Z"
+}

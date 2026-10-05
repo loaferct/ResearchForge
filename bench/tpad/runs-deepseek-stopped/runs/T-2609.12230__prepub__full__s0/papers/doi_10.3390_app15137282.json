@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.3390/app15137282",
+  "title": "GLR: Graph Chain-of-Thought with LoRA Fine-Tuning and Confidence Ranking for Knowledge Graph Completion",
+  "authors": [
+    "Yifei Chen",
+    "Xuliang Duan",
+    "Yan Guo"
+  ],
+  "year": 2025,
+  "published": "2025-06-27",
+  "venue": "Applied Sciences",
+  "url": "https://doi.org/10.3390/app15137282",
+  "pdf_url": null,
+  "abstract": "In knowledge graph construction, missing facts often lead to incomplete structures, thereby limiting the performance of downstream applications. Although recent knowledge graph completion (KGC) methods based on representation learning have achieved notable progress, they still suffer from two fundamental limitations, namely the lack of structured reasoning capabilities and the inability to assess the confidence of their predictions, which often results in unreliable outputs. We propose the GLR framework, which integrates Graph Chain-of-Thought (Graph-CoT) reasoning, LoRA fine-tuning, and the P(True)-based confidence evaluation mechanism. In the KGC task, this approach effectively enhances the reasoning ability and prediction reliability of large language models (LLMs). Specifically, Graph-CoT introduces local subgraph structures to guide LLMs in performing graph-constrained, step-wise reasoning, improving their ability to model multi-hop relational patterns. Complementing this, LoRA-based fine-tuning enables efficient adaptation of LLMs to the KGC scenario with minimal computational overhead, further enhancing the model’s capability for graph-structured reasoning. Moreover, the P(True) mechanism quantifies the reliability of candidate entities, improving the robustness of ranking and the controllability of outputs, thereby enhancing the credibility and interpretability of model predictions in knowledge reasoning tasks. We conducted systematic experiments on the standard KGC datasets FB15K-237, WN18RR, and UMLS, which demonstrate the effectiveness and robustness of the GLR framework. Notably, GLR achieves a Mean Reciprocal Rank (MRR) of 0.507 on FB15K-237, marking a 6.8% improvement over the best recent instruction-tuned method, DIFT combined with CoLE (MRR = 0.439). GLR also maintains significant performance advantages on WN18RR and UMLS, verifying its effectiveness in enhancing both the structured reasoning capabilities and the prediction reliability of LLMs for KGC tasks. These results indicate that GLR offers a unified and scalable solution to enhance structure-aware reasoning and output reliability of LLMs in KGC.",
+  "doi": "10.3390/app15137282",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 1,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T05:00:08.015312Z",
+  "relevance": 0.5556,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "knowledge graph completion triple context passage fine-tuning language model"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

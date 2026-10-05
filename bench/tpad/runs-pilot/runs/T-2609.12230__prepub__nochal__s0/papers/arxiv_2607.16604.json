@@ -1,0 +1,36 @@
+{
+  "id": "arxiv:2607.16604",
+  "title": "Controlled Evaluation of Graph and Multimodal Augmentation in RAG for Document Question Answering",
+  "authors": [
+    "Sokipriala Jonah",
+    "Opeoluwa Akinseloyin",
+    "Michael Ajao-Olarinoye",
+    "Abiola Babatunde"
+  ],
+  "year": 2026,
+  "published": "2026-07-18",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2607.16604",
+  "pdf_url": "https://arxiv.org/pdf/2607.16604v2",
+  "abstract": "Graph and multimodal extensions to retrieval-augmented generation (RAG) are often evaluated end to end, making it difficult to isolate whether gains arise from retrieval, prompt-side context, visual access, generator capability, or benchmark construction. We present a stage- and evidence-controlled evaluation across five RAG configurations, four multimodal generators, and three document corpora. The same LLM-extracted knowledge graph is used either after retrieval as provenance-constrained triple injection (+KG) or during retrieval as entity-bridged passage expansion (+KGret). Prompt-side graph injection yields no consistent accuracy improvement and generally reduces faithfulness. In contrast, +KGret increases gold-evidence completeness from 0.22 to 0.46 on HotpotQA bridge questions and from 0.50 to 0.72 on SPIQA cross-paper questions, improving accuracy for every generator on both evidence-deficient sets while having little effect on retrieval-complete controls. For visual question answering, matched caption-answerable and verified pixel-only protocols show that apparent multimodal gains are sensitive to textual leakage. Programmatic checks reveal answer recoverability from captions, corpus text, and model responses generated without complete gold evidence. Accuracy on incomplete-evidence questions reaches 0.35--0.71 on widely disseminated corpora, compared with 0 on PubLayNet, indicating that raw accuracy can overstate retrieval-attributable performance. These results show that graph augmentation is most effective when it changes retrieval under evidence deficits, while multimodal evaluation requires explicit verification that answers are unavailable through text.",
+  "doi": null,
+  "arxiv_id": "2607.16604",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T07:32:47.346287Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "extracting triples from passage for question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

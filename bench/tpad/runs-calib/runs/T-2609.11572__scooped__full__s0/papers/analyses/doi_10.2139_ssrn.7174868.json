@@ -1,0 +1,47 @@
+{
+  "paper_id": "doi:10.2139/ssrn.7174868",
+  "relevance_tier": "high",
+  "problem": "Dense retrieval systems match cross-lingual semantics well but fail systematically on queries with hard temporal constraints (named 'temporal-semantic misalignment'), and this persists after fine-tuning on temporal data, suggesting a structural rather than data-driven limitation.",
+  "method": "A three-signal hybrid retrieval framework combining BM25 lexical matching, dense semantic embeddings, and exponential temporal decay; benchmark construction; evaluation of six retrieval architectures; and a fine-tuning study on 7,000+ temporal training examples.",
+  "key_assumptions": [
+    "Queries carry a hard temporal constraint expressible as a target date",
+    "Documents carry usable timestamps",
+    "Temporal relevance decreases with elapsed time (exponential decay as the temporal signal)"
+  ],
+  "main_contribution": "A trilingual temporal retrieval benchmark (TemporalESG) and a three-signal hybrid framework showing that hard temporal constraints require explicit architectural solutions beyond representation learning.",
+  "datasets": [
+    "40,814 ESG disclosure documents from 43 multinational corporations, 11 years (2015-2025), Vietnamese/English/Arabic",
+    "970 validated temporal queries"
+  ],
+  "benchmarks": [
+    "TemporalESG"
+  ],
+  "baselines": [
+    "Six retrieval architectures (including BM25 sparse, dense, and hybrid)",
+    "Fine-tuned temporal dense retrieval"
+  ],
+  "metrics": [
+    "Temporal accuracy",
+    "Entity precision",
+    "Recall"
+  ],
+  "results": "State-of-the-art dense retrieval reaches only 65.1% temporal accuracy; fine-tuning on 7,000+ temporal examples yields marginal recall gains while degrading top-ranked precision; the three-signal hybrid reaches 99.8% temporal accuracy and 50.8% entity precision across all three languages with cross-validated generalization.",
+  "limitations": [
+    "Full text not open access; method details beyond the abstract unknown",
+    "Domain is ESG disclosure retrieval rather than amended statutes/regulations",
+    "Temporal signal is exponential decay (recency), not supersession/validity of near-duplicate successive versions"
+  ],
+  "future_work": [
+    "The abstract asserts the finding 'extends to any domain where temporal precision is non-negotiable, including legal, medical, and regulatory retrieval', implying legal/regulatory transfer as future work"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.9,
+    "method_overlap": 0.85,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "This is a fixed three-signal hybrid (BM25 + dense + exponential temporal decay) evaluated on multilingual ESG disclosures, not a retrieval-agnostic temporal re-ranking term attached to an arbitrary base retriever, and it does not model supersession or validity intervals of near-duplicate successive document versions; its temporal signal equates recency with correctness. Its own framing ('extends to legal, medical, regulatory') leaves exactly the proposed legal/regulatory transfer open.",
+    "basis": "Abstract explicitly describes lexical+dense+exponential-temporal-decay combination, a temporal benchmark, and temporal-accuracy metrics; the proposal's distinctive elements (retrieval-agnostic plug-in, amended statutory versions with overlapping wording) are absent from the abstract."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T04:28:39.391382Z"
+}

@@ -1,0 +1,75 @@
+{
+  "id": "E006",
+  "title": "Corpus census and clustered power analysis for the recency-decoupled non-latest-gold stratum",
+  "research_question": "Can a public consolidated legal corpus supply enough clause-level version chains with documented validity dates to populate the recency-decoupled, non-latest-gold stratum with sufficient statistical power to compare valid-time gating against recency decay?",
+  "hypothesis": "A public consolidated legal corpus supplies enough clause-level version chains with documented per-version validity dates that the recency-decoupled stratum can be populated with several hundred non-latest-gold queries, and a clustered power analysis shows the design can detect a practically meaningful contamination difference between valid-time gating and recency decay.",
+  "proposed_method": "Systematically census candidate public consolidated legal corpora. For each, extract clause-level version chains (a clause identified across successive consolidations), count how many have documented validity intervals per version, and measure inter-version lexical overlap and embedding similarity to size the near-duplicate regime. For a sample of chains, hand-verify validity dates and agreement with machine-readable metadata, and record provenance. Then compute extractable query counts under the design (multiple sampled target dates per version window) and run a clustered power analysis (queries nested within clauses) to obtain the minimal detectable difference in contamination between recency decay and valid-time gating for several intra-cluster correlations, plus the natural-prevalence-weighted estimate implied by the 16.5-30% prevalence reference points. Output a go/no-go decision with pre-registered thresholds.",
+  "baselines": [
+    "Not a model comparison; the comparators are design configurations: per-clause single query vs multiple sampled target dates per clause, and independent vs clustered power assumptions",
+    "Reference points for stratum size: the 16.5% context-dependent prevalence and the up-to-30% answer-changing prevalence from the precedent dataset, used to compute natural-prevalence-weighted rates and the oversampling factor needed"
+  ],
+  "datasets": [
+    "Candidate public corpora to census: consolidated EU legislation with European Legislation Identifier metadata (entry into force and applicability dates), at least one national consolidated statute or regulation database, and a regulatory amendment register or circular series",
+    "Outputs: a census table of corpora by clause-level version chains, versions per chain, chains with documented validity intervals, inter-version similarity distribution, and extractable query counts",
+    "Not used: the static RMA regulatory corpus (no versioning), financial filings and ESG disclosures (different amendment and publication regimes)"
+  ],
+  "workloads": [
+    "Census across candidate corpora at clause granularity (article/paragraph/sub-item level)",
+    "Inter-version similarity measurement to define the near-duplicate regime",
+    "Manual verification sample for validity-date accuracy, reported as agreement",
+    "Query-count projection: sampled target dates per validity window per chain",
+    "Clustered power analysis over queries nested within clauses, for several intra-cluster correlations"
+  ],
+  "hardware": "CPU-only corpus processing: downloading and parsing public legal documents, clause extraction, date parsing and BM25/dense similarity computation. No GPU and no LLM required, though a small embedding model (BAAI/bge-small-en-v1.5) is used for the similarity distribution.",
+  "software_environment": "",
+  "metrics": [
+    "Number of clause-level version chains per corpus, and versions per chain",
+    "Number of chains with both a start and end validity date documented, and the fraction of these resolvable at clause rather than document granularity",
+    "Number of target dates sampleable per chain, and total achievable non-latest-gold queries",
+    "Inter-version lexical and embedding similarity distribution, and the size of the near-duplicate subset under a pre-registered threshold",
+    "Natural prevalence estimate of non-latest-authoritative questions and the required oversampling factor",
+    "Minimal detectable contamination difference at 80% power under clustered designs, for several intra-cluster correlations",
+    "Metadata provenance and manual-verification agreement rate on a sampled subset"
+  ],
+  "ablations": [
+    "Candidate corpus source: EU consolidated legislation, a national consolidated statute database, a regulatory amendment register, or a combination",
+    "Clause granularity: article/paragraph level vs sub-item level, which changes the number of extractable chains",
+    "Validity-date source: machine-readable identifier metadata vs parsed amendment tables vs manual verification",
+    "Similarity threshold defining the near-duplicate subset",
+    "Clustering assumptions in the power calculation: queries independent vs clustered within clause (intra-cluster correlation 0.1, 0.3, 0.5)"
+  ],
+  "controls": [
+    "Census counted with the same extraction rules across corpora",
+    "Validity dates verified manually on a sample of chains with agreement reported",
+    "Similarity measured with fixed lexical and embedding models across corpora",
+    "Power analysis parameters pre-registered before counting, with the minimal detectable effect reported rather than chosen post hoc",
+    "Every count reported with the extraction rule that produced it so it can be reproduced"
+  ],
+  "confounders_addressed": [
+    "Natural prevalence may be low, making an unweighted oversampled rate misleading - addressed by reporting weighted and unweighted estimates and the oversampling factor",
+    "Queries are not independent because several may come from one clause - addressed by clustered power calculations and by reporting the number of clauses as the effective sample-size driver",
+    "Corpus size may be inflated by documents rather than clauses - addressed by counting clause-level version chains, not documents",
+    "Near-duplicate regime may be empty if amendments rewrite heavily - addressed by measuring inter-version similarity before query construction",
+    "Metadata may exist at document level only - addressed by reporting the fraction of chains resolvable at clause granularity and treating document-level-only chains as unusable rather than substituting them"
+  ],
+  "expected_outcomes": "At least one candidate corpus supplies enough clause-level version chains to populate the non-latest-gold and near-duplicate strata - as a working target, several hundred chains yielding at least a few hundred non-latest-gold queries - and the clustered power calculation shows a minimal detectable contamination difference small enough to be interesting (roughly 5 percentage points or better at 80% power). If instead only tens of chains qualify, the census will show that the recency-decoupled comparison must be narrowed or the benchmark declared infeasible at clause granularity.",
+  "failure_conditions": [
+    "Fewer than roughly 40 clauses with two or more versions and documented per-version validity dates can be extracted from every candidate corpus - the design is underpowered and the clause-granularity benchmark is infeasible",
+    "Metadata exists only at document granularity, so version chains cannot be resolved to clauses",
+    "Inter-version similarity is low in all extractable chains, leaving the near-duplicate regime empty",
+    "The clustered minimal detectable effect exceeds any plausible contamination difference (for example above 15 percentage points), so even a successful census cannot yield an informative comparison",
+    "Chains with documented dates are concentrated in one jurisdiction or subject area such that the query set cannot be stratified as designed"
+  ],
+  "reproducibility_notes": "No execution spec is attached. The census is a corpus-analysis task rather than a run of existing code: it requires downloading public legal corpora and writing extraction and date-parsing code, and no public implementation of a clause-versioned legal benchmark was found to extend (the adjacent RMA repository is an interactive notebook over a static, non-versioned corpus). To make the census reproducible: record the corpus snapshot date and the exact query used to retrieve each document, publish the extraction rules and the chain-identification procedure, report the manual verification agreement rate, pre-register the similarity threshold and the power-analysis parameters, and release the census table along with the scripts so the counts can be recomputed.",
+  "related_modification_id": "M005",
+  "related_paper_ids": [
+    "arxiv:2109.06157",
+    "arxiv:2606.09724",
+    "arxiv:2608.21409",
+    "doi:10.3390/sym18091498",
+    "doi:10.2139/ssrn.7087840"
+  ],
+  "execution": null,
+  "status": "planned",
+  "recorded_at": "2026-09-30T04:42:09.474327Z"
+}

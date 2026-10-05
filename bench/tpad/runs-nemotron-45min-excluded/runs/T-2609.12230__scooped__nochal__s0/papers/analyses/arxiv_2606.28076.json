@@ -1,0 +1,46 @@
+{
+  "paper_id": "arxiv:2606.28076",
+  "relevance_tier": "high",
+  "problem": "Existing multi-hop KGQA methods relying on topic-centered expansion suffer from rapidly growing search space with noisy mixed-type paths and retrieved paths that may fail to satisfy semantic constraints of complex questions.",
+  "method": "Proposes OPI, an ontology-guided evidence path inference framework: introduces a relation-centric ontology graph to capture head-tail type constraints, uses bidirectional retrieval (mapping predicted answer type to compatible final-hop relations and combining topic-side prefix expansion with answer-side final-hop matching), and adopts iterative refinement to reassess retrieved paths and candidate answers under question context, filtering type-compatible but question-irrelevant evidence.",
+  "key_assumptions": [
+    "A relation-centric ontology graph can effectively capture head-tail type constraints of relations.",
+    "Bidirectional retrieval reduces noisy expansion while preserving relevant paths.",
+    "Iterative refinement under question context improves answer reliability."
+  ],
+  "main_contribution": "OPI framework that reduces search space and improves Hit@1/F1 by 4.6/5.0 on WebQSP and 8.9/3.3 on CWQ over strongest prior results, achieving near-saturated Hit@1 on MetaQA with retrieval module alone.",
+  "datasets": [
+    "WebQSP",
+    "CWQ",
+    "MetaQA"
+  ],
+  "benchmarks": [
+    "WebQSP",
+    "CWQ",
+    "MetaQA"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "Hit@1",
+    "F1"
+  ],
+  "results": "[\"Hit@1/F1 improvements: +4.6/+5.0 on WebQSP, +8.9/+3.3 on CWQ; near-saturated Hit@1 on MetaQA\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.85,
+    "method_overlap": 0.3,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "OPI uses ontology graphs and bidirectional retrieval with iterative refinement, while the idea enriches target triples with local context subgraphs from source passages, adds an adaptive repair loop for factual reliability, and applies RL transfer from lower-hop QA.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:51:58.692767Z"
+}

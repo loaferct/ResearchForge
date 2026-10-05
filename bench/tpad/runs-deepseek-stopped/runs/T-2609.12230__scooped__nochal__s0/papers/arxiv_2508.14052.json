@@ -1,0 +1,43 @@
+{
+  "id": "arxiv:2508.14052",
+  "title": "FinAgentBench: A Benchmark Dataset for Agentic Retrieval in Financial Question Answering",
+  "authors": [
+    "Chanyeol Choi",
+    "Jihoon Kwon",
+    "Alejandro Lopez-Lira",
+    "Chaewoon Kim",
+    "Minjae Kim",
+    "Juneha Hwang",
+    "Jaeseon Ha",
+    "Hojun Choi",
+    "Suyeol Yun",
+    "Yongjin Kim",
+    "Yongjae Lee"
+  ],
+  "year": 2025,
+  "published": "2025-08-07",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2508.14052",
+  "pdf_url": "https://arxiv.org/pdf/2508.14052v4",
+  "abstract": "Accurate information retrieval (IR) is critical in the financial domain, where investors must identify relevant information from large collections of documents. Traditional IR methods -- whether sparse or dense -- often fall short in retrieval accuracy, as it requires not only capturing semantic similarity but also performing fine-grained reasoning over document structure and domain-specific knowledge. Recent advances in large language models (LLMs) have opened up new opportunities for retrieval with multi-step reasoning, where the model ranks passages through iterative reasoning about which information is most relevant to a given query. However, there exists no benchmark to evaluate such capabilities in the financial domain. To address this gap, we introduce FinAgentBench, the first large-scale benchmark for evaluating retrieval with multi-step reasoning in finance -- a setting we term agentic retrieval. The benchmark consists of 26K expert-annotated examples on S&P-500 listed firms and assesses whether LLM agents can (1) identify the most relevant document type among candidates, and (2) pinpoint the key passage within the selected document. Our evaluation framework explicitly separates these two reasoning steps to address context limitations. This design enables to provide a quantitative basis for understanding retrieval-centric LLM behavior in finance. We evaluate a suite of state-of-the-art models and further demonstrated how targeted fine-tuning can significantly improve agentic retrieval performance. Our benchmark provides a foundation for studying retrieval-centric LLM behavior in complex, domain-specific tasks for finance.",
+  "doi": null,
+  "arxiv_id": "2508.14052",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:16:41.511896Z",
+  "relevance": 0.1923,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "fine-tuning language model on retrieved context documents improves open-domain question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

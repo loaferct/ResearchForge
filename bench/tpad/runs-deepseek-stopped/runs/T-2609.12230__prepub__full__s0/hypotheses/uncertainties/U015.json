@@ -1,0 +1,37 @@
+{
+  "id": "U015",
+  "question": "Does the idea reduce to established path-based supervision once the answer chain is recognized as the effective ingredient, leaving no novel contribution from peripheral context?",
+  "description": "If the defensible part of H1 is that supervision containing the full reasoning chain beats isolated-triple supervision (C015), then the mechanism coincides with established path-based reasoning supervision: GreaseLM/MHGRN unifies path-based reasoning over subgraphs, and Variational Reasoning already trains multi-hop KGQA over latent KG paths. The remaining distinct claim is that peripheral same-passage triples (not on the answer chain) add value - precisely the component the controlled evidence finds nearly inert at inference.",
+  "category": "overlap",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "COMPARE",
+    "SEARCH",
+    "REFINE"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "The refinement in C015 relocates the idea's value to the reasoning chain, which prior work (MHGRN, Variational Reasoning) already supervises, potentially shrinking the contribution to the peripheral-context component that the closest controlled evidence reports as nearly inert.",
+  "resolution": "Largely resolved in the affirmative: the idea's effective component does reduce to established prior art. Supervision/inductive bias over the reasoning chain is already provided by path-based reasoning methods (MHGRN unifies path-based reasoning over KG subgraphs; Variational Reasoning learns multi-hop reasoning over latent KG paths), so 'expose the chain' is not a novel contribution. The repair loop additionally reduces to established process-supervision self-bootstrapping (KnowTrace) and generic iterative refinement (Self-Refine). What does not reduce is the residual question of whether peripheral (non-chain) same-passage triples contribute anything as training supervision - but the closest controlled evidence finds non-chain triples nearly inert at inference (+0.003 F1). So no novel contribution is demonstrated; the surviving claim is at most a boundary/negative result from one matched-budget training test, which is exactly what the revised modification M001 targets (G003).",
+  "paper_ids": [
+    "doi:10.18653/v1/2020.emnlp-main.99",
+    "doi:10.1609/aaai.v32i1.12057",
+    "arxiv:2609.10237",
+    "arxiv:2505.20245"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.10237",
+    "doi:10.18653/v1/2020.emnlp-main.99",
+    "doi:10.1609/aaai.v32i1.12057"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "CRITIQUE",
+  "created_at": "2026-09-30T05:17:32.456641Z",
+  "updated_at": "2026-09-30T05:29:20.127397Z"
+}

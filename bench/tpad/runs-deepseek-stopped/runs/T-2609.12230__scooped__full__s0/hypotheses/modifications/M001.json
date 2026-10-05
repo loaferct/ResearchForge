@@ -1,0 +1,30 @@
+{
+  "id": "M001",
+  "title": "Matched-supervision-volume control isolating passage locality from added context volume",
+  "description": "Add a supervision-volume control arm to the two-regime comparison: keep the isolated-triple (KG-grounded) instances but pad each with an equal token budget of distractor triples - one variant using random triples from elsewhere in the KG, one using semantically related but non-co-occurring triples chosen so they are not from the same source passage. Compare isolated, volume-matched, and same-passage context arms at matched tokens, matched examples, and matched gradient steps, then attribute any remaining gap to passage locality rather than to more training signal.",
+  "why_differs": "The closest work compares KG-grounded vs CG-grounded supervision but does not report a matched-token or matched-example control between those two arms (it size-matches only the two disease KGs against each other); adding a volume-matched and relatedness-matched padding arm distinguishes 'same-passage context' from 'more tokens' and from 'topically related tokens', which no retrieved work does.",
+  "technical_mechanism": "For each target triple, construct three training variants with equal token counts: (a) target triple only plus neutral filler text; (b) target triple plus k randomly sampled triples from other passages in the same KG; (c) target triple plus the k same-source-chunk triples used by the context graph. Train identical SFT runs with a single seed schedule and identical optimizer steps, then evaluate per hop depth. Token counts are verified programmatically before training, and the distractor triples in (b) are additionally tested for semantic relatedness to control for a 'relatedness' rather than 'locality' explanation.",
+  "expected_benefit": "Converts the central causal claim from 'context helps' to a falsifiable statement about passage locality at fixed supervision volume, and makes a null or reduced effect interpretable and publishable rather than a failure.",
+  "potential_novelty": "Moderate and hedged: no retrieved work reports a token-matched or example-matched comparison between context-augmented and isolated-triple LLM supervision (G001), but volume controls are standard experimental practice, so novelty lies in the finding rather than the technique.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "Only the training-instance construction changes; no new model, objective, or infrastructure is needed, and the same KG/QA generator is reused.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Requires additional data-construction work (selecting distractors, verifying token budgets) and at least three training arms per hop configuration, each with multiple seeds; the pipeline itself (SFT on the same backbone and QA items) is unchanged from the existing recipe.",
+  "main_risk": "Padded distractors may themselves add useful signal or noise that shrinks or reverses the gap, making the comparison sensitive to how padding is chosen; if so, the result is informative but the 'context' effect may be partly explained as generic lexical/structural exposure.",
+  "required_baselines": [
+    "KG-grounded (isolated triple/path) SFT at matched tokens",
+    "CG-grounded SFT at matched tokens",
+    "Volume-matched distractor padding (random triples)",
+    "Semantically related but non-passage-local padding"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2406.09994",
+    "arxiv:2202.13296"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T05:20:48.706972Z"
+}

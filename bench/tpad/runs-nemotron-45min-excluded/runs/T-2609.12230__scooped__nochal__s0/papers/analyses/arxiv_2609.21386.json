@@ -1,0 +1,41 @@
+{
+  "paper_id": "arxiv:2609.21386",
+  "relevance_tier": "medium",
+  "problem": "Existing video benchmarks are limited to simple scene-level queries or global summaries, lacking evaluation of multi-hop multimodal reasoning needed for real-world video understanding.",
+  "method": "Introduces AgentVidBench, a multi-hop video question answering benchmark that provides step-by-step solution traces to support trajectory evaluation, assessing whether agents acquire evidence needed to justify answers.",
+  "key_assumptions": [
+    "Step-by-step solution traces can effectively evaluate multimodal reasoning trajectories.",
+    "Integrating MLLMs into agentic workflows improves performance on complex video understanding."
+  ],
+  "main_contribution": "AgentVidBench benchmark and datasets/code for evaluating MLLM agents on spatial, temporal, and causal reasoning in video understanding, showing that agentic workflows improve performance over single-turn MLLMs.",
+  "datasets": [
+    "AgentVidBench benchmark dataset"
+  ],
+  "benchmarks": [
+    "AgentVidBench"
+  ],
+  "baselines": [
+    "simple agentic strategy as competitive baseline"
+  ],
+  "metrics": [
+    "accuracy",
+    "trajectory scores"
+  ],
+  "results": "[\"Single-turn MLLM performance limited; integrating into agentic workflows improves accuracy and trajectory scores.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"Code and datasets available at https://github.com/krafton-ai/agentvidbench and https://huggingface.co/datasets/agentvidbench/agentvidbench.\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.2,
+    "method_overlap": 0.05,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "AgentVidBench focuses on video QA benchmarking with step-by-step traces, while the idea targets KGQA via context subgraph enrichment, adaptive repair loop, and RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T06:19:36.922664Z"
+}

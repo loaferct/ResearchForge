@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2601.08160",
+  "title": "SwiftMem: Fast Agentic Memory via Query-aware Indexing",
+  "authors": [
+    "Anxin Tian",
+    "Yiming Li",
+    "Xing Li",
+    "Hui-Ling Zhen",
+    "Lei Chen",
+    "Xianzhi Yu",
+    "Zhenhua Dong",
+    "Mingxuan Yuan"
+  ],
+  "year": 2026,
+  "published": "2026-01-13",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2601.08160",
+  "pdf_url": "https://arxiv.org/pdf/2601.08160v2",
+  "abstract": "Agentic memory systems have become critical for enabling LLM agents to maintain long-term context and retrieve relevant information efficiently. However, existing memory frameworks often perform query-agnostic retrieval over the full memory embedding space even when their storage layer is backed by efficient vector indexes such as HNSW. This full-scope retrieval path creates latency bottlenecks as memory grows, hindering real-time agent interactions. We propose SwiftMem, a query-aware agentic memory system that narrows retrieval to query-relevant memory subsets through specialized indexing over temporal and semantic dimensions. Our temporal index enables logarithmic-time range queries for time-sensitive retrieval, while the semantic DAG-Tag index maps queries to relevant topics through hierarchical tag structures. To address memory fragmentation during growth, we introduce an embedding-tag co-consolidation mechanism that reorganizes storage based on semantic clusters to improve locality. Across LoCoMo and LongMemEval$_S$, SwiftMem reaches 10.8/12.7 ms search latency while maintaining competitive LLM-judge accuracy against strong HNSW-backed memory systems. On the calibrated benchmark, LoCoMo Refined, SwiftMem remains close to the top LLM-judge score while preserving an order-of-magnitude latency advantage.",
+  "doi": null,
+  "arxiv_id": "2601.08160",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T09:39:32.506145Z",
+  "relevance": 0.0667,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "retriever agnostic temporal relevance"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

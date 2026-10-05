@@ -1,0 +1,31 @@
+{
+  "id": "M004",
+  "title": "Cross-corpus portability with open-ended evaluation and a head-to-head against intermediate-step supervision",
+  "description": "Move the evaluation off synthetic disease-specific multiple-choice items: construct the context-graph supervision on a text-attributed corpus with triple-to-passage provenance (e.g., an extraction pipeline over an open corpus, or a KG-text alignment resource such as CDTP), ask open-ended multi-hop questions, and score with exact match/F1 per hop depth. Include a head-to-head comparison against the strongest alternative answer to the same missing-supervision problem - learned intermediate-step supervision (teacher-student intermediate entity distributions) - at matched budget.",
+  "why_differs": "The closest work validates only on two GraphMERT-extracted disease-specific KGs with synthetically generated multiple-choice items; this modification changes corpus, question format, and metric, and pits context-triple supervision against the alternative supervision-enrichment mechanism from the literature rather than only against its own KG-only baseline.",
+  "technical_mechanism": "Retain the passage identifier for every extracted triple so that context graphs can be rebuilt for any hop path; generate multi-hop questions whose supporting path spans at least three hops; train the same backbone under the supervision arms; evaluate with per-hop exact match and F1, plus a hop-depth breakdown to test whether any context advantage grows with depth outside the MCQ setting.",
+  "expected_benefit": "Tests whether the mechanism is domain-general and metric-robust rather than an artifact of generated domain MCQs, and separates two competing remedies for missing multi-hop supervision (added factual context versus added intermediate reasoning supervision).",
+  "potential_novelty": "Moderate and hedged: context-triple supervision has not been evaluated on standard or open-ended benchmarks in the retrieved literature (G002), but the contribution is transfer evidence rather than a new mechanism.",
+  "implementation_difficulty": "high",
+  "implementation_difficulty_basis": "Needs corpus selection, KG extraction with provenance retention, open-ended question generation or adaptation, and answer parsing; several of these steps were only available in the closest work as an un-released internal pipeline.",
+  "experimental_difficulty": "high",
+  "experimental_difficulty_basis": "Requires building or adapting a text-attributed multi-hop QA set with open-ended answers, plus implementing an intermediate-supervision baseline and running both at scale; no single off-the-shelf benchmark was confirmed by the retrieved evidence.",
+  "main_risk": "The ported setting may differ from the closest work enough that results are not comparable, and building provenance-preserving extraction is itself error-prone, potentially introducing new noise that confounds the comparison.",
+  "required_baselines": [
+    "KG-grounded (isolated triple/path) SFT",
+    "CG-grounded SFT (same-passage context)",
+    "Learned intermediate-step supervision (teacher-student)",
+    "Retrieval-based multi-hop baseline (subgraph retrieval / GNN-based retrieval)"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2510.06039",
+    "arxiv:2101.03737",
+    "arxiv:2202.13296"
+  ],
+  "addresses_gap_ids": [
+    "G002"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:20:48.731849Z"
+}

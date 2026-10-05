@@ -1,0 +1,35 @@
+{
+  "id": "U010",
+  "question": "Does component (A) alone — context-enriched supervision — produce any measurable effect, and if not, do components (B) and (C) have any independent justification?",
+  "description": "The idea stacks three components (A: context-enriched supervision, B: adaptive repair loop, C: low-hop RL). Each has a strong prior against being the marginal contribution: A is challenged by the +0.003 null (C001), B is pre-empted by intermediate supervision (arxiv:2101.03737), and C is pre-empted by reward shaping for corrupted one-hop rewards (doi:10.18653/v1/d18-1362). If the ablation shows component A alone contributes nothing, the pipeline has no contribution to report regardless of B and C, and the whole design must be abandoned or re-scoped.",
+  "category": "validity",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "CHALLENGE",
+  "possible_actions": [
+    "PLAN_EXPERIMENT",
+    "REFINE",
+    "CHALLENGE"
+  ],
+  "confidence": 0.7,
+  "confidence_basis": "Based on the full-text results section and the Table 7 caption (\"before adaptive repair and RL\") of arxiv:2609.12230, which reports the isolated-triple vs context-augmented comparison in isolation from the other two components.",
+  "rationale": "The stacked design hides whether any single component works; a component-wise ablation with an early-abort decision is the cheapest way to avoid spending the full pipeline budget on a premise that the closest controlled study already contradicts.",
+  "resolution": "Component (A) does produce a measurable effect on its own. In arxiv:2609.12230 the KGModel versus CGModel comparison is reported before adaptive repair and RL are applied (Table 7 is explicitly the higher-hop accuracy of Base, KGModel and CGModel before adaptive repair and RL), and CGModel improves over KGModel in every disease, evaluation setting and hop length, by 1.98/2.20/2.15 points on Gastroparesis KG-grounded 3/4/5-hop and 1.50-2.66 on Diabetes. Components (B) and (C) also have independent measured value in the same work: adaptive repair drives the retained one-hop validation set to 100% accuracy, and \"RL initialized from unrepaired SFT checkpoints gives small or inconsistent gains, whereas RL initialized from repaired checkpoints produces larger and more stable improvements\". So the question of whether any component contributes is answered affirmatively. What the resolution does NOT settle is attribution: the (A) comparison is not token-matched and has no random-distractor or unrelated-entity arm, so the effect of (A) is measurable but its cause is not established (U011). The practical consequence is that the experiment-design concern shifts entirely to the control arms rather than to whether the components work.",
+  "paper_ids": [
+    "arxiv:2609.10237",
+    "arxiv:2101.03737",
+    "doi:10.18653/v1/d18-1362",
+    "arxiv:2609.12230"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "CRITIQUE",
+  "created_at": "2026-09-30T05:15:27.933721Z",
+  "updated_at": "2026-09-30T05:28:56.046403Z"
+}

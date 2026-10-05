@@ -1,0 +1,39 @@
+{
+  "id": "arxiv:2602.08448",
+  "title": "Vista: Scene-Aware Optimization for Streaming Video Question Answering under Post-Hoc Queries",
+  "authors": [
+    "Haocheng Lu",
+    "Nan Zhang",
+    "Wei Tao",
+    "Xiaoyang Qu",
+    "Guokuan Li",
+    "Jiguang Wan",
+    "Jianzong Wang"
+  ],
+  "year": 2026,
+  "published": "2026-02-09",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2602.08448",
+  "pdf_url": "https://arxiv.org/pdf/2602.08448v1",
+  "abstract": "Streaming video question answering (Streaming Video QA) poses distinct challenges for multimodal large language models (MLLMs), as video frames arrive sequentially and user queries can be issued at arbitrary time points. Existing solutions relying on fixed-size memory or naive compression often suffer from context loss or memory overflow, limiting their effectiveness in long-form, real-time scenarios. We present Vista, a novel framework for scene-aware streaming video QA that enables efficient and scalable reasoning over continuous video streams. The innovation of Vista can be summarized in three aspects: (1) scene-aware segmentation, where Vista dynamically clusters incoming frames into temporally and visually coherent scene units; (2) scene-aware compression, where each scene is compressed into a compact token representation and stored in GPU memory for efficient index-based retrieval, while full-resolution frames are offloaded to CPU memory; and (3) scene-aware recall, where relevant scenes are selectively recalled and reintegrated into the model input upon receiving a query, enabling both efficiency and completeness. Vista is model-agnostic and integrates seamlessly with a variety of vision-language backbones, enabling long-context reasoning without compromising latency or memory efficiency. Extensive experiments on StreamingBench demonstrate that Vista achieves state-of-the-art performance, establishing a strong baseline for real-world streaming video understanding.",
+  "doi": null,
+  "arxiv_id": "2602.08448",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T09:54:36.332189Z",
+  "relevance": 0.2308,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "retrieval agnostic temporal relevance question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

@@ -1,0 +1,502 @@
+{
+  "project": "T-2609.12230__scooped__full__s0",
+  "idea": "Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model training typically uses isolated head‑relation‑tail triples, depriving the model of the surrounding context that supports multi‑step inference. We propose to enrich each target triple (or path) with additional triples drawn from the same source passage, forming a local context subgraph that is presented together with the primary supervision signal. The model will be fine‑tuned under two regimes: one using only the target triple/path and another that also incorporates the supporting context. To improve the reliability of the base facts, we will introduce an adaptive repair loop that detects one‑hop failures, generates corrective examples, and iteratively refines the model. After this cleaning stage, we will apply reinforcement‑learning‑based optimization on lower‑hop QA instances and evaluate transfer to deeper multi‑hop queries.",
+  "created_at": "2026-09-30T05:39:08.705056Z",
+  "updated_at": "2026-09-30T06:25:07.371917Z",
+  "status": "incomplete",
+  "dsh_session_id": "session-f13c668d-b5a7-4a89-9541-53f838124af7",
+  "provider": "ollama-cloud",
+  "model": "nemotron-3-super",
+  "phases": [
+    {
+      "name": "formalize",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T05:39:08.709152Z",
+      "finished_at": "2026-09-30T05:45:28.462833Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 17,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "literature",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": null,
+      "finished_at": "2026-09-30T05:45:28.465001Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 11,
+      "failed_tool_calls": 3
+    },
+    {
+      "name": "analysis",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T05:46:39.024633Z",
+      "finished_at": "2026-09-30T06:09:03.910118Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 109,
+      "failed_tool_calls": 4
+    },
+    {
+      "name": "landscape",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T06:09:03.926708Z",
+      "finished_at": "2026-09-30T06:10:37.085195Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 3,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "critique",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T06:10:37.101302Z",
+      "finished_at": "2026-09-30T06:13:00.618894Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 11,
+      "failed_tool_calls": 3
+    },
+    {
+      "name": "gaps",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T06:18:00.792415Z",
+      "finished_at": "2026-09-30T06:22:45.548379Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 13,
+      "failed_tool_calls": 3
+    },
+    {
+      "name": "modifications",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T06:18:00.792435Z",
+      "finished_at": "2026-09-30T06:22:45.548456Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 13,
+      "failed_tool_calls": 3
+    },
+    {
+      "name": "experiments",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T06:22:45.575062Z",
+      "finished_at": "2026-09-30T06:25:07.308831Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 2,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "report",
+      "status": "complete",
+      "attempts": 0,
+      "started_at": "2026-09-30T06:25:07.334041Z",
+      "finished_at": "2026-09-30T06:25:07.371915Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    }
+  ],
+  "error": null,
+  "loop_phase": "FINALIZE",
+  "current_action": "FINALIZE",
+  "current_focus": null,
+  "budget": {
+    "iterations": 9,
+    "tool_calls": 166,
+    "failed_tool_calls": 15,
+    "runtime_failures": 0,
+    "seconds": 2757.9999999999995,
+    "tokens": 15831244
+  },
+  "decisions": [
+    {
+      "iteration": 0,
+      "phase": "INTAKE",
+      "action": "INTAKE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Research idea received.",
+      "evidence": "idea: Multi‑hop question answering often relies on reasoning over a chain of facts in a knowledge graph, yet current language‑model training typically uses isolated head‑relation‑tail triples, depriving the",
+      "expected_outcome": "",
+      "outcome": "idea stored in the workspace",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:39:08.705790Z"
+    },
+    {
+      "iteration": 1,
+      "phase": "FORMALIZE",
+      "action": "FORMALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been formalized into a testable research question.",
+      "evidence": "0 papers from 0 searches, 0 analyzed, 0 claims (0 verified), 0 open uncertainties",
+      "expected_outcome": "Problem, hypothesis, variables, assumptions and search queries recorded.",
+      "outcome": "+76 papers; +8 searches; +3 uncertainties; idea formalized",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "record_idea_analysis",
+        "record_uncertainty",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 76,
+        "relevant_papers": 57,
+        "searches": 8,
+        "uncertainties_created": 3,
+        "idea_formalized": 1
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:39:08.708386Z"
+    },
+    {
+      "iteration": 2,
+      "phase": "PLAN",
+      "action": "PLAN",
+      "focus": null,
+      "focus_id": null,
+      "reason": "No investigation plan exists yet, so it is unclear what must be determined.",
+      "evidence": "76 papers from 8 searches, 0 analyzed, 0 claims (0 verified), 3 open uncertainties",
+      "expected_outcome": "Questions to answer, search topics and initial uncertainties recorded.",
+      "outcome": "+2 uncertainties; investigation plan recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_investigation_plan",
+        "record_uncertainty"
+      ],
+      "state_changes": {
+        "uncertainties_created": 2,
+        "plan_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:45:28.473012Z"
+    },
+    {
+      "iteration": 3,
+      "phase": "INVESTIGATE",
+      "action": "READ",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Retrieved papers have not been analyzed enough to judge overlap.",
+      "evidence": "76 papers from 8 searches, 0 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Structured analyses of the most relevant papers.",
+      "outcome": "+8 analyses; runtime note: phase exceeded 900.0s and was stopped",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "get_research_state",
+        "list_papers",
+        "record_paper_analysis",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "analyses": 8
+      },
+      "info_gain": 4.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T05:46:39.018097Z"
+    },
+    {
+      "iteration": 4,
+      "phase": "SYNTHESIZE",
+      "action": "SYNTHESIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Analyses exist but the field has not been mapped.",
+      "evidence": "76 papers from 8 searches, 8 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "A landscape placing the idea among approaches.",
+      "outcome": "landscape recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_records",
+        "record_landscape"
+      ],
+      "state_changes": {
+        "landscape_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:09:03.919863Z"
+    },
+    {
+      "iteration": 5,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been challenged yet.",
+      "evidence": "76 papers from 8 searches, 8 analyzed, 0 claims (0 verified), 5 open uncertainties",
+      "expected_outcome": "Strongest objections recorded as critique and uncertainties.",
+      "outcome": "+13 papers; +1 searches; +3 claims; +2 verified claims; critique recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_paper",
+        "record_claim",
+        "record_critique",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 13,
+        "relevant_papers": 8,
+        "searches": 1,
+        "claims": 3,
+        "verified_claims": 2,
+        "critique_recorded": 1
+      },
+      "info_gain": 5.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:10:37.094904Z"
+    },
+    {
+      "iteration": 6,
+      "phase": "UNCERTAINTY",
+      "action": "SEARCH",
+      "focus": "U002: How should one-hop failures be detected to trigger the adaptive repair loop?",
+      "focus_id": "U002",
+      "reason": "Most valuable next step for high-importance validity question U002: score 1.62 = importance 3 x expected gain 0.6 x relevance 0.9 x evidence deficiency 1 / cost 1. Next best: CHALLENGE on U006 (1.4).",
+      "evidence": "89 papers from 9 searches, 8 analyzed, 3 claims (2 verified), 6 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U002.",
+      "outcome": "+14 papers; +1 searches; +3 claims; +3 verified claims; +1 resolved uncertainties; uncertainties updated: U002",
+      "candidates": [
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U002",
+          "target": "How should one-hop failures be detected to trigger the adaptive repair loop?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.62
+        },
+        {
+          "action": "CHALLENGE",
+          "uncertainty_id": "U006",
+          "target": "Does published work contradict the current assessment: Our idea applies subgraph enrichment at the training level to enrich supervision signals, includes an adaptive repair loop for iterative error correction, and evaluates transfer from lower-hop to higher-hop QA via RL optimization, whereas subgraph retrieval methods focus on inference-time retrieval without modifying training data or incorporating adaptive repair loops.?",
+          "importance": 3.0,
+          "expected_gain": 0.7,
+          "gain_basis": "prior 0.7",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.4
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U005",
+          "target": "How does the quality of the extracted local context (e.g., noise from irrelevant triples) affect the final performance?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.648
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U001",
+          "target": "What is the optimal number of additional triples to include in the local context subgraph for each target triple/path?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.504
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U003",
+          "target": "Which reinforcement learning algorithm is most suitable for optimizing lower-hop QA instances to transfer to deeper multi-hop queries?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.504
+        },
+        {
+          "action": "SEARCH",
+          "uncertainty_id": "U004",
+          "target": "What is the computational cost of training with local context subgraphs compared to isolated triples?",
+          "importance": 2.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.7,
+          "deficiency": 0.6,
+          "cost": 1.0,
+          "score": 0.504
+        }
+      ],
+      "expected_gain": 0.6,
+      "estimated_cost": 1.0,
+      "tools_used": [
+        "fetch_paper_text",
+        "record_claim",
+        "search_paper_text",
+        "search_papers",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "papers": 14,
+        "relevant_papers": 5,
+        "searches": 1,
+        "claims": 3,
+        "verified_claims": 3,
+        "uncertainties_resolved": 1
+      },
+      "info_gain": 7.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:13:00.633123Z"
+    },
+    {
+      "iteration": 7,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "14 papers arrived since the last critique.",
+      "evidence": "103 papers from 10 searches, 8 analyzed, 6 claims (5 verified), 5 open uncertainties",
+      "expected_outcome": "Critique revised against the new evidence.",
+      "outcome": "+1 claims; +1 verified claims; critique recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_claim",
+        "record_critique"
+      ],
+      "state_changes": {
+        "claims": 1,
+        "verified_claims": 1,
+        "critique_recorded": 1
+      },
+      "info_gain": 2.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:16:41.589759Z"
+    },
+    {
+      "iteration": 8,
+      "phase": "REFINE",
+      "action": "REFINE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The findings have not yet been turned into gaps, modifications and a direction decision.",
+      "evidence": "103 papers from 10 searches, 8 analyzed, 7 claims (6 verified), 5 open uncertainties",
+      "expected_outcome": "Evidence-linked gaps, 2-5 modifications and a recorded direction decision.",
+      "outcome": "+4 gaps; +3 modifications; +1 directions",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "record_direction",
+        "record_gap",
+        "record_modification",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "gaps": 4,
+        "modifications": 3,
+        "directions": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:18:00.784201Z"
+    },
+    {
+      "iteration": 9,
+      "phase": "EXPERIMENT_PLAN",
+      "action": "PLAN_EXPERIMENT",
+      "focus": null,
+      "focus_id": null,
+      "reason": "A research direction exists but no experiment would test it.",
+      "evidence": "103 papers from 10 searches, 8 analyzed, 7 claims (6 verified), 10 open uncertainties",
+      "expected_outcome": "An experiment plan with baselines, metrics, controls and falsifying outcomes.",
+      "outcome": "+1 experiment plans",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_experiment_plan"
+      ],
+      "state_changes": {
+        "plans": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:22:45.566796Z"
+    },
+    {
+      "iteration": 10,
+      "phase": "FINALIZE",
+      "action": "FINALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Stopping: time budget reached (2700 s).",
+      "evidence": "103 papers from 10 searches, 8 analyzed, 7 claims (6 verified), 10 open uncertainties",
+      "expected_outcome": "Report what was established and what remains open.",
+      "outcome": "finalizing",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T06:25:07.315279Z"
+    }
+  ],
+  "no_progress": {},
+  "blocked_actions": [],
+  "critiques": 2,
+  "papers_at_last_critique": 103,
+  "finalize_reason": "Stopping: time budget reached (2700 s).",
+  "awaiting_approval": [],
+  "investigation_closed": null,
+  "investigation_closed_at": null,
+  "challenged_refs": [
+    "critique",
+    "G001",
+    "G002",
+    "G003",
+    "G004",
+    "D001"
+  ],
+  "research_decision": "INSUFFICIENT_EVIDENCE",
+  "research_decision_basis": "high-importance questions remain unresolved (U006, U007, U008, U009, U010, U011)"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "U006",
+  "question": "Does the inference-time null for non-chain context triples (arxiv:2609.10237) replicate when the same contrast is used as a fine-tuning signal, or does training extract value from passage-coherent context that prompting cannot?",
+  "description": "arxiv:2609.10237 holds the triple count fixed and reports that replacing every non-chain triple with material from an unrelated entity neighbourhood changes answer accuracy by +0.003 F1 (removing the chain is what hurts). The idea's premise is that non-chain triples drawn from the same source passage provide supportive context during training. The two claims are in tension, though not strictly contradictory because 2609 is an inference-time prompting study on frozen LLMs over 125 questions, whereas the idea proposes fine-tuning. The key unknown is whether gradient updates can exploit passage-coherent context that a prompt cannot, or whether the null will replicate for training.",
+  "category": "contradiction",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "CHALLENGE",
+  "possible_actions": [
+    "READ",
+    "CHALLENGE",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": 0.75,
+  "confidence_basis": "Based on a full-text reading of a directly targeted paper with reported per-hop numbers, tempered because it is a single preprint on synthetic biomedical multiple-choice QA without a token-matched distractor control.",
+  "rationale": "If the null replicates under fine-tuning, the idea's central mechanism is unsupported and the contribution collapses to the (already-occupied) subgraph-retrieval space; if it does not, the idea has a genuine, cheap-to-test claim.",
+  "resolution": "The inference-time null does not straightforwardly replicate under fine-tuning. arxiv:2609.12230 fine-tunes Qwen3-14B under exactly the contested contrast (KG-grounded: target triple/path only; CG-grounded: target plus same-source-chunk supporting triples) with matched base model, LoRA setup, optimizer, sequence length, batch size, epochs, learning-rate schedule and equal QA-item counts, and reports that the context-augmented model beats the KG-only model in every disease, evaluation setting and hop length, by 1.98/2.20/2.15 points on Gastroparesis 3/4/5-hop and 1.50-2.66 points for Diabetes. So training does appear to extract value that prompting did not, and the 'premise is false' inference is weakened. What remains open is attribution: the two regimes have equal example counts but the CG examples contain more context tokens, and no token-matched random-distractor control was run, so the gain could still be partly a context-volume or question-distribution effect rather than passage coherence.",
+  "paper_ids": [
+    "arxiv:2609.10237",
+    "arxiv:2609.12230"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2609.10237",
+    "arxiv:2202.13296"
+  ],
+  "contradicting_paper_ids": [
+    "arxiv:2609.12230"
+  ],
+  "claim_ids": [],
+  "challenge_verdict": "weakened",
+  "target_ref": null,
+  "attempts": 1,
+  "source": "INVESTIGATE",
+  "created_at": "2026-09-30T05:09:17.470274Z",
+  "updated_at": "2026-09-30T05:23:37.256784Z"
+}

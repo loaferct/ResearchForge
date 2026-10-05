@@ -1,0 +1,40 @@
+{
+  "paper_id": "doi:10.1109/ijcnn55064.2022.9892550",
+  "relevance_tier": "high",
+  "problem": "Multi-hop question answering requires effective reasoning over knowledge graphs, and existing methods may not adequately capture semantic similarities between question and answer entities.",
+  "method": "Uses knowledge graph embedding in a similar semantic space to align question and answer entities, facilitating multi-hop reasoning by measuring semantic proximity in the embedding space.",
+  "key_assumptions": [
+    "Embedding entities and relations in a shared semantic space can capture similarities that aid multi-hop reasoning.",
+    "Proximity in the embedding space correlates with likelihood of correct answer."
+  ],
+  "main_contribution": "A method for multi-hop KGQA that leverages knowledge graph embeddings in a similar semantic space to improve reasoning accuracy.",
+  "datasets": [
+    "not stated in abstract"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"not stated in abstract\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "The paper uses KG embeddings in a similar semantic space, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:56:27.319681Z"
+}

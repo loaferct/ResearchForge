@@ -1,0 +1,42 @@
+{
+  "paper_id": "doi:10.3390/info17020114",
+  "relevance_tier": "medium",
+  "problem": "Forecasting stock market crashes is difficult due to rarity, nonlinearity, and latent structural/behavioral forces; need a calibrated and interpretable model for early warning.",
+  "method": "Calibrated and interpretable Random Forest framework using structural feature engineering (volatility expansion, moving-average deterioration, Bollinger Band width, short-horizon return dynamics), early-warning calibration, and model explainability via SHAP; probability-threshold optimization to improve sensitivity to rare events, selecting crash-probability threshold of 0.33.",
+  "key_assumptions": [
+    "Structural features capture precursors of stock market crashes."
+  ],
+  "main_contribution": "A calibrated and interpretable Random Forest for stock market crash prediction that achieves higher precision while maintaining competitive F1 and MCC, provides early-warning signals with ~60 day lead-time, and uses SHAP for explainability.",
+  "datasets": [
+    "daily data on global equity indices and major large-cap stocks from the U.S., Europe, and Asia"
+  ],
+  "benchmarks": [
+    "econometric and machine learning benchmarks (not specified in abstract)"
+  ],
+  "baselines": [
+    "econometric and machine learning benchmarks"
+  ],
+  "metrics": [
+    "precision",
+    "F1",
+    "MCC",
+    "lead-time"
+  ],
+  "results": "\"Compared with econometric and machine learning benchmarks, the calibrated model attains higher precision while maintaining competitive F1 and MCC scores, and delivers meaningful early-warning signals with an average lead-time of around 60 days.\"",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.2,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "The paper focuses on calibrating a single Random Forest for stock market crash prediction and optimizing a threshold for early warning; the idea involves calibrating multiple diverse models and using common thresholds for routing decisions in collaborative inference across language and vision tasks.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T11:30:40.306470Z"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "doi:10.1109/ijcnn60899.2024.10650447",
+  "title": "Enhancing Question Answering through Effective Candidate Answer Selection and Mitigation of Incomplete Knowledge Graphs and over-smoothing in Graph Convolutional Networks",
+  "authors": [
+    "Sirui Li",
+    "Kok-Wai Wong",
+    "Dengya Zhu",
+    "C. Fung"
+  ],
+  "year": 2024,
+  "published": "2024-06-30",
+  "venue": "IEEE International Joint Conference on Neural Network",
+  "url": "https://www.semanticscholar.org/paper/bdf5554653c9160e7876fbb385c6b7653815370a",
+  "pdf_url": null,
+  "abstract": "Question answering over knowledge graphs (KGQA) seeks to automatically answer natural language questions by retrieving triples within the knowledge graph (KG). In the context of multi-hop KGQA, reasoning across multiple edges of the KG becomes crucial for obtaining answers. Existing methods align with either the path-searching-based mainstream, emphasizing structural KG analysis, or the subgraph-based mainstream, focusing on semantic KG embeddings. Both streams have two primary challenges: (1) KG incompleteness, where path searching or subgraph construction faces limitations in the absence of links between entities; (2) candidate answer selection, wherein most approaches employ pre-defined searching sizes or heuristics. Many recent studies incorporate Graph Convolutional Network (GCN) to encode KGs, yet they overlook the potential over-smoothing issue inherent in GCNs. The over-smoothing problem arises from the tendency of closely connected nodes to exhibit similar embeddings within the deep convolutional architecture of GCNs. To address these challenges, this paper proposes a two-stage framework named ComPath, leveraging insights from both mainstreams. ComPath utilizes GCN to tackle KG incompleteness and introduces a path analyser to mitigate the over-smoothing issue associated with GCN. Candidate answers are selected using semantic similarity. The ablation studies and comparative experiments on the three KGQA benchmark datasets shown that the proposed ComPath performed better than the other KGQAs.",
+  "doi": "10.1109/ijcnn60899.2024.10650447",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "bdf5554653c9160e7876fbb385c6b7653815370a",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 1,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T07:50:25.428029Z",
+  "relevance": 0.3529,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "local context subgraph training triples multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

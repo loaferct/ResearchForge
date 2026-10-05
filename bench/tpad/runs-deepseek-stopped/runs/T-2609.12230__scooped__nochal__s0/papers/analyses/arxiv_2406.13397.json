@@ -1,0 +1,39 @@
+{
+  "paper_id": "arxiv:2406.13397",
+  "relevance_tier": "medium",
+  "problem": "Most multi-hop datasets are extractive-answer datasets, so models can exploit heuristics or shortcuts instead of performing true multi-hop reasoning.",
+  "method": "Semi-automated construction adding an extra question layer requiring one, two or all three of commonsense, arithmetic and symbolic reasoning on top of existing multi-hop questions; human verification of 1,118 samples; evaluation of five LLMs (Mistral 7B, Gemma 7B, Llama 3 8B/70B, GPT-4) with question-decomposition analysis.",
+  "key_assumptions": [
+    "Extractive-answer multi-hop datasets let models use heuristics/shortcuts instead of true reasoning",
+    "Adding commonsense, arithmetic and symbolic reasoning layers on top of existing multi-hop questions produces a harder and more diagnostic benchmark",
+    "Perfect reasoning can be measured by whether all decomposed sub-questions are answered correctly"
+  ],
+  "main_contribution": "MoreHopQA, a generative-answer multi-hop dataset extending HotpotQA, 2WikiMultihopQA and MuSiQue with commonsense, arithmetic and symbolic reasoning layers; plus an analysis of reasoning-step correctness showing only 38.7% (GPT-4) and 33.4% (Llama3-70B) of correctly answered questions have all sub-questions correct.",
+  "datasets": [
+    "MoreHopQA (built by extending HotpotQA, 2WikiMultihopQA and MuSiQue; 1,118 human-verified samples)"
+  ],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [
+    "answer accuracy",
+    "perfect-reasoning rate over decomposed sub-questions",
+    "qualitative reasoning-step cases"
+  ],
+  "results": "Abstract: models perform well on the initial multi-hop questions but struggle with the extended questions; only 38.7% of GPT-4 and 33.4% of Llama3-70B answers achieve perfect reasoning where all sub-questions are correct.",
+  "limitations": [
+    "It is an evaluation benchmark, not a training method.",
+    "Small scale (1,118 samples), so fine-grained hop-depth stratification may be underpowered.",
+    "Abstract reports that no evaluated model achieves perfect reasoning, i.e. the benchmark is far from saturation, which is good for detecting transfer but bad for isolating small effects."
+  ],
+  "future_work": [],
+  "code_availability": "Available: https://github.com/Alab-NII/morehopqa (evaluation code and data, per the abstract). Not independently inspected in this step.",
+  "relation_to_idea": {
+    "problem_overlap": 0.45,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.55,
+    "conceptual_difference": "Like 2WikiMultiHopQA this is a measurement resource. Its distinctive value to the idea is the sub-question-level correctness measure, which is a ready-made operationalization of 'does the model get the intermediate hop right?' — i.e. a candidate signal for the adaptive repair loop's one-hop failure detection.",
+    "basis": "Problem overlap 0.45: shared multi-hop QA evaluation with a focus on whether reasoning is genuine. Method overlap 0.1: benchmark construction, not training or supervision design. Evaluation overlap 0.55: sub-question decomposition and 'perfect reasoning' rate is conceptually the same diagnostic the idea needs for its one-hop-failure detection and deeper-hop transfer claims."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:08:27.555655Z"
+}

@@ -1,0 +1,41 @@
+{
+  "paper_id": "arxiv:2508.15790",
+  "relevance_tier": "high",
+  "problem": "Large language models struggle with multi-hop reasoning because their chain-of-thoughts often deviate from real reasoning paths, while knowledge graphs explicitly encode logical connections between facts.",
+  "method": "KG-o1, a four-stage approach: (1) filter initial entities and generate complex subgraphs from KG; (2) construct logical paths for subgraphs; (3) use KG to build a dataset with complex extended brainstorming process to train LLMs to imitate long-term reasoning; (4) employ rejection sampling to generate self-improving corpus for direct preference optimization (DPO) to refine LLM reasoning.",
+  "key_assumptions": [
+    "KG-derived subgraphs and logical paths can guide LLMs toward better reasoning paths.",
+    "Rejection sampling and DPO can effectively refine LLM multi-hop reasoning abilities."
+  ],
+  "main_contribution": "A KG-enhanced LLM framework (KG-o1) that demonstrates superior multi-hop reasoning performance on simple and complex datasets compared to existing large reasoning models.",
+  "datasets": [
+    "Two simple datasets (unspecified)",
+    "Two complex datasets (unspecified)"
+  ],
+  "benchmarks": [
+    "The aforementioned simple and complex datasets"
+  ],
+  "baselines": [
+    "Existing large reasoning models (e.g., o1)"
+  ],
+  "metrics": [
+    "Not specified in abstract; likely accuracy or hit@1"
+  ],
+  "results": "[\"KG-o1 models exhibit superior performance across all tasks compared to existing LRMs.\"]",
+  "limitations": [
+    "Not stated in abstract."
+  ],
+  "future_work": [
+    "Not stated in abstract."
+  ],
+  "code_availability": "[\"Not stated in abstract.\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.9,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "KG-o1 constructs KG-derived subgraphs and logical paths to create training data for LLMs via DPO. Our idea enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, focusing on training data enrichment and iterative correction rather than generating logical paths for imitation.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T06:37:53.998824Z"
+}

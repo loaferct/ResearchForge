@@ -1,0 +1,38 @@
+{
+  "id": "U002",
+  "question": "How much does the proposed method overlap with existing subgraph retrieval approaches like SG-RAG MOT or UniKGQA that already incorporate surrounding triple information?",
+  "description": "Compare the proposed context-enriched triple training with methods that retrieve or use subgraphs for multi-hop QA.",
+  "category": "overlap",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "COMPARE",
+  "possible_actions": [
+    "COMPARE",
+    "READ",
+    "SEARCH"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "Understanding overlap helps delineate the contribution (training on enriched triples vs retrieval-augmented inference).",
+  "resolution": "Substantial overlap exists with existing subgraph retrieval approaches: UniKGQA unifies retrieval and reasoning via shared architecture and pre‑training; SG‑RAG MOT retrieves and orders subgraphs; other works (e.g., subgraph retrieval and link scoring model) also utilize surrounding triple information. The proposed idea overlaps in leveraging local context but differs by enriching training triples with that context, adding an adaptive repair loop, and applying RL transfer.",
+  "paper_ids": [
+    "arxiv:2212.00959",
+    "arxiv:2607.23278",
+    "doi:10.20944/preprints202505.1992.v1",
+    "doi:10.1007/s10489-024-05935-8"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2212.00959",
+    "doi:10.20944/preprints202505.1992.v1",
+    "doi:10.1007/s10489-024-05935-8",
+    "arxiv:2607.23278"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "PLAN",
+  "created_at": "2026-09-30T06:32:28.262289Z",
+  "updated_at": "2026-09-30T06:57:14.940331Z"
+}

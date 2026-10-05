@@ -1,0 +1,39 @@
+{
+  "id": "arxiv:2509.06531",
+  "title": "SLiNT: Structure-aware Language Model with Injection and Contrastive Training for Knowledge Graph Completion",
+  "authors": [
+    "Meng-Xue Yang",
+    "Chun-Che Yang",
+    "Jiaqi Zhu",
+    "Jiafan Li",
+    "Jingqi Zhang",
+    "Yu-Yang Li",
+    "Ying Li"
+  ],
+  "year": 2025,
+  "published": "2025-09-08",
+  "venue": "Conference on Empirical Methods in Natural Language Processing",
+  "url": "https://www.semanticscholar.org/paper/afc45646417735eafec73dc94c37f19cc51c7891",
+  "pdf_url": null,
+  "abstract": "Link prediction in knowledge graphs requires integrating structural information and semantic context to infer missing entities. While large language models offer strong generative reasoning capabilities, their limited exploitation of structural signals often results in structural sparsity and semantic ambiguity, especially under incomplete or zero-shot settings. To address these challenges, we propose SLiNT (Structure-aware Language model with Injection and coNtrastive Training), a modular framework that injects knowledge-graph-derived structural context into a frozen LLM backbone with lightweight LoRA-based adaptation for robust link prediction. Specifically, Structure-Guided Neighborhood Enhancement (SGNE) retrieves pseudo-neighbors to enrich sparse entities and mitigate missing context; Dynamic Hard Contrastive Learning (DHCL) introduces fine-grained supervision by interpolating hard positives and negatives to resolve entity-level ambiguity; and Gradient-Decoupled Dual Injection (GDDI) performs token-level structure-aware intervention while preserving the core LLM parameters. Experiments on WN18RR and FB15k-237 show that SLiNT achieves superior or competitive performance compared with both embedding-based and generation-based baselines, demonstrating the effectiveness of structure-aware representation learning for scalable knowledge graph completion.",
+  "doi": "10.48550/arxiv.2509.06531",
+  "arxiv_id": "2509.06531",
+  "openalex_id": null,
+  "s2_id": "afc45646417735eafec73dc94c37f19cc51c7891",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 2,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:17:15.981938Z",
+  "relevance": 0.2037,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "structure-aware graph tokens fine-tuning LLM knowledge graph reasoning supervision neighbor context"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

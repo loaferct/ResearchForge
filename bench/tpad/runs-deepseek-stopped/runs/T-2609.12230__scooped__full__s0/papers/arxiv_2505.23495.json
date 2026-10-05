@@ -1,0 +1,43 @@
+{
+  "id": "arxiv:2505.23495",
+  "title": "Diagnosing and Addressing Pitfalls in KG-RAG Datasets: Toward More Reliable Benchmarking",
+  "authors": [
+    "Liangliang Zhang",
+    "Zhuorui Jiang",
+    "Hongliang Chi",
+    "Haoyang Chen",
+    "Mohammed Elkoumy",
+    "Fali Wang",
+    "Qiong Wu",
+    "Zhengyi Zhou",
+    "Shirui Pan",
+    "Suhang Wang",
+    "Yao Ma"
+  ],
+  "year": 2025,
+  "published": "2025-01-01",
+  "venue": null,
+  "url": "https://doi.org/10.52202/085713-2274",
+  "pdf_url": "https://arxiv.org/pdf/2505.23495",
+  "abstract": "Knowledge Graph Question Answering (KGQA) systems rely on high-quality benchmarks to evaluate complex multi-hop reasoning. However, despite their widespread use, popular datasets such as WebQSP and CWQ suffer from critical quality issues, including inaccurate or incomplete ground-truth annotations, poorly constructed questions that are ambiguous, trivial, or unanswerable, and outdated or inconsistent knowledge. Through a manual audit of 16 popular KGQA datasets, including WebQSP and CWQ, we find that the average factual correctness rate is only 57 %. To address these issues, we introduce KGQAGen, an LLM-in-the-loop framework that systematically resolves these pitfalls. KGQAGen combines structured knowledge grounding, LLM-guided generation, and symbolic verification to produce challenging and verifiable QA instances. Using KGQAGen, we construct KGQAGen-10k, a ten-thousand scale benchmark grounded in Wikidata, and evaluate a diverse set of KG-RAG models. Experimental results demonstrate that even state-of-the-art systems struggle on this benchmark, highlighting its ability to expose limitations of existing models. Our findings advocate for more rigorous benchmark construction and position KGQAGen as a scalable framework for advancing KGQA evaluation.",
+  "doi": "10.52202/085713-2274",
+  "arxiv_id": "2505.23495",
+  "openalex_id": "W4414812733",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 2,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T05:05:11.103088Z",
+  "relevance": 0.1552,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "WebQSP ComplexWebQuestions MetaQA benchmark evaluation multi-hop KGQA baselines"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

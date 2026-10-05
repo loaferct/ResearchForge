@@ -1,0 +1,37 @@
+{
+  "id": "arxiv:2309.12510",
+  "title": "Confidence Calibration for Systems with Cascaded Predictive Modules",
+  "authors": [
+    "Yunye Gong",
+    "Yi Yao",
+    "Xiao Lin",
+    "Ajay Divakaran",
+    "Melinda Gervasio"
+  ],
+  "year": 2023,
+  "published": "2023-09-21",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2309.12510",
+  "pdf_url": "https://arxiv.org/pdf/2309.12510v1",
+  "abstract": "Existing conformal prediction algorithms estimate prediction intervals at target confidence levels to characterize the performance of a regression model on new test samples. However, considering an autonomous system consisting of multiple modules, prediction intervals constructed for individual modules fall short of accommodating uncertainty propagation over different modules and thus cannot provide reliable predictions on system behavior. We address this limitation and present novel solutions based on conformal prediction to provide prediction intervals calibrated for a predictive system consisting of cascaded modules (e.g., an upstream feature extraction module and a downstream regression module). Our key idea is to leverage module-level validation data to characterize the system-level error distribution without direct access to end-to-end validation data. We provide theoretical justification and empirical experimental results to demonstrate the effectiveness of proposed solutions. In comparison to prediction intervals calibrated for individual modules, our solutions generate improved intervals with more accurate performance guarantees for system predictions, which are demonstrated on both synthetic systems and real-world systems performing overlap prediction for indoor navigation using the Matterport3D dataset.",
+  "doi": null,
+  "arxiv_id": "2309.12510",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T11:34:11.145241Z",
+  "relevance": 0.6667,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "confidence cascade calibration"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

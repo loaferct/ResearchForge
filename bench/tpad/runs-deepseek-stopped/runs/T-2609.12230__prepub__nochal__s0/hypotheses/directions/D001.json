@@ -1,0 +1,30 @@
+{
+  "id": "D001",
+  "direction": "Narrow the investigation from a three-component system (context-enriched supervision + adaptive repair loop + lower-hop RL) to a single, causally testable claim: under matched example counts and matched supervision tokens, does the *relevance* of passage-derived context triples drive any benefit on multi-hop KGQA and held-out deeper-hop transfer? Keep the context component as the object of study (implemented via modification M001: an isolated / relevant-context / equal-length-irrelevant-context / relevance-selected factorial design), demote the RL stage to a later, separately-reported extension, and replace the naive one-hop repair loop with error-type attribution (M003) so the repair component is either justified or dropped on evidence. Restrict the setting to a provenance-bearing, text-grounded KG (M004) because 'co-passage triples' are undefined on Freebase/MetaQA.",
+  "hypothesis": "Under matched example counts and matched total supervision tokens, relevance-selected co-passage context triples improve multi-hop KGQA accuracy and held-out deeper-hop transfer relative to both isolated triple/path supervision and an equal-length irrelevant-triple control; any measured gain is therefore attributable to context relevance rather than to context quantity, and it is expected to be smaller than a naive unmatched comparison would suggest.",
+  "rationale": "The critique found the original framing partly unsupported: recent LLM-based KGQA already trains on retrieved subgraphs, and DrKGC already injects a retrieved subgraph into LLM fine-tuning (C005), so 'isolated triples' mis-describes the state of the art (U008) and subgraph context is not novel (U002). More importantly, the newly retrieved evidence shows the confounder is not just token count: imprecise KG context can degrade performance below the no-context baseline, subgraph scope trades recall against precision (C015, C016), and models use long contexts non-uniformly (C017), while training-time tasks can change context use (C018). This makes 'does context relevance drive the gain?' the sharpest surviving question and turns the original confound into the contribution. Passage provenance remains infeasible on the standard benchmarks used by every baseline (C013), and the auxiliary repair and RL components are separately precedented (C012) with the repair loop resting on an unevidenced locality assumption (C010). The narrowed scope therefore targets exactly where a distinction can survive and can be tested with a clean negative-result outcome.",
+  "change_type": "REFINE_SCOPE",
+  "previous_direction_id": null,
+  "research_question": "Holding the number of training examples and total supervision tokens fixed, does adding co-passage context triples to triple/path supervision improve multi-hop KGQA and held-out deeper-hop transfer because of the relevance of those triples rather than the mere presence of extra context?",
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "doi:10.1109/ickg66886.2025.00020",
+    "arxiv:2506.00708",
+    "doi:10.20944/preprints202505.1992.v1",
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "arxiv:2101.03737",
+    "arxiv:2307.03172",
+    "arxiv:2311.09198"
+  ],
+  "uncertainty_ids": [
+    "U001",
+    "U002",
+    "U003",
+    "U005",
+    "U008",
+    "U010",
+    "U011"
+  ],
+  "recorded_at": "2026-09-30T05:28:47.689765Z"
+}

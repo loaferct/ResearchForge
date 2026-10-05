@@ -1,0 +1,24 @@
+{
+  "id": "C002",
+  "statement": "In a controlled graph-RAG study, replacing every non-answer-path triple with unrelated-entity material changes multi-hop answer accuracy by only +0.003 F1, i.e., surrounding triples contributed almost nothing to answer accuracy.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.10237",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Holding the number of triples fixed and replacing every triple that is not on the chain with material from an unrelated entity changes answer accuracy by +0.003 F1, while removing the chain costs most of what the graph was worth.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "high",
+  "phase": "critique",
+  "tags": [
+    "core-premise-challenge",
+    "surrounding-context",
+    "confounder"
+  ],
+  "recorded_at": "2026-09-30T05:15:00.409198Z"
+}

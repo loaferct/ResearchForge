@@ -1,0 +1,892 @@
+[[page 1]]
+Graphhopper: Multi-Hop Scene Graph
+Reasoning for Visual Question Answering
+Rajat Koner∗1, Hang Li∗1,2, Marcel Hildebrandt∗1,2, Deepan Das 3, Volker
+Tresp1,2, and Stephan G¨ unnemann3
+1 Ludwig Maximilian University of Munich, Germany
+2 Siemens AG, Germany
+3 Technical University of Munich, Germany
+∗ equal contribution
+Abstract. Visual Question Answering (VQA) is concerned with answer-
+ing free-form questions about an image. Since it requires a deep semantic
+and linguistic understanding of the question and the ability to associate
+it with various objects that are present in the image, it is an ambitious
+task and requires multi-modal reasoning from both computer vision and
+natural language processing. We propose Graphhopper, a novel method
+that approaches the task by integrating knowledge graph reasoning, com-
+puter vision, and natural language processing techniques. Concretely,
+our method is based on performing context-driven, sequential reasoning
+based on the scene entities and their semantic and spatial relationships.
+As a ﬁrst step, we derive a scene graph that describes the objects in
+the image, as well as their attributes and their mutual relationships.
+Subsequently, a reinforcement learning agent is trained to autonomously
+navigate in a multi-hop manner over the extracted scene graph to gener-
+ate reasoning paths, which are the basis for deriving answers. We conduct
+an experimental study on the challenging dataset GQA, based on both
+manually curated and automatically generated scene graphs. Our results
+show that we keep up with human performance on manually curated
+scene graphs. Moreover, we ﬁnd that Graphhopper outperforms another
+state-of-the-art scene graph reasoning model on both manually curated
+and automatically generated scene graphs by a signiﬁcant margin.
+Keywords: Visual Question Answering (VQA)· Knowledge Graph Rea-
+soning · Scene Graph Reasoning · Multi-Modal Reasoning · Reinforce-
+ment Learning
+1 Introduction
+Visual Question Answering (VQA) is a challenging task that involves under-
+standing and reasoning over two data modalities, i.e., images and natural lan-
+guage. Given an image and a free-form question which formulates a query about
+the presented scene — the issue is for the algorithm to ﬁnd the correct answer.
+VQA has been studied from the perspective of scene and knowledge graphs
+[33,6], as well as vision-language reasoning [10,1]. To study VQA, various real-
+world data sets, such as the VQA data set [4,24], have been generated. It has
+arXiv:2107.06325v1  [cs.CV]  13 Jul 2021
+
+[[page 2]]
+2 R. Koner et al.
+Fig. 1. Example of an image and the corresponding scene graph. Since the scene
+graph is a directed graph with typed edges, it resembles a knowledge graph and
+permits the application of knowledge-base completion techniques.
+been argued that, in the VQA data set, many of the apparently challenging
+reasoning tasks can be solved by an algorithm through exploiting trivial prior
+knowledge, and thus by shortcuts to proper reasoning (e.g., clouds are white
+or doors are made of wood). To address these shortcomings, the GQA dataset
+[17] has been developed. Compared to other real-world datasets, GQA is more
+suitable for evaluating reasoning abilities since the images and questions are
+carefully ﬁltered to make the data less prone to biases.
+Plenty of VQA approaches are agnostic towards the explicit relational struc-
+ture of the objects in the presented scene and rely on monolithic neural network
+architectures that process regional features of the image separately [2,39]. While
+these methods led to promising results on previous datasets, they lack explicit
+compositional reasoning abilities, which results in weaker performance on more
+challenging datasets such as GQA. Other works [34,31,15] perform reasoning
+on explicitly detected objects and interactive semantic and spatial relationships
+among them. These approaches are closely related to the scene graph representa-
+tions [19] of an image, where detected objects are labeled as nodes and relation-
+ships between the objects are labeled as edges. In this work, we aim to combine
+VQA techniques with recent research advances in the area of statistical rela-
+tion learning on knowledge graphs (KGs). KGs provide human-understandable,
+structured representations of knowledge about the real world via collections of
+factual statements. Inspired by multi-hop reasoning methods on KGs such as
+[8,38,12], we propose Graphhopper, a novel method that models the VQA task as
+a path-ﬁnding problem on scene graphs. The underlying idea can be summarized
+
+[[page 3]]
+Graphhopper 3
+with the phrase: Learn to walk to the correct answer. More speciﬁcally, given
+an image, we consider a scene graph and train a reinforcement learning agent
+to conduct a policy-guided random walk on the scene graph until a conclusive
+inference path is obtained. In contrast to purely embedding-based approaches,
+our method provides explicit reasoning chains that lead to the derived answers.
+To sum up, our major contributions are as follows.
+– Graphhopper is the ﬁrst VQA method that employs reinforcement learning
+for multi-hop reasoning on scene graphs.
+– We conduct a thorough experimental study on the challenging VQA dataset
+named QGA to show the compositional and interpretable nature of our
+model.
+– To analyze the reasoning capabilities of our method, we consider manually
+curated (ground truth) scene graphs. This setting isolates the noise asso-
+ciated with the visual perception task and focuses solely on the language
+understanding and reasoning task. Thereby, we can show that our method
+achieves human-like performance.
+– Based on both the manually curated scene graphs and our own automatically
+generated scene graphs, we show that Graphhopper outperforms the Neural
+State Machine (NMS), a state-of-the-art scene graph reasoning model that
+operates in a setting, similar to Graphhopper.
+Moreover, we are the ﬁrst group to conduct experiments and publish the code
+on generated scene graphs for the GQA dataset 4.The remainder of this work is
+organized as follows. We review related literature in the next section. Section 3 in-
+troduces the notation and describes the methodology of Graphhopper. Section 4
+and Section 5 detail an experimental study on the benchmark dataset GQA. Fur-
+thermore, through a rigorous study using both manually-curated ground-truth
+and generated scene graphs, we examine the reasoning capabilities of Graphhop-
+per. We conclude in Section 6.
+2 Related Work
+Visual Question Answering: Various models have been proposed that perform
+VQA on both real-world [4,17] and artiﬁcial datasets [18]. Currently, leading
+VQA approaches can be categorized into two diﬀerent branches: First, mono-
+lithic neural networks, which perform implicit reasoning on latent representations
+obtained from fusing the two data modalities. Second, multi-hop methods that
+form explicit symbolic reasoning chains on a structured representation of the
+data. Monolithic network architectures obtain visual features from the image
+either in the form of individual detected objects or by processing the whole im-
+age directly via convolutional neural networks (CNNs). The derived embeddings
+are usually scored against a ﬁxed answer set along with the embedding of the
+question obtained from a sequence model. Moreover, co-attention mechanisms
+4 Code is available at : https://github.com/rajatkoner08/Graphhopper
+
+[[page 4]]
+4 R. Koner et al.
+are frequently employed to couple the vision and the language models allowing
+for interactions between objects from both modalities [20,2,5,40,41]. Monolithic
+networks are among the dominant methods on previous real-world VQA datasets
+such as [4]. However, they suﬀer from the black-box problem and possess lim-
+ited reasoning capabilities with respect to complex questions that require long
+reasoning chains (see [7] for a detailed discussion).
+Explicit reasoning methods combine the sub-symbolic representation learn-
+ing paradigm with symbolic reasoning approaches over structured representa-
+tions of the image. Most of the popular explicit reasoning approaches follow
+the idea of neural module networks (NMNs) [3] which perform a sequence of
+reasoning steps realized by forward passes through specialized neural networks
+that each correspond to predeﬁned reasoning subtasks. Thereby, NMNs con-
+struct functional programs by dynamically assembling the modules resulting in
+a question-speciﬁc neural network architecture. In contrast to the monolithic
+neural network architectures described above, these methods contain a natural
+transparency mechanism via functional programs. However, while NMN-related
+methods (e.g., [14,26]) exhibit good performance on synthetic datasets such as
+CLEVR [18], they require functional module layouts as additional supervision
+signals to obtain good results. Closely related to our method is the Neural State
+Machine (NSM) proposed by [16]. NSM’s underlying idea consists of ﬁrst con-
+structing a scene graph from an image and treating it as a state machine. Con-
+cretely, the nodes correspond to states and edges to transitions. Then, condi-
+tioned on the question, a sequence of instructions is derived that indicates how
+to traverse the scene graph and arrive at the answer. In contrast to NSM, we
+treat path-ﬁnding as a decision problem in a reinforcement learning setting.
+Concretely, we outline in the next section how extracting predictive paths from
+scene graphs can be naturally formulated in terms of a goal-oriented random
+walk induced by a stochastic policy that allows the approach to balance between
+exploration and exploitation. Moreover, our framework integrates state-of-the-
+art techniques from graph representation learning and NLP. This paper only
+considers basic policy gradient methods, but more sophisticated reinforcement
+learning techniques will be employed in future works.
+Statistical Relational Learning: Machine learning methods for KG reasoning
+aim at exploiting statistical regularities in observed connectivity patterns. These
+methods are studied under the umbrella of statistical relational learning (SRL)
+[27]. In recent years, KG embeddings have become the dominant approach in
+SRL. The underlying idea is that graph features that explain the connectivity
+pattern of KGs can be encoded in low-dimensional vector spaces. In the embed-
+ding spaces, the interactions among the embeddings for entities and relations
+can be eﬃciently modeled to produce scores that predict the validity of a triple.
+Despite achieving good results in KG reasoning tasks, most embedding-based
+methods have problems capturing the compositionality expressed by long rea-
+soning chains. This often limits their applicability in complex reasoning tasks.
+Recently, multi-hop reasoning methods such as MINERVA [8] and DeepPath [38]
+were proposed. Both methods are based on the idea that a reinforcement learn-
+
+[[page 5]]
+Graphhopper 5
+ing agent is trained to perform a policy-guided random walk until the answer
+entity to a query is reached. Thereby, the path ﬁnding problem of the agent can
+be modeled in terms of a sequential decision making task framed as a Markov
+decision process (MDP). The method that we propose in this work follows a
+similar philosophy, in the sense that we train an RL agent to navigate on a
+scene graph to the correct answer node. However, a conceptual diﬀerence is that
+the agents in MINERVA and DeepPath perform walks on large-scale knowledge
+graphs exploiting repeating statistical patterns. Thereby, the policies implicitly
+incorporate approximate rules. In addition, instead of free-form processing ques-
+tions, the query in the KG reasoning setting is structured as a pair of symbolic
+entities. That is why we propose a wide range of modiﬁcations to adjust our
+method to the challenging VQA setting.
+3 Method
+The task of VQA is framed as a scene graph traversal problem. Starting from
+a hub node that is connected to all other nodes, an agent sequentially samples
+transitions to neighboring nodes on the scene graph until the node correspond-
+ing to the answer is reached. In this way, by adding transitions to the current
+path, the reasoning chain is successively extended. Before describing the deci-
+sion problem of the agent, we introduce the notation that we use throughout
+this work.
+Notation: A scene graph is a directed multigraph where each node corresponds
+to a scene entity which is either an object associated with a bounding box or an
+attribute of an object. Each scene entity comes with a type that corresponds to
+the predicted object or attribute label. Typed edges specify how scene entities
+are related to each other. More formally, let E denote the set of scene entities
+and consider the set of binary relations R. Then a scene graph SG ⊂ E×
+R×E is a collection of ordered triples ( s,p,o ) – subject, predicate, and object.
+For example, as shown in Figure 1, the triple (motorcycle-1, has part, tire-1)
+indicates that both a motorcycle (subject) and a tire (object) are detected in
+the image. The predicate has part indicates the relation between the entities.
+Moreover, we denote withp−1 the inverse relation corresponding to the predicate
+p. For the remainder of this work, we impose completeness with respect to inverse
+relations in the sense that for every ( s,p,o )∈SG it is implied that (o,p−1,s )∈
+SG.
+Environment The state space of the agent S is given byE×Q whereE are the
+nodes of a scene graph SG andQ denotes the set of all questions. The state at
+time t is the entity et at which the agent is currently located and the question
+Q. Thus, a state St∈S for time t∈ N is represented by St = (et,Q ). The set
+of available actions from a state St is denoted by ASt. It contains all outgoing
+edges from the node et together with their corresponding object nodes. More
+formally,ASt ={(r,e )∈R×E :St = (et,Q )∧ (et,r,e )∈SG} . Moreover, we
+
+[[page 6]]
+6 R. Koner et al.
+Fig. 2. The architecture of our scene graph reasoning module.
+denote withAt∈A St the action that the agent performed at time t. We include
+self-loops for each node in SG that produce a NO OP-label. These self-loops
+allow the agent to remain at the current location if it reaches the answer node.
+Furthermore, the introduction of inverse relations allows agent to transit freely
+in any direction between two nodes.
+The environments evolve deterministically by updating the state accord-
+ing to previous action. Formally, the transition function at time t is given by
+δt(St,At) := (et+1,Q ) with St = (et,Q ) and At = (r,et+1).
+Auxiliary Nodes : In addition to standard entity relation nodes present in
+a scene graph, we introduce a few auxiliary nodes (e.g. hub node). The underlying
+rationale for the inclusion of auxiliary nodes is that they facilitate the walk for
+the agent or help to frame the QA-task as a goal-oriented walk on the scene
+graph. These additional nodes are included during run-time graph traversal,
+but they are ignored during the compile time such as when computing node
+embedding. For example, we add a hub node ( hub) to every scene graph which
+is connected to all other nodes. The agent then starts the scene graph traversal
+from a hub with global connectivity. Furthermore for a binary question, we add
+YES and NO nodes to the scene entities that correspond to the ﬁnal location of
+the agent. The agent can then transition to either the YES or the NO node.
+Question and Scene Graph Processing We initialize words in Q with GloVe
+embeddings [29] with dimension d = 300. Similarly we initialize entities and re-
+lations inSG with the embeddings of their type labels. In the scene graph, the
+node embeddings are passed through a multi-layered graph attention network
+(GAT) [36]. Extending the idea from graph convolutional networks [22] with
+a self-attention mechanism, GATs mimic the convolution operator on regular
+
+[[page 7]]
+Graphhopper 7
+grids where an entity embedding is formed by aggregating node features from
+its neighbors. Relations and inverse relations between nodes allows context to
+ﬂow in both ways through GAT. Thus, the resulting embeddings are context-
+aware, which makes nodes with the same type, but diﬀerent graph neighbor-
+hoods, distinguishable. To produce an embedding for the question Q, we ﬁrst
+apply a Transformer [35], followed by a mean pooling operation.
+Finally, since we added auxiliary YES and NO nodes to the scene graph
+for binary questions, we train a feedforward neural network to classify query-
+type (i.e., questions that query for an object in the depicted scene) and binary
+questions. This network consists of two fully connected layers with ReLU ac-
+tivation on the intermediate output. We ﬁnd that it is easy to distingquish
+between query and binary questions (e.g., query questions usually begin with
+What, Which, How , etc., whereas binary questions usually begin with Do, Is ,
+etc.). Since our classiﬁer achieves 99.99% accuracy we will ignore the error in
+question classiﬁcation in the following discussions.
+Policy We denote the agent’s history until time t with the tuple Ht =
+(Ht−1,At−1) for t≥ 1 and H0 = hub along with A0 =∅ for t = 0. The his-
+tory is encoded via a multilayered LSTM [13]
+ht = LSTM (at−1) , (1)
+where at−1 = [ rt−1, et]∈ R2d corresponds to the embedding of the previous
+action with rt−1 and et denoting the embeddings of the edge and the target
+node into Rd, respectively. The history-dependent action distribution is given
+by
+dt = softmax (At (W2ReLU (W1 [ht, Q]))) , (2)
+where the rows of At∈ R|ASt|×d contain latent representations of all admissible
+actions. Moreover, Q∈ Rd encodes the questionQ. The actionAt = (r,e )∈A St
+is drawn according to categorical (dt). Equations (1) and (2) induce a stochastic
+policy πθ, where θ denotes the set of trainable parameters.
+Rewards and Optimization After sampling T transitions, a terminal reward is
+assigned according to
+R =
+{
+1 if eT is the answer to Q,
+0 otherwise. (3)
+We employ REINFORCE [37] to maximize the expected rewards. Thus, the
+agent’s maximization problem is given by
+arg max
+θ
+EQ∼T EA1,A2,...,AN∼πθ
+[
+R
+⏐⏐⏐⏐ec
+]
+, (4)
+whereT denote the set of training questions. During training the ﬁrst expecta-
+tion in Equation (4) is substituted with the empirical average over the training
+
+[[page 8]]
+8 R. Koner et al.
+set. The second expectation is approximated by the empirical average over mul-
+tiple rollouts. We also employ a moving average baseline to reduce the variance.
+Further, we use entropy regularization with parameter λ∈ R≥0 to enforce ex-
+ploration. During inference, we do not sample paths but perform a beam search
+with width 20 based on the transition probabilities given by Equation (2).
+Additional details on the model, the training and the inference procedure
+along with sketches of the algorithms, and a complexity analysis can be found
+in the supplementary material.
+4 Dataset and Experimental Setup
+In this section we introduce the dataset and detail the experimental protocol.
+4.1 Dataset
+The GQA dataset [17] has been introduced with the goal of addressing key short-
+comings of previous VQA datasets, such as CLEVR [18] or the VQA dataset [4].
+GQA is more suitable for evaluating the reasoning and compositional abilities of
+a model in a realistic setting. It contains 113K images, and around 1.2M ques-
+tions split into roughly 80%/10%/10% for the training, validation, and testing.
+The overall vocabulary size consists of 3097 words, including 1702 object classes,
+310 relationships, and 610 object attributes.
+Due to the large number of objects and relationships present in GQA, we used
+a pruned version of the dataset (see Section 5) for our generated scene graph.
+In this work, we have conducted two primary experiments. First, we report the
+results on manually curated scene graphs provided in the GQA dataset. In this
+setting, the true reasoning and language understanding capabilities of our model
+can be analyzed. Afterward, we evaluate the performance of our model with the
+generated scene graphs on pruned GQA dataset. It shows the performance of our
+model on noisy generated data. We have used state of the art Relation Trans-
+former Network (RTN) [23] for the scene graph generation and DetectoRS [30]
+for object detection. We have conducted all the experiments on “test-dev” split
+of the GQA.
+Question Types: The questions are designed to evaluate the reasoning abilities
+such as visual veriﬁcation, relational reasoning, spatial reasoning, comparison,
+and logical reasoning. These questions can be categorized either according to
+structural or semantic criteria. An overview of the diﬀerent question types is
+given in supplementary (see Table 4).
+4.2 Experimental Setup
+Scene Graph Reasoning: Regarding the model parameters, we apply 300 di-
+mensional GloVe embeddings to both the questions and the graphs (i.e., edges
+and nodes). Moreover, we employ a two-layer GAT [36] model. The dropout [32]
+probability of each layer is set to 0.1. The ﬁrst layer has eight attention heads.
+
+[[page 9]]
+Graphhopper 9
+Each head has eight latent features which are concatenated to form the output
+features of that layer. The output layer has eight attention heads with mean
+aggregation, so that the output also has 300-dimensional features. We apply
+dropout with p = 0.1 to the attention coeﬃcients at each layer. This essentially
+means that each node is exposed to a stochastically sampled neighborhood dur-
+ing training. Moreover, we employ a two-layer Transformer [35] decoder model.
+The model dimension is set to 300, and the key and query dimensions are both
+set to 64 with dropout p = 0.1 . The LSTM of the policy networks consists of
+a uni-directional layer with hidden size 300. Finally, the agent performs a ﬁxed
+number of transitions. In question answering, most questions concern one subject
+to be explored within one reasoning path originated from the start node. Hence,
+we set the maximum number of steps to 4, without resetting. By contrast, the
+binary questions have 8 steps and a reset frequency of 4. In other words, the
+agent is prompted to the hub node after the fourth step.
+Training the Graphhopper: In terms of the training procedure, the GAT, the
+Transformer, and the policy networks are initialized with Glorot [11] initializa-
+tion. We train our model with data from the val balanced questions tier. We use
+a batch size of 64 and sample a batch of questions along with their associated
+graphs. We collect 20 stochastic rollouts for each question performed in a vector-
+ized form to utilize parallel computation. For each batch, we collect the rewards
+when a complete forward pass is done. Then the gradients are approximated
+from the rewards and applied to update the weights. We employ the Adam op-
+timizer [21] with a learning rate of 10−4 for all trainable weights. The coeﬃcient
+for the action entropy, which balances exploration and exploitation, starts from
+0.2 and decreases exponentially at each step with a factor 0.99.
+Next to other standard Python libraries, we mainly employed PyTorch [28].
+All experiments were conducted on a machine with one NVIDIA RTX 2080 Ti
+GPU and 64 GB RAM. Training the scene graph reasoner of Graphhopper for
+40 epochs on GQA takes around 10 hours, testing about 1 hour.
+4.3 Performance Metrics
+Along with the accuracy (i.e., Hits@1) on open questions (“Open”), binary ques-
+tions (yes/no) (“Binary”), and the overall accuracy (“Accuracy”), we also report
+the additional metric “Consistency” (answers should not contradict themselves),
+“Validity” (answers are in the range of a question; e.g.,red is a valid answer when
+asked for the color of an object), “Plausibility” (answers should be reasonable;
+e.g., red is a reasonable color of an apple reasonable, blue is not), as proposed
+in [17].
+5 Results and Discussion
+As outlined before, VQA is a challenging task, and there is still a signiﬁcant per-
+formance gap between state-of-the-art VQA methods and human performance on
+
+[[page 10]]
+10 R. Koner et al.
+challenging, real-world datasets such as GQA (see [17]). Similar to other existing
+methods, our architecture involves multiple components, and it important to be
+able to analyse the performance of the diﬀerent modules and processing steps in
+isolation. Therefore we ﬁrst present the results of our experiments on manually
+curated, ground-truth scene graphs provided in the GQA dataset and compare
+the performance of Graphhopper against NSM and humans. This setting allows
+us to isolate the noise from the visual perception component and quantify our
+methods’ reasoning capabilities. Subsequently, we present the results with our
+own generated scene graphs.
+In addition, we also observed that the inclusion of auxiliary nodes helps the
+agent to achieve eﬃcient performance. Hub node performs better compare to
+starting from any random nodes, as its facilitate easier forward and backtracking
+from a node. For binary question instead of YES or NO node, we experimented
+where the path of the agent was processed by another classiﬁer (e.g., a logis-
+tic regression) and the classiﬁcation logits were assigned as rewards. However,
+this led to inferior results; most likely due to the absence of a weight-sharing
+mechanism and due to the noisy reward signal produced by the classiﬁer. These
+observations supports our assumption on the role of auxiliary nodes we have
+used in scene graph.
+Reproducing NSM: [15] proposed the state of the art method named NSM for
+VQA. NSM is the conceptually most similar method, as it also exploits the
+scene graph reasoning for VQA. We consider NSM to be our baseline method
+for comparison. However, their approach to reasoning is diﬀerent from ours. To
+compare the reasoning ability of our method with the same generated scene
+graph, we tried to reproduce NSM, as the code for NSM is not open-sourced.
+We have used the the available parameters from [15] and the implementation
+from [9].
+T able 1. A comparison of Graphhopper with human performance and NSM
+based on manually curated scene graphs.
+Method Binary Open Consistency Validity Plausibility Accuracy
+Human [17] 91.2 87.4 98.4 98.9 97.2 89.3
+NSM [15] 51.03 18.79 81.36 83.69 79.12 34.5
+Graphhopper 92.18 92.40 91.92 93.68 93.13 92.30
+5.1 Results on Manually Curated Scene Graphs
+In this section, we report on an experimental study with Graphhopper on the
+manually curated scene graphs provided along with the GQA dataset. Table 1
+shows the performance of Graphhopper and compares it with the human perfor-
+mance reported in [17] and with the performance of NSM on the same underlying
+
+[[page 11]]
+Graphhopper 11
+manually curated scene graphs. We ﬁnd that Graphhopper strictly outperforms
+NSM with respect to all performance measures. In particular, on the open ques-
+tions, the performance gap is signiﬁcant. Moreover, Graphhopper also slightly
+outperforms humans with respect to the accuracy on both types of questions.
+On the other hand, concerning the supplementary performance measures con-
+sistency, validity, and plausibility, Graphhopper is outperformed by humans but
+nevertheless consistently reaches high values. Overall, these results can be seen
+as a testament of the reasoning capabilities and establish an upper bound to the
+performance of Graphhopper.
+5.2 Results on automatically generated graph
+The process of generating a graph representation for visual data is a costly and
+complex procedure. Although the scene graph generation is not the main focus
+of this work, it constituted one of the major challenges to create good scene
+graph for GQA due to the following facts:
+– There is no open source code for GQA scene graph generation or object
+detection.
+– A large number of instances and an uneven class distribution in GQA leads to
+a signiﬁcant drop in the accuracy compared to existing scene graph datasets
+(see [24]).
+– There is a lack of attribute prediction models in modern object detection
+frameworks.
+In this work, we adress all of these challenges as our model’s performance is
+directly dependent on the quality of the scene graph. We will also open-source
+our code base for transparency and accelerate the development scene graph-
+based reasoning for VQA.
+Generation of Scene Graph: To address these problems, ﬁrst, we choose two
+state-of-the-art network, RTN [23] for scene graph generation, and DetectoRS
+[30] for object detection. The transformer [35] based architecture of RTN and
+its contextual scene graph embedding is most closely related to our architecture
+and for our future expansion. To make Graphhopper generic to any scene graph
+generator, we haven’t use contextualized embedding from RTN, instead we rely
+on GAT for contextualization.
+Pruning of GQA: GQA has more than 6 times the number of relationships
+compared to Visual Genome [24], which is the most used scene graph generation
+dataset, and contains more than 18 times the number of objects compared to the
+most common object detection dataset COCO [25]. Also, the class distribution
+is highly skewed which causes a signiﬁcant drop in the accuracy for both the
+object detection and the scene graph generation task. To eﬃciently prune the
+number of instances, we take the ﬁrst 800 classes, 170 relationships, and 200
+attributes based on their frequency of occurrence in the training questions and
+answers. This pruning allows us to reduce more than 60% of the words while
+covering more than 96% of the combined answers in the training set.
+
+[[page 12]]
+12 R. Koner et al.
+(a) Question: Is the color
+of the number the same as
+that of the wristband?
+Answer: No.
+(b) Question: What is the
+name of the appliance that
+is not small?
+Answer: Refrigerator.
+(c) Do both the pepper
+and the vegetable to the
+right of the ice cube have
+green color?
+Answer: Yes.
+Fig. 3. Three examples question and the corresponding images and paths.
+Attribute prediction: One of the shortcomings of existing scene graph generation
+and object detection networks is that they do not predict the attributes (e.g., the
+color or size of an object) of a detected object. Therefore, we have incorporated
+the attribute prediction for answering the question on GQA. Contextualized
+object embedding from RTN [23] is used for attribute prediction as
+Pattribute =σ(W (Objcontext,Pobj)), (5)
+where W ,Objcontext, Pobj , Pattribute are the weight matrices of a linear layer,
+the contextual embedding of an object, the probability distribution over all ob-
+jects and the probability distribution over the attributes. σ denotes the sigmoid
+function.
+We have trained both the object detector and the scene graph generator on a
+pruned version of GQA with their respective default parameters after the pre-
+possessing. This helps to increase the coverage of all the instances (e.g., objects,
+attributes, relationships ) on training questions from 52% to 77% implying that
+our generated scene graph now covers 77% of all instances that represent answers
+to the training questions.
+T able 2. A comparison of our method with NSM, based on generated scene
+graphs. Graphhopper (pr) indicates that we employed predicted relations from
+RTN [23].
+Method Binary Open Consistency Validity Plausibility Accuracy
+NSM [15] 51.88 19.83 82.01 86.28 81.75 35.34
+Graphhopper 69.48 44.69 83.64 89.42 85.13 56.69
+Graphhopper (pr) 85.84 77.27 92.98 92.26 89.50 81.41
+
+[[page 13]]
+Graphhopper 13
+(a) Experiments on Manually Curated Scene Graph
+(b) Experiments on Ground Truth objects and predicted relation from RTN [23]
+as Relation predictor.
+(c) Experiments on Generated Scene Graph using DetectoRS [30] object detector
+and RTN [23] as Scene Graph generator.
+Fig. 4. Comparison of the performance of our model on various Scene Graph
+generation settings, (left) accuracy across various semantic instances (“At-
+tribute”,“Global”,“Relation” etc) required to answer a question (middle) ac-
+curacy on multiple types of question category (“Choose”,“Logical”,“Verify” etc)
+and (right) accuracy on minimum number of steps needed to reach the answer
+node.
+
+[[page 14]]
+14 R. Koner et al.
+Table 2, shows the performance of Graphhopper in two settings: First, with
+a generated graph where we predict the classes, the attributes, and relationships
+using our own pipeline. Second, where we only use the predicted relationships
+from RTN [23] (with ground truth objects and attributes). We ﬁnd that Graph-
+hopper consistently outperforms NSM [15] based on the generated graph. More-
+over, in the “pr” or predicted relations setting, it achieves an even higher score as
+the graphs do not contain any misprediction from the object detector. These en-
+couraging results show superior reasoning abilities both on the generated graph
+and generated relationships between objects.
+5.3 Discussion on the Reasoning Ability
+To further analyze the reasoning abilities of Graphhopper, Figure 4 disentangles
+the results according to diﬀerent types of questions: 5 semantic types (left) and
+5 structural types (middle). Moreover, we report the performance of Graphhop-
+per according to the length of the reasoning path (right) (see the supplemen-
+tary material for additional information). Moreover, we show the performance
+of Graphhopper separately for each of the three scene graph settings that we
+considered in this work. Figure 4a shows performance on a manually curated
+scene graph that depicts the actual performance in an ideal environment. Figure
+4b illustrates the performance based on only the predicted relationships between
+objects. This setting shows the performance of Graphhopper along with a scene
+graph generator. Finally, Figure 4c depicts the performance based on the object
+detector, the scene graph generator, and Graphhopper. First and foremost, we
+ﬁnd that Graphhopper consistently achieves high accuracy on all types of ques-
+tions in every setting. Moreover, we ﬁnd that the performance of Graphhopper
+does not suﬀer if answering the questions requires many reasoning steps. We con-
+jecture that this is because high-complexity questions are harder to answer, but
+due to proper contextualization of the embeddings (e.g., via the GAT and the
+Transformer), the agent can extract the speciﬁc information that identiﬁes the
+correct target node. The good performance on these high-complexity questions
+can be seen as evidence that Graphhopper can eﬃciently translate the question
+into a transition on the scene graph hopping until the correct answer is reached.
+Examples of Reasoning Path: Figure 3 shows three examples of scene graph
+traversals of Graphhopper that lead to the correct answer. One can see in these
+examples that the sequential reasoning process over explicit scene graph entities
+makes the reasoning process more comprehensible. In the case of wrong predic-
+tions, the extracted path may oﬀer insights into the mechanics of Graphhopper
+and facilitate debugging.
+6 Conclusion
+We have proposed Graphhopper, a novel method for visual question answering
+that integrates existing KG reasoning, computer vision, and natural language
+
+[[page 15]]
+Graphhopper 15
+processing techniques. Concretely, an agent is trained to extract conclusive rea-
+soning paths from scene graphs. To analyze the reasoning abilities of our method,
+we conducted a rigorous experimental study on both manually curated and gen-
+erated scene graphs. Based on the manually curated scene graphs we showed that
+Graphhopper reaches human performance. Moreover, we ﬁnd that, on our own
+automatically generated scene graph, Graphhopper outperform another state-of-
+the-art scene graph reasoning model with respect to all considered performance
+metrics. In future works, we plan to combine scene graphs with common sense
+knowledge graphs to further enhance the reasoning abilities of Graphhopper.
+References
+1. Abbasnejad, E., Teney, D., Parvaneh, A., Shi, J., Hengel, A.v.d.: Counterfactual
+vision and language learning. In: Proceedings of the IEEE/CVF Conference on
+Computer Vision and Pattern Recognition. pp. 10044–10054 (2020)
+2. Anderson, P., He, X., Buehler, C., Teney, D., Johnson, M., Gould, S., Zhang,
+L.: Bottom-up and top-down attention for image captioning and visual question
+answering. In: Proceedings of the IEEE conference on computer vision and pattern
+recognition. pp. 6077–6086 (2018)
+3. Andreas, J., Rohrbach, M., Darrell, T., Klein, D.: Neural module networks. In:
+Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition.
+pp. 39–48 (2016)
+4. Antol, S., Agrawal, A., Lu, J., Mitchell, M., Batra, D., Lawrence Zitnick, C., Parikh,
+D.: Vqa: Visual question answering. In: Proceedings of the IEEE international
+conference on computer vision. pp. 2425–2433 (2015)
+5. Cadene, R., Ben-Younes, H., Cord, M., Thome, N.: Murel: Multimodal relational
+reasoning for visual question answering. In: Proceedings of the IEEE Conference
+on Computer Vision and Pattern Recognition. pp. 1989–1998 (2019)
+6. Chen, L., Zhang, H., Xiao, J., He, X., Pu, S., Chang, S.F.: Counterfactual critic
+multi-agent training for scene graph generation. In: Proceedings of the IEEE/CVF
+International Conference on Computer Vision. pp. 4613–4623 (2019)
+7. Chen, W., Gan, Z., Li, L., Cheng, Y., Wang, W., Liu, J.: Meta module network
+for compositional visual reasoning. arXiv preprint arXiv:1910.03230 (2019)
+8. Das, R., Dhuliawala, S., Zaheer, M., Vilnis, L., Durugkar, I., Krishnamurthy, A.,
+Smola, A., McCallum, A.: Go for a walk and arrive at the answer: Reasoning over
+paths in knowledge bases using reinforcement learning. In: ICLR (2018)
+9. Eyzaguirre, C.: Nsm. https://github.com/charlespwd/project-title (2019)
+10. Gan, Z., Chen, Y.C., Li, L., Zhu, C., Cheng, Y., Liu, J.: Large-scale adver-
+sarial training for vision-and-language representation learning. arXiv preprint
+arXiv:2006.06195 (2020)
+11. Glorot, X., Bengio, Y.: Understanding the diﬃculty of training deep feedforward
+neural networks. In: Proceedings of the thirteenth international conference on ar-
+tiﬁcial intelligence and statistics. pp. 249–256 (2010)
+12. Hildebrandt, M., Serna, J.A.Q., Ma, Y., Ringsquandl, M., Joblin, M., Tresp,
+V.: Reasoning on knowledge graphs with debate dynamics. arXiv preprint
+arXiv:2001.00461 (2020)
+13. Hochreiter, S., Schmidhuber, J.: Long short-term memory. Neural computation
+9(8), 1735–1780 (1997)
+
+[[page 16]]
+16 R. Koner et al.
+14. Hu, R., Andreas, J., Rohrbach, M., Darrell, T., Saenko, K.: Learning to reason:
+End-to-end module networks for visual question answering. In: Proceedings of the
+IEEE International Conference on Computer Vision. pp. 804–813 (2017)
+15. Hudson, D., Manning, C.D.: Learning by abstraction: The neural state machine.
+In: Advances in Neural Information Processing Systems. pp. 5901–5914 (2019)
+16. Hudson, D.A., Manning, C.D.: Compositional attention networks for machine rea-
+soning. arXiv preprint arXiv:1803.03067 (2018)
+17. Hudson, D.A., Manning, C.D.: Gqa: A new dataset for real-world visual reasoning
+and compositional question answering. arXiv preprint arXiv:1902.09506 (2019)
+18. Johnson, J., Hariharan, B., van der Maaten, L., Fei-Fei, L., Lawrence Zitnick, C.,
+Girshick, R.: Clevr: A diagnostic dataset for compositional language and elemen-
+tary visual reasoning. In: Proceedings of the IEEE Conference on Computer Vision
+and Pattern Recognition. pp. 2901–2910 (2017)
+19. Johnson, J., Krishna, R., Stark, M., Li, L.J., Shamma, D., Bernstein, M., Fei-Fei,
+L.: Image retrieval using scene graphs. In: Proceedings of the IEEE conference on
+computer vision and pattern recognition. pp. 3668–3678 (2015)
+20. Kim, J.H., Jun, J., Zhang, B.T.: Bilinear attention networks. In: Advances in Neu-
+ral Information Processing Systems. pp. 1564–1574 (2018)
+21. Kingma, D.P., Ba, J.: Adam: A method for stochastic optimization. arXiv preprint
+arXiv:1412.6980 (2014)
+22. Kipf, T.N., Welling, M.: Semi-supervised classiﬁcation with graph convolutional
+networks. arXiv preprint arXiv:1609.02907 (2016)
+23. Koner, R., Sinhamahapatra, P., Tresp, V.: Relation transformer network. arXiv
+preprint arXiv:2004.06193 (2020)
+24. Krishna, R., Zhu, Y., Groth, O., Johnson, J., Hata, K., Kravitz, J., Chen, S.,
+Kalantidis, Y., Li, L.J., Shamma, D.A., et al.: Visual genome: Connecting language
+and vision using crowdsourced dense image annotations. International Journal of
+Computer Vision 123(1), 32–73 (2017)
+25. Lin, T.Y., Maire, M., Belongie, S., Hays, J., Perona, P., Ramanan, D., Doll´ ar, P.,
+Zitnick, C.L.: Microsoft coco: Common objects in context. In: European conference
+on computer vision. pp. 740–755. Springer (2014)
+26. Mao, J., Gan, C., Kohli, P., Tenenbaum, J.B., Wu, J.: The neuro-symbolic concept
+learner: Interpreting scenes, words, and sentences from natural supervision. arXiv
+preprint arXiv:1904.12584 (2019)
+27. Nickel, M., Murphy, K., Tresp, V., Gabrilovich, E.: A review of relational machine
+learning for knowledge graphs. Proceedings of the IEEE 104(1), 11–33 (2015)
+28. Paszke, A., Gross, S., Chintala, S., Chanan, G., Yang, E., DeVito, Z., Lin, Z.,
+Desmaison, A., Antiga, L., Lerer, A.: Automatic diﬀerentiation in pytorch (2017)
+29. Pennington, J., Socher, R., Manning, C.D.: Glove: Global vectors for word repre-
+sentation. In: Empirical Methods in Natural Language Processing (EMNLP). pp.
+1532–1543 (2014), http://www.aclweb.org/anthology/D14-1162
+30. Qiao, S., Chen, L.C., Yuille, A.: Detectors: Detecting objects with recursive fea-
+ture pyramid and switchable atrous convolution. arXiv preprint arXiv:2006.02334
+(2020)
+31. Shi, J., Zhang, H., Li, J.: Explainable and explicit visual reasoning over scene
+graphs. In: Proceedings of the IEEE Conference on Computer Vision and Pattern
+Recognition. pp. 8376–8384 (2019)
+32. Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I., Salakhutdinov, R.:
+Dropout: a simple way to prevent neural networks from overﬁtting. The journal of
+machine learning research 15(1), 1929–1958 (2014)
+
+[[page 17]]
+Graphhopper 17
+33. Tang, K., Niu, Y., Huang, J., Shi, J., Zhang, H.: Unbiased scene graph generation
+from biased training. In: Proceedings of the IEEE/CVF Conference on Computer
+Vision and Pattern Recognition. pp. 3716–3725 (2020)
+34. Teney, D., Liu, L., van Den Hengel, A.: Graph-structured representations for visual
+question answering. In: Proceedings of the IEEE Conference on Computer Vision
+and Pattern Recognition. pp. 1–9 (2017)
+35. Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser,
+ L., Polosukhin, I.: Attention is all you need. In: Advances in neural information
+processing systems. pp. 5998–6008 (2017)
+36. Veliˇ ckovi´ c, P., Cucurull, G., Casanova, A., Romero, A., Lio, P., Bengio, Y.: Graph
+attention networks. arXiv preprint arXiv:1710.10903 (2017)
+37. Williams, R.J.: Simple statistical gradient-following algorithms for connectionist
+reinforcement learning. Machine learning 8(3-4), 229–256 (1992)
+38. Xiong, W., Hoang, T., Wang, W.Y.: Deeppath: A reinforcement learning method
+for knowledge graph reasoning. In: Proceedings of the 2017 Conference on Empir-
+ical Methods in Natural Language Processing (EMNLP 2017). ACL, Copenhagen,
+Denmark (9 2017)
+39. Yang, Z., He, X., Gao, J., Deng, L., Smola, A.: Stacked attention networks for
+image question answering. In: Proceedings of the IEEE conference on computer
+vision and pattern recognition. pp. 21–29 (2016)
+40. Yu, Z., Yu, J., Fan, J., Tao, D.: Multi-modal factorized bilinear pooling with co-
+attention learning for visual question answering. In: Proceedings of the IEEE in-
+ternational conference on computer vision. pp. 1821–1830 (2017)
+41. Zhu, C., Zhao, Y., Huang, S., Tu, K., Ma, Y.: Structured attentions for visual ques-
+tion answering. In: Proceedings of the IEEE International Conference on Computer
+Vision. pp. 1291–1300 (2017)
+
+[[page 18]]
+18 R. Koner et al.
+A Details on Model Training and Inference
+A.1 T raining Details
+In order to optimize the training objective given by Equation (4), we use REIN-
+FORCE [37] to obtain the gradient approximation
+ˆg =
+T−1∑
+t=0
+∇θ logπθ(At|St)(
+T−1∑
+t′ =t
+Rt′γt
+′
+−t−B(St)), (6)
+where γ is the discount factor for the reward. The gradient of the weights are
+aggregated over multiple rollouts. To reduce the variance, we adopt a moving
+average baseline functionB(St). The baseline function is an approximation of the
+value of a state St. We could have employed more sophisticated methods such
+as advantage network or actor-critic algorithm. However, we ﬁnd the current
+baseline works suﬃciently well. Formally, the baseline function consists of a
+non-trainable variable b and a hyperparameter λ. The baseline is updated by
+bt+1 =λbt + (1−λ)rt at each optimization step. Another technique that aﬀects
+the training speed is the reward normalization. Concretely, the accumulated
+rewards at each time step for each rollout are collected and normalized after
+subtraction of the baseline value.
+We introduce a regularization term on the entropy of the resulting probability
+distribution from the policy network πθ(At|St), which enforces that the agent
+explores the SG. The regularization is controlled by a hyperparameter β. In
+addition, we apply exponential decay to β during training so that β converges
+to zero.
+Moreover, we use the chain rule to calculate the gradients of the param-
+eters of the graph encoder (GAT) θGAT and the question encoder (Trans-
+former)θTransformer . The weight updates can be performed via gradient ascent,
+θ←θ +ηˆg or more advanced optimization methods such as Adam [21].
+A.2 Inference
+Beam search is used to infer the answer to a given question. Our inference ap-
+proach is based on evaluating how likely speciﬁc paths are appearing among all
+possible paths with a ﬁxed length. More speciﬁcally, given an input question, the
+agent’s initial location is given by the hub node. At each time step, the agent
+scores the next permissible actions based on the learned policy. The value of ac-
+tion represents the transition probability from the current node to a target node.
+Next, we keep the top k (also known as beam width) paths among all possible
+transitions and move the agent to the corresponding targets. This computation
+is iteratively performed until the maximum number of transitions is reached. In
+the end, we obtain multiple rollouts ranked by the path probabilities. The target
+node (i.e. the last node) of the path is regarded as an answer candidate. Unlike
+Monte Carlo sampling which does not consider path probabilities, beam search
+yields better answer candidates, as it always chooses the best choice within the
+search region. The algorithm for inference is summarized in table 2.
+
+[[page 19]]
+Graphhopper 19
+Algorithm 1: Training regime
+Input: Question Q, Scene GraphSG⊂E×R×E
+Model : Policy Network with θ :={θGAT,θTransformer,θAgent}, Baseline
+with b
+1 for i← 0 to N do // Loop over epochs
+2 Initialize Q andSG with GloVe embeddings;
+3 Q← GAT(Q) // Update the question with the question encoder
+4 SG← Transformer(SG) // Update the SG with the graph encoder
+5 C← [] // Initialize the trajectory buffer
+6 for r← 0 to N do // Loop over samples
+7 τ← [] // Initialize the trajectory
+8 E0← hub // Initialize the start position
+9 A0← dummy // Initialize the dummy start action
+10 for t← 0 to T do // Loop over time steps
+11 if t%∆ == 0 then // Restart and prompt the agent to the
+hub node
+// so that the agent is aware of its own action
+12 Et+1← hub // Set next nodes to the hub node
+13 At+1← dummy // Set next actions to the dummy return
+action
+14 end
+15 Sample an action (At, Et+1) from dt τ.append(At, Et) // Extend
+the trajectory
+16 Et←Et+1 // Move the agent to the next entity
+17 end
+18 C.append(τ) // Collect the trajectory
+19 end
+20 r←R(C) // Gather rewards
+21 g← ∑T −1
+t=0 ∇θ logπθ(at|st)(∑T −1
+t′ =trt′γt
+′
+−t−b(st)) // Approximate
+gradients
+22 θ←θ +ηg // Update the policy network
+23 b←b + (1−λ)r // Update the baseline function
+24 end
+Inference Complexity The inference of our method is computationally eﬃcient.
+Unlike other methods that need to iterate through each candidate answer for
+a ﬁnal prediction, we only need to run the inference once so that the score
+of each answer is obtained. Let d denote the embedding dimension of the
+words and entities. Analytically, the embedding stage has asymptotic complexity
+O(|E| +|R| +|Q|). For the GAT, the implementation of a single attention head
+and multi-head attention is similar. In particular, they have the same time com-
+plexityO(|E|dd
+′
++|R|d
+′
+). The computation of the question encoding is given
+byO(|Q|2d). It is eﬃcient as it only runs once for each question and is used
+for arbitrary times during random walks. Also, the length of the questions Q is
+usually short (less than 30 words). Finally, during the random walk sampling,
+
+[[page 20]]
+20 R. Koner et al.
+the agents complxity is given by O(T (D2 +|E|d)), where d is dominant. The
+inference time depends largely on the path length.
+Algorithm 2: Inference with beam search
+Input: Question Q, Scene graphSG⊂E×R×E
+Output: Answer
+1 Initialize Q andSG with GloVe embeddings;
+2 Q← GAT(Q) // Update the question with the question encoder
+3 SG← Transformer(SG) // Update the SG with the graph encoder.
+4 P← [] // Initialize the probability register
+5 τ← [] // Initialize the trajectory
+6 E0← hub // Initialize the start position
+7 A0← dummy // Initialize the dummy start action
+8 for t← 0 to T do // Loop over time steps
+9 for r← 0 to N do // Loop over rollouts
+10 if t%∆ == 0 then // Restart and prompt the agent to the hub
+node
+// so that the agent is aware of its own action
+11 Et+1← hub // Set next nodes to the hub node
+12 At+1← dummy // Set next actions to the dummy return
+action
+13 end
+14 Forward pass through the policy network to generate candidate actions
+{(At,Et)} along with their probabilities {pi} τ.append({(At,Et)})
+// Extend the trajectory
+15 P .append({pi}) // Store corresponding probabilities
+16 end
+17 indicies←argmax(P,k ) // Filter indices of top k probabilities
+from P
+18 τ←τ[indices] // Choose top k paths ranked by their probabilities
+19 Et+1←e∈τ // Conduct corresponding transitions
+20 end
+21 Prediction←τ[0] // Predict the end entity of the top path as the
+answer
+A.3 Complexity Analysis
+For analyzing the complexity of our method, we provide all the parameters
+contained in the building blocks. Moreover, we present the number of operations
+of a forward pass - the complete run that derives the answer from a given Q and
+SG. They are listed in the table 3.
+
+[[page 21]]
+Graphhopper 21
+Group Name No. Parameters No. Operations
+Word Embeddings* Entity Ne×d O(N)
+Relation Nr×D O(N)
+GAT Conv layer weight d×H1 O(BHNe)
+Conv layer attention d×H1 O(BHNe)
+Conv layer bias H1 O(BHNe)
+Transformer Positional encoder d×d O(Ne)
+Layer self attention (qkv)Ht(512)×d 3×Ht×d
+Self attn norm (W,b ) d 2×d
+Layer enc attn Ht(512)×d 3×Ht×d
+Enc attn norm (W,b ) d 2×d
+Pos ﬀn 1 (W,b ) d×d +d d×d +d
+Pos ﬀn 2 (W,b ) d×d +d d×d +d
+Pos ﬀn norm(W,b ) 2d 2×d
+Enc attn norm (W,b ) d 2×d
+Agent-MLP Dense 0 4d× 4d + 4d (H× 4d + 4d)×T
+Dense 1 2d× 4d + 2d (H× 2d + 2d)×T
+Agent-LSTM Lstm cell Wih 4d× 16d (4d× 16d)×T
+Lstm cell ih 16d (16d)×T
+Lstm cell Whh 4d× 16d (4d× 16d)×T
+Lstm cell bhh 16d (16d)×T
+T able 3. An overview of the number parameters and the asymptotic number
+of operations for the individual modules. The batch size is indicated by B. T
+corresponds to the number of time steps. D and H denote the embedding size
+and hidden size, respectively. Blocks are marked with a ”*” if their weights are
+not trainable.
+B Additional Details on the Dataset GQA
+In this section we describe various question category and their type. We list the
+question based on semantic and structural categories. We further grouped them
+based on their entity type like object, attribute, category etc. Table 4, describes
+the detailed list of question category.
+
+[[page 22]]
+22 R. Koner et al.
+T able 4. List of question examples in the GQA dataset.
+Category Type Description Example
+Semantics
+Object Existence of object Are there any doors that are not made of
+metal?
+Attribute Property about an object Does the soap dispenser that is to the right of
+the other soap dispenser have small size and
+white color?
+Category Identify an object class What kind of animal is standing?
+Relation Relationship of object What is the food that is to the left of the
+white object that is to the left of the choco-
+late called?
+Global Overall scene property Which place is it?
+Structural
+Query Open-form question What type of furniture is to the left of the
+silver device which is to the left of the helmet?
+Choose Choose from alternatives What are the ﬂoating people in the ocean do-
+ing, riding or swimming?
+Verify Simple yes/no question Are there statues above the brass clock that
+is on the building?
+Compare Comparison of objects Are the drawers made of the same material
+as the cages?
+Logical And/or operators Are both the giraﬀe near the building and the
+giraﬀe that is to the left of the tray standing?

@@ -1,0 +1,36 @@
+{
+  "id": "doi:10.1145/3696410.3714782",
+  "title": "MedRAG: Enhancing Retrieval-augmented Generation with Knowledge Graph-Elicited Reasoning for Healthcare Copilot",
+  "authors": [
+    "Xuejiao Zhao",
+    "Siyan Liu",
+    "Su-Yin Yang",
+    "Chunyan Miao"
+  ],
+  "year": 2025,
+  "published": "2025-04-22",
+  "venue": null,
+  "url": "https://doi.org/10.1145/3696410.3714782",
+  "pdf_url": "https://dl.acm.org/doi/pdf/10.1145/3696410.3714782",
+  "abstract": "Retrieval-augmented generation (RAG) is a well-suited technique for retrieving privacy-sensitive Electronic Health Records (EHR).It can serve as a key module of the healthcare copilot, helping reduce misdiagnosis for healthcare practitioners and patients.However, the diagnostic accuracy and specificity of existing heuristic-based RAG models used in the medical domain are inadequate, particularly for diseases with similar manifestations.This paper proposes MedRAG, a RAG model enhanced by knowledge graph (KG)-elicited reasoning for the medical domain that retrieves diagnosis and treatment recommendations based on manifestations.MedRAG systematically constructs a comprehensive four-tier hierarchical diagnostic KG encompassing critical diagnostic differences of various diseases.These differences are dynamically integrated with similar EHRs retrieved from an EHR database, and reasoned within a large language model.This process enables more accurate and specific decision support, while also proactively providing follow-up questions to enhance personalized medical decision-making.MedRAG is evaluated on both a public dataset DDXPlus and a private chronic pain diagnostic dataset (CPDD) collected from Tan Tock Seng Hospital, and its performance is compared against various existing RAG methods.Experimental results show that, leveraging the information integration and relational abilities of the KG, our MedRAG provides more specific diagnostic insights and outperforms state-of-the-art models in reducing misdiagnosis rates.Our code will be available at https:// github.com/ SNOWTEAM2023/ MedRAG",
+  "doi": "10.1145/3696410.3714782",
+  "arxiv_id": null,
+  "openalex_id": "W4409657176",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 109,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T09:39:34.961901Z",
+  "relevance": 0.0,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "retriever agnostic temporal relevance"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

@@ -1,0 +1,47 @@
+{
+  "paper_id": "arxiv:2604.26176",
+  "relevance_tier": "high",
+  "problem": "Existing LLM-driven KGQA systems act as stateless planners, generating retrieval plans in isolation without exploiting historical query patterns, leading to schema hallucinations and limited retrieval coverage.",
+  "method": "CacheRAG: a systematic cache-augmented architecture for LLM-based KGQA that transforms stateless planners into continual learners via (1) Schema-agnostic user interface (two-stage semantic parsing via Intermediate Semantic Representation), (2) Diversity-optimized cache retrieval (two-layer hierarchical index + Maximal Marginal Relevance), (3) Bounded heuristic expansion (deterministic depth and breadth subgraph operators with strict complexity guarantees).",
+  "key_assumptions": [
+    "Intermediate Semantic Representation can effectively bridge natural language queries and local schema context.",
+    "Diversity-optimized cache retrieval improves structural variety and mitigates reasoning homogeneity.",
+    "Bounded heuristic expansion enhances retrieval recall without risking unbounded API execution."
+  ],
+  "main_contribution": "CacheRAG significantly outperforms state-of-the-art baselines (e.g., +13.2% accuracy and +17.5% truthfulness on the CRAG dataset) by transforming stateless LLM planners into continual learners that exploit historical query patterns.",
+  "datasets": [
+    "CRAG",
+    "QALD-10-en",
+    "WebQSP",
+    "CWQ"
+  ],
+  "benchmarks": [
+    "CRAG",
+    "QALD-10-en",
+    "WebQSP",
+    "CWQ"
+  ],
+  "baselines": [
+    "LLM base models (GPT-4o, Llama-3.1-70B-Instruct, Deepseek-chat-V3-0324), LLM tool-calling models (StructGPT variants), KDD Cup-winning solutions (db3, apex), SPARQL-based state-of-the-art solutions (ToG, ToG-2, sparql-qa, Decaf, CBR)"
+  ],
+  "metrics": [
+    "For CRAG: accuracy, miss rate, hallucination rate, truthfulness score (T = A - H). For SPARQL-based datasets: Hit@1 score."
+  ],
+  "results": "On CRAG: accuracy 0.824, hallucination rate 0.112, miss rate 0.064, truthfulness 0.711. On QALD-10-en: Hit@1 0.587 (+4.6% over prior SOTA). On WebQSP: Hit@1 0.840 (+1.9% over prior SOTA). On CWQ: Hit@1 0.736 (+3.2% over prior SOTA).",
+  "limitations": [
+    "Not explicitly stated in the paper."
+  ],
+  "future_work": [
+    "Not explicitly stated in the paper."
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "CacheRAG focuses on caching retrieval plans to improve efficiency and reduce hallucinations via semantic planning and reuse, while the idea enriches training triples with local context subgraphs from the same passage and uses an adaptive repair loop for one-hop failures followed by RL lower-hop transfer. Both aim to improve KGQA correctness, but CacheRAG operates at inference time via plan reuse, whereas the idea operates at training time via data enrichment and failure-driven example generation.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T08:24:39.829687Z"
+}

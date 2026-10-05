@@ -1,0 +1,41 @@
+{
+  "id": "U008",
+  "question": "Is the idea's premise — that current language-model training for multi-hop KGQA uses isolated triples — accurate, given that recent LLM+KGQA systems already fine-tune on retrieved subgraphs and paths (DrKGC, GNN-RAG, UniKGQA, KG-Hopper)?",
+  "description": "The idea's premise is that LM training 'typically uses isolated head-relation-tail triples'. The closest retrieved works describe the opposite problem at inference: KG-Hopper and KG-Reasoner criticize fixed, step-isolated *pipelines*, not isolated triples in training. If current LLM-based KGQA already fine-tunes on retrieved subgraphs/paths, the premise is weakened and the gap must be restated in terms of provenance-derived co-passage context rather than 'context vs. isolation'.",
+  "category": "validity",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "REFINE",
+  "possible_actions": [
+    "CHALLENGE",
+    "SEARCH",
+    "READ",
+    "REFINE"
+  ],
+  "confidence": 0.6,
+  "confidence_basis": "Based on full-text reads of DrKGC and GNN-RAG and abstracts of the rest; a targeted search on the premise statement was not run.",
+  "rationale": "If the premise is false as stated, the contribution must be re-framed around passage-derived provenance and matched-budget controls rather than around isolated-vs-context, which changes the research question and the baselines.",
+  "resolution": "Partially resolved and the premise must be restated. Recent LLM-based KGQA does not train on isolated triples in the strict sense — GNN-RAG and UniKGQA train on retrieved subgraphs with answer-level supervision, and DrKGC fine-tunes with a retrieved subgraph via a GCN adapter (C005). What is genuinely missing is context *derived from the source passage of each supervision triple* and *attached to the training signal*. So 'isolated triples' is inaccurate as a description of the state of the art; the defensible gap is narrower.",
+  "paper_ids": [
+    "arxiv:2506.00708",
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "arxiv:2101.03737"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2506.00708",
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "arxiv:2101.03737"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C006",
+    "C012",
+    "C013"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "INVESTIGATE",
+  "created_at": "2026-09-30T05:17:51.025693Z",
+  "updated_at": "2026-09-30T05:22:15.762464Z"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "doi:10.2139/ssrn.7084790",
+  "title": "Knowledge-Guided Cross-Modal Evidence Entity Alignment via Large Language Model Reasoning and Graph Structured Context",
+  "authors": [
+    "Xuhao Yang",
+    "Le Wang",
+    "ZiRui Zhao",
+    "RuiSheng Li"
+  ],
+  "year": 2026,
+  "published": null,
+  "venue": null,
+  "url": "https://doi.org/10.2139/ssrn.7084790",
+  "pdf_url": null,
+  "abstract": "With the rapid development of multimodal artificial intelligence, integrating heterogeneous evidence from text and vision has become a fundamental challenge in knowledge-guided reasoning, intelligent decision support, and information analysis in high-stakes scenarios. However, cross-modal evidence understanding still faces three persistent obstacles. First, there remains a substantial gap between low-level perceptual signals and domain semantics. Existing visual models are often effective at recognizing physical objects, local attributes, and spatial layouts. However, they frequently fail to determine the evidential meaning, functional role, and task relevance of these observations without domain knowledge and contextual cues. As a result, visually similar objects may correspond to very different evidence entities, while small but critical evidence items may be ignored because they are not visually salient. Second, there is a pronounced mismatch between abstract textual descriptions and complex visual scenes. Textual evidence is often expressed at the event level, relation level, or role level, whereas visual evidence is distributed across fine grained entities, local regions, occluded targets, and cluttered backgrounds. This mismatch makes direct one to one alignment unreliable, especially when crucial evidence is weakly visible, partially hidden, or embedded in dense scene context. Third, high quality benchmark resources remain scarce in privacy sensitive domains. Real world evidence data are difficult to access, difficult to release, and expensive to annotate with fine grained cross modal correspondences, which limits not only model training but also fair comparison and reproducible evaluation. To address these challenges, this study proposes a knowledge-guided framework for cross modal evidence entity alignment. First, we design a logical reconstruction pipeline and construct EviMM, a high fidelity and privacy preserving multimodal evidence dataset with fine grained alignment annotations. Second, we propose EviGraph-Align, a two stage framework that injects domain semantics into multimodal representations and performs coarse to fine candidate matching under graph structured context. Third, we develop an evidence verification mechanism that uses structural neighbor consistency to eliminate visually salient but semantically irrelevant distractors in cluttered scenes. Experimental results show that domain semantic injection and graph-based contextual reranking substantially improve alignment quality and effectively bridge the gap between perceptual observations and domain semantics. Overall, this study contributes a dataset resource, a structured alignment framework, and an interpretable evidence grounding paradigm for multimodal reasoning in high-stakes scenarios.",
+  "doi": "10.2139/ssrn.7084790",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T05:17:11.546350Z",
+  "relevance": 0.2692,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "knowledge graph context augmentation fine-tuning improves multi-hop reasoning large language model"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

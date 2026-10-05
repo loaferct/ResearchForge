@@ -1,0 +1,36 @@
+{
+  "id": "doi:10.20944/preprints202505.1992.v1",
+  "title": "SG-RAG MOT: SubGraph Retrieval Augmented Generation with Merging and Ordering Triplets for Knowledge Graph Multi-hop Question Answering",
+  "authors": [
+    "Ahmmad O. M. Saleh",
+    "Gokhan Tur",
+    "Yucel Saygin"
+  ],
+  "year": 2025,
+  "published": "2025-05-26",
+  "venue": null,
+  "url": "https://doi.org/10.20944/preprints202505.1992.v1",
+  "pdf_url": null,
+  "abstract": "Large Language Models (LLMs) often tend to hallucinate, especially on domain-specific tasks and tasks that require reasoning. Previously, we introduced SubGraph Retrieval Augmented Generation (SG-RAG) as a novel GraphRAG method for multi-hop question answering. SG-RAG leverages Cypher queries to search the given knowledge graph and retrieve the necessary subgraph to answer the question. The results from our previous work showed a higher performance of our method compared to the traditional Retrieval Augmented Generation (RAG). In this work, we further enhance SG-RAG by proposing an additional step called Merging and Ordering Triplets (MOT). The new MOT step seeks to decrease the redundancy in the retrieved triplets by applying hierarchical merging on the retrieved subgraphs. Moreover, it provides an ordering among the triplets using the Breadth First Search (BFS) traversal algorithm. We conducted experiments on the MetaQA benchmark, which is proposed for a multi-hop question-answering on the movies domain. Our experiments show that the SG-RAG MOT provides more accurate answers than Chain-of-Though and Graph Chain-of-Though. We also find out that merging (up to some point) highly overlapping subgraphs and defining an order among the triplets helps the LLM to generate more precise answers.",
+  "doi": "10.20944/preprints202505.1992.v1",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T06:28:34.051731Z",
+  "relevance": 0.7143,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "local context subgraph knowledge graph question answering",
+    "subgraph enrichment knowledge graph question answering training"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

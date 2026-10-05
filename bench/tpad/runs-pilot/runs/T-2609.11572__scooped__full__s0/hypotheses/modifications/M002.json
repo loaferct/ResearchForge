@@ -1,0 +1,27 @@
+{
+  "id": "M002",
+  "title": "Real-world regulatory benchmark with noisy temporal metadata",
+  "description": "Construct a benchmark from actual regulatory documents (e.g., US Code, Code of Federal Regulations) with version histories, extract temporal metadata using rule-based and NLP methods, and create time-stamped questions.",
+  "why_differs": "TimelyRAG uses synthetic benchmark (TimelyQABench); this uses real-world texts with inherent noise and missing temporal signals.",
+  "technical_mechanism": "Parse regulatory documents, extract effective dates via pattern matching, handle missing/noisy timestamps via fallback strategies, generate questions that require temporal reasoning.",
+  "expected_benefit": "More realistic evaluation of temporal relevance in practical regulatory QA.",
+  "potential_novelty": "High – first large-scale real-world regulatory QA benchmark with versioning.",
+  "implementation_difficulty": "high",
+  "implementation_difficulty_basis": "Data collection, parsing, question generation, and noise handling are non-trivial.",
+  "experimental_difficulty": "high",
+  "experimental_difficulty_basis": "Building the benchmark and running experiments require significant effort.",
+  "main_risk": "Noise may obscure signal, making evaluation challenging.",
+  "required_baselines": [
+    "BM25",
+    "BGE-M3",
+    "standard retrievers"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.11572"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T10:08:39.046279Z"
+}

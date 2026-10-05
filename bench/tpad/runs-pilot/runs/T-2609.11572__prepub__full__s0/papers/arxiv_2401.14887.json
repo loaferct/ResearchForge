@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2401.14887",
+  "title": "The Power of Noise: Redefining Retrieval for RAG Systems",
+  "authors": [
+    "Florin Cuconasu",
+    "Giovanni Trappolini",
+    "Federico Siciliano",
+    "Simone Filice",
+    "Cesare Campagnano",
+    "Yoelle Maarek",
+    "Nicola Tonellotto",
+    "Fabrizio Silvestri"
+  ],
+  "year": 2024,
+  "published": "2024-07-10",
+  "venue": null,
+  "url": "https://doi.org/10.1145/3626772.3657834",
+  "pdf_url": null,
+  "abstract": "Retrieval-Augmented Generation (RAG) has recently emerged as a method to extend beyond the pre-trained knowledge of Large Language Models by augmenting the original prompt with relevant passages or documents retrieved by an Information Retrieval (IR) system. RAG has become increasingly important for Generative AI solutions, especially in enterprise settings or in any domain in which knowledge is constantly refreshed and cannot be memorized in the LLM. We argue here that the retrieval component of RAG systems, be it dense or sparse, deserves increased attention from the research community, and accordingly, we conduct the first comprehensive and systematic examination of the retrieval strategy of RAG systems. We focus, in particular, on the type of passages IR systems within a RAG solution should retrieve. Our analysis considers multiple factors, such as the relevance of the passages included in the prompt context, their position, and their number. One counter-intuitive finding of this work is that the retriever's highest-scoring documents that are not directly relevant to the query (e.g., do not contain the answer) negatively impact the effectiveness of the LLM. Even more surprising, we discovered that adding random documents in the prompt improves the LLM accuracy by up to 35%. These results highlight the need to investigate the appropriate strategies when integrating retrieval with LLMs, thereby laying the groundwork for future research in this area.",
+  "doi": "10.1145/3626772.3657834",
+  "arxiv_id": "2401.14887",
+  "openalex_id": "W4391376033",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 210,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T10:12:04.718447Z",
+  "relevance": 0.3,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal relevance weighting document retrieval"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

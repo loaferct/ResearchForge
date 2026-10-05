@@ -1,0 +1,4100 @@
+[[page 1]]
+Time Present and Time Past:Benchmarking Large Language Models on
+Temporally Evolving Document Understanding
+Mahbub E Sobhani1,2♠, Md. Faiyaz Abdullah Sayeedi1,2♠, Fahmid Hasan Chowdhury1,
+Md Adnan Arefeen3,Farig Sadeque 1,Md. Faizul Bari 4,Swakkhar Shatabda 1♣
+1BRAC University 2United International University
+3North South University 4Spectrum Software & Consulting Ltd.
+HuggingFace/Datasets/TIDE
+Abstract
+Evolving documents, such as laws, tax codes,
+and software documentation, are amended, re-
+placed, and sometimes reverted over time, so
+a question has different correct answers at dif-
+ferent dates. In contrast to encyclopedic knowl-
+edge, where an old fact is simply overwritten,
+an amendment is itself an official text that states
+what it replaces and when it takes effect, and
+the earlier version stays correct for its validity
+period. The central challenge is thereforever-
+sion resolution, that is, identifying the version
+in force on the queried date. Existing tempo-
+ral QA datasets treat time only as an annota-
+tion, so version resolution stays untested. We
+present TIDE, an expert-verified benchmark of
+3,050 QA pairs over 644 official customs in-
+struments issued between 1969 and 2025 by
+the Government of Bangladesh, covering eight
+task types over deeply code-mixed documents
+that are heterogeneous in layout and dated in
+two calendars. In addition, we evaluate nine
+recent LLMs under a single protocol across
+parametric, gold-context, and retrieval access,
+scored by a three-judge LLM council with a
+hard date gate separating correct meaning from
+correct time. The best macro-averaged accu-
+racy is only 68.5%. Resolving a version from
+an implicit date reaches 59.7%, and detecting
+that the supplied version does not govern the
+query reaches only 26.7%. Models are more
+likely to find correct versions than to reject in-
+correct ones, and they tend to follow a confident
+parametric answer over the supplied authorita-
+tive text. All code and data are available at
+https://github.com/icsetepa44/TIDE
+1 Introduction
+Wikipedia is the traditional form of evolving knowl-
+edge, where a fact changes by simply overwriting
+the old text (Nakshatri et al., 2025). In contrast,
+♠Equal contribution.
+♣Corresponding author: swakkhar.shatabda@bracu.ac.bd
+Traditional Evolving Knowledge
+(e.g., Wikipedia)
+Old facts are overwritten. Cumulative, layered formal versions coexists. Only specific section
+change, creating a persistent, complete historical record.
+TIDE: Evolving Documents
+(e.g., Laws, Tax Codes)
+2010 2020
+Every past granular rule
+(Section 5a, Section 5b)
+remains persistant and
+correct for its own
+validity period.
+Determine Rule Section A
+form for July 2026.  (Rule
+Sec A is in D1; D2 amends
+it; D3 reverts it to D1.)
+a superseded answer
+(e.g., D1 form being queried in 2026)
+RISK OF SUPERSEDED ANSWER!
+TIDE evaluates LLMs on version resolution, finding the version in effect on the queried date.
+The Version Resolution Challenge
+2021
+LLMs must traverse multi-document
+dependencies and resolve rule reversions!
+Figure 1: Comparison of traditional evolving knowledge
+and evolving documents.
+an official rule changes through a formal amend-
+ment or revision, which is itself an official text that
+states what it replaces or reverts and when it takes
+effect (Levinson, 2001). The earlier version there-
+fore stays correct for the period it covers. We term
+such textsevolving documents. Laws, tax codes,
+drug regulations, and medical guidelines all work
+in this way. For example, a customs notification
+supersedes an earlier duty rate from a stated date,
+and a new software release deprecates an interface
+while older versions keep the previous behavior.
+Several versions of the same rule can all be cor-
+rect, each for its own period. An LLM answering
+a question about such a document must therefore
+identify the version that governs the queried date.
+This challenge isversion resolution. When it fails,
+an answer taken from a superseded version can
+cause legal, financial, or clinical harm.
+Version resolution is hard for three reasons,
+which correspond to the three ways a model can
+obtain knowledge. First, parametric knowledge
+freezes at or before the training cutoff (Cheng et al.,
+2024). Second, the provided context may come
+from the wrong period (Zhu et al., 2025). Third,
+retrieval matches meaning rather than time (Zhang
+et al., 2025). In addition, our corpus adds a sec-
+ond axis of difficulty. The documents are deeply
+1
+arXiv:2608.08512v1  [cs.AI]  9 Aug 2026
+
+[[page 2]]
+code-mixed Bangla–English, they often embed tar-
+iff tables, and 97% of them state dates in both the
+Bangla and the Gregorian calendar. A model must
+therefore normalise script and calendar before it
+can locate the version (see Figure 1).
+Time-sensitive QA benchmarks like TempRea-
+son (Tan et al., 2023) and MenatQA (Wei et al.,
+2023), as well as studies on knowledge that evolves
+post-training (Kim et al., 2026a), treat time merely
+as an annotation. Closest to our setting, evolveQA
+(Nakshatri et al., 2025) builds questions from time-
+stamped AWS, Azure, and WHO updates, but it
+probes closed-book knowledge and treats super-
+seded values as outdated. Similarly, EvolveBench
+(Zhu et al., 2025) tests misaligned context and
+implicit dates, but only over Wikidata facts with
+model-generated contexts. In contrast to anevolv-
+ing document, no source text in either benchmark
+states what it replaces or when it takes effect. Fur-
+thermore, version-aware retrieval ignores amend-
+ment semantics (Huwiler et al., 2025), automat-
+ically generated corpora lack expert verification
+(Gruber et al., 2025), and cross-lingual benchmarks
+cross languages but not time (Asai et al., 2021;
+Longpre et al., 2021). Therefore, no existing bench-
+mark tests version resolution overevolving docu-
+mentsin a mixed-language setting.
+We address these gaps with TIDE, an expert-
+verified benchmark built on authenticevolving doc-
+uments. The benchmark spans eight task categories.
+Moreover, we evaluate every model under a single
+protocol with three knowledge-access settings. In
+summary, our contributions are as follows.
+• We formalizeevolving documentsand pro-
+pose TIDE, an expert-verified benchmark of
+3,050 QA pairs over 644 official, deeply code-
+mixed Bangladesh customs instruments, cov-
+ering eight task types.
+• We designed a unified evaluation protocol
+across the parametric, gold-context, and re-
+trieval settings, scored by an LLM council
+with a hard date gate that separates correct
+meaning from correct time.
+• We benchmark nine LLMs and show that read-
+ing the correct text is necessary but not suffi-
+cient, because models locate correct versions
+far more readily than they reject wrong ones,
+and they often follow a confident parametric
+answer over the authoritative text.
+2 TheTIDEBenchmark
+We introduce TIDE (TemporalInformationDrift in
+Evolving Documents), a benchmark for evaluating
+the evolving knowledge of LLMs. Figure 2 shows
+how we construct TIDE, and Table 1 compares it
+with existing benchmarks. For more details, see
+Appendix A.1.
+Benchmark properties
+Benchmark Source Temp. Evol. Amend. Pert. Misal. P/C/R
+Temporal and time-sensitive QA
+TRAM Suite✓ ✗ ✗ ✗ ✗ ✗
+TempReason Wikidata✓ ✓ ✗ ✗ ✗ ✓
+MenatQA Wikipedia✓ ✓ ✗ ✓ ✗ ✗
+Evolving knowledge
+EvolveBench Wikidata✓ ✓ ✗ ✗ ✓◦
+evolveQA Web docs✓ ✓ ✗ ✗ ✗ ✗
+OAKS Synthetic✓ ✓ ✗ ✗◦✗
+Version-aware retrieval
+TempRAGEval QA sets✓ ✓ ✗ ✓ ✗ ✗
+VersionQA Tech docs✓ ✓ ✗ ✗ ✗ ✗
+Cross-lingual QA
+XOR-TyDi QA Wikipedia✗ ✗ ✗ ✗ ✗ ✗
+MKQA NQ✗ ✗ ✗ ✗ ✗ ✗
+TIDE(ours) Customs law ✓ ✓ ✓ ✓ ✓ ✓
+Table 1: TIDE offers a more thorough evaluation of
+LLMs on time-evolving knowledge.Amend.: the
+amending text names what it replaces and its effective
+date.Pert.: a value in the statement is altered.Misal.:
+the context conflicts with the correct answer.P/C/R: the
+parametric, gold-context, and retrieval settings, with◦
+marking support for only two. NQ is Natural Questions.
+2.1 Data Sourcing
+Evolving documents, in which later versions amend
+earlier ones, appear in many domains, includ-
+ing finance, customs, income tax, V AT, law, soft-
+ware requirements, and medicine. Among these,
+we selected Bangladesh Customs because entity-
+level information, such as V AT, tax, and rules,
+changes frequently over time. We collected 644
+PDFs from official the website 1: 3 Acts of
+Parliament, 20 General Orders (GOs), 609
+Statutory Regulatory Orders (SROs), and 12
+Rules, spanning 1969 to 2025.
+2.2 Document Parsing
+One key challenge was extracting every document
+without text loss. The PDFs are heterogeneous,
+written in code-mixed Bangla and English, and
+range from 1 to 169 pages. Therefore, we defined
+a general extraction schema that preserves clauses,
+clause hierarchy, tables, and metadata, and used
+1https://nbr.gov.bd/regulations/acts/
+customs-acts/eng
+2
+
+[[page 3]]
+clauses + tables + metadata
+13 volunteer verifiers | WER=0.07%
+parse
+644 official customs PDFs
+(1969-2025)
+3 Acts | 20 GOs | 609 SROs | 12 Rules
+extract
+[entity, concept] clustering 
++ 
+thread construction
+(e,C)
+generate
+Temporally Grounded
+Question & Answer
+...raw sugar duty: 2000
+Taka per metric ton....
+(version frozen at
+training cut-off)
+verify
+3,050 QA | 8 task types
+expert-verified
+(a) Corpus Construction
+(b) Amendment Timeline
+1969
+Each amendment states what it replaces and when it takes
+effect. The old rule stays correct for its own validity period.
+2010
+Minimum Valuation
+Condition
+2012
+SRO 178-
+AIN/2012 issued
+Customs
+Act, 1969
+2013-06-06
+SRO 165-AIN/2013
+amends clauses (12)
+2014-06-05
+Jewellery
+Weight Limits
+2017-06-01
+SRO 128-AIN/2017
+repeals SRO 135
+January 2025
+ January 2025
+benchmark
+cut-off
+LLM Knowledge
+cut-off
+version 1 in force version 2 in force repealed
+Temporal Drift
+Each amendment states what it replaces and when it takes
+effect. SRO 165-AIN/2013 repealed as SRO 128-AIN/2017.
+(c) Eight Task Types
+Temporal MCQ
+Q: Which notification was repealed on 1 Jun
+2017 by SRO 128-AIN/2017?
+SRO 135...
+SRO 176...
+Relative-Time QA
+Q: Baggage rules stand at 2011-06-09.
+What jewellery restriction arrived three
+years later?
+2014-06-05: Weight limits introduced
+2016: Full ban introduced
+Event Sorting
+Q: Chronologically order shuffled, undated
+events
+E1 E2 E3 E4
+ E2 E3 E4 E1
+E1 E2 E3 E4
+Open-Ended
+Q: Why introduce a minimum valuation
+conditions in 2010?
+1. To prevent under-invoicing of imports
+2. To promote tourism revenue
+3. ...
+Perturbation Detection
+Q: ...random scanning of up to 10% of the
+passengers...
+Inaccurate. The true limit is 5%.
+Accurate.
+Temporal Scenario
+Q: How did SRO 165-AIN/2013 update SRo
+178-AIN/2012?
+Replaced clause (12)...
+Added a brand-new schedule
+Scenario Short Answer
+Q: Mr. Hamim is a...CD and SD rates for
+silk screens under SRO 135-AIN/2017?
+The rates are CD 25%, SD 0%
+The rates are CD 15%, SD 10%
+Context Misalignment
+Q: What is the actual threshold?
+1% per the official text
+5%
+Context: exemption applies if duty exceeds 5%
+(d) Evaluation
+Parametric
+(closed
+book)
+Gold
+Context
+(ICL)
+RAG: Top-10
+Retrieved
+Clauses
+LLM
+Answer
+LLM Council (3 Judges)
+ Wrong Date = 0 Score 0-1
+Figure 2: Overview of TIDE construction. From 644 official customs instruments, we build verified clauses and
+threads and generate 3,050 QA pairs across eight task types, evaluated under parametric, gold-context, and retrieval
+settings with a three-judge LLM council.
+Gemini 3.1 Pro for information extraction. Thir-
+teen third-year Computer Science undergraduate
+volunteers verified OCR fidelity. Gemini omitted
+no words but occasionally substituted garbage to-
+kens due to the code-mixed script and tokenization
+errors, resulting in a word error rate of 0.07–0.08%.
+The annotators manually corrected all errors to min-
+imize text loss.
+2.3 Entity and Concept Extraction
+We start from our corpus of OCR-parsed
+Bangladesh customs documents, organized in a
+four-level hierarchy H={Act,SRO,Rule,GO} .
+Each document is segmented into clauses and meta-
+data elements, with embedded tables restored in-
+line so that no content is lost. For each element
+u with level ℓu ∈H , we use Gemini 3.1 Pro
+as an extractorGec(·) to obtainm entity–concept
+pairs (ei,C i), whereei is the canonical subject in
+its official English name and Ci is a set of short
+plain-English descriptions of whatu states about
+ei. We condition the prompt onℓu, so that concepts
+capture foundational rules for Acts, legal changes
+for SROs, procedures for Rules, and operational
+instructions for GOs. Moreover, we re-inject pre-
+viously extracted namesNu as preferred canonical
+names, which keeps naming consistent across docu-
+ments. Finally, a second passGsub(·) decomposes
+each entity into sub-entitiesS i grounded inC i.
+2.4 Temporally Grounded QA Generation
+Entity Clustering.A question about anevolving
+documentis meaningful only once we know which
+provisions speak about the same referent. We there-
+fore treat the entities ei of Section 2.3 and their
+sub-entitiesSi as one universeE of surface forms,
+and we embed each surface forme with its concept
+text asϕ(e). Embeddings only propose candidates,
+whereas the model decides. For every e∈E , we
+keep its nearest neighboursN(e)above a high co-
+sine similarity (≥0.90 ). Moreover, a greedy set
+cover packs these neighbourhoods into bounded
+judge units{Uj}, so that every candidate pair is
+examined at least once.
+Alias Judgement.Threshold-based merging alone
+is unsafe, because similarity chains unrelated enti-
+ties into one giant component. A judgeGali there-
+fore reads one unitUj at a time and confirms only
+true aliases, abbreviations, and numeral variants.
+In contrast, it rejects merely related and part-whole
+3
+
+[[page 4]]
+terms, and it leaves unclear cases separate. A union-
+find closure over the confirmed pairs then yields
+the entity clusters{Kc}, only a minority of which
+merge two or more variants. Finally, every ele-
+mentu is tagged with the clusters of the entities
+it mentions.
+Evolving Concept Threads.Since evolution needs
+two time points, a clusterKc qualifies only when
+it spans enough provisions across at least two dis-
+tinct dates. For each qualifying cluster, the model
+Gthr reads its date-sorted provisions and splits the
+cluster into evolving threads. Each thread is a regu-
+latory topicR, that is, a time-ordered list of dated
+instruments and the values they set. Beyond this
+timeline, a thread also records a summary, its mem-
+ber provisions, and the dimensions along which the
+rule moved, for example legal basis, duty structure,
+eligibility, and scope. Restatements are separated
+out, because official texts repeat boilerplate across
+years. This step yields the thread set {Ri} that
+drives generation.
+Question & Answer Pair Generation.The gen-
+eratorGgen takes a thread R as its only input, so
+every question is written against a history rather
+than a snapshot. Each thread context provides its
+summary, evolution dimensions, and full timeline,
+plus a temporally stratified sample of provisions
+that always keeps the earliest and latest. We issue
+oneGgen call per task typey∈Y , which generates
+each type in depth under its own prompt. A call
+returns a pair (q,a) whose answera must state the
+version in force and its effective date, and this fixes
+temporal correctness at generation time. Further-
+more, each item must be grounded in the context
+with no invented date, rate, instrument, or entity,
+and must be self-contained, non-trivial, and dis-
+tinct within the thread. When a thread cannot hon-
+estly support a type,Ggen returns nothing, so weak
+questions are never forced. Every pair also cites
+its supporting provisions, which resolve to exact
+clause identifiers and source files, making both the
+asked fact and the gold answer traceable to official
+text. Finally, two subject-matter experts (SMEs)
+independently verify each pair on a three-point Lik-
+ert scale (Amidei et al., 2019), rating 94.89% as
+factually correct with strong agreement at Cohen’s
+κ= 0.91 . Appendix A.3 gives the per-task human-
+validation breakdown, and Appendix A.8 lists all
+generation prompts.
+2.5 Task Types
+TIDE comprises eight temporally grounded QA task
+types, totaling 3,050 instances. Appendix A.4 gives
+two verbatim examples per type. We model each
+regulatory topicR as a time-ordered list ofn dated
+instruments. The k-th instrument Ik takes effect
+on datedk, whered1<···<d n, and puts a value
+vk in force, such as a duty rate or item code. We
+writeV= [v 1,...,v n] for the value timeline ofR.
+For a query date t,vt is the value in force and It
+the instrument that set it. The temporal tasks differ
+mainly in howtis provided.
+Temporal MCQ(ymcq). The model must identify
+the correct instrument, code, or date among four
+close options. Because instrument numbers restart
+every year, the distractors are lexically close to
+the in-force instrumentIt. Therefore, a plausible
+option is not always correct, and the task isolates
+version resolution from the surrounding reasoning.
+Event Sorting(ysort). The model reconstructs the
+chronological order of a shuffled set of instruments
+{Ik} whose dates have been removed. Because no
+instrument shows its date, the order must follow
+from what each change did rather than from the sur-
+face. Moreover, the order is never stated in a single
+clause. Therefore, the task also tests whether the
+model can combine evidence across the timelineV .
+Perturbation Detection( ypert). The model re-
+ceives a fluent statements about a valuevk, its in-
+strumentIk, or its datedk, in which one field may
+have been altered. It must decide whethers is ac-
+curate and, whens is wrong, name the altered field
+and correct it rather than flag it. Because s reads
+as confident, the task measures verification against
+the source rather than agreement with the prompt.
+Scenario Short Answer(yssa). We place a single
+named instrumentIk inside a realistic scenario, and
+the model extracts its valuevk, such as a duty rate.
+The scenario never quotes the clause, and the value
+usually sits inside a code-mixed table. Therefore,
+the task measures grounding across the language
+and layout boundary. Furthermore, it serves as
+the single-instrument baseline against which the
+temporal tasks are read.
+Temporal Scenario Short Answer(ytssa). Given a
+query datet for a topic withn≥2 instruments, the
+model returns the value in forcevt. This requires
+reasoning over several instruments at once, because
+later rules amend earlier ones. In contrast to the
+previous task, a single provision is never sufficient,
+since the answer depends on which instrument t
+4
+
+[[page 5]]
+Task Type Count (n) Stimulus Question Answer
+Temporal MCQ 354 4 options 136 128 41
+Event Sorting 207 3.5 events – 69 –
+Perturbation Detection 498 Statement 167 67 181
+Scenario Short Answer 562 Scenario 493 104 120
+Temporal Scenario Short Answer 363 Scenario 285 156 253
+Relative-Time QA 463 Seed & offset – 167 199
+Open-Ended 487 – – 122381
+Context Misalignment 116 Context 216 127 271
+Total 3050
+Table 2:TIDEinstances per task (mean characters).
+selects. Therefore, this is the most direct test of
+amendment semantics.
+Relative-Time QA(yrel). This task gives an an-
+chor datet0 and a relative offset ∆, such as “three
+years later”. The model must first compute the tar-
+get datet0 + ∆ and then return the value in force
+there,vt0+∆. Because this date is never stated, it
+cannot be matched by words or retrieved directly.
+Therefore, the task separates temporal arithmetic
+from content lookup.
+Open-Ended(yoe). This task asks about the reason
+behind a policy change rather than a single value.
+It checks whether the model understands the direc-
+tion and purpose of a change fromvk tovk+1, not
+only the value that changed. Similarly, it shows
+whether success on the short-answer tasks reflects
+understanding or copying from the text.
+Context Misalignment( ycm). A misleading
+preamble ˜cstates a wrong version, and the model
+must ignore it and answer from the verified value
+vt. This mirrors deployment, where a superseded
+version is pasted into the prompt. Moreover, in the
+retrieval setting the correct clauses are placed above
+˜c. Therefore, the task measures whether authorita-
+tive evidence can override a confident false claim.
+2.6 Dataset Statistics
+TIDE consists of 3,050 QA instances drawn from
+265 source threads across 157 topic clusters, and
+every instance retains full provenance metadata, in-
+cluding source clause IDs, thread identifiers, and
+originating files. Table 2 reports the distribution
+and average character lengths of inputs and an-
+swers across the eight task types, where counts
+include code-mixed Bengali text. Notably,Sce-
+nario Short Answerhas the longest average input
+(493 characters), whileOpen-Endedrequires the
+longest answers (381 characters). For a detailed un-
+derstanding of the complexity of the dataset, please
+see Appendix A.2.
+3 Evaluation Setup
+Every Gemini call, as subject model and as council
+judge, was served by the Google AI Studio Gem-
+ini Developer API,2 while all other models were
+served through OpenRouter.3
+3.1 Models
+We evaluate nine recent LLMs (six open-
+weight, three proprietary) from seven model fam-
+ilies on TIDE. The open-weight group includes
+Qwen3.6-35B (Yang et al., 2025), GPT-OSS-120B
+(OpenAI et al., 2025), Gemma-4-31B (Team et al.,
+2026a), Kimi-K2.5 (Team et al., 2026b), GLM-4.6
+(Team et al., 2025), and DeepSeek-V4-Flash
+(DeepSeek-AI et al., 2026). In addition, we eval-
+uate the proprietary GPT-5.2 (OpenAI, 2025),
+Gemini-3.5-Flash (Google DeepMind, 2026),
+and Claude-Sonnet-4.5 (Anthropic, 2025) to
+benchmark against enterprise-grade models. An
+LLM’s knowledge is limited by its training cut-off
+date. This is crucial for TIDE, so we select mod-
+els whose cut-off dates cover the date of our most
+recent document. To evaluate all models consis-
+tently, we set the temperature to T= 0.0 and a
+maximum generation length of 32k tokens, with
+thinking mode enabled for all models.
+3.2 Evaluation Metrics
+Accuracy.For the deterministic tasks, we use
+accuracy as the main metric. For temporal MCQ,
+an answer is correct if the predicted option matches
+the gold option. For perturbation detection, we
+score the binary verdict against the gold label over
+perturbed and unperturbed statements together. For
+event ordering, we report exact-match accuracy.
+LLM-as-a-Council.For the other six free-form
+tasks, answers are validated for temporal, fac-
+tual, and conclusive equivalence with the ground
+truth by anLLM-as-a-Councilof three heteroge-
+neous judges: Claude Opus 4.6 , Gemini 3.5
+Flash, and GPT-5.1. Rather than assigning nu-
+meric scores, each judge answers a fixed set of
+yes/no questions in JSON, which a deterministic
+program turns into scores. The metric is therefore
+reproducible and testable. The judges reach an
+inter-rater reliability of Fleiss’κ∈[0.8297,0.861] .
+Equation 1 formalizes this process.
+Jk : (Allm,A gt)7→(R k,b k),C= maj
+ 
+b1,b 2,b 3
+
+(1)
+2https://aistudio.google.com/api-keys
+3https://openrouter.ai/
+5
+
+[[page 6]]
+Each judge Jk maps the model answer Allm and
+the ground truthAgt to a reasoning traceRk and a
+boolean vector bk. Its first part holds one boolean
+per canonical ground-truth date, recording whether
+the answer satisfies that date and whether it con-
+tradicts it. Its second part holds one item-level
+boolean for whether the answer agrees with the
+ground truth in meaning. The verdict C is an
+element-wise majority vote over the three vectors,
+which the deterministic scorer of §3.2 reads. Refer-
+ence dates are extracted deterministically and given
+to the council as a canonical list, so judges never
+search for them. Our council extends the LLM-
+as-a-judge setup of Kim et al. (2026b). To check
+reliability, two independent subject-matter experts
+(SMEs) rescore the same answers with the rubric of
+E Sobhani et al. (2026). Their average agreement
+with the council is 94.21%.
+Deterministic scoring.Let n be the number of
+canonical ground-truth dates, and letm be the num-
+ber of those dates thatC marks as satisfied at the
+required granularity. Letµ be the item-level mean-
+ing boolean ofC after contradiction forcing, soµ is
+false whenever the answer contradicts a canonical
+date, even when the judges accept its meaning. The
+final scoreS∈[0,1]follows Equation 2.
+S(m,n,µ) =
+
+
+
+[µ]n= 0
+0.5 + 0.5 [µ]n= 1, m= 1
+0n= 1, m= 0
+0.5 m
+n + 0.5 [m=n∧µ]n≥2
+(2)
+Here, [·] is the Iverson bracket (1 if the condition
+holds, 0 otherwise). The date component is a hard
+gate. A wrong date on a single-date item scores
+zero, and multi-date items earn the meaning credit
+only when every reference date is satisfied. For
+relative-time QA, the required granularity depends
+on the offset: the full date up to three months, the
+year and month for longer month-level offsets, and
+the year alone for year-level offsets.
+3.3 Knowledge Access Settings
+We evaluate every model under three settings that
+differ only in the model’s access to the corpus.
+Parametric Knowledge.Here we probe the knowl-
+edge stored in a model’s parameters over our corpus
+ofevolving documents. We select models whose
+pre-training data covers our full corpus, spanning
+[1969,2025] . Since documents are available on-
+line and models are pre-trained on extensive web
+data, we provide only the question and evaluate
+the closed-book prediction a=f(q) , where the
+modelf answers the question q from its internal
+knowledge alone.
+In-Context Learning (ICL).In this setting, we
+include the gold context documents in the input.
+For each question, the model predictsa=f(q,D) ,
+whereD is the set of gold documents used to build
+the corresponding question–answer pair. In con-
+trast to the parametric setting, the model no longer
+relies on memory alone, so this setting measures
+how well it reads and uses the given evidence.
+Retrieval-Augmented Generation (RAG).In this
+setting the model predictsa=f(q,C) , where the
+retrieved setC replaces the gold documentsD of
+the ICL setting §3.3. We embed the parsed cor-
+pus into R3072 with gemini-embedding-2 (Lee
+et al., 2025) and index it in ChromaDB:4 4,858
+elements whole, plus 2,081 overlapping 1,200-
+character chunks for the 82 clauses above the 2,048-
+token limit, for 6,939 vectors in total. For each
+instance we embed the task-specific input fields
+in query mode (Ram et al., 2023), excluding the
+misleading context in context misalignment, and
+keep the k= 40 nearest vectors by cosine simi-
+larity. We then map chunks to parent clauses and
+deduplicate to at most 10 complete clauses (on
+average|C|= 9.9 ), which we prepend as authori-
+tative sources. We use gemini-embedding-2 with
+Top-10 retrieval throughout the main experiments
+because this configuration provides the most stable
+performance across task types and answer models.
+Appendix A.11 presents the complete ablation over
+embedding models and retrieval depths. Moreover,
+the retriever is a standard semantic one without
+temporal re-ranking (Zhang et al., 2025). All other
+components match the ICL setting.
+4 Results & Analysis
+Table 3 reports strict and partial accuracy for all
+nine models under the parametric, RAG, and ICL
+settings. Two patterns hold for every model. First,
+performance rises steadily from the parametric set-
+ting to RAG and then to ICL, so access to the source
+text matters more than model identity. Second,
+even the best configuration stays far from solved.
+GPT-5 obtains the best macro average in the para-
+metric and ICL settings, while Claude leads un-
+der RAG, yet the strongest single number is only
+68.49% (GPT-5, ICL), and the version-sensitive
+tasks collapse well below this level. Therefore, ver-
+sion resolution overevolving documentsremains
+4https://www.trychroma.com/
+6
+
+[[page 7]]
+Proprietary models Open-Source models
+Task type
+strict (+partial) GPT-5.2 Claude-Sonnet-4.5 Gemini-3.5-Flash Kimi-K2.5 DeepSeek-V4-Flash GPT-OSS-120B Qwen3.6-35B Gemma-4-31B GLM-4.6
+Parametric Knowledge
+Temporal MCQ 69.57 54.24 64.72 69.57 67.27 58.21 56.88 70.17 48.97
+Perturbation Det. 58.63 56.83 59.84 56.43 59.64 56.63 44.38 61.85 46.39
+Event Sorting 25.67 17.45 27.13 24.15 21.39 21.36 19.88 23.26 18.45
+Scenario SA 41.81+0.25 30.12+0.13 41.35 40.92+0.16 38.64+0.24 35.99+0.14 33.16+0.13 35.68+0.13 30.68+0.13
+Temporal Scenario SA 46.39+3.18 30.68+3.16 39.44 +3.09 38.88+2.49 39.43+3.41 38.69+2.63 29.23+3.49 38.61+2.53 36.19+3.22
+Relative-Time QA 11.08 +20.66 3.77+10.07 9.91+23.36 10.25+22.85 8.05+22.41 12.37+24.06 4.58+20.91 4.88+13.96 5.22+24.85
+Open-Ended 27.96+0.94 12.91+1.16 23.23 +1.19 21.65+1.09 22.23+1.02 21.49+0.98 16.48+1.15 19.11+0.92 16.86+1.03
+Context Misalign. 1.78+10.74 1.79+11.28 7.87+7.98 4.36+9.65 4.31+9.84 1.75+11.66 6.01 +9.03 2.62+9.48 1.72+10.53
+Macro avg. 35.39+4.45 25.91+3.23 34.15 +4.42 33.28+4.56 32.64+4.62 30.76+5.04 26.39+4.33 32.04+3.38 25.54+5.06
+RAG
+Temporal MCQ 84.53 82.01 84.21 85.01 83.93 80.59 83.97 73.79 69.59
+Perturbation Det. 83.73 82.00 85.14 79.72 80.32 80.32 83.94 82.73 80.52
+Event Sorting 31.42 26.05 30.95 29.58 29.51 26.16 28.58 26.11 18.41
+Scenario SA 87.74 +0.12 94.06 84.35+0.16 84.72+0.44 84.57 81.54+0.19 83.69 80.49+0.29 78.16
+Temporal Scenario SA 66.71+1.74 62.04+4.52 56.53+2.13 60.61+2.31 52.65+2.98 63.93 +2.02 53.76+2.32 47.42+2.03 50.45+2.58
+Relative-Time QA 32.41 +11.84 48.02+9.02 27.45+12.92 28.12+18.27 27.75+11.41 28.52+15.21 26.65+16.13 21.86+10.36 18.89+10.33
+Open-Ended 48.57+0.87 48.09 +1.75 36.14+0.81 42.35+1.32 36.59+1.06 43.94+1.14 34.91+1.06 33.34+1.06 33.56+0.94
+Context Misalign. 21.54+5.65 22.09 +5.52 18.13+6.83 25.09+8.18 20.76+6.03 16.48+7.75 21.57+5.45 15.52+5.55 13.89+7.08
+Macro avg. 57.06 +2.54 58.05+2.65 52.87+2.94 54.46+3.78 52.08+2.61 52.69+3.36 52.13+3.14 47.69+2.41 45.43+2.65
+ICL
+Temporal MCQ 91.88 86.08 91.07 90.49 90.75 82.28 86.76 85.37 77.26
+Perturbation Det. 80.32 80.00 81.33 77.11 80.12 74.50 77.31 79.52 73.90
+Event Sorting 66.23 60.05 60.42 66.73 65.25 39.15 58.07 63.32 33.25
+Scenario SA 86.58 +0.15 88.04 84.79+0.11 83.56 85.97 75.46 84.92 79.42 74.02
+Temporal Scenario SA 75.29+1.25 64.06+1.52 63.45+1.33 62.02+2.11 66.43 +1.59 65.64+2.05 62.35+1.73 59.83+1.95 52.17+1.69
+Relative-Time QA 59.66 +8.78 68.03+8.01 49.58+13.57 49.56+12.34 44.96+14.66 46.73+11.84 48.88+13.34 49.28+10.23 36.43+15.56
+Open-Ended 61.04+0.54 54.06 +2.49 49.16+0.76 48.94+1.08 53.61+0.63 53.44+0.61 48.73+0.79 43.93+1.19 38.05+0.94
+Context Misalign. 26.73 +4.31 14.71+2.52 19.88+5.69 27.62+3.49 18.18+5.36 19.89+6.04 22.42+5.39 19.85+4.78 17.23+7.36
+Macro avg. 68.49+4.62 64.39 +4.23 62.45+5.91 63.27+4.83 63.11+5.66 57.11+6.65 61.13+4.44 60.05+4.63 50.38+8.03
+Table 3: Temporal reasoning performance onTIDE across the Parametric Knowledge, RAG, and ICL settings. Scores
+are percentages (%). The base number is strict accuracy, and the small teal value is the extra credit from the partial
+rubric in Equation 2, so base plus teal equals partial accuracy. A single number means the task is deterministic and
+admits no partial credit, and for event sorting we report exact-match accuracy.Boldand underline mark the best
+and second-best model per row, on the base for strict accuracy and the teal value for partial.
+an open problem, and the gap is largest exactly
+where a query depends on which amendment is in
+force. Further analysis of these results is provided
+in Appendix A.10.
+Injecting the source text helps, yet a gold context
+is still not enough.Every model improves substan-
+tially once it can read the documents. For GPT-5
+the macro average grows from 35.39% in the para-
+metric setting to 57.06% under RAG and 68.49%
+under ICL, and the same ordering holds for all other
+models. However, for the ICL setting, even with
+the relevant documents that contain the relevant
+clause, together with unrelated clauses, metadata,
+and tables, performance still tops out at 68.49%.
+Reading the correct text is therefore necessary but
+not sufficient, because the model must locate the
+right provision, select the version in force, and at-
+tach the correct date.
+ICL vs RAG.RAG trails ICL for every model,
+and the gap ranges from 4.42 points (GPT-OSS) to
+12.36 points (Gemma). The two settings differ in
+what they provide. ICL includes the full gold doc-
+uments, so every provision in those documents is
+available even when it is surrounded by unrelated
+text. RAG instead provides only the top retrieved
+clauses, so a needed provision can be missing. The
+loss therefore concentrates in tasks that need the
+full amendment history. Event Sorting is the clear-
+est case, as GPT-5 falls from 66.23% under ICL to
+31.42% under RAG, and every model shows a com-
+parable drop. Because the timeline is never stated
+in a single clause, a semantic retriever without tem-
+poral re-ranking misses some of the required pro-
+visions, so the order cannot be reconstructed. In
+contrast, single-instrument Scenario SA stays high
+under RAG, reaching 94.06% for Claude, because
+the one relevant clause is easy to retrieve. Retrieval
+completeness is therefore the limiting factor for
+amendment-wide reasoning.
+The date gate separates correct meaning from
+correct time.The partial score retains credit for
+correct dates even when the meaning is wrong,
+whereas meaning earns credit only when every ref-
+erence date is satisfied. The gap between partial
+and strict accuracy is therefore largest for Relative-
+Time QA, indicating that models often identify the
+correct date but associate it with the wrong regula-
+tory change, which receives no strict credit because
+7
+
+[[page 8]]
+Parametric RAG In-Context (ICL)
+ModelDet. Ident.∆Det. Ident.∆Det. Ident.∆
+Proprietary
+GPT-5.291.83 21.47 +1.91 76.6 96.11 57.56 +2.33 40.1 95.33 60.70 +2.97 36.3
+Claude-Sonnet-4.565.37 8.33 +4.42 87.3 93.1080.17 +5.94 13.989.6679.31 +9.15 11.5
+Gemini-3.5-Flash92.2219.55 +1.65 78.897.6753.96 +1.29 44.8 94.94 41.41 +2.20 56.4
+Open-weight
+Kimi-K2.587.16 21.08 +3.10 75.897.6765.53 +1.57 32.9 94.16 48.90 +3.03 48.1
+DeepSeek-V4-Flash80.54 21.17 +5.12 73.7 97.28 55.12 +1.55 43.396.1148.18 +1.95 49.9
+GPT-OSS-20B78.2127.50 +7.66 64.896.89 62.61 +2.02 35.4 95.33 52.72 +2.59 44.7
+Qwen3.6-35B66.54 20.33 +10.23 69.4 97.6759.40 +1.42 39.2 93.39 48.90 +3.46 47.6
+Gemma-4-31B80.93 12.65 +2.97 84.4 94.16 48.80 +3.03 48.2 94.94 33.82 +1.80 64.4
+GLM-4.667.70 15.53 +7.41 77.1 75.10 37.42 +12.41 50.2 68.87 29.83 +13.48 56.7
+Mean78.94 18.62 76.4 93.96 57.84 38.7 91.41 49.31 46.2
+Table 4: Perturbation detection vs. identification, over
+perturbed items only.Ident.is the mean explanation
+score across all perturbed items, with the increment over
+flagged items only tiled in green. ∆ is the relative drop
+from Det. to Ident.; both tints scale with magnitude.
+Best per column inbold, second underlined .
+strict scoring requires both the correct date and the
+correct meaning. In the parametric setting, strict
+accuracy stays between 3.77% and 12.37%, while
+the partial bonus adds between 10.07 and 24.85
+points. The gap shrinks once the documents are
+available, and Claude becomes the strongest tem-
+poral resolver, reaching 68.03% on Relative-Time
+QA under ICL and 48.02% under RAG, well above
+every other model. These results suggest that re-
+trieving the relevant regulation alone is insufficient;
+models must also correctly resolve temporal offsets
+relative to the retrieved evidence.
+Models trust a confident false premise over the
+authoritative text.Context Misalignment is the
+hardest task in the benchmark. Strict accuracy
+never exceeds 7.87% in the parametric setting and
+27.62% under ICL, even though the correct answer
+is fixed by the verified ground truth. In the RAG
+setting we stack the authoritative clauses above the
+misleading premise, yet accuracy still stays at or
+below 25.09%. This shows that a fluent but wrong
+preamble can override correct evidence that sits in
+the same prompt. Because a superseded or wrong
+version is often pasted into a real query, this failure
+mode is the most concerning for deployment.
+Detecting an altered provision is much easier
+than identifying what was altered.Table 4 reports
+two scores per model. Detection is the share of
+perturbed provisions that a model flags as wrong.
+Strict identification is the share where the model
+also identifies the altered fact. Both use perturbed
+items only, so they differ from Table 3, which
+scores detection over all items, including the unal-
+tered ones. The green tile beside each identification
+score adds the same rubric score of §3.2 measured
+over flagged items only, so it is the identification
+credit each model loses to missed detections. With-
+out grounding, detection stays high, but identifica-
+tion does not. Gemini reaches 92.22% detection
+and only 19.55% identification, and Claude falls
+from 65.37% to 8.33%. On average, models de-
+tect 78.9% but identify only 18.6%. Grounding
+closes most of the gap. Claude rises from 8.33%
+to 80.17% with RAG and 79.31% with ICL, yield-
+ing mean identification values of 57.8% and 49.3%.
+It gains the most in both grounded settings, since it
+leverages contextual evidence more reliably than it
+recalls the same provision from memory. Its drastic
+parametric failure comes from naming the wrong
+element rather than from declining to answer. In
+contrast, open-weight models remain competitive.
+GPT-OSS has the highest parametric identification
+of all nine at 27.50%, and Kimi reaches 65.53%
+with RAG.
+Task Type-Wise Analysis.Ordered from easiest
+to hardest, the results show where the challenge
+lies. Recognition-style Temporal MCQ is easiest,
+reaching 91.88% under ICL, and the single-clause
+tasks Perturbation Detection and Scenario SA fol-
+low, reaching 85.14% and 94.06% once grounded,
+because one provision is enough to answer. Diffi-
+culty then rises with the amount of temporal reason-
+ing required, so the best ICL scores fall to 75.29%
+on Temporal Scenario SA and 61.04% on Open-
+Ended. The three hardest tasks each fail for a dif-
+ferent reason. Event Sorting reaches 66.73% under
+ICL but collapses to 31.42% under RAG because
+the retriever misses parts of the timeline, Relative-
+Time QA is limited by the target date rather than the
+content, and Context Misalignment never exceeds
+27.62% because models follow a confident false
+premise. Task type therefore predicts performance
+more than model identity, although Claude leads
+the grounded Scenario SA and Relative-Time QA
+tasks while GPT-5 leads Temporal Scenario SA and
+Open-Ended. Appendix A.9 presents qualitative
+analysis examples.
+5 Conclusion
+This study introduced TIDE, a novel benchmark
+for evaluating large language models onevolving
+documents, where the answer depends on the ver-
+sion in force on the queried date. Spanning 644
+expert-verified customs instruments and eight task
+types that separate document reading from version
+resolution, our evaluation of nine recent LLMs un-
+der parametric, gold-context, and retrieval settings
+revealed several actionable insights. Persistent fail-
+8
+
+[[page 9]]
+ures on version-sensitive tasks show that version
+resolution is not solved by retrieval or long-context
+access alone. Our contributions offer a foundation
+for reliable reasoning overevolving documents.
+Limitations
+While TIDE provides a controlled environment for
+studying version resolution in evolving documents,
+it has several limitations urging future research.
+First, we evaluate models in a frozen state using
+prompts, which does not clarify whether version
+resolution needs additional training or if frozen
+models can perform it with prompting alone. Sec-
+ond, supervised fine-tuning and continued pretrain-
+ing would help identify what models cannot do
+versus what prompts fail to elicit. Subsequently,
+TIDE focuses solely on Bangladesh customs in a
+specific language pair and calendar system, leav-
+ing untested cross-domain generalization relevant
+to areas like income tax, V AT, and medical guide-
+lines. Additionally, multilingual question answer-
+ing could complicate temporal challenges further.
+Fifth, the parametric setting relies on unverifiable
+assumptions, as providers do not disclose training
+datasets. A low parametric score might indicate an
+absent document rather than a version resolution
+failure. Sixth, our retriever is semantic and lacks
+temporal re-ranking, so RAG scores are a lower
+bound with respect to retrieval quality. Incorpo-
+rating temporally aware retrieval could narrow the
+gap with in-context learning (Zhang et al., 2025;
+Huwiler et al., 2025). Finally, since our corpus is
+set to 2025, the benchmark will become outdated
+with new instruments, so we plan periodic updates
+to include these changes.
+Ethical Considerations
+All 644 instruments in TIDE are official Bangladesh
+customs documents published by the National
+Board of Revenue for public compliance. There-
+fore, this corpus contains no personally identifiable
+or sensitive information. The personas used in our
+scenario questions are fictional and do not repre-
+sent real importers, agents, or taxpayers. TIDE is
+intended purely for research purposes, while the
+official gazette serves as the authoritative source
+for any duty rates or effective dates. Nothing in
+this benchmark should be considered legal advice.
+Additionally, our findings indicate that models can
+follow a confident but incorrect premise over au-
+thoritative texts. We advise caution against deploy-
+ing LLMs in customs, tax, or compliance work-
+flows without ensuring version-aware safeguards
+and expert review. We also disclose that an LLM
+assisted in parsing and generating questions, and
+every released pair underwent human verification
+by subject matter experts, who were compensated
+at standard rates for their time. Separately, the
+authors used AI writing assistance tools (e.g., Chat-
+GPT, Claude, Gemini) solely for improving the
+fluency and clarity of the writing; all scientific con-
+tent, ideas, experiments, and conclusions are en-
+tirely the work of the human authors, who take full
+responsibility for the integrity and accuracy of the
+content presented in this paper.
+References
+Jacopo Amidei, Paul Piwek, and Alistair Willis. 2019.
+The use of rating and Likert scales in natural lan-
+guage generation human evaluation tasks: A review
+and some recommendations. InProceedings of the
+12th International Conference on Natural Language
+Generation, pages 397–402, Tokyo, Japan. Associa-
+tion for Computational Linguistics.
+Anthropic. 2025. Claude sonnet 4.5 system card. Sys-
+tem card, Anthropic.
+Akari Asai, Jungo Kasai, Jonathan H. Clark, Kenton
+Lee, Eunsol Choi, and Hannaneh Hajishirzi. 2021.
+Xor qa: Cross-lingual open-retrieval question answer-
+ing.Preprint, arXiv:2010.11856.
+Jeffrey Cheng, Marc Marone, Orion Weller, Dawn
+Lawrie, Daniel Khashabi, and Benjamin Van Durme.
+2024. Dated data: Tracing knowledge cutoffs in large
+language models.Preprint, arXiv:2403.12958.
+Zheng Chu, Jingchang Chen, Qianglong Chen, Weijiang
+Yu, Haotian Wang, Ming Liu, and Bing Qin. 2024.
+TimeBench: A comprehensive evaluation of tempo-
+ral reasoning abilities in large language models. In
+Proceedings of the 62nd Annual Meeting of the As-
+sociation for Computational Linguistics (Volume 1:
+Long Papers), pages 1204–1228, Bangkok, Thailand.
+Association for Computational Linguistics.
+DeepSeek-AI, Anyi Xu, Bangcai Lin, Bing Xue, Bingx-
+uan Wang, Bingzheng Xu, Bochao Wu, Bowei Zhang,
+Chaofan Lin, Chen Dong, Chenchen Ling, Chengda
+Lu, Chenggang Zhao, Chengqi Deng, Chengyu Hou,
+Chenhao Xu, Chenze Shao, Chong Ruan, Conner
+Sun, and 300 others. 2026. Deepseek-v4: Towards
+highly efficient million-token context intelligence.
+Preprint, arXiv:2606.19348.
+Mahbub E Sobhani, Md. Faiyaz Abdullah Sayeedi, Tas-
+nim Mohiuddin, Md Mofijul Islam, and Swakkhar
+Shatabda. 2026. MathMist: A parallel multilingual
+benchmark dataset for mathematical problem solv-
+ing and reasoning. InFindings of the Association
+9
+
+[[page 10]]
+for Computational Linguistics: EACL 2026, pages
+2524–2550, Rabat, Morocco. Association for Com-
+putational Linguistics.
+Bahare Fatemi, Mehran Kazemi, Anton Tsitsulin,
+Karishma Malkan, Jinyeong Yim, John Palowitch,
+Sungyong Seo, Jonathan Halcrow, and Bryan Perozzi.
+2024. Test of time: A benchmark for evaluating llms
+on temporal reasoning.Preprint, arXiv:2406.09170.
+Google DeepMind. 2026. Gemini 3.5 flash model card.
+Model card, Google DeepMind.
+Raphael Gruber, Abdelrahman Abdallah, Michael Fär-
+ber, and Adam Jatowt. 2025. ComplexTempQA: A
+100m dataset for complex temporal question answer-
+ing. InProceedings of the 2025 Conference on Em-
+pirical Methods in Natural Language Processing,
+pages 9100–9112, Suzhou, China. Association for
+Computational Linguistics.
+Daniel Huwiler, Kurt Stockinger, and Jonathan
+Fürst. 2025. Versionrag: Version-aware retrieval-
+augmented generation for evolving documents.
+Preprint, arXiv:2510.08109.
+Joel Jang, Seonghyeon Ye, Changho Lee, Sohee Yang,
+Joongbo Shin, Janghoon Han, Gyeonghun Kim, and
+Minjoon Seo. 2023. Temporalwiki: A lifelong bench-
+mark for training and evaluating ever-evolving lan-
+guage models.Preprint, arXiv:2204.14211.
+Xunyi Jiang, Dingyi Chang, Julian McAuley, and Xin
+Xu. 2026. When benchmarks age: Temporal mis-
+alignment through large language model factuality
+evaluation.Preprint, arXiv:2510.07238.
+Jiyeon Kim, Hyunji Lee, Dylan Zhou, Sue Hyun Park,
+Seunghyun Yoon, Trung Bui, Franck Dernoncourt,
+Sungmin Cha, and Minjoon Seo. 2026a. Can large
+language models keep up? benchmarking online
+adaptation to continual knowledge streams. InPro-
+ceedings of the 64th Annual Meeting of the Associa-
+tion for Computational Linguistics (Volume 1: Long
+Papers), pages 42240–42272, San Diego, Califor-
+nia, United States. Association for Computational
+Linguistics.
+Soyeon Kim, Jindong Wang, Xing Xie, and Steven Eu-
+ijong Whang. 2026b. Harnessing temporal
+databases for systematic evaluation of factual time-
+sensitive question-answering in large language mod-
+els.Preprint, arXiv:2508.02045.
+Jinhyuk Lee, Feiyang Chen, Sahil Dua, Daniel Cer,
+Madhuri Shanbhogue, Iftekhar Naim, Gustavo
+Hernández Ábrego, Zhe Li, Kaifeng Chen, Hen-
+rique Schechter Vera, and 1 others. 2025. Gemini
+embedding: Generalizable embeddings from gemini.
+Preprint, arXiv:2503.07891.
+Sanford Levinson. 2001. Designing an amendment
+process.Constitutional culture and democratic rule,
+271:274.
+Qian Lin, Junyi Li, and Hwee Tou Ng. 2025. Dy-
+naQuest: A dynamic question answering dataset
+reflecting real-world knowledge updates. InFind-
+ings of the Association for Computational Linguis-
+tics: ACL 2025, pages 26918–26936, Vienna, Austria.
+Association for Computational Linguistics.
+Adam Liška, Tomáš Koˇciský, Elena Gribovskaya, Tay-
+fun Terzi, Eren Sezener, Devang Agrawal, Cyprien
+de Masson d’Autume, Tim Scholtes, Manzil Zaheer,
+Susannah Young, Ellen Gilsenan-McMahon, Sophia
+Austin, Phil Blunsom, and Angeliki Lazaridou. 2022.
+Streamingqa: A benchmark for adaptation to new
+knowledge over time in question answering models.
+Preprint, arXiv:2205.11388.
+Shayne Longpre, Yi Lu, and Joachim Daiber. 2021.
+MKQA: A linguistically diverse benchmark for mul-
+tilingual open domain question answering.Transac-
+tions of the Association for Computational Linguis-
+tics, 9:1389–1406.
+Seyed Mahed Mousavi, Simone Alghisi, and Giuseppe
+Riccardi. 2024. Dyknow: Dynamically verifying
+time-sensitive factual knowledge in llms.Preprint,
+arXiv:2404.08700.
+Nishanth Sridhar Nakshatri, Shamik Roy,
+Manoj Ghuhan Arivazhagan, Hanhan Zhou,
+Vinayshekhar Bannihatti Kumar, and Rashmi
+Gangadharaiah. 2025. When facts change: Probing
+llms on evolving knowledge with evolveqa.Preprint,
+arXiv:2510.19172.
+OpenAI, :, Sandhini Agarwal, Lama Ahmad, Jason
+Ai, Sam Altman, Andy Applebaum, Edwin Arbus,
+Rahul K. Arora, Yu Bai, Bowen Baker, Haiming Bao,
+Boaz Barak, Ally Bennett, Tyler Bertao, Nivedita
+Brett, Eugene Brevdo, Greg Brockman, Sebastien
+Bubeck, and 108 others. 2025. gpt-oss-120b & gpt-
+oss-20b model card.Preprint, arXiv:2508.10925.
+OpenAI. 2025. Gpt-5.2 system card. Technical report,
+OpenAI.
+Ori Ram, Yoav Levine, Itay Dalmedigos, Dor Muhlgay,
+Amnon Shashua, Kevin Leyton-Brown, and Yoav
+Shoham. 2023. In-context retrieval-augmented lan-
+guage models.Transactions of the Association for
+Computational Linguistics, 11:1316–1331.
+Qingyu Tan, Hwee Tou Ng, and Lidong Bing. 2023.
+Towards benchmarking and improving the temporal
+reasoning capability of large language models. In
+Proceedings of the 61st Annual Meeting of the As-
+sociation for Computational Linguistics (Volume 1:
+Long Papers), pages 14820–14835, Toronto, Canada.
+Association for Computational Linguistics.
+Wei Tang, Yixin Cao, Yang Deng, Jiahao Ying,
+Bo Wang, Yizhe Yang, Yuyue Zhao, Qi Zhang, Xu-
+anjing Huang, Yugang Jiang, and Yong Liao. 2024.
+Evowiki: Evaluating llms on evolving knowledge.
+Preprint, arXiv:2412.13582.
+10
+
+[[page 11]]
+5 Team, Aohan Zeng, Xin Lv, Qinkai Zheng, Zhenyu
+Hou, Bin Chen, Chengxing Xie, Cunxiang Wang,
+Da Yin, Hao Zeng, Jiajie Zhang, Kedong Wang,
+Lucen Zhong, Mingdao Liu, Rui Lu, Shulin Cao,
+Xiaohan Zhang, Xuancheng Huang, Yao Wei, and
+152 others. 2025. Glm-4.5: Agentic, reasoning,
+and coding (arc) foundation models.Preprint,
+arXiv:2508.06471.
+Gemma Team, Sherif El Abd, Vaibhav Aggarwal, Robin
+Algayres, Alek Andreev, Olivier Bachem, Ian Bal-
+lantyne, Cormac Brick, Victor C ˘arbune, Michelle
+Casbon, Mayank Chaturvedi, Victor Cotruta, Alice
+Coucke, Phil Culliton, Robert Dadashi, Lucas Dixon,
+Mohamed Elhawaty, Utku Evci, Clément Farabet,
+and 282 others. 2026a. Gemma 4 technical report.
+Preprint, arXiv:2607.02770.
+Kimi Team, Tongtong Bai, Yifan Bai, Yiping Bao,
+S. H. Cai, Yuan Cao, Y . Charles, H. S. Che, Cheng
+Chen, Guanduo Chen, Huarong Chen, Jia Chen, Ji-
+ahao Chen, Jianlong Chen, Jun Chen, Kefan Chen,
+Liang Chen, Ruijue Chen, Xinhao Chen, and 307 oth-
+ers. 2026b. Kimi k2.5: Visual agentic intelligence.
+Preprint, arXiv:2602.02276.
+Md Nayem Uddin, Amir Saeidi, Divij Handa, Agastya
+Seth, Tran Cao Son, Eduardo Blanco, Steven Cor-
+man, and Chitta Baral. 2025. UnSeenTimeQA: Time-
+sensitive question-answering beyond LLMs’ mem-
+orization. InProceedings of the 63rd Annual Meet-
+ing of the Association for Computational Linguistics
+(Volume 1: Long Papers), pages 1873–1913, Vienna,
+Austria. Association for Computational Linguistics.
+Yuqing Wang and Yun Zhao. 2024. Tram: Benchmark-
+ing temporal reasoning for large language models.
+Preprint, arXiv:2310.00835.
+Yifan Wei, Yisong Su, Huanhuan Ma, Xiaoyan Yu,
+Fangyu Lei, Yuanzhe Zhang, Jun Zhao, and Kang
+Liu. 2023. MenatQA: A new dataset for testing the
+temporal comprehension and reasoning abilities of
+large language models. InFindings of the Associa-
+tion for Computational Linguistics: EMNLP 2023,
+pages 1434–1447, Singapore. Association for Com-
+putational Linguistics.
+An Yang, Anfeng Li, Baosong Yang, Beichen Zhang,
+Binyuan Hui, Bo Zheng, Bowen Yu, Chang
+Gao, Chengen Huang, Chenxu Lv, and 1 others.
+2025. Qwen3 technical report.arXiv preprint
+arXiv:2505.09388.
+Siyue Zhang, Yuxiang Xue, Yiming Zhang, Xiaobao
+Wu, Anh Tuan Luu, and Chen Zhao. 2025. MRAG:
+A modular retrieval framework for time-sensitive
+question answering. InFindings of the Association
+for Computational Linguistics: EMNLP 2025, pages
+3080–3118, Suzhou, China. Association for Compu-
+tational Linguistics.
+Zhiyuan Zhu, Yusheng Liao, Zhe Chen, Yuhao Wang,
+Yunfeng Guan, Yanfeng Wang, and Yu Wang. 2025.
+EvolveBench: A comprehensive benchmark for as-
+sessing temporal awareness in LLMs on evolving
+knowledge. InProceedings of the 63rd Annual Meet-
+ing of the Association for Computational Linguistics
+(Volume 1: Long Papers), pages 16173–16188, Vi-
+enna, Austria. Association for Computational Lin-
+guistics.
+11
+
+[[page 12]]
+A Appendix
+A.1 Related Work
+Temporal QA Benchmarks.Benchmarks such
+as TimeBench (Chu et al., 2024) and TRAM (Wang
+and Zhao, 2024) test whether LLMs understand
+time itself, covering event order, duration, and tem-
+poral arithmetic, where even GPT-4 stays clearly
+below human performance. Synthetic benchmarks
+remove memorization so that scores reflect reason-
+ing rather than recall (Fatemi et al., 2024; Uddin
+et al., 2025). Closer to our setting, Tan et al. (2023)
+evaluated TempReason in closed-book, open-book,
+and reasoning QA settings, an early ancestor of
+our unified three-setting protocol. Wei et al. (2023)
+built MenatQA with 2,853 samples around scope,
+order, and counterfactual factors, showing that
+LLMs are highly sensitive to perturbed temporal
+context. Likewise, Liška et al. (2022) compared
+closed-book and open-book models on Stream-
+ingQA over fourteen years of time-stamped news.
+Recent benchmarks target knowledge that keeps
+evolving after training. Zhu et al. (2025) tested
+whether models notice temporally misaligned con-
+texts and refuse invalid timestamps; all 15 evalu-
+ated LLMs struggled. Nakshatri et al. (2025) built
+evolveQA from time-stamped AWS, Azure, and
+WHO reports and observed accuracy drops of 6%
+to 31% on evolving facts, with models often giving
+outdated open-ended answers despite choosing the
+current answer in multiple-choice format. Lin et al.
+(2025) generated DynaQuest from Wikipedia in-
+fobox changes and balanced retrieved and paramet-
+ric knowledge with reinforcement learning, while
+Kim et al. (2026a) showed on OAKS that models
+fail to track facts that supersede earlier ones in a
+stream. Further resources track evolving Wikipedia
+knowledge (Jang et al., 2023; Mousavi et al., 2024;
+Tang et al., 2024), and Jiang et al. (2026) showed
+that static factuality benchmarks age and unfairly
+penalize up-to-date models. Across these works,
+temporal change means drifting world facts or story
+states from English Wikipedia, news, or synthetic
+sources. None models formal amendment, where
+a dated instrument replaces an older rule from an
+explicit effective date while the old rule stays cor-
+rect for its own validity period, and none verifies
+its questions with domain experts.
+Cross-Lingual QA and Temporal Retrieval.
+Asai et al. (2021) introduced XOR QA, where
+questions in seven typologically diverse languages,
+including Bengali, are answered from English
+Wikipedia, showing that crossing the language
+boundary makes both retrieval and answering much
+harder. Longpre et al. (2021) aligned 10k QA
+pairs across 26 languages in MKQA and found
+low-resource languages hardest. Both target open-
+domain encyclopedic facts over monolingual evi-
+dence, without temporal or robustness settings. On
+the retrieval side, Zhang et al. (2025) showed that
+off-the-shelf retrievers fail on temporally perturbed
+questions and proposed a semantic-temporal hybrid
+ranking to recover accuracy. Across prior work, le-
+gal and regulatory documents are absent, temporal
+change is never a formal amendment, robustness
+settings such as perturbed or misaligned contexts
+appear only in isolation, unified parametric versus
+grounded comparisons are rare, and expert verifica-
+tion is uncommon.
+A.2 Additional Analysis of the Dataset
+This appendix reports two aspects of TIDE. Sec-
+tion A.2.1 states where the source documents come
+from, under what terms we collected them, and
+how we license the release. Section A.2.2 then
+quantifies the structural and linguistic complexity
+of those documents.
+A.2.1 Licensing and Terms of Use
+Provenance.All 644 instruments in TIDE come
+from the public regulations area of the National
+Board of Revenue (NBR) portal, which is the offi-
+cial publisher of Bangladeshi customs, value added
+tax, and income tax instruments.5 The portal lists
+Acts, Rules, SROs, and General Orders as down-
+loadable PDF files. Access is free, and it requires
+no account, no payment, and no API key. We
+fetched only these public files, we followed the
+published download links rather than any internal
+endpoint, and we rate-limited our requests so that
+the collection placed no unusual load on the server.
+Terms of the source portal.The portal publishes
+a terms-of-use page, posted in May 2012, that ap-
+plies to visitors of the site. Three points matter for
+a dataset release. First, the material is offered with-
+out warranty of any kind, and accuracy is explicitly
+among the excluded warranties. Second, the page
+states that the material on the portal is subject to
+copyright, and it treats the NBR name, images, and
+logos as proprietary marks that may not be copied
+5https://nbr.gov.bd/regulations/acts/
+customs-acts/eng
+12
+
+[[page 13]]
+without prior approval. Third, the page permits
+direct linking to hosted pages without permission.
+Moreover, the page frames the portal as a resource
+for individual use and viewing, and it grants no
+bulk redistribution licence.
+Permission from the source authority.Because
+the site terms grant no redistribution licence, we
+did not rely on them. We approached the National
+Board of Revenue directly, and the Board granted
+us written permission to use the instruments for aca-
+demic research and to release the resulting dataset.
+The permission is limited to research purposes,
+therefore our release carries the same limitation.
+This permission is the legal basis of the release.
+In addition, Bangladeshi copyright law treats offi-
+cial texts as Government works and exempts the
+reproduction of certain Government works from in-
+fringement unless such reproduction is prohibited,
+and the Right to Information Act 2009 obliges pub-
+lic authorities to publish this class of information.6
+How we license the release.The research-only
+permission governs the whole release, therefore we
+do not attach a licence that would allow commercial
+reuse. We release the data under CC BY-NC-SA
+4.0, and we release the pipeline code under the MIT
+licence. The release has two layers of provenance.
+The annotation layer is our own contribution, and
+it covers clause identifiers, entity–concept pairs,
+canonical entity names, concept threads, timelines,
+and all question–answer pairs. In contrast, the ex-
+cerpt layer holds verbatim clause text, which re-
+mains Government of Bangladesh material and is
+redistributed under the permission described above.
+Every record carries its source file and retrieval
+link, so a user can check any item against the au-
+thoritative document.
+A.2.2 Complexity of Source Documents
+Beyond temporal reasoning, the TIDE source docu-
+ments are structurally and linguistically complex,
+as Figure 3 illustrates qualitatively. This section
+quantifies that complexity over the 644 official in-
+struments in the corpus.
+Scale and heterogeneity.The corpus spans 4,131
+OCR pages, with a median of only 2 pages per doc-
+ument but a maximum of 169. Document length is
+likewise very uneven. The longest instrument holds
+6Copyright Act 2023, which repealed the Copyright Act
+2000. The instruments are additionally mirrored on the Min-
+istry of Law portal,http://bdlaws.minlaw.gov.bd/.
+S C R I P T  &  L A N G U A G E
+2 Dual-calendar metadata
+3 Code-switched legal
+prose
+M A C R O  L A Y O U T
+1 Institutional header
+4 Heterogeneous layout
+TA B L E  M I C R O -S T R U C T U R E
+5 Sparse table structure
+6 Intra-cell text
+hierarchies
+7 Symbolic indentation
+গণপ্রজাত    বাংলােদশ  সরকার
+অথ   মন্ত্রণালয়
+অভ ন্তরীণ  সম্পদ  িবভাগ
+(কাস্টমস )
+প্র াপন
+তািরখ , ২১   জ ষ্ঠ , ১৪২২  ব াব্দ / ৪  জ ন , ২০১৫  ি স্টাব্দ
+এস , আর , ও  নং  ১৩৬ - আইন / ২০১৫ / ১৬ / কাস্টমস।— Customs Act, 1969
+(Act No. IV of 1969), অতঃপর  উক্ত  Act ব লয়   উ লিখত , এর  section 19 এর  sub-section (1) এ  প্রদত্ত
+ক্ষমতাবেল  সরকার , জনস্বােথ  , জাতীয়  রাজস্ব   বােড র  সিহত  পরামশ ক্রেম , উক্ত  Act এর  FIRST SCHEDULE
+ভুক্ত  পণ সমূেহর  মেধ   িনম্নব ণত  TABLE এর  কলাম  (1) এ  উ লিখত  Heading এবং  কলাম  (2)  ত  উ  িখত  H.
+S. Code এর  িবপরীেত  কলাম  (3)  ত  ব ণত  পণ সমূহেক  উহােদর  িবপরীেত  কলাম  (4) এ  উ  িখত  আমদািন
+শুেল্কর  অিতিরক্ত  পিরমাণ  আমদািন  শুল্ক  হইেত  অব াহিত  প্রদান  কিরল , যথাঃ -
+TABLE
+Heading H. S. Code Description Import Duty
+(Bangladesh
+Taka)
+(1) (2) (3) (4)
+17.01 - Raw sugar not containing added flavouring or
+colouring matter
+1701.12.00 -- Beet sugar 2000 per Metric
+Ton
+1701.13.00 -- Cane sugar specified in Subheading Note 2 to this
+Chapter
+2000 per Metric
+Ton
+1701.14.00 -- Other cane sugar 2000 per Metric
+Ton
+- Other
+H E A D E RP R O S ET A B L E
+1
+2
+3
+4
+5
+6
+7
+Figure 3: Beyond the challenges of temporal reasoning,
+the documents in the TIDE benchmark are inherently
+complex, both structurally and linguistically. Compris-
+ing mixed Bangla–English customs acts, notifications,
+and gazettes, they require models to parse multi-line
+institutional headers ( ①), dual-calendar dates in Ben-
+gali numerals (②), dense intra-sentential code-switching
+(③), heterogeneous layouts ( ④), sparse tables whose
+empty cells inherit parent values (⑤), nested intra-cell
+hierarchies (⑥), and symbolic indentation that encodes
+taxonomic depth rather than noise (⑦).
+50,829 words against a median of 360, a spread of
+about 141 times, and the coefficient of variation
+of length reaches 2.6. This follows from the in-
+strument mix, because SROs make up 95% of the
+corpus and are short tariff notifications, whereas
+the three Acts are book-length statutes. Conse-
+quently, no single prompt template fits every docu-
+ment shape.
+Code-mixing and mixed notation.The docu-
+ments are written in Bengali but saturated with En-
+glish legal vocabulary, so the two scripts interleave
+within the same sentence. English accounts for
+37.0% of alphabetic characters and 37.9% of words,
+and 96.4% of documents contain both scripts, of
+which 80.1% are genuinely bilingual with the mi-
+nority script above 5% of words. This is bilingual
+text rather than Bengali with loanwords. Moreover,
+the notation is doubly mixed, since 91.7% of doc-
+uments use both Bengali and ASCII digits, and
+97.0% state each date in both the Bangla and the
+Gregorian era. Therefore, a model must normalize
+scripts, digits, and calendars before it can compare
+two dates.
+Domain density.The text is also dense with do-
+main references, as 98.6% of documents cite a
+section and 63.6% contain H.S. tariff codes, for
+27,829 H.S. code occurrences across the corpus.
+13
+
+[[page 14]]
+Type Docs Med. words Max words Eng. % Tariff %
+Acts 3 42,585 50,829 89.1 0.0
+Rules 12 2,711 21,926 9.2 0.0
+GOs 20 641 26,428 4.2 10.0
+SROs 609 333 18,291 13.8 54.4
+Table 5: Per-instrument-type complexity in TIDE.Eng.
+%is the per-document median share of English words,
+andTariff %is the share of documents with tabular
+tariff content, proxied by three or more H.S. codes. The
+three Acts are two parallel monolingual versions of the
+Customs Act 1969 plus one mixed amendment, so their
+median English share is not a typical value.
+Furthermore, 51.7% of documents carry tabular
+tariff content, which OCR flattens into linear text
+and thereby breaks the alignment between codes
+and rates. These dimensions vary sharply by instru-
+ment type, as Table 5 shows. Acts and Rules are
+long and prose-heavy, in contrast to SROs, which
+are short but numerically dense and highly tabular.
+A benchmark drawn from all four types therefore
+forces a model to handle both long statutory prose
+and terse tariff notifications.
+A.3 Expert Verification of QA Pairs
+Two customs subject-matter experts (SMEs) inde-
+pendently review every generated pair for factual
+and temporal correctness. Each expert rates a pair
+on a three-point Likert scale, defined as follows. A
+score of 3 (correct) means the answer is factually
+accurate and, where the item requires a date, names
+the version in force and its effective date at the re-
+quired granularity. A score of2(partially correct)
+means the core fact is right but a supporting detail
+is imprecise or incomplete, for example a missing
+month on a date-level item or one omitted value
+in a multi-value answer. A score of 1 (incorrect)
+means the answer asserts a wrong fact or a wrong
+or contradicting date. A pair counts as factually
+correct only when it is rated 3. The two experts
+also repair the corpus as they review it. A pair rated
+2 is corrected in place, so the imprecise or missing
+detail is fixed and the pair is retained. A pair rated1
+is discarded, and the experts write a new pair on the
+same thread theme to replace it. The two experts
+agree strongly, with Cohen’sκ= 0.91 over the full
+set of pairs. Since the rubric turns on what each
+task must get right, Table 6 states the criterion for
+a score of3per task type.
+Table 7 reports the score distribution by task
+type, averaged over the two experts. Along the
+scale, the overwhelming majority of pairs are fully
+Task Type A Score of 3 Requires
+Temporal MCQ The selected option matches the gold instrument, code, or date
+exactly.
+Event sorting The full predicted ordering matches the gold chronology.
+Perturbation detection The verdict is correct, and an inaccurate statement has its changed
+value named and corrected.
+Scenario short answer The extracted value, such as a duty rate, matches the gold value.
+Temporal scenario short an-
+swer
+The amendment is resolved correctly, with the right superseding
+instrument and effective date.
+Relative-time QA The resolved target date matches at the required granularity, and the
+identified change is correct.
+Open-ended The stated rationale matches the gold rationale in substance.
+Context misalignment The answer follows the gold text and ignores the misleading
+premise.
+Table 6: Verification rubric. For each task type, the
+criterion that a pair must meet to earn the top score of
+3 on the three-point scale. Scores of 2 and 1 follow the
+general definitions ofpartially correctandincorrect.
+correct, only a small fraction are partially correct,
+and incorrect pairs are rare and never exceed 2.8%
+of any task. Across task types, correctness is high-
+est on the constrained tasks, where the target is a
+single value or a single ordering, and lowest on
+temporal scenario short answer and open-ended,
+which demand reasoning over several dated instru-
+ments or an open rationale. In aggregate, 94.89%
+of pairs are rated correct on the first pass. After
+the repairs above, every retained or rewritten pair
+meets the score-3 criterion, which is what makes
+the benchmark gold data.
+Task Type n 3 (%) 2 (%) 1 (%) Mean
+Temporal MCQ 354 97.5 1.4 1.1 2.96
+Event sorting 207 96.3 2.3 1.4 2.95
+Perturbation detection 498 95.6 2.6 1.8 2.94
+Scenario short answer 562 96.4 2.4 1.2 2.95
+Temporal scenario short answer 363 92.3 4.9 2.8 2.90
+Relative-time QA 463 94.0 3.8 2.2 2.92
+Open-ended 487 92.9 5.1 2.0 2.91
+Context misalignment 116 94.1 3.8 2.1 2.92
+Overall 3050 94.89 3.31 1.80 2.93
+Table 7: Expert verification results by task type on the
+first pass, before repair, averaged over the two SMEs.
+Columns 3, 2, and 1 give the percentage of pairs at each
+level of the scale in Table 6, andMeanis the average
+score in [1,3] . A pair is factually correct when rated 3.
+Pairs rated 2 are then corrected in place, and pairs rated
+1are rewritten on the same theme.
+A.4 Qualitative Examples by Task Type
+This appendix presents two representative exam-
+ples for each of the eight task types, drawn verba-
+tim from the released benchmark, with one colored
+panel per type. The examples illustrate the prop-
+erties that the generation pipeline of Section 2.4
+enforces by construction and that the expert review
+of Appendix A.3 confirms, where 94.89% of pairs
+are rated factually correct with strong inter-expert
+14
+
+[[page 15]]
+agreement. Each panel opens with the property it
+illustrates, so the examples can be read as evidence
+for the corresponding design claim of Section 2.5.
+Temporal MCQ (ymcq)
+Illustrates: the distractors are lexically close instruments
+that differ only in number or date, so surface matching
+fails, and version resolution is required.
+Example 1.
+Question:Which instrument introduced the requirement
+for customs offices to use methods like electronic flag-
+ging or the AEO Accreditation Logo for priority dispute
+resolution?
+Options:
+(a) AEO Rules 2024 (2024-06-13)
+(b) AEO Rules Amendment (2025-02-17)
+(c) AEO Operational Guidelines (2025-01-21)
+(d) AEO Rules Amendment (2025-02-16)
+Gold answer:(c) AEO Operational Guidelines (2025-01-
+21)
+Rationale:The 2025-01-21 guidelines mandated that
+customs offices prioritize accredited entities in disputes
+and implement identification methods like the AEO Logo
+or electronic flagging.
+Example 2.
+Question:In which year did the government reduce the
+duty rate for specific exempted categories from 3% to
+2%?
+Options:
+(a) 2011
+(b) 2012
+(c) 2013
+(d) 2014
+Gold answer:(c) 2013
+Rationale:SRO 145-AIN/2013, dated 2013-06-06, ex-
+plicitly amended the previous SRO 157-AIN/2012 to re-
+place the 3% duty rate with 2%.
+Event Sorting (ysort)
+Illustrates: the events carry no dates or ordering cues, so
+the chronology must be recovered from what each change
+did.
+Example 1.
+Instruction:Arrange these events in chronological order
+(earliest first).
+Events (shuffled, dates removed):
+E1 The primary baggage allowance for passengers is
+reduced to 36kg.
+E2 The baggage rules are updated to introduce a spe-
+cific 40kg weight limit for passengers under twelve
+years of age.
+E3 The baggage rules establish a 65kg primary al-
+lowance and a 35kg secondary allowance for cloth-
+ing and personal items.
+E4 The language regarding baggage composition is
+refined to specify that the 65kg allowance applies
+to total baggage brought by any means.
+Gold chronological order:
+1. 2011-06-09— The baggage rules establish a 65kg
+primary allowance and a 35kg secondary allowance
+for clothing and personal items.
+2. 2016-04-08— The baggage rules are updated to in-
+troduce a specific 40kg weight limit for passengers
+under twelve years of age.
+3. 2016-06-02— The language regarding baggage
+composition is refined to specify that the 65kg al-
+lowance applies to total baggage brought by any
+means.
+4. 2025-06-03— The primary baggage allowance for
+passengers is reduced to 36kg.
+Example 2.
+Instruction:Arrange these events in chronological order
+(earliest first).
+Events (shuffled, dates removed):
+E1 The use of technical explanatory notes for machin-
+ery classification was mandated for duty purposes.
+E2 Large-scale industries were granted flexibility to
+extend import timelines for machinery up to three
+years.
+E3 The government established a concessional duty
+threshold of one percent for industrial machinery.
+E4 The concessional duty threshold was adjusted to
+three percent, with an expanded scope including
+specific components.
+E5 The legal basis for duty concessions was transi-
+tioned to the Customs Act.
+Gold chronological order:
+1. 2010-06-10— The government established a con-
+cessional duty threshold of one percent for indus-
+trial machinery.
+2. 2011-06-09— The concessional duty threshold
+was adjusted to three percent, with an expanded
+scope including specific components.
+3. 2016-06-02— Large-scale industries were granted
+flexibility to extend import timelines for machinery
+up to three years.
+4. 2020-06-11— The use of technical explanatory
+notes for machinery classification was mandated
+for duty purposes.
+5. 2025-06-02— The legal basis for duty concessions
+was transitioned to the Customs Act.
+Perturbation Detection (ypert)
+Illustrates: each statement differs from the regulation
+in exactly one value, and the gold answer names and
+corrects that value.
+Example 1.
+15
+
+[[page 16]]
+Statement:Under SRO 175/2024, pharmaceutical raw
+materials listed in TABLE-2 are granted a customs duty
+exemption provided the existing duty exceeds a threshold
+of 5%.
+Question:Is this statement accurate? If not, identify and
+correct the error.
+Gold answer:The statement is inaccurate. Per SRO
+175/2024 (dated June 6, 2024), the duty exemption for
+pharmaceutical raw materials in TABLE-2 applies if the
+existing duty exceeds 10%, whereas the 5% threshold
+applies to TABLE-1.
+Example 2.
+Statement:Under the AEO Rules 2024, the formaliza-
+tion of rejection criteria for tier promotion and cancella-
+tion due to non-compliance was introduced on 2025-02-
+17.
+Question:Is this statement accurate? If not, identify and
+correct the error.
+Gold answer:The statement is inaccurate. The formal-
+ization of rejection criteria for tier promotion and can-
+cellation was introduced on 2025-02-16, whereas 2025-
+02-17 focused on the introduction of explicit tier-based
+promotion and demotion mechanisms.
+Scenario Short Answer (yssa)
+Illustrates: the queried value is embedded in a realistic
+persona and setting, and the scenario never quotes the
+clause that answers it.
+Example 1.
+Scenario:A local manufacturer is expanding their facility
+in 2023 to begin domestic production of electric switches
+and sockets. To remain competitive, they are planning
+to import specialized components from abroad. Before
+placing their first order, the management team needs to
+understand the specific regulatory framework that allows
+for duty concessions on these industrial inputs. They are
+particularly concerned with identifying the legal basis for
+these exemptions and the conditions they must meet to
+qualify.
+Question:What is the legal basis and the specific condi-
+tion for duty concessions on these industrial imports?
+Gold answer:The import is governed by Section 19(1)
+of the Customs Act 1969 and Section 126(1) of the V AT
+and Supplementary Duty Act 2012, allowing for duty ex-
+emptions where the import duty exceeds 5% ad valorem,
+subject to conditions prescribed for local manufacturing.
+Example 2.
+Scenario:A long-time manufacturing executive whose
+company recently achieved Class-1 Authorized Economic
+Operator (AEO) status is reviewing their supply chain
+efficiency for February 2025. They have invested heavily
+in compliance and secure logistics to earn this trusted
+partnership with customs. As they plan their next high-
+volume import, they want to understand the exact reg-
+ulatory benefits they are entitled to regarding physical
+intervention. Specifically, they need to know the upper
+limit of the selectivity rate for physical examination ap-
+plied to their shipments.
+Question:What is the maximum selectivity rate for phys-
+ical examination for a Class-1 AEO as of February 2025?
+Gold answer:The selectivity rate for a Class-1 AEO is
+set at a maximum of 50%.
+Temporal Scenario Short Answer (ytssa)
+Illustrates: the answer requires composing several dated
+instruments, including repeals that nonetheless preserve
+an earlier threshold.
+Example 1.
+Scenario:A Bangladeshi flight crew member has been
+working on international flights since 2012. They recall
+that when they started, they were allowed to bring in
+baggage worth 100 USD duty-free. They continued their
+service through the updates in 2016, 2023, and 2024, and
+are now planning a return flight in late 2025.
+Question:How has the duty-free baggage allowance for
+this flight crew member changed from their start date in
+2012 to the current regulation in 2025?
+Gold answer:The duty-free allowance increased from
+100 USD (2012) to 300 USD (2016, 2023, 2024), and
+was subsequently reduced to 150 USD in 2025.
+Example 2.
+Scenario:An industrial manufacturer has been importing
+machinery since 2010 under the original 1% excess duty
+threshold established by SRO 178/2010. In 2016, they
+observed that SRO 151/2016 repealed the 2010 order.
+The manufacturer wants to know if their eligibility for
+the 1% threshold for machinery and spare parts remains
+consistent despite this change.
+Question:Does the repeal of SRO 178/2010 by SRO
+151/2016 in 2016 remove the 1% excess duty thresh-
+old for industrial machinery, or does the new instrument
+maintain it?
+Gold answer:The 1% excess threshold is maintained;
+SRO 151/2016 explicitly repealed SRO 178/2010 while
+simultaneously codifying the 1% excess duty threshold
+for the specified industrial goods.
+Relative-Time QA (yrel)
+Illustrates: the target date is never stated, so the anchor
+and offset must be resolved before the regulatory change
+can be identified.
+Example 1.
+Question:In 2016-06-02, SRO 160/2016 formalized
+V AT-7 form submissions. What major change regarding
+V AT registration and electronic verification was mandated
+six years later?
+Gold answer:Six years later, on 2022-06-09, SRO
+118/2022 mandated that entities must hold a 13-digit
+BIN and undergo electronic verification of monthly V AT
+returns via online systems as a prerequisite for customs
+clearance.
+Example 2.
+Question:In 2010-06-10, the Government relied on Sec-
+tion 19(1) of the Customs Act 1969 to issue notifications;
+five years later, what legal framework was additionally
+cited in conjunction with the Customs Act 1969 for issu-
+ing customs notifications?
+Gold answer:By 2015-06-04 (SRO 140-Ain/2015), the
+Government began reading Section 19(1) of the Customs
+Act 1969 in conjunction with Section 14(1) of the Value
+Added Tax Act, 1991 to issue or amend customs notifica-
+tions.
+16
+
+[[page 17]]
+Open-Ended (yoe)
+Illustrates: the gold answer traces a rationale and its
+evolution across instruments rather than a single value.
+Example 1.
+Question:How did the minimum valuation framework
+and documentation requirements for importing motor
+vehicles under Section 25(3) of the Customs Act 1969
+evolve between June 2010 and June 2012?
+Gold answer:In June 2010, S.R.O. 190-AIN/2010 es-
+tablished minimum valuation conditions specifically for
+new motor vehicles under Heading 87.03, requiring a
+’Manufacturer’s Price Certificate’ prior to assessment. By
+June 2011, this was replaced by S.R.O. 168-AIN/2011,
+which expanded the scope to include double cabin pick-
+ups and other vehicles under Heading 87.04, and shifted
+the mandatory documentation requirement to a ’Manufac-
+turer’s invoice’. This structure (Heading 87.03 and 87.04
+with a Manufacturer’s invoice) was maintained in the sub-
+sequent June 2012 update under S.R.O. 163-AIN/2012,
+which repealed the intervening S.R.O. 298-AIN/2011.
+Example 2.
+Question:How has the regulatory approach to handling
+repealed minimum value notifications evolved between
+2020 and 2022?
+Gold answer:Starting with SRO 132/2020 and continu-
+ing through SRO 133/2021 and SRO 147/2022, the gov-
+ernment formalized a requirement that even when a previ-
+ous minimum value notification is repealed, that historical
+price must still be considered when determining the du-
+tiable value under the Customs Valuation (Determination
+of Value of Imported Goods) Rules 2000.
+Context Misalignment (ycm)
+Illustrates: the premise is fluent but wrong, and the gold
+answer corrects it from the official timeline.
+Example 1.
+Misaligned context:In 2017, the National Board of Rev-
+enue issued SRO 132-AIN/2017 to establish the legal
+framework for LED lamp and energy-saving lamp manu-
+facturing concessions under the Customs Act 2023.
+Question:Does the 2017 notification (SRO 132-
+AIN/2017) provide the legal basis for LED lamp manu-
+facturing concessions under the Customs Act 2023?
+Gold answer:No. According to the timeline, SRO 132-
+AIN/2017, issued on 2017-06-01, was exclusively for
+cellular phone manufacturing and assembly. LED and
+energy-saving lamp manufacturing concessions were only
+introduced later via SRO 201-AIN/2022, and the legal
+basis was updated to the Customs Act 2023 only in 2024
+via SRO 173-AIN/2024.
+Example 2.
+Misaligned context:On June 2, 2016, the government
+issued SRO 169-AIN/2016 to modify Table-1 of SRO
+143-AIN/2009 regarding chemical product classifications.
+Question:Does the description of SRO 169-AIN/2016
+align with the established regulatory history?
+Gold answer:No, this is incorrect. SRO 169-AIN/2016,
+issued on June 2, 2016, amended SRO 11-AIN/2005.
+Amendments to SRO 143-AIN/2009 on that same date
+were handled by SRO 168-AIN/2016.
+A.5 Model Details and Knowledge Cut-offs
+We evaluate a diverse set of large language mod-
+els, spanning both open-weight and proprietary
+systems, to ensure our findings generalize across
+model families and access types. Table 8 sum-
+marizes these models along with their parameter
+counts, release dates, and reported knowledge cut-
+offs. Knowledge cut-off dates are particularly im-
+portant for our evaluation, as several of our bench-
+mark categories directly test temporal reasoning
+and awareness of time-sensitive information.
+Model Params Release Cut-off
+OPEN-WEIGHT
+Qwen 3.635B (3B act.) Apr 2026 n.d.
+GPT-OSS117B (5.1B act.) Aug 2025 n.d.
+Gemma-431B (dense) Apr 2026 n.d.
+Kimi-K2.51T (32B act.) Jan 2026 n.d.
+GLM-4.6355B (32B act.) Sep 2025 n.d.
+DeepSeek-V4-Flash284B (13B act.) Apr 2026 n.d.
+PROPRIETARY
+GPT-5.2n.d. Dec 2025 Aug 2025
+Gemini-3.5-Flashn.d. May 2026 Jan 2025
+Claude-Sonnet-4.5n.d. Sep 2025 Jan 2025∗
+Table 8: Evaluated models grouped by access type.
+Params reports total parameters, and active parame-
+ters per token for Mixture-of-Experts models. The
+shaded column lists the officially reported knowledge
+cut-off. n.d. marks values not disclosed by the provider.
+∗Anthropic reports a reliable knowledge cut-off of Jan-
+uary 2025 and a training data cut-off of July 2025.
+However, not all providers disclose this informa-
+tion. We mark such cases as not disclosed (n.d.) in
+Table 8. Where a provider distinguishes between
+a reliable knowledge cut-off and a training data
+cut-off, as is the case with Claude-Sonnet-4.5,
+we report the reliable cut-off and note the distinc-
+tion in the table caption. All experiments were run
+through two paid billing accounts. Specifically, ev-
+ery Gemini call, both as a subject model and as a
+council judge, was served by the Google AI Stu-
+dio Gemini Developer API, whereas all remaining
+subject models, judges, and embedding retrievers
+were served through OpenRouter under a single
+OpenAI-compatible endpoint, so that prompts, de-
+coding parameters, and retry logic stayed constant
+across model families. In total, building and evalu-
+ating TIDE cost around $1,100, or roughly $0.0045
+per item per model per run.
+17
+
+[[page 18]]
+A.6 More Details on Evaluation Metrics
+Table 9 summarizes the scoring rubric used across
+the pipeline.
+Task Type How It Is Scored What Forces a Zero
+Council-judged tasksscored by code from Eq. 2
+Scenario, temporal sce-
+nario, & open-ended short
+answer
+Base rubric. Items with no date
+are scored on meaning alone.
+A wrong date on a one-date item. A
+contradicting date also cancels the
+meaning credit.
+Relative-time QA Base rubric. The offset sets how
+exact the date must be: year, full
+date, or year and month.
+Same as above, checked only at the
+required level of exactness.
+Context misalignment Base rubric against the gold an-
+swer.
+Same as above.
+Perturbation detection (ex-
+planation)
+Base rubric, but only if the
+changed part is correctly pointed
+out.
+Missing the changed part. Raising a
+false alarm.
+Deterministic tasksmatched directly against the ground truth
+Perturbation detection (ver-
+dict)
+Verdict vs. correct verdict. Accu-
+racy, P, R, F1.
+—
+Temporal MCQ Chosen option vs. correct option.
+Accuracy, macro P, R, F1.
+—
+Event sorting Exact match. —
+Table 9: Scoring rubric of the evaluation pipeline. For
+council-judged tasks, a wrong date forces a zero no
+matter how good the meaning is. Deterministic tasks
+need no council and have no gates.
+Council scoring.The six free-form tasks are
+scored by a council of three heterogeneous judges
+rather than a single model. Each judge does
+not return a numeric score. Instead, it answers
+a fixed set of yes/no questions in JSON about
+whether the answer aligns with, contradicts, or en-
+tails each canonical ground-truth date, and whether
+it is borderline. A deterministic program then
+takes the majority vote of the three judges and
+computes the final score with Eq. 2, which keeps
+the scoring reproducible and removes any single
+judge’s scale bias. Moreover, we measure inter-
+judge reliability with Fleiss’ kappa and obtain
+κ∈[0.8297,0.861] , which indicates strong agree-
+ment among the judges.
+Human validation.To confirm that the council
+tracks expert judgment, we conduct a focused hu-
+man review with two independent subject-matter
+experts (SMEs). We adopt the human scoring
+rubric of E Sobhani et al. (2026) and adapt it to
+our temporal setting. As Table 10 shows, the rubric
+awards up to 50 points for a correct verdict, up to
+40 points for logical and well-grounded reasoning,
+and up to 10 points for a clear justification, for a
+total of 100. Each SME independently rescored
+the council’s decisions on the council-judged tasks
+drawn from across the whole corpus. As reported
+in Table 11, the two experts give the council total
+scores of 92.93 and 95.49 out of 100.
+Component Points What the SME Checks
+Verdict accuracy 0–50 Did the council reach the correct decision on temporal, factual,
+and conclusive equivalence with the ground truth?
+Reasoning alignment 0–40 Is the council’s analysis logical, and does it justify the verdict
+against the reference dates and meaning?
+Clarity & justification 0–10 Is the explanation clear, and does it properly support the deci-
+sion?
+Total 100
+Table 10: Human validation rubric, adapted from E Sob-
+hani et al. (2026), that each SME applies to council
+decisions on the free-form tasks. The verdict carries the
+most weight, and the remaining points reward sound
+and clearly justified reasoning.
+Reviewer Verdict Reasoning Clarity Total
+(0–50) (0–40) (0–10) (0–100)
+SME 1 46.98 37.95 8.00 92.93
+SME 2 48.20 38.49 8.80 95.49
+Mean 47.59 38.22 8.40 94.21
+Table 11: Mean rubric scores that each subject-matter
+expert assigns to the council over the council-judged
+tasks across the whole corpus, following the rubric in
+Table 10. The verdict is scored highest and the clarity
+of the justification lowest, so the council agrees with the
+experts on the outcome and loses only minor points on
+explanation.
+A.7 OCR Output Schema
+Each parsed document is serialised as one
+JSON record. The document_info block holds
+document-level metadata and a summary count,
+parsed_text holds the ordered metadata and
+clause items, and tables holds every extracted
+table linked back to its parent item through
+parent_text_id. Listing A.7 shows the empty
+template that the prompt in Appendix A.8.1 popu-
+lates.
+{
+"document_info": {
+"file_name": "",
+"document_type": "",
+"document_date": "",
+"total_pages": 0,
+"extraction_timestamp": "",
+"summary": {
+"total_metadata": 0,
+"total_clauses": 0,
+"total_tables": 0
+}
+},
+"parsed_text": [
+{
+"type": "metadata",
+"metadata_category": "",
+"metadata_title": "",
+"text": "",
+"page_start": 0,
+"page_end": 0,
+18
+
+[[page 19]]
+"text_id": "",
+"table_ids": []
+},
+{
+"type": "clause",
+"clause_number": "",
+"clause_title": "",
+"text": "",
+"subclause_hierarchy": "",
+"page_start": 0,
+"page_end": 0,
+"text_id": "",
+"table_ids": []
+}
+],
+"tables": [
+{
+"table_id": "",
+"parent_text_id": "",
+"page_start": 0,
+"page_end": 0,
+"headers": [],
+"rows": [
+[]
+]
+}
+]
+}
+A.8 Prompt Templates
+A.8.1 OCR and Structured Extraction
+Prompt
+We used this prompt to guide Gemini-3.1-Pro
+when parsing the raw customs instruments into
+the structured schema of Section 2.2. The prompt
+transcribes every page in reading order, classifies
+each block as document metadata or a legal clause,
+merges clauses and tables that cross page bound-
+aries, and emits a single JSON record in document
+order. It enforces zero text loss and no translation,
+so the mixed Bangla–English source is preserved
+exactly.
+You are a legal-document transcription and
+structured-extraction agent for Bangladeshi
+government PDFs (SROs 1969-2025, Finance Acts,
+customs/tax notifications, gazette
+notifications, and international treaties or
+bilateral agreements between the Government of
+Bangladesh and foreign governments or
+entities). Documents are in Bangla, English,
+or mixed Bangla-English.
+This is a government gazette document for
+structured indexing. Output is a field-level
+transcription for research, not republication.
+Extract all visible text from the attached PDF
+in reading order. For scanned or image-based
+pages, perform OCR. Preserve Bangla and
+English scripts exactly as printed.
+Use visual structure (headings, numbering,
+tables) to decide metadata vs clause
+boundaries.
+Follow these steps in order:
+1. EXTRACT every page - capture ALL visible
+text in reading order.
+2. CLASSIFY each text block as METADATA or
+CLAUSE.
+3. MERGE clause text that continues across
+page boundaries into a single clause
+item.
+4. MERGE table rows that span multiple pages
+into a single table entry.
+5. BUILD the JSON output with all items in
+document order.
+R1 OCR FIDELITY
+- Extract ALL text exactly as printed -
+every header, footer, page number,
+footnote, section number, and body text.
+- Bangla -> Bengali Unicode. English ->
+Latin script. Mixed -> keep both scripts
+exactly as they appear.
+- Do NOT translate, transliterate,
+paraphrase, or invent text.
+- ZERO TEXT LOSS: every visible character
+MUST appear in your JSON.
+R2 ITEM TYPES - exactly two: "metadata" and
+"clause".
+- type field is the string "metadata" or
+"clause".
+- Never use "clauses" (plural) or any
+other value.
+R3 METADATA
+- DEFINITION: Text whose function is to
+IDENTIFY, LABEL, or NAVIGATE the
+document - it describes or organises the
+document but carries no legal
+obligation, right, or definition in
+itself. A metadata block could be
+removed without changing any legal rule.
+- Includes: document titles, SRO/act
+numbers, ministry names, chapter
+headings, schedule titles, preamble
+recitals, amendment titles, page
+headers/footers, page numbers,
+footnotes, running headers, and
+attestation/signature blocks.
+- metadata_category - exactly one of:
+* "document": anything that identifies
+or structures the document at a
+content level (titles, chapter
+headings, schedule headings,
+preambles).
+* "page": anything that identifies or
+structures a physical page (headers,
+footers, page numbers, footnotes).
+- metadata_title: the heading/title text
+if this block IS a heading; otherwise
+"".
+- Metadata items NEVER have tables. tables
+field = [].
+R4 CLAUSES
+- DEFINITION: A numbered unit of legal
+text whose function is to CREATE,
+19
+
+[[page 20]]
+MODIFY, or REMOVE a legal rule - an
+obligation, right, prohibition, penalty,
+definition, or procedural requirement. A
+clause can be independently cited and
+has normative force on its own. It would
+remain meaningful if extracted from the
+document.
+- Primary markers (use to locate clause
+boundaries):
+Bengali numeral followed by the daari
+(danda) mark.
+Arabic numeral + period: 4., 5., 10.
+- When a block carries legal force AND
+bears a clause numeral, it is always a
+clause - regardless of its visual
+formatting or position on the page.
+- Sub-clauses (a)(b)(c) and
+sub-sub-clauses (i)(ii)(iii) qualify or
+elaborate the parent clause's legal
+rule. They are ALWAYS part of the parent
+clause's text. They are NEVER separate
+items in the output.
+R5 CLAUSE_NUMBER - GLOBAL SEQUENTIAL
+NUMBERING
+- Format: always "clause_N" where N is an
+Arabic numeral.
+- N must be the GLOBAL sequential position
+of the clause in the ENTIRE document,
+NOT the chapter-local number.
+- Documents with multiple chapters/parts
+often restart clause numbering (e.g. a
+later chapter starts again at 1). You
+MUST continue the global count from
+where the previous chapter ended.
+- Example: if Chapters 1-5 had clauses
+1-43, then Chapter 6's first clause
+becomes clause_44, its second becomes
+clause_45, and so on.
+- The clause's original printed numeral
+still appears in the text field verbatim
+- only clause_number uses the global N.
+- Never a raw script numeral, a bare
+number ("3"), or a value without the
+prefix.
+R6 CLAUSE_TITLE
+- The clause_title is the heading phrase
+between the clause numeral and the
+trailing em-dash delimiter.
+- Example:
+"4. Replacement of section 25B.--"
+-> clause_title = "Replacement of
+section 25B"
+- If no heading phrase exists before the
+body text, clause_title = "".
+R7 CROSS-PAGE MERGING (CRITICAL)
+- You see the ENTIRE document. If a clause
+continues across pages, merge ALL its
+text into ONE clause item.
+- page_start = first page where the clause
+appears. page_end = last page.
+- Literal strings spanning pages: all text
+stays in the parent clause's text field.
+R8 SUBCLAUSE HIERARCHY
+- subclause_hierarchy: a JSON array
+capturing the FULL nested structure of
+all sub-clauses for the entire clause.
+- Flat items = top-level sub-clauses. A
+nested sub-array IMMEDIATELY after a
+parent = that parent's children.
+- Examples:
+a has children x, y; then b:
+-> ["a", ["x", "y"], "b"]
+a has child x, which has children i,
+ii;
+then y; then b:
+-> ["a", ["x", ["i", "ii"], "y"],
+"b"]
+- Use ORIGINAL numbering signs from the
+PDF.
+- EXCLUDE sub-clause markers inside quoted
+literal strings ("..."). Those are part
+of quoted law text, not structural.
+- No sub-clauses -> empty array [].
+R9 TABLE EXTRACTION
+- Tables ALWAYS belong to a CLAUSE - embed
+in the clause's tables array.
+- Detect ALL table types: bordered,
+partially bordered, and borderless
+(aligned columns of data).
+- For each table:
+* headers: array of column header
+strings as printed.
+* rows: array of arrays [[cell, cell],
+...]. NO dict rows. Empty cells -> "".
+* page_start / page_end: pages the table
+spans.
+- Extract ALL rows - never truncate, even
+for 100+ rows.
+- MULTI-PAGE TABLES: merge all rows into
+ONE table entry.
+- Schedule tables: attach to the clause
+that introduces the schedule.
+- INLINE TABLE MARKERS (CRITICAL): In the
+clause's text field, insert the marker
+[TABLE_K] at the EXACT position where
+the K-th table appears in the document
+flow. K = 1, 2, 3... per clause,
+matching the order of objects in the
+tables array. Example: if a clause has
+text before a table, then more text,
+then a second table:
+text: "... preceding text [TABLE_1]
+middle text [TABLE_2] trailing text"
+- Place [TABLE_K] at the exact spot in the
+text where the table visually appears on
+the page. If the table appears at the
+end of the clause text, place the marker
+at the end.
+R10 LITERAL STRINGS
+- Verbatim legislative text between the
+outermost "...".
+- Inside a literal string: (a)(b)(i)(ii)
+are sub-sections of QUOTED LAW. Do NOT
+add them to subclause_hierarchy. Do NOT
+create new clause items from them.
+R11 DATES
+- Extract the document date from page 1
+header/metadata. Report as
+document_date.
+R12 ORDERING
+20
+
+[[page 21]]
+- Items in the output MUST follow document
+order: top-to-bottom, page-by-page.
+A.8.2 Entity–Concept Extraction Prompt
+We used this prompt to guide Gemini-3.1-Pro in
+extracting entity–concept pairs from each parsed
+clause and metadata element (Section 2.3). The
+prompt fixes canonical, cross-document English
+names for every legal subject, so the same entity
+is spelled identically wherever it appears, and it
+frames each concept to the document level (a foun-
+dational rule for an Act, a legal change for an SRO,
+a procedure for a Rule, and an operational instruc-
+tion for a GO). It also reads embedded tables as
+entity-rich content rather than formatting noise.
+You are an expert legal analyst specializing
+in
+Bangladeshi customs, taxation, and trade law.
+Your task is to extract entity-concept pairs
+from a legal clause or metadata element.
+===== DEFINITIONS =====
+ENTITY: An entity is a canonical,
+re-identifiable SUBJECT of Bangladesh customs
+law - a thing that keeps the SAME identity
+wherever it appears across the legal hierarchy
+(the Act that defines it, the SRO that amends
+it, the Rule that operationalizes it, and the
+GO that gives instructions about it). It may
+be a law or instrument, a tax instrument, a
+government body or role, a commodity or
+schedule, a process/mechanism, or a formally
+defined legal term. An entity must be a noun
+or noun phrase. There can be multiple entities
+in a single clause.
+ENTITY NAMES ARE CROSS-DOCUMENT ANCHORS -
+consistency is critical:
+- Always use the canonical, official
+English name, spelled IDENTICALLY every
+time (e.g.,'Value Added Tax', never
+'VAT';'National Board of Revenue',
+never'NBR';'Customs Act 1969', never
+'the Act').
+- Prefer the specific, registered name
+over a generic reference (e.g.,
+'Passenger (Non-Tourist) Baggage
+(Import) Rules 2012', not'the Rules';
+the instrument's own number, e.g.,
+'S.R.O. 169-AIN/2010', not'this
+notification').
+- If a PREFERRED CANONICAL NAMES list is
+given above and the subject matches one,
+REUSE that exact spelling.
+ENTITY CATEGORIES (use these to guide
+consistent naming):
+- Laws/Acts: e.g.,'Customs Act 1969',
+'Finance Act 2022','Right to
+Information Act 2009'
+- Tax Instruments: e.g.,'Customs Duty',
+'Value Added Tax','Supplementary Duty'
+- Government Bodies: e.g.,'National Board
+of Revenue','Customs Authority'
+- Roles: e.g.,'Commissioner of Customs',
+'Appropriate Officer of Customs'
+- Processes/Mechanisms: e.g.,'Bonded
+Warehouse Operation','Customs
+Clearance','Risk Analysis'
+- Documents/Schedules: e.g.,'First
+Schedule','Bangladesh Customs Tariff'
+- Infrastructure: e.g.,'Customs
+Computerised Entry Processing System'
+CONCEPT: A concept is a meaningful,
+descriptive explanation of what is being said
+ABOUT a specific entity in this clause. It
+captures the central theme, action, rule,
+condition, or policy being applied to or
+associated with that entity. IMPORTANT: the
+KIND of claim a concept should capture depends
+on the document's level (see the DOCUMENT TYPE
+& FUNCTION block above, when present) - a
+foundational rule/power for an ACT, a specific
+legal change for an SRO, a procedure or
+threshold for a RULE, and a practical
+operational instruction for a GO. Frame each
+concept to match that level. A concept must be
+at least one complete, meaningful sentence and
+at most 3-4 sentences. Concepts should be
+written in simple, plain English using generic
+terms (avoid citing specific monetary amounts,
+exact dates, or proper names - describe them
+generically instead). A single entity can have
+multiple concepts if the clause discusses
+multiple distinct aspects of it.
+===== ENTITY NAMING - RIGHT vs WRONG =====
+WRONG entity names -> RIGHT entity names:
+-'VAT'->'Value Added Tax'
+-'duty'->'Customs Duty'
+-'the Act'->'Customs Act 1969'
+-'NBR'->'National Board of Revenue'
+- a Bangla name for the law ->'Customs
+Act 1969'(always English)
+-'section 156'->'Customs Offence
+Penalties'(entity = the subject, not
+the section number)
+===== SPECIAL CLAUSE RULES =====
+DEFINITION CLAUSES (Definitions):
+When the clause defines legal terms (typically
+using numbered or lettered sub-clauses like
+(a), (b), or quoted phrases followed by
+'means...'), extract EACH formally defined
+term as its own entity. The concept for each
+defined term should paraphrase the definition
+in plain English. Do not merge all definitions
+into one entity.
+TABLE GRANULARITY:
+When the clause contains an embedded table,
+extract row-level entities only when a row
+introduces a distinct legal subject (e.g., a
+specific offence, a commodity class, a form or
+schedule, a penalty category). For
+questionnaires, checklists, or compliance
+requirement tables, summarize by section or
+21
+
+[[page 22]]
+theme rather than extracting one entity per
+row.
+===== INSTRUCTIONS =====
+1. Read the clause text below carefully.
+2. The clause may be in English, Bangla, or
+mixed Bangla-English - but ALL entity and
+concept values MUST be written in English
+regardless of the source language.
+3. Be STRICT and CONSISTENT in entity naming -
+always use canonical, official English
+names. Use the same form every time.
+4. Be DESCRIPTIVE in concept formation - each
+concept must be a meaningful sentence (1-4
+sentences) that clearly explains the legal
+provision or rule being applied to the
+entity.
+5. TABLES ARE ENTITY-RICH: When the clause
+text contains embedded table data
+(pipe-separated rows), treat the table
+content as equally important to the
+surrounding clause text. Tables in legal
+clauses often introduce distinct entities
+not mentioned in the main text - such as
+specific offence types, penalty structures,
+commodity categories, systems, or section
+references. Extract entities from BOTH the
+clause text AND the table content. Ignore
+only the formatting noise (pipe characters,
+repeated headers, cell borders) but
+carefully read the semantic content of
+every table row and column.
+6. If no meaningful entities can be extracted
+(e.g., the text is a page number, blank, or
+purely navigational), return an empty
+entities list.
+A.8.3 Question–Answer Generation Prompt
+We used the prompt template in this section to
+guide Gemini 3.1 Pro in generating question–
+answer pairs from each evolving concept thread.
+One call produces one task type for one thread.
+Every call sends the same header, the same context,
+and exactly one task block, therefore the shared
+instructions and the shared output fields are stated
+only once. The task block adds only the definition
+and the extra fields of the requested type.
+The header sets four quality rules, so a pair must
+name a concrete date, instrument, rate, or category,
+must stay answerable from the cited clauses alone,
+must not repeat another pair, and must follow the
+cited text exactly. Moreover, the header treats the
+per-type target as a guide instead of a quota, there-
+fore a thin thread returns fewer pairs rather than
+padded ones. Finally, every pair must return the
+clause indices it used. We resolve these indices
+back to clause identifiers and source files, so each
+released pair carries an explicit grounding trail.
+You build a HIGH-QUALITY, exam-grade Q&A
+dataset from how a Bangladeshi customs/tax
+concept evolves over time. Use ONLY the facts
+in the context below - never invent dates,
+rates, instruments, categories, or entities.
+===== QUALITY BAR (EVERY PAIR) =====
+- SPECIFIC & grounded: name the exact
+date/year, SRO/instrument number, rate,
+category/HS heading, or entity involved.
+Never vague or generic.
+- SELF-CONTAINED: fully answerable from the
+cited clauses, no outside knowledge.
+- NON-TRIVIAL & DISTINCT: no two pairs test
+the same fact. Favour pairs that require
+reading the evolution/timeline over a
+single surface fact.
+- FAITHFUL: the answer must be exactly
+supported by the cited clauses.
+Generate AS MANY strong, distinct pairs as
+the content genuinely supports (<TARGET> is a
+guide; return fewer if the material is thin -
+never pad with weak pairs).
+===== OUTPUT FORMAT =====
+Return ONLY this JSON object, with no
+preamble and no code fences:
+{"qa_pairs":[{...},{...}]}
+EVERY pair object carries these two fields:
+"type": "<the requested task block type>"
+"clause_indices": [<int>,...]
+CRITICAL: "clause_indices" lists the clause
+[index] numbers (from NUMBERED CLAUSES below)
+whose content the question/answer is grounded
+in. Cite the exact clauses used; never leave
+it empty.
+The task block adds its own fields on top of
+these two. Emit ONLY the requested type.
+===== CONTEXT =====
+<THREAD CONTEXT: thread title, concept label,
+summary, EVOLUTION block (dimension: value),
+TIMELINE block (date | instrument | change)>
+NUMBERED CLAUSES (each has a source file;
+cite the ones you use):
+<one entry per sampled clause, giving its
+[index], clause date, source file, entity
+names, up to three concepts, and the
+resolved clause text>
+===== TASK BLOCK (exactly one per call) =====
+(1) temporal_mcq [target 6]
+TEMPORAL multiple-choice (when did X change /
+what held at time T / which instrument
+introduced Y). 4 options, one correct,
+plausible distractors.
+Fields: "question", "options":["A","B","C",
+"D"], "answer_index":<0-3>, "answer":
+"<correct option>", "explanation":"<why, with
+date/instrument>".
+22
+
+[[page 23]]
+(2) event_sorting [target 4]
+Give a SHUFFLED set of 3-6 real
+events/changes and ask to order them
+chronologically (earliest first). The
+shuffled events MUST NOT contain any date,
+year, or month - no "1969", no "in 2012", no
+"June", no "FY2018-19" - so the order cannot
+be recovered by surface matching. Dates
+appear only in the answer key.
+Fields: "question":"Arrange these events in
+chronological order (earliest first).",
+"events_shuffled":["e1","e2","e3"],
+"answer_ordered":[{"event":"e","date":
+"YYYY-MM-DD"}].
+(3) perturbation_detection [target 6]
+A statement in which exactly ONE fact is
+subtly WRONG (changed date/rate/category/
+instrument/scope). Ask the reader to judge
+accuracy and correct it. Most perturbed; a
+few may be fully correct.
+Fields: "statement", "question":"Is this
+statement accurate? If not, identify and
+correct the error.", "is_perturbed":
+<true|false>, "perturbed_fact":"<wrong part
+or null>", "correct_fact", "answer":
+"<verdict + correction>".
+(4) scenario_short_answer [target 6]
+A realistic, STORY-LIKE real-world SCENARIO
+(3-6 sentences: a named persona/firm/officer
+in a concrete situation and year) that
+naturally leads to a question, with a SHORT
+factual answer about the rule/rate/
+requirement that applied. Do not reveal the
+answer inside the scenario.
+Fields: "scenario", "question", "answer":
+"<short factual answer>",
+"date_or_instrument":"<relevant date/SRO>".
+(5) temporal_scenario_short_answer [target 5]
+A scenario that DEPENDS ON MULTIPLE related
+clauses at DIFFERENT times, with a question
+requiring TEMPORAL reasoning (before vs
+after, what now applies to someone who
+started under an older rule, sequence/
+consequence). Only if it genuinely needs >=2
+clauses across time; else fewer/none.
+Fields: "scenario":"<multi-time story>",
+"question", "answer":"<short factual
+answer>", "clauses_involved":["<date/
+instrument>"].
+(6) relative_time_qa [target 4]
+State an explicit SEED time, then ask about a
+different point via a RELATIVE offset ("six
+years later", "two years earlier") WITHOUT
+naming the target year in the question. The
+target must be a real timeline event, and the
+answer resolves it to the actual
+time/instrument.
+Fields: "seed_time", "relative_offset":"<e.g.
+'six years later'>", "question":"<uses seed +
+relative offset>", "answer":"<resolves to
+actual time + fact>".
+(7) open_ended [target 6]
+Analytical questions on HOW/WHY the concept
+evolved, cross-period comparisons, drivers,
+or implications. Answers are a few grounded
+sentences.
+Fields: "question":"<analytical q>",
+"answer":"<grounded answer>".
+(8) context_misalignment [target 5]
+Give a short MISALIGNED context passage that
+mixes in a detail from the WRONG time period
+or contradicts the true evolution, then a
+question whose correct answer requires
+RESOLVING the conflict using the true
+chronology.
+Fields: "misaligned_context":"<passage with a
+conflict>", "question":"<q needing conflict
+resolution>", "conflict":"<what is
+misaligned>", "answer":"<resolution citing
+correct date/instrument>".
+A.8.4 Parametric (Closed-Book) Evaluation
+Prompts
+In the parametric setting (Section 3.3), the model
+answers from its own knowledge with no reference
+documents. Every task prompt is a shared system
+preambleP followed by a task-specific body, so we
+giveP once and then each body. The deterministic
+tasks, namely temporal MCQ, event sorting, and
+the perturbation verdict, additionally constrain the
+output to a strict JSON schema. For relative-time
+QA, the temporal anchor and offset are narrated
+inside the question text and are supplied to the
+judge separately, so its prompt matches open-ended
+QA. Perturbation detection runs in two steps, and
+the explanation step is issued only when the verdict
+step returnsINCORRECT.
+Shared preamble P (prepended to every task
+body below):
+You are being tested on your knowledge of
+Bangladesh customs regulations: SROs
+(Statutory Regulatory Orders), customs and
+regulatory duties, baggage rules, and trade
+agreements. Answer from your own knowledge; no
+reference documents are provided.
+Each task prompt is P followed by the body
+shown.
+--- open_ended / relative_time_qa ---
+Question: {question}
+Give a direct, factual answer in 1-4
+sentences.
+--- scenario_short_answer /
+temporal_scenario_short_answer ---
+Scenario:
+{scenario}
+Question: {question}
+Give a direct, factual answer in 1-4
+sentences.
+23
+
+[[page 24]]
+--- context_misalignment ---
+({context} is a deliberately misaligned
+passage, yet the answer is still scored
+against the true ground truth.)
+Context:
+{context}
+Question: {question}
+Give a direct, factual answer in 1-4
+sentences.
+--- temporal_mcq (strict JSON: reasoning,
+choice_index) ---
+Question: {question}
+Options:
+{options_block}
+Choose the single best option; if you are
+unsure, choose the most likely one. Think
+first, then answer. Respond with strict JSON
+only, exactly:
+{"reasoning": "<briefly weigh the options
+against your knowledge>", "choice_index":
+<0-based index of the chosen option>}
+--- event_sorting (strict JSON:
+ordered_indices) ---
+Task: {question}
+Events (numbered, in shuffled order):
+{events_block}
+Arrange ALL of the numbered events in
+chronological order (earliest first). Respond
+with strict JSON only, exactly:
+{"ordered_indices": [<each event number
+exactly once, earliest event first>]}
+--- perturbation_detection, Step 1 - Verdict
+(strict JSON: reasoning, verdict = CORRECT /
+INCORRECT) ---
+Statement:
+{statement}
+Is this statement factually accurate according
+to the actual regulations? First check each
+specific detail of the statement (values,
+percentages, dates, names, authorities,
+requirements) against your knowledge, then
+respond with strict JSON only, exactly:
+{"reasoning": "<check the statement's specific
+facts against your knowledge>", "verdict":
+"CORRECT" or "INCORRECT"}
+Use "CORRECT" if the statement is accurate,
+"INCORRECT" if it contains an error.
+--- perturbation_identification, Step 2 -
+Explanation (free text; only if Step 1
+returned INCORRECT) ---
+Statement:
+{statement}
+This statement contains error. Explain
+precisely WHY it is incorrect and WHERE the
+error lies: identify the specific wrong detail
+(value, percentage, date, name, authority, or
+requirement) and state what the correct fact
+should be.
+A.8.5 Grounded (Document-as-Context)
+Evaluation Prompts
+The grounded, in-context setting (Section 3.3)
+prepends the resolved source documents to the
+parametric prompts and swaps the preamble’s clos-
+ing sentence from a closed-book instruction to
+a grounded one. The task bodies are otherwise
+identical to Appendix A.8.4, so we show only the
+document-context block, the grounded preamble,
+and the single structural change. That change is in
+context misalignment, where the prompt holds both
+the misleading passage and the authoritative source,
+so the setting measures context-conflict resolution
+rather than parametric robustness.
+Every prompt here is the matching parametric
+prompt (previous appendix) with two changes:
+(a) the resolved source document(s) are
+prepended as the context block below, and (b)
+the preamble's closing sentence is swapped
+from the closed-book instruction to the
+grounded one below. All task bodies (question
+/ scenario / context / options / events /
+statement) and both JSON schemas are
+byte-identical to the parametric prompts.
+Document-context block (prepended to every
+prompt):
+You are given the following official source
+document(s). Use them to answer.
+--- DOCUMENT 1: {document_stem} ---
+{document_text}
+--- DOCUMENT 2: {document_stem} ---
+{document_text}
+...
+Grounded preamble (replaces the closed-book
+closing sentence of P):
+You are being tested on Bangladesh customs
+regulations: SROs (Statutory Regulatory Orders),
+customs and regulatory duties, baggage rules,
+and trade agreements. Answer using the official
+source document(s) provided above; they are
+authoritative.
+context_misalignment (the only structural
+change): the prompt contains BOTH the
+misaligned {context} and the authoritative
+document(s). This measures whether the model
+resolves the conflict in favor of the official
+document, reported as
+context_conflict_resolution, and is distinct
+from the closed-book parametric misalignment
+robustness.
+A.8.6 Retrieval-Augmented (RAG) Evaluation
+Prompts
+The retrieval-augmented setting (Section 3.3) re-
+peats the grounded setting of Appendix A.8.5 with
+one change. The source documents are not resolved
+from the gold clause identifiers of a question, but
+retrieved from the corpus by semantic search. Ev-
+24
+
+[[page 25]]
+erything the model reads after retrieval, namely
+the document-context block, the preamble, every
+task body, and both strict-JSON schemas, is byte-
+identical to Appendix A.8.5. Moreover, the judge
+(Appendix A.8.7) is unchanged and never sees the
+retrieved documents, so grading stays identical
+across all three settings. We therefore give only
+the retrieval procedure and the blocks that change.
+Retrieval procedure.For each instance we em-
+bed a query with the same gemini-embedding-2
+model that built the corpus and pull the
+nearest clauses from the pre-built ChromaDB
+customs_corpus collection. These clauses replace
+the gold documents and fill the context block below.
+The query concatenates only the task-appropriate
+record fields of Table 12, and not the full record,
+so answers, options, and other leakage-prone fields
+stay out of retrieval. In addition, list-valued fields
+such as the shuffled events are flattened to text.
+Ranking and expansion.We over-fetch four
+times the target depth and keep at most one hit
+per parent clause, so a chunked long clause occu-
+pies a single slot and does not crowd out ordinary
+single-vector clauses. The firstk= 10 clauses after
+deduplication are passed to the model, ranked by
+cosine similarity. When a slot is won by a chunk,
+the rank follows the similarity of the chunk itself,
+whereas the prompt receives the full resolved text
+of the parent clause. Only the 82 oversized clauses
+are chunked, and all others are served whole.
+Packing and fallback.Documents are packed
+on document boundaries, so a clause is either in-
+cluded whole or dropped whole and is never trun-
+cated in the middle. The character cap is dis-
+abled in the reported runs, hence all k retrieved
+clauses are kept. Finally, if the query is empty or
+retrieval returns nothing, the instance is marked
+none_resolved and the model answers with no
+context block, which is equivalent to the paramet-
+ric body of Appendix A.8.4.
+Every prompt here is the matching grounded
+prompt (previous appendix) with one change:
+the source document(s) are retrieved from the
+corpus by semantic search instead of being
+resolved from the gold clause ids. All task
+bodies (question / scenario / context /
+options / events / statement) and both JSON
+schemas are byte-identical to the parametric
+prompts.
+Retrieved-document context block (prepended
+Task type Query fields used
+Temporal MCQ question
+Event Sorting shuffled events
+Perturbation Detection statement
+Scenario Short Answer scenario + question
+Temporal Scenario Short Answer scenario + question
+Relative-Time QA question
+Open-Ended question
+Context Misalignment question
+Table 12: Fields concatenated into the retrieval query for
+each task type. Leakage-prone fields are excluded, so
+the options are dropped for temporal MCQ, the question
+template is dropped for event sorting, and the misaligned
+passage is dropped for context misalignment.
+to every prompt):
+You are given the following official source
+document(s). Use them to answer.
+--- DOCUMENT 1: {clause_stem} ---
+{clause_text}
+--- DOCUMENT 2: {clause_stem} ---
+{clause_text}
+...
+(When a retrieved clause has no OCR text,
+{clause_text} is replaced by the literal
+string [This document's OCR text is empty.].
+When retrieval returns nothing, the instance
+is marked none_resolved and the whole block
+is omitted, so the prompt equals the
+parametric one.)
+Grounded preamble (identical to the grounded
+setting; replaces the closed-book closing
+sentence of P):
+You are being tested on your knowledge of
+Bangladesh customs regulations: SROs
+(Statutory Regulatory Orders), customs and
+regulatory duties, baggage rules, and trade
+agreements. Answer using the official source
+document(s) provided above; they are
+authoritative.
+context_misalignment (the only structural
+change): the prompt contains BOTH the
+misaligned {context} and the retrieved
+document(s). This measures whether the model
+resolves the conflict in favor of the
+retrieved official source, reported as
+context_conflict_resolution, and is distinct
+from the closed-book parametric misalignment
+robustness. The misaligned passage is used
+only inside the prompt body and is kept out
+of the retrieval query, so it cannot steer
+which clauses are retrieved.
+25
+
+[[page 26]]
+A.8.7 LLM-as-Judge Prompt (single council
+member)
+Free-form answers are graded by an LLM council
+of three judges (Section 3.2). The template below
+is the single-judge prompt each council member
+receives. A judge never emits a score or verdict.
+Instead, it answers a fixed set of atomic yes/no ques-
+tions, and a deterministic program computes the
+score from those booleans (Eq. 2). The same tem-
+plate serves both the parametric and the grounded
+conditions, because the judge is shown the sce-
+nario, context, and anchor but never the source doc-
+uments, so grading stays identical across settings.
+Temporal MCQ and event sorting are scored deter-
+ministically and do not use the judge. The template
+has a constant header and footer, a per-item case
+block, and a task-specific note that is inserted only
+for context misalignment, perturbation explanation,
+and relative-time QA.
+===== HEADER (constant, every judge call)
+=====
+You are a grading assistant for a
+question-answering benchmark on Bangladesh
+customs regulations (SROs - Statutory
+Regulatory Orders, duty rules, baggage rules,
+and trade agreements).
+You do NOT produce a grade, score, or verdict.
+You answer a fixed set of atomic yes/no
+questions about the MODEL ANSWER; a program
+computes the score from your booleans.
+Rules:
+1. The GROUND-TRUTH ANSWER is authoritative
+and correct BY DEFINITION. Do not use your
+own knowledge or opinion to second-guess
+it.
+2. The ground-truth dates listed below were
+extracted programmatically from the
+ground-truth answer. Decide ONLY whether
+the model answer commits to each of them;
+never introduce ground-truth dates of your
+own.
+3. For each listed ground-truth date: matched
+= true iff the MODEL ANSWER commits to that
+date - in any language, script, or format
+(Bengali numerals, Bangla month names, "9
+June 2011", "09/06/2011", spelled-out
+ordinals, or a relative expression that
+resolves to it) - supplying at least the
+required components with matching values.
+Copy the exact span of the model answer
+that expresses the date into
+model_expression (empty string if not
+matched).
+4. contradicting_dates_in_answer = true iff
+the model answer asserts a DIFFERENT date,
+at the required granularity, for a fact the
+ground truth dates - or gives multiple
+conflicting dates for the same fact without
+committing to one. Extra dates about other
+facts that do not conflict with the ground
+truth are NOT contradictions.
+5. meaning_correct is TRUE only if ALL of the
+following hold, judged against the
+ground-truth answer; otherwise FALSE.
+Binary - no partial credit.
+- The model answer entails the ground
+truth's key facts and contradicts none of
+them.
+- Correct legal instrument / entity /
+section (the right SRO, Act, or clause).
+- Correct action AND direction of change -
+increased vs decreased, inserted vs
+omitted, effective vs repealed. Direction
+errors are automatically FALSE: in
+amendment QA, "raised to 15%" vs "lowered
+to 15%" is the difference between correct
+and catastrophically wrong.
+- Correct values (rates, amounts,
+thresholds) when the ground truth states
+them.
+- Paraphrase and language switching (Bangla
+<-> English) are acceptable; extra
+correct detail is acceptable.
+Judge meaning_correct on the NON-DATE
+substance of the answer; date agreement is
+captured separately by date_matches and
+must not double-count here.
+6. If a judgment is genuinely borderline under
+the checklist, still commit to a boolean
+but set uncertain = true and say why in
+meaning_rationale (such items are routed to
+human review; they are never soft-scored).
+===== TASK-SPECIFIC NOTES =====
+(inserted after the header; only for the task
+types shown)
+context_misalignment:
+Task note (context_misalignment): the context
+shown to the model deliberately contains
+misaligned or incorrect information; the
+ground-truth answer remains the authority.
+Additionally report these booleans about the
+model's behavior (they are logged, not
+scored):
+- followed_context: the answer adopts the
+misaligned context's wrong value/claim.
+- followed_parametric: the answer gives the
+authoritative (ground-truth) value.
+- conflict_acknowledged: the answer explicitly
+notes a discrepancy between the given
+context and the actual regulation.
+- blended_sources: the answer mixes the
+misaligned and authoritative values.
+(If a documented conflict exists, the line
+"Documented conflict for this item:
+{conflict}" is appended.)
+perturbation_explanation (grades Step 2; only
+for items the ground truth marks as
+perturbed):
+Task note (perturbation explanation): the
+statement below contains a deliberately
+perturbed element, and the model was asked to
+explain WHY and WHERE the statement is wrong.
+The specific perturbed element is:
+- perturbed (wrong) value in the statement:
+26
+
+[[page 27]]
+{perturbed_fact}
+- correct value per the regulation:
+{correct_fact}
+Additionally report:
+- perturbation_flagged: the explanation
+asserts the statement is wrong.
+- perturbation_localized: the explanation
+identifies THAT SPECIFIC element above as
+the error. Saying something is off while
+naming a DIFFERENT element is false.
+- localized_element: the element the model
+identified (empty string if none).
+- correction_given: the model states what the
+correct fact should be.
+- correction_correct: the model's stated
+correction matches the correct value above.
+relative_time_qa (anchor resolvable):
+Task note (relative-time QA): the question
+situates the target relative to an anchor.
+Anchor: {anchor}. The model may express the
+answer date absolutely or relative to the
+anchor; a relative expression counts as
+committing to a date only if it resolves to
+the listed ground-truth date at its required
+granularity.
+relative_time_qa (no anchor available):
+Task note (relative-time QA): no anchor date
+is available for this item. Decide each date
+match by semantic equivalence between the
+model answer and the listed ground-truth date
+(booleans only).
+open_ended, scenario_short_answer, and
+temporal_scenario_short_answer receive no
+task-specific note.
+===== CASE (per item, after the header/note)
+=====
+Now analyze the following case.
+Context/scenario that was shown to the model
+(for reference only - the ground truth below
+remains the authority):
+{context}
+Question: {question}
+Ground-truth answer: {ground_truth}
+Ground-truth dates (canonical, extracted
+programmatically from the ground-truth
+answer):
+[0] {canonical_date} - as written in the
+ground truth: "{source_span}" - required
+match: {granularity_description}
+...
+(or, if none: "Ground-truth dates: none were
+extracted from the ground-truth answer. Return
+an empty date_matches list.")
+Model answer: {model_answer}
+(The Context/scenario block is omitted for QA
+types with no context/scenario. For
+perturbation_explanation the label instead
+reads: "Statement under evaluation (the model
+judged it wrong and explained why; analyze
+that explanation against the ground truth):"
+followed by {statement}.)
+A.9 Qualitative Analysis
+A.9.1 Error Analysis of Perturbation
+Identification Failures
+Each box below shows one perturbed provision, the
+reference answer, and the model’s own explanation.
+We highlight in red the fact that we silently altered
+together with the incorrect or missing corrections
+in the model’s answer, and in green the correct
+value from the source provision as well as any part
+of the model’s answer that is right. Examples 1 to
+3 show Claude in the parametric setting flagging
+the provision and then blaming an element that
+was never altered. Example 4 shows Gemini under
+RAG naming the altered element correctly and then
+supplying a replacement that the provision does not
+support. Example 5 shows GPT-5 under in-context
+grounding naming the element correctly and sup-
+plying no replacement at all. Every case is detected
+and every case scores zero on identification, which
+shows that the two abilities fail independently.
+Example 1: Detected but Misidentified
+(Claude)
+Statement: As of the 2011-06-09 Baggage Rules, cus-
+toms officers are permitted to perform random scanning
+and examination of up to 10% of passengers passing
+through the Green Channel.
+Ground Truth Answer: The statement is inaccurate.
+According to the 2011-06-09 Baggage Rules, customs
+officers are authorized to scan and examine up to 5%
+(five percent) of passengers passing through the Green
+Channel on a random basis.
+Model Explanation: The statement “. . . up to 10% of pas-
+sengers passing through the Green Channel” is incorrect.
+The error lies in the date mentioned in the statement.
+The Baggage Rules in Bangladesh are not dated
+2011-06-09. The Baggage Rules in
+Bangladesh are updated periodically, and
+the latest version is not from 2011. The cor-
+rect and current Baggage Rules in Bangladesh
+do not specify a fixed percentage of passengers to
+be randomly scanned and examined. The percentage
+is at the discretion of the customs authorities and may
+vary based on risk assessment and intelligence inputs.
+Model Reasoning: The 2011-06-09 Bag-
+gage Rules do allow random scanning, but
+the actual percentage is not known to me.
+Justification: The model incorrectly identifies the date as
+the error instead of the percentage, and it provides false
+information regarding the regulation’s content.
+27
+
+[[page 28]]
+Example 2: Detected but Misidentified
+(Claude)
+Statement: According to the June 6, 2024 Customs Or-
+der, the total value of a comprehensive guarantee must
+be less than the cumulative duties and taxes payable on
+the goods.
+Ground Truth Answer: The statement is inaccurate. Ac-
+cording to the June 6, 2024 Customs Order, the total value
+of the comprehensive guarantee must not be less than
+the cumulative duties and taxes payable on the goods.
+Model Explanation: The statement . . . is incorrect.
+The error lies in the date mentioned in the statement.
+There is no “June 6, 2024 Customs Order” that I am
+aware of in the context of Bangladesh customs regu-
+lations. The correct fact should be: according to the
+Bangladesh Customs Act and the relevant SROs issued by
+the National Board of Revenue, the total value of a com-
+prehensive guarantee must be equal to or greater than
+the cumulative duties and taxes payable on the goods.
+Model Reasoning: I do not have information
+on the June 6, 2024 Customs Order . . . Without access
+to the actual regulations, I cannot confidently verify
+the accuracy of this statement.
+Justification: The model incorrectly identifies the date
+as the error instead of the phrase “less than”, and it fails
+to provide the correct regulation requirement as specified
+in the ground truth.
+Example 3: Altered Fact Endorsed as Correct
+(Claude)
+Statement: Under the 2025-05-18 Transit/Transshipment
+Rules, customs authorities must ensure the release of
+bonds or guarantees within 10 working days after the
+completion of the transit process.
+Ground Truth Answer: The statement is inaccurate. Ac-
+cording to the Transit/Transshipment Rules 2025 (2025-
+05-18), customs authorities must ensure the release of
+bonds or guarantees within 7 working days , not 10.
+Model Explanation: The statement . . . contains an
+error. The error lies in the date mentioned in the state-
+ment. The correct date should be 2022-05-18,
+not 2025-05-18. The reason is that
+Bangladesh’s current Transit/Transshipment Rules
+were issued on May 18, 2022, not in the future year
+of 2025. The customs authorities in Bangladesh are
+required to ensure the release of bonds or guarantees
+within 10 working days after the completion of the
+transit process, as per the 2022-05-18 Rules.
+Model Reasoning: I do not have any knowledge of
+these Rules . . . I cannot verify the accuracy of this
+statement.
+Justification: The model incorrectly identifies the date
+as the error and fails to identify the actual error regarding
+the 10-day period, providing an incorrect correction.
+Example 4: Correct Element, Incorrect Re-
+placement (Gemini)
+Statement: As of the 2011-06-09 Baggage Rules, cus-
+toms officers are permitted to perform random scanning
+and examination of up to 10% of passengers passing
+through the Green Channel.
+Ground Truth Answer: The statement is inaccurate.
+According to the 2011-06-09 Baggage Rules, customs
+officers are authorized to scan and examine up to 5%
+(five percent) of passengers passing through the Green
+Channel on a random basis.
+Model Explanation: The statement is incorrect regarding
+the percentage of passengers subject to random examina-
+tion. The error lies in the specific figure “10%” .
+Under the Baggage Rules, 2016 (which
+superseded the 2011 rules ) . . . the threshold
+for random physical examination is not 10%.
+There is no fixed “10% quota” or limitation that
+restricts officers to only 10% of passengers . . .
+customs officers have the legal right to stop and
+examine 100% of passengers passing through the
+Green Channel . . . the authority is discretionary and
+based on risk assessment rather than a static percentage
+cap.
+Model Reasoning: The Baggage Rules of 2011
+do not contain a provision limiting customs officers to
+a 10% examination rate . . . there is no such fixed
+percentage restriction in the regulatory framework.
+Justification: The model fails to provide the correct 5%
+threshold specified in the ground truth and instead pro-
+vides an incorrect interpretation of the regulatory frame-
+work regarding examination limits.
+Example 5: Correct Element, No Replacement
+Offered (GPT-5)
+Statement: According to the Customs Act 1969, a cus-
+toms officer may enter private residential premises to
+conduct an audit at any time without a warrant or the
+consent of the occupant .
+Ground Truth Answer: The statement is in-
+accurate. The Customs Act 1969 prohibits
+customs officers from entering private residen-
+tial premises without the consent of the occupant
+or owner, or without a valid warrant issued under the
+Act.
+Model Explanation: The error is the claim
+that a customs officer may enter private resi-
+dential premises at any time without a warrant
+or the consent of the occupant . That is
+not found in the provided official document .
+The document supplied is an S.R.O. amending the
+Customs Agent Licensing Rules, 2016 . . . Nothing
+in this S.R.O. grants a power for customs officers
+to enter private residential premises. Any actual
+powers of entry would need to be found in the
+relevant provisions of the Customs Act itself .
+28
+
+[[page 29]]
+Justification: The model correctly identifies the state-
+ment as wrong but fails to provide the required correction
+regarding the necessity of a warrant or consent for entry
+into private premises from the provided documents.
+A.9.2 Examples of Cross-Setting Behavior
+The boxes below show one question each answered
+across settings: an item unrecoverable even with
+the gold document (Example 1); a correct memory
+answer the gold document overturns (Example 2);
+an item answerable from the gold document but
+missed once retrieval must find it (Example 3); and
+a planted false premise the model accepts closed-
+book but rejects once the authoritative document is
+retrieved (Example 4).
+Example 1: Unrecoverable Even With the Gold
+Document (DeepSeek)
+Question: What is the primary legal basis for rule-
+making as of May 29, 2024?
+Ground Truth Answer: The Customs Act, 2023 (Act
+No. 57 of 2023).
+Parametric (closed-book): “. . . the primary legal ba-
+sis . . . is the Customs Act, 1969 (Act No. IV of 1969),
+which grants . . . the authority to issue Statutory Regula-
+tory Orders.”
+ICL (gold document): “The primary legal basis . . . is the
+Customs Act, 1969 , specifically the powers conferred
+by Section 219B . . . under which the Post Clearance
+Audit Manual, 2023 was formulated.”
+Reading: A 2023-era provision is in the prompt, yet the
+model still resolves rule-making to the superseded 1969
+Act. The document is already present, so retrieval cannot
+help; only stronger version resolution can.
+Example 2: A Correct Memory Answer Over-
+turned by the Gold Document (Gemini)
+Question: When did the Advance Rulings Rules 2016
+come into force?
+Ground Truth Answer: Immediately upon issuance on
+June 5, 2016 .
+Parametric (closed-book): “. . . came into force on
+June 5, 2016 , the same date they were officially noti-
+fied by the National Board of Revenue.”
+ICL (gold document): “. . . came into force immediately
+upon the issuance of the notification, which was dated
+June 2, 2016 (19 Jaishtha, 1423 BS).”
+Reading: Closed-book the model recalls the correct
+date; handed the document, it misreads the notification’s
+Bangla-calendar date and overwrites a right answer with
+a wrong one.
+Example 3: Answerable From the Gold Doc-
+ument, Missed When Retrieval Must Find It
+(Kimi)
+Question: What new HS Code replaced 3204.13.00 in
+the 2015 update?
+Ground Truth Answer: 3204.13.00 was replaced by
+3204.13.90 .
+ICL (gold document): “According to SRO No. 156-
+Law/2015/36-Customs dated 4 June 2015, 3204.13.00
+was replaced by 3204.13.90 .”
+RAG (retrieved): “. . . reviewing SRO 140-AIN/2015/20
+. . . I do not see any entry for 3204.13.00 . . .
+there is no explicit information about what new HS
+Code replaced 3204.13.00 in the 2015 update .”
+Reading: The corpus contains the answer and ICL proves
+it, but the retriever returns the neighboring orders (SRO
+140-AIN/2015/20, SRO 151-AIN/2016/13) instead of the
+amending SRO 156-Law/2015/36, so the model declares
+the change absent.
+Example 4: Following a False Premise vs. Re-
+jecting It With the Document (GPT-5)
+Question: Was the transition of HS code 3402.13.00 to
+3402.13.90 part of the 2015 regulatory changes?
+Injected (misleading) context: “The amendment . . . was
+finalized in the 2015 notification SRO 158-AIN/2015 .”
+Ground Truth Answer: No; the amendment was imple-
+mented by SRO 222-AIN/2016 on July 1, 2016 , not by
+SRO 158-AIN/2015.
+Parametric (closed-book): “ Yes. The change . . . was
+enacted as part of the 2015 regulatory amendments under
+SRO 158-AIN/2015 .”
+RAG (retrieved): “No. The change . . . was made by
+S.R.O. No. 222-AIN/2016 (01 July 2016) , not by SRO
+158-AIN/2015.”
+Reading: With no source the model adopts the confident
+but false premise; once the authoritative order is retrieved
+and stacked above the misleading context, it rejects the
+planted claim.
+A.9.3 Examples of Relative-Time and
+Event-Sorting Failures
+The boxes below show worked examples for two
+further task types. Examples 1 and 2 are Relative-
+Time QA, which asks the model to resolve a rela-
+tive offset over an evolving provision. On a ques-
+tion about a raredownwardrevision, two models
+both fail the temporal reasoning: they miscompute
+the nine-year interval and assume the allowance
+rose, missing the actual cut. Examples 3 and 4
+are Event Sorting: closed-book the model orders
+amendments by magnitude rather than by date, a
+failure shared by all nine models (Example 3), and
+under retrieval it still misorders a longer timeline
+whose effective dates are spread across separate
+29
+
+[[page 30]]
+instruments (Example 4). Examples 1–3 share one
+bias: the models assume regulatory values only
+increase over time.
+Example 1: Miscomputed Interval and Wrong
+Direction (Gemini)
+Question: Starting from the 2016-06-02 policy which
+set the airline crew baggage allowance at 300 USD, what
+was the adjustment made nine years later?
+Ground Truth Answer: In 2025-06-03 , the allowance
+for airline crew was adjusted downward to 150 USD .
+Model Answer: “The 2016 policy was actually ad-
+justed in 2024 (eight years later, rather than nine) . . .
+the duty-free baggage allowance for airline crew members
+was increased from 300 USD to 400 USD .”
+Reading: The model miscounts the nine-year interval,
+placing the change in 2024, and assumes the allowance
+rose, when the actual amendment cut it to 150 USD.
+The temporal reasoning fails on both the interval and the
+direction of change.
+Example 2: A Downward Change Denied as
+an Increase (Qwen)
+Question: Starting from the 2016-06-02 policy which set
+the airline crew baggage allowance at 300 USD, what was
+the adjustment made nine years later? (the same question
+as Example 1)
+Ground Truth Answer: In 2025-06-03 , the allowance
+was cut to 150 USD .
+Model Answer: “. . . an adjustment occurred
+in 2023, seven years after the 2016 policy, in-
+creasing the limit from $300 to $500 . . . there is
+no official record of a specific adjustment made nine
+years later in 2025 .”
+Reading: On the same question, a second model also
+assumes the allowance rose (to $500) and then denies
+that any change occurred at the nine-year mark, missing
+the downward revision entirely. Both models impose a
+monotonic-increase prior rather than tracking the actual
+evolution.
+Example 3: Ordered by Magnitude, Not by
+Date (Gemini)
+Question: Arrange these events in chronological order
+(earliest first).
+Events: (0) The baggage allowance for airline crew mem-
+bers is set at 100 USD. (1) . . . is adjusted to 150 USD.
+(2) . . . is increased to 300 USD.
+Correct order: 100 USD→300 USD→150 USD
+(the allowance was raised to 300, then later cut to 150).
+Model’s order: 100 USD→150 USD→300 USD (a
+monotonic increase).
+Reading: Without the dated amendments the model orders
+the values by magnitude, assuming the allowance only
+ever rose.All nine modelsmake this same error in the
+closed-book setting; given the documents, eight of nine
+recover the true order, confirming that the ordering needs
+the dated evidence, not more reasoning.
+Example 4: A Longer Timeline Misordered
+Under Retrieval (DeepSeek)
+Question: Arrange these events in chronological order
+(earliest first).
+Events: (0) established minimum import values for as-
+sessing customs duty; (1) formalized tariff value and
+duty structures under the Customs Act; (2) expanded
+minimum-value tables to broader categories (bovine meat,
+milk powder); (3) directly substituted specific HS
+codes for industrial headings.
+Correct order: (3)→(0)→(1)→(2) .
+Model’s order: (0)→(3)→(2)→(1) .
+Reading: The four amendments’ effective dates sit in
+separate instruments; retrieval supplies an incomplete set,
+so the model produces a plausible but wrong sequence.
+This is the retrieval-completeness failure behind the RAG
+collapse on Event Sorting.
+A.10 Additional Result Analysis
+A.10.1 Cross-Setting Model Behavior
+Parametric knowledge recognizes instruments but
+cannot resolve versions.Table 3 shows that with
+no context, the best macro average is only 35.39%
+(GPT-5), and open models such as Qwen and GLM
+sit near 26%. Claude also scores near this level,
+but for a different reason: it often declines to an-
+swer rather than guess. Moreover, the difficulty
+is uneven across tasks. Recognition-style ques-
+tions remain tractable, as Temporal MCQ reaches
+48.97% to 70.17%. In contrast, tasks that require
+resolving the correct version fall to the floor, with
+Context Misalignment between 1.72% and 7.87%
+and strict Relative-Time QA between 3.77% and
+12.37%. This split shows that a model can recall
+that an instrument exists while still failing to re-
+cover which version applies on a given date.
+Reading skill and memorization are decoupled
+across models.The ranking of models changes
+with the setting, which shows that recalling this
+corpus and reading it are different abilities. Claude
+illustrates this most clearly. Its parametric macro
+average is only 25.91%, near the bottom, yet it
+leads all models under RAG at 58.05% and ranks
+second under ICL at 64.39%, and it shows the
+largest jump from the parametric to the ICL setting,
+at 38.48 points. The low parametric score is not
+only due to missing knowledge. In the parametric
+setting Claude frequently declined to answer and
+stated that it did not have the specific information,
+rather than producing a guess. A refusal is a safer
+30
+
+[[page 31]]
+failure mode than a confident wrong answer, and it
+contrasts with the over-trust of a false premise that
+we observe under Context Misalignment. GPT-5,
+by contrast, is strong in every setting, while GLM
+is consistently weakest. Gemma shows the opposite
+profile to Claude, with the best parametric Tempo-
+ral MCQ at 70.17% but a weaker use of retrieved
+context.
+A third of the benchmark is unrecoverable even
+with the gold document.By parametric and ICL
+outcome (Table 13), 33.9% of items are answered
+from memory, 37.0% are a gap the gold document
+closes, and 29.2% stay wrong even when it is sup-
+plied: a reasoning ceiling, since the correct provi-
+sion is already in the prompt. Two smaller effects
+qualify this: the gold document overturns a correct
+memory answer for 5.5% of items, and 17.3% are
+answered under ICL but missed under RAG, so re-
+trieval recall alone explains most of RAG’s deficit
+(restricted to items ICL answers, RAG succeeds on
+only73.5%).
+Outcome regime Items
+Known without context 33.9%
+Recovered by the gold document 37.0%
+Unrecoverable with the gold document 29.2%
+Gold-document regression 5.5%
+Retrieval gap (ICL right, RAG wrong) 17.3%
+Table 13: Per-item decomposition by outcome across
+settings, pooled over the nine models on the matched set.
+The first three rows partition every item (100%); the last
+two are cross-cutting effects. The 29% “unrecoverable
+with the gold document” is a reasoning ceiling retrieval
+cannot address.
+Grounding changes how models fail, not only
+how often.Among wrong answers, flat factual
+errors fall from 58% of parametric failures to 50%
+(ICL) and 53% (RAG), while failures that require
+a document to exist (asserting a date that conflicts
+with the source, or overriding a supplied value with
+memory) rise from under 2% to 4–5%. Grounding
+thus trades hallucination formisgrounding. The
+event-sorting drop under RAG is a strict, exact-
+match effect: under graded pairwise-order accuracy
+the ICL–RAG gap narrows from 0.57 vs. 0.28 to
+0.81 vs. 0.67, as most wrong orderings misplace
+only a few events.
+Once grounded, the residual temporal error flips
+from meaning to date.On judged items carrying
+gold dates (Table 14), the main parametric residual
+is a plausible date on the wrong substance (35%),
+while the main grounded residual is the reverse,
+correct substance with the wrong date (10% under
+ICL). Grounding settleswhatthe provision says
+and leaveswhenas the last mile, which the date
+gate (Section 3.2) scores as zero.
+Setting Meaning right,
+date wrong
+Date right,
+meaning wrong
+Parametric 2%35%
+RAG 6% 22%
+ICL10%20%
+Table 14: Meaning versus date on judged items carrying
+gold dates (matched set). The dominant residual flips
+fromdate right, meaning wrongwithout a document to
+meaning right, date wrongonce one is supplied.
+A correct document lets models reject a false
+premise they otherwise accept.In context misalign-
+ment (Table 15), closed-book the model adopts
+the planted value 65% of the time and gives the
+authoritative value only 14%; with a correct doc-
+ument present the authoritative rate rises to 66%
+(ICL) and 50% (RAG), and conflict acknowledg-
+ment from 7% to about 26%. Two cautions: the
+parametric column measures robustness to an un-
+supported premise while the grounded columns
+measure conflict resolution with the correct text
+present, so they are different conditions; and “gave
+the authoritative value” is not memory reliance
+under grounding, where that value sits in the docu-
+ment. Appendix A.9.2 gives one case per regime.
+Setting Adopted the
+misaligned value
+Gave the
+authoritative value
+Parametric65%14%
+RAG 15% 50%
+ICL 16%66%
+Table 15: Context-misalignment behavior on the
+matched set: how often the model adopts the planted
+claim versus states the authoritative value. A correct
+document present shifts the model from adopting the
+false premise to rejecting it.
+A.10.2 Task-Level Comparison of Knowledge
+Injection Strategies
+Table 3 reports every model on every task under ev-
+ery setting, and Figure 4 averages the same scores
+over the nine models. This appendix adds the pair-
+wise differences between settings, which Table 16
+lists. These differences show that the macro gap be-
+tween settings comes from a small group of tasks,
+31
+
+[[page 32]]
+whereas the remaining tasks respond in a similar
+way to retrieval and to full context.
+All values are partial accuracy, averaged over
+the nine models. The dispersion quoted below is
+the standard deviation across models, therefore it
+measures disagreement inside the model pool and
+not item-level sampling error. It ranges from 0.013
+to 0.081 over all tasks and settings. We discuss a
+difference only when it is larger than this spread for
+both settings involved. Three entries fail that test,
+and we call them indistinguishable rather than zero.
+Furthermore, a paired test over the nine per-model
+differences would be more sensitive, so these en-
+tries are inconclusive rather than negative.
+Task type n RAG−P ICL−P ICL−RAG
+FULL CONTEXT BEYOND RETRIEVAL
+Relative-Time QA 463+0.136 +0.342 +0.206
+Event Sorting∗ 207+0.018 +0.168 +0.150
+Open-Ended 487+0.196 +0.299 +0.103
+Temporal MCQ 354+0.187 +0.247 +0.060
+Temporal Scenario SA 363+0.192 +0.247 +0.055
+RETRIEVAL ALREADY SUFFICIENT
+Scenario SA 562+0.479 +0.460 −0.019
+Perturbation Det. 498+0.264 +0.226 −0.038
+NEITHER SETTING SUFFICES
+Context Misalign. 116+0.123 +0.121 −0.002
+Macro average 3,050+0.199 +0.264 +0.064
+Table 16: Differences in partial accuracy between set-
+tings, averaged over the nine models. RAG−P is the
+RAG score minus the parametric score (P), and a posi-
+tive value means the second setting is better. The first
+and third columns sum to the second. Rows are sorted
+by the shaded column, whose sign defines the three
+groups. Absolute scores appear in Figure 4. ∗Event
+sorting uses a graded ordering metric under ICL but
+exact match elsewhere, so this row is not on a common
+scale.
+Full Context Beyond Retrieval.Five tasks im-
+prove clearly when the governing clauses are sup-
+plied in full rather than retrieved. Relative-time
+QA improves the most, by 0.206, which is more
+than twice the across-model spread of either set-
+ting. Such a question asks for the rule in force at an
+offset from an anchor date. The model must there-
+fore see both the anchored version and the version
+that replaced it, and a top-10 clause retriever often
+returns one of the two but not the other.
+Event sorting shows the second largest gain, at
+0.150. Retrieval alone adds only 0.018 here, which
+is smaller than the across-model spread, so it does
+not help at all. However, the ICL score for this
+task comes from a graded ordering metric, while
+the parametric and RAG scores come from exact
+match. The three values are therefore not on a
+common scale, and part of the gain is a metric
+effect rather than a capability gain.
+Retrieval Is Already Sufficient.In contrast, two
+tasks gain nothing from full context. On perturba-
+tion detection RAG exceeds ICL by 0.038, which
+is larger than the across-model spread of both set-
+tings. On scenario short answer the two settings
+differ by only 0.019, so they are indistinguishable.
+Both tasks are answered from a single local span of
+evidence. A plausible reason is that retrieval acts as
+a filter, because ten candidate clauses remove most
+of the distracting text, whereas the full document
+forces the model to find the same clause inside a
+much longer input.
+Context Misalignment Is Not an Evidence Prob-
+lem.Context misalignment is the only task where
+the two evidence settings behave identically. RAG
+gains 0.123 over parametric knowledge and ICL
+gains 0.121, so they differ by0.002, which is far be-
+low their across-model spread of about0.04. More-
+over, both settings still stop near 0.26. Supplying
+the governing document therefore does not help,
+because the task does not ask the model to use the
+context. It asks the model to notice that the context
+cannot answer the question.
+Model Strict Gap
+PROPRIETARY
+GPT-50.684 0.045
+Claude0.643 0.042
+Gemini0.624 0.059
+OPEN-WEIGHT
+Kimi0.632 0.048
+DeepSeek0.631 0.056
+GPT-OSS0.571 0.066
+Qwen0.611 0.044
+Gemma0.600 0.046
+GLM0.503 0.080
+Mean 0.611 0.054
+Table 17: Macro strict accuracy per model under ICL,
+and its gap from macro partial accuracy. The gap is the
+share of answers that are correct in meaning but wrong
+on at least one date. Partial accuracy itself is shown in
+Figure 5, and the row order follows Table 3.
+Task Difficulty Dominates Model Identity.ICL
+macro scores range from 0.583 for GLM to 0.729
+for GPT-5, which is a spread of 0.146 across nine
+32
+
+[[page 33]]
+Context
+misalign.
+Temporal
+MCQ
+Event
+sorting
+Perturb.
+detection
+Scenario
+short ans.
+Relative
+time QA
+Open-
+ended
+Temporal
+scenario SA
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Mean graded score (9 models)
+Parametric RAG In-Context (ICL)
+Figure 4: Partial accuracy per task type under the three settings. Each bar is the mean over the nine models, and
+each error bar is one standard deviation across models. Differences between the bars are given in Table 16.
+0.50 0.55 0.60 0.65 0.70 0.75
+GLM
+GPT-OSS
+Gemma
+Qwen 3.6
+Kimi
+Gemini
+Claude
+DeepSeek
+GPT-5
+mean ± std   [95% CI]
+In-Context (ICL): macro-graded score per model
+0.583 ± 0.194   [0.568, 0.599]
+0.637 ± 0.179   [0.621, 0.653]
+0.646 ± 0.214   [0.631, 0.662]
+0.655 ± 0.196   [0.638, 0.672]
+0.680 ± 0.204   [0.664, 0.696]
+0.683 ± 0.224   [0.668, 0.698]
+0.685 ± 0.232   [0.668, 0.702]
+0.687 ± 0.227   [0.672, 0.702]
+0.729 ± 0.198   [0.714, 0.744]
+Figure 5: Macro partial accuracy per model under ICL, computed as the unweighted mean over the eight task
+types. The value after± is the standard deviation across the eight task scores, and the bracketed interval is a 95%
+confidence interval over the 3,050 graded items. These two quantities are computed over different units.
+models. In contrast, the ICL bars in Figure 4 range
+from 0.256 to 0.868, which is a spread of 0.612.
+Task difficulty therefore varies about four times
+more than model identity. Moreover, the macro
+gain from parametric knowledge to ICL is 0.264,
+which alone exceeds the whole range between the
+best and the worst model.
+Table 17 reports macro strict accuracy per model.
+The two weakest models show the largest gaps
+from partial accuracy, at 0.080 and 0.066, whereas
+GPT-5 and Claude show 0.045 and 0.042. How-
+ever, the relation is not monotone in the middle of
+the ranking, so we report it as a tendency rather
+than as a rule.
+Finally, half of the eight tasks stay below 0.66
+even under ICL. The benchmark is therefore not
+saturated by a longer context window, and the re-
+maining difficulty lies in version resolution rather
+than in retrieval.
+A.10.3 Why Perturbation Detection Behaves
+Differently?
+Perturbation detection is the only task where RAG
+clearly exceeds ICL. Figures 6 to 8 explain why. In
+each matrix, the rows give the true label and the
+columns give the decision of the model. The top
+row therefore shows how often a perturbed clause
+is caught, and the bottom row shows how often an
+accurateclauseis correctly left alone.
+The limiting factor is false alarms rather than
+missed perturbations. Averaged over the nine mod-
+els, the share of perturbed clauses that are flagged
+rises from 78.9% under parametric knowledge to
+93.9% under RAG and 91.4% under ICL. In con-
+33
+
+[[page 34]]
+accuracy 59.84%
+PerturbedAccurate
+237
+(92.2%)
+20
+(7.8%)
+180
+(74.7%)
+61
+(25.3%)
+Gemini
+accuracy 58.63%
+236
+(91.8%)
+21
+(8.2%)
+185
+(76.8%)
+56
+(23.2%)
+GPT-5
+accuracy 56.43%
+224
+(87.2%)
+33
+(12.8%)
+184
+(76.3%)
+57
+(23.7%)
+Kimi
+accuracy 59.64%
+PerturbedAccurate
+207
+(80.5%)
+50
+(19.5%)
+151
+(62.7%)
+90
+(37.3%)
+DeepSeek
+accuracy 56.63%
+201
+(78.2%)
+56
+(21.8%)
+160
+(66.4%)
+81
+(33.6%)
+GPT-OSS
+accuracy 61.85%
+208
+(80.9%)
+49
+(19.1%)
+141
+(58.5%)
+100
+(41.5%)
+Gemma
+Flagged Not flagged
+accuracy 44.38%
+PerturbedAccurate
+170
+(66.1%)
+87
+(33.9%)
+190
+(78.8%)
+51
+(21.2%)
+Qwen 3.6
+Flagged Not flagged
+accuracy 56.83%
+168
+(65.4%)
+89
+(34.6%)
+126
+(52.3%)
+115
+(47.7%)
+Claude
+Flagged Not flagged
+accuracy 46.39%
+174
+(67.7%)
+83
+(32.3%)
+184
+(76.3%)
+57
+(23.7%)
+GLM
+Perturbation detection — confusion matrices (Parametric)
+Figure 6: Perturbation detection under parametric
+knowledge.
+trast, the share of accurate clauses that are correctly
+left alone rises from 30.8% to 69.3% and 64.2%.
+The second gain is about two and a half times the
+first, therefore evidence mainly teaches the model
+when not to flag. Without evidence the models flag
+almost everything. Gemini flags 74.7% of accu-
+rate clauses under parametric knowledge, yet it still
+catches 92.2% of perturbed ones, so a high catch
+rate alone is not evidence of detection ability. More-
+over, a model that always flags would score 51.6%
+on this task, while the mean parametric accuracy
+is only 55.6% and two models fall below that triv-
+ial baseline. Closed-book perturbation detection
+is therefore close to a constant response. RAG
+leads ICL on both rows, at 93.9% against 91.4%
+on perturbed clauses and 69.3% against 64.2% on
+accurate ones. A retrieved clause set gives the
+model a short comparison target. In contrast, the
+full document offers much more text against which
+a correct clause can look inconsistent. Additional
+context therefore adds false alarms, which is why
+this task reverses the usual ordering between the
+two settings.
+GLM fails in the opposite direction. Its catch rate
+falls to 75.1% under RAG and 68.9% under ICL,
+whereas its rate on accurate clauses is the highest
+in the pool at 86.3% and 79.3%. Nevertheless its
+overall accuracy stays close to the group mean. A
+single score can therefore hide two opposite be-
+haviours, and the confusion matrices make that
+visible.
+accuracy 85.14%
+PerturbedAccurate
+251
+(97.7%)
+6
+(2.3%)
+68
+(28.2%)
+173
+(71.8%)
+Gemini
+accuracy 83.73%
+247
+(96.1%)
+10
+(3.9%)
+71
+(29.5%)
+170
+(70.5%)
+GPT-5
+accuracy 79.72%
+251
+(97.7%)
+6
+(2.3%)
+95
+(39.4%)
+146
+(60.6%)
+Kimi
+accuracy 80.32%
+PerturbedAccurate
+250
+(97.3%)
+7
+(2.7%)
+91
+(37.8%)
+150
+(62.2%)
+DeepSeek
+accuracy 80.32%
+249
+(96.9%)
+8
+(3.1%)
+90
+(37.3%)
+151
+(62.7%)
+GPT-OSS
+accuracy 82.73%
+242
+(94.2%)
+15
+(5.8%)
+71
+(29.5%)
+170
+(70.5%)
+Gemma
+Flagged Not flagged
+accuracy 83.94%
+PerturbedAccurate
+251
+(97.7%)
+6
+(2.3%)
+74
+(30.7%)
+167
+(69.3%)
+Qwen 3.6
+Flagged Not flagged
+accuracy 82.00%
+239
+(93.0%)
+18
+(7.0%)
+72
+(29.9%)
+169
+(70.1%)
+Claude
+Flagged Not flagged
+accuracy 80.52%
+193
+(75.1%)
+64
+(24.9%)
+33
+(13.7%)
+208
+(86.3%)
+GLM
+Perturbation detection — confusion matrices (RAG)
+Figure 7: Perturbation detection under RAG.
+accuracy 81.33%
+PerturbedAccurate
+244
+(94.9%)
+13
+(5.1%)
+80
+(33.2%)
+161
+(66.8%)
+Gemini
+accuracy 80.32%
+245
+(95.3%)
+12
+(4.7%)
+86
+(35.7%)
+155
+(64.3%)
+GPT-5
+accuracy 77.11%
+242
+(94.2%)
+15
+(5.8%)
+99
+(41.1%)
+142
+(58.9%)
+Kimi
+accuracy 80.12%
+PerturbedAccurate
+247
+(96.1%)
+10
+(3.9%)
+89
+(36.9%)
+152
+(63.1%)
+DeepSeek
+accuracy 74.50%
+245
+(95.3%)
+12
+(4.7%)
+115
+(47.7%)
+126
+(52.3%)
+GPT-OSS
+accuracy 79.52%
+244
+(94.9%)
+13
+(5.1%)
+89
+(36.9%)
+152
+(63.1%)
+Gemma
+Flagged Not flagged
+accuracy 77.31%
+PerturbedAccurate
+240
+(93.4%)
+17
+(6.6%)
+96
+(39.8%)
+145
+(60.2%)
+Qwen 3.6
+Flagged Not flagged
+accuracy 80.00%
+230
+(89.5%)
+27
+(10.5%)
+73
+(30.3%)
+168
+(69.7%)
+Claude
+Flagged Not flagged
+accuracy 73.90%
+177
+(68.9%)
+80
+(31.1%)
+50
+(20.7%)
+191
+(79.3%)
+GLM
+Perturbation detection — confusion matrices (In-Context (ICL))
+Figure 8: Perturbation detection under ICL.
+A.11 RAG Ablation
+Table 18 analyzes the effect of retrieval depth
+for each embedding model by averaging the
+performance of all nine answer models. We
+report the main results in Table 3 using
+gemini-embedding-2 with Top-10 retrieval be-
+cause this setting provides the most consistent
+behavior across different task types. Although
+Top-15 achieves a slightly higher macro aver-
+age for gemini-embedding-2, the improvement
+is marginal (56.06 vs. 55.91). In contrast, Top-10
+either achieves the best performance or remains
+34
+
+[[page 35]]
+Gemini Embedding 2 GLM-Embedding-3 Qwen3-Embedding-8B
+Top-5 Top-10 Top-15 Top-5 Top-10 Top-15 Top-5 Top-10 Top-15
+Temporal MCQ 79.79 80.8580.66 77.28 78.1578.1575.63 76.4876.49
+Perturbation Det. 81.20 82.0681.84 78.88 79.7079.69 77.13 77.9377.88
+Scenario SA 83.28 84.3784.33 80.87 81.7181.8478.88 79.8580.00
+Temporal Scenario SA 54.27 57.1257.11 49.34 52.4652.40 46.52 49.6349.62
+Relative-Time QA 25.01 28.8528.59 20.77 24.2024.10 18.14 20.9221.04
+Open-Ended 36.78 39.7239.57 31.73 34.8034.8128.65 31.2031.50
+Context Misalign. 17.40 19.4519.30 14.79 16.2016.4912.28 13.8714.28
+Macro average 53.96 56.0655.91 50.52 52.4652.5048.18 49.9850.12
+Table 18: Strict accuracy of the RAG setting by embedding model and retrieval depth, averaged over the nine answer
+models. Shaded columns mark the depth used in the main results. Event sorting is under re-scoring and excluded,
+so the macro row averages the remaining seven tasks. Best depth per embedding model in bold.
+GPT-5 Claude Gemini
+Top-5 Top-10 Top-15 Top-5 Top-10 Top-15 Top-5 Top-10 Top-15
+Gemini Embedding 254.57 57.06 57.6055.90 58.05 58.5349.78 52.87 53.21
+GLM-Embedding-349.95 53.35 53.3951.29 54.71 55.0746.04 49.31 49.87
+Qwen3-Embedding-8B47.96 51.4750.79 49.45 52.1952.09 43.94 46.93 47.09
+Kimi DeepSeek GPT-OSS
+Top-5 Top-10 Top-15 Top-5 Top-10 Top-15 Top-5 Top-10 Top-15
+Gemini Embedding 251.59 54.46 54.9449.50 52.0851.44 50.14 52.6951.39
+GLM-Embedding-347.81 50.65 51.3945.30 48.7648.05 46.22 49.3649.21
+Qwen3-Embedding-8B45.59 48.27 49.3943.12 46.4545.27 44.23 47.1346.41
+Qwen Gemma GLM
+Top-5 Top-10 Top-15 Top-5 Top-10 Top-15 Top-5 Top-10 Top-15
+Gemini Embedding 249.30 52.1351.37 44.73 47.6945.32 42.72 45.4343.99
+GLM-Embedding-345.36 48.5948.50 40.91 44.1743.10 39.31 42.1140.92
+Qwen3-Embedding-8B42.59 46.1446.07 37.99 41.2539.95 36.29 39.8737.54
+Table 19: Macro strict accuracy (%) of the RAG setting grouped by answer model. Rows correspond to embedding
+models, while columns show retrieval depth (Top-5, Top-10, and Top-15). The best retrieval depth for each
+embedding model is highlighted. Event sorting is excluded because it is under re-scoring.
+very close to the best performance on nearly every
+task. This indicates that Top-10 provides a better
+balance across heterogeneous reasoning tasks.
+Furthermore, the other embedding models show
+less stable behavior. For both GLM-Embedding-3
+and Qwen3-Embedding-8B, the best retrieval depth
+varies across task types, and the macro average
+also changes more noticeably. Therefore, select-
+ing a single retrieval depth for these embeddings
+requires a stronger trade-off between tasks. In com-
+parison, gemini-embedding-2 maintains a more
+consistent performance profile, making it a more
+reliable choice for the experiments reported in the
+main paper.
+Table 19 provides a complementary view by
+grouping results according to the answer model. A
+similar trend can be observed for the open-weight
+models, including GPT-OSS, Qwen, Gemma, GLM, and
+DeepSeek. These models generally achieve their
+best macro average with Top-10 retrieval, while
+increasing the retrieval depth to Top-15 often pro-
+vides little improvement or slightly reduces perfor-
+mance. The main exception is Kimi, which contin-
+ues to improve with Top-15 retrieval.
+In contrast, the closed-source models, namely
+GPT-5, Claude, and Gemini, consistently obtain
+their best results with Top-15 retrieval. This
+trend suggests that these models can better uti-
+lize the additional retrieved context without suf-
+fering from the extra retrieved passages. On the
+other hand, most open-weight models appear to
+be more sensitive to the additional context intro-
+duced at Top-15. Based on these observations, we
+use gemini-embedding-2 with Top-10 retrieval
+35
+
+[[page 36]]
+throughout the main experiments because it pro-
+vides the most stable and broadly applicable config-
+uration across both task types and answer models.
+36

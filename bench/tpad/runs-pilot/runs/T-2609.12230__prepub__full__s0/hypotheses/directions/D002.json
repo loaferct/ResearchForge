@@ -1,0 +1,23 @@
+{
+  "id": "D002",
+  "direction": "Continue with the original idea of enriching each target triple (or path) with additional triples drawn from the same source passage to form a local context subgraph presented together with the primary supervision signal, fine-tuning under two regimes (triple-only vs triple+context), introducing an adaptive repair loop that detects one-hop failures and generates corrective examples, and applying reinforcement-learning-based optimization on lower-hop QA instances to evaluate transfer to deeper multi-hop queries.",
+  "hypothesis": "Training language models with enriched context subgraphs and an adaptive repair loop, followed by RL optimization, will improve multi-hop QA performance (Hits@1) on longer reasoning chains compared to training on isolated triples alone.",
+  "rationale": "No evidence of overlap found in the surveyed literature: six highly relevant papers on RL enhancements for KGQA and subgraph-aware methods (UniKGQA, MRE, etc.) do not enrich triples with locally extracted context subgraphs from source passages, nor do they combine this with an adaptive repair loop before RL transfer. Claims C004, C005, C006 confirm that none of the six most relevant retrieved papers use local context subgraph enrichment. Thus the proposed idea remains novel regarding overlap with subgraph-aware language model training methods.",
+  "change_type": "KEEP_ORIGINAL",
+  "previous_direction_id": "D001",
+  "research_question": null,
+  "confidence": "high",
+  "modification_id": null,
+  "paper_ids": [
+    "arxiv:2212.00959",
+    "arxiv:2404.00492",
+    "arxiv:2507.13625",
+    "doi:10.1016/j.knosys.2022.108515",
+    "doi:10.1109/ijcnn55064.2022.9892550",
+    "doi:10.1109/ikt65497.2024.10892619"
+  ],
+  "uncertainty_ids": [
+    "U005"
+  ],
+  "recorded_at": "2026-09-30T08:20:48.791497Z"
+}

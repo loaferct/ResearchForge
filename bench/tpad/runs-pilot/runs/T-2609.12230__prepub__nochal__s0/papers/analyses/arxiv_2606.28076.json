@@ -1,0 +1,47 @@
+{
+  "paper_id": "arxiv:2606.28076",
+  "relevance_tier": "high",
+  "problem": "Existing multi-hop KGQA methods rely on topic-centered expansion, causing rapid search space growth with noisy mixed-type paths and retrieved paths that may fail to satisfy semantic constraints of complex questions.",
+  "method": "OPI (Ontology-Guided Evidence Path Inference) framework: (1) construct a relation-centric ontology graph capturing head-tail type constraints of relations for answer-side constraints; (2) bidirectional retrieval: map predicted answer type to compatible final-hop relations, combine topic-side prefix expansion with answer-side final-hop matching to suppress noisy mixed-type expansion; (3) iterative refinement: reassess retrieved paths and candidate answers under question context, filtering type-compatible but question-irrelevant evidence.",
+  "key_assumptions": [
+    "The ontology graph can be constructed accurately from the KG to reflect type constraints.",
+    "Bidirectional retrieval effectively reduces noisy mixed-type expansion while preserving relevant paths.",
+    "Iterative refinement improves answer precision by removing irrelevant evidence under question context."
+  ],
+  "main_contribution": "OPI provides a compact, reusable relation-centric ontology graph for retrieval, substantially reduces search space, improves Hit@1/F1 over prior results on WebQSP, CWQ, and MetaQA, and achieves near-saturated Hit@1 on MetaQA with retrieval alone.",
+  "datasets": [
+    "WebQSP",
+    "CWQ",
+    "MetaQA (including 1-hop, 2-hop, 3-hop subsets)"
+  ],
+  "benchmarks": [
+    "WebQSP",
+    "CWQ",
+    "MetaQA"
+  ],
+  "baselines": [
+    "Embedding-based: KV-Mem, NSM, TransferNet, KGT5; Retrieval-based: (not fully listed); Standalone LLMs: Llama-2, Llama-3.1, ChatGPT, GPT-4o, DeepSeek-v3; KG-enhanced LLM methods: ToG, RoG, SymAgent, GNN-RAG, R2, ORT, GCR"
+  ],
+  "metrics": [
+    "Hit@1",
+    "F1"
+  ],
+  "results": "OPI(Llama-2-7B + GPT-4o) achieves WebQSP Hit@1 91.3, F1 76.8; CWQ Hit@1 72.3, F1 62.7 (improvements of +4.6 Hit@1, +5.0 F1 on WebQSP; +8.9 Hit@1, +3.3 F1 on CWQ over strongest prior results). Near-saturated Hit@1 on MetaQA with retrieval module alone.",
+  "limitations": [
+    "LLMs may hallucinate unsupported facts when lacking explicit graph-grounded evidence (mitigated by OPI's ontology-guided retrieval).",
+    "Performance depends on quality and completeness of the ontology graph; may degrade on KGs with weak or missing type information."
+  ],
+  "future_work": [
+    "Extend OPI to knowledge graphs with weaker or less reliable type information by constructing and updating relation signatures when entity types are missing, noisy, or partially available."
+  ],
+  "code_availability": "https://github.com/shanyongxue/OPI_KGQA",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "Both address multi-hop KGQA challenges; OPI uses ontology-guided retrieval and iterative refinement, while the idea proposes local context subgraph enrichment, adaptive repair loop, and RL lower-hop transfer. Overlap in aiming to improve reasoning quality, but differs in mechanism (context subgraph vs ontology graph, repair loop vs iterative refinement).",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T07:43:19.151614Z"
+}

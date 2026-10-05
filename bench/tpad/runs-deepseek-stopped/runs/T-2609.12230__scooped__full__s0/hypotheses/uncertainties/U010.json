@@ -1,0 +1,41 @@
+{
+  "id": "U010",
+  "question": "Can passage-local context-triple supervision be constructed at all for standard multi-hop KGQA benchmarks, or does the mechanism require text-grounded KGs with passage provenance (making generalization a different, harder question)?",
+  "description": "The idea's mechanism requires each target triple to be traceable to a source passage so that same-passage supporting triples can be attached (as arxiv:2609.12230 does via GraphMERT source-chunk identifiers). Standard multi-hop KGQA benchmarks (WebQSP, CWQ, MetaQA) are built over KGs (Freebase, a movies KG) whose triples are not shipped with source-passage provenance, so passage-local context graphs cannot be constructed for them without an external corpus. This means the natural external-validity test (does the effect hold on standard benchmarks?) may be infeasible as stated, and generalization would require text-grounded KGs instead. The landscape's underexplored combination of 'context supervision on standard benchmarks' therefore may not be achievable with the idea's exact mechanism.",
+  "category": "evaluation",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "PLAN_EXPERIMENT",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "REFINE",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": null,
+  "confidence_basis": "",
+  "rationale": "This affects the design of any experiment intended to test generalizability and thus which re-scoped contribution is feasible; it also constrains the choice of benchmark and the comparison to arxiv:2609.12230. It was surfaced by the landscape mapping and has not been investigated.",
+  "resolution": "Narrowed. Standard multi-hop benchmarks as retrieved (WebQSP/CWQ over Freebase in arxiv:2202.13296; WebQSP/CWQ/MetaQA in arxiv:2101.03737) are not packaged with source-passage provenance, and the closest work avoided them by building GraphMERT-extracted disease KGs whose triples are explicitly 'traceable to their originating source text sequence'. However, the mechanism is not restricted to that paper: KG-text alignment resources pair text with textually supported triples at scale (CDTP, arxiv:2510.06039, 15M triples, used for KGC/QA/T2T), so passage-provenance data can be constructed on other corpora. The consequence is that generalization to standard benchmarks cannot be tested with the mechanism as-is, but generalization to a different text-attributed corpus can - a different and more tractable question, now recorded as a gap with a concrete experiment. Remaining verification: whether an English text-attributed multi-hop KGQA benchmark with triple-level provenance exists (search budget was exhausted).",
+  "paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2202.13296",
+    "arxiv:2510.06039",
+    "arxiv:2101.03737"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2510.06039",
+    "arxiv:2609.12230"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C005",
+    "C006",
+    "C007"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "SYNTHESIZE",
+  "created_at": "2026-09-30T05:11:43.245201Z",
+  "updated_at": "2026-09-30T05:22:40.794373Z"
+}

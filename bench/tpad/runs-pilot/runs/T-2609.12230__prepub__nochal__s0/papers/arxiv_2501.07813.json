@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2501.07813",
+  "title": "Talk to Right Specialists: Iterative Routing in Multi-agent Systems for Question Answering",
+  "authors": [
+    "Feijie Wu",
+    "Zitao Li",
+    "Fei Wei",
+    "Yaliang Li",
+    "Bolin Ding",
+    "Jing Gao"
+  ],
+  "year": 2025,
+  "published": "2025-01-14",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2501.07813",
+  "pdf_url": "https://arxiv.org/pdf/2501.07813v2",
+  "abstract": "Retrieval-augmented generation (RAG) agents are increasingly deployed to answer questions over local knowledge bases that cannot be centralized due to knowledge-sovereignty constraints. This results in two recurring failures in production: users do not know which agent to consult, and complex questions require evidence distributed across multiple agents. To overcome these challenges, we propose RIRS, a training-free orchestration framework to enable a multi-agent system for question answering. In detail, RIRS summarizes each agent's local corpus in an embedding space, enabling a user-facing server to route queries only to the most relevant agents, reducing latency and avoiding noisy \"broadcast-to-all\" contexts. For complicated questions, the server can iteratively aggregate responses to derive intermediate results and refine the question to bridge the gap toward a comprehensive answer. Extensive experiments demonstrate the effectiveness of RIRS, including its ability to precisely select agents and provide accurate responses to single-hop queries, and its use of an iterative strategy to achieve accurate, multi-step resolutions for complex queries.",
+  "doi": null,
+  "arxiv_id": "2501.07813",
+  "openalex_id": null,
+  "s2_id": "b9d1680fa26e035aadda27d9c85603d7b959bc66",
+  "source": "arxiv",
+  "sources": [
+    "arxiv",
+    "semantic_scholar"
+  ],
+  "citation_count": 2,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T07:33:21.701234Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "\"one-hop\" multi-hop question answering",
+    "local context subgraph training triples multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

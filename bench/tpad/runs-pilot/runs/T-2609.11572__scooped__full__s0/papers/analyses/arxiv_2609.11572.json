@@ -1,0 +1,52 @@
+{
+  "paper_id": "arxiv:2609.11572",
+  "relevance_tier": "high",
+  "problem": "Although large language models (LLMs) and retrieval-augmented generation (RAG) have advanced open-domain question answering (QA), they remain unreliable when documents evolve through amendments. Existing time-sensitive retrieval methods address only the disjoint-evolving environment, where each update is an independent snapshot. However, laws, policies, and regulations often operate in overlapping-evolving environments, where amendments override earlier clauses while preserving most content, creating strong semantic overlap across versions.",
+  "method": "We propose TimelyRAG, a retriever-agnostic framework that incorporates temporal distance into ranking to align queries with version-appropriate documents. For each candidate passage, compute a temporal relevance score based on the elapsed time between the query's target date (or referenced event time) and the passage's version timestamp (or effective interval). Combine this temporal relevance with semantic similarity (e.g., via weighted sum) to produce a final ranking score. We also introduce TimelyQABench, a benchmark for regulation-heavy domains with overlapping-evolving challenges.",
+  "key_assumptions": [
+    "Temporal relevance can be modeled as a decreasing function of temporal distance between query time and document version timestamp.",
+    "Semantic similarity and temporal relevance can be combined via a weighted sum.",
+    "Version timestamps or effective intervals are available at the passage level."
+  ],
+  "main_contribution": "(1) TimelyRAG, a retriever-agnostic temporal relevance reranking framework for overlapping-evolving documents; (2) TimelyQABench, the first benchmark for regulation-heavy domains with overlapping-evolving challenges.",
+  "datasets": [
+    "TimelyQABench (constructed from regulatory documents including United States Code, Code of Federal Regulations, etc.)"
+  ],
+  "benchmarks": [
+    "TimelyQABench"
+  ],
+  "baselines": [
+    "BM25",
+    "BGE-M3",
+    "NV-Embed-V2",
+    "Temporal Query Rewriting",
+    "Rule-based Effective-Date Filtering",
+    "LLM-based Temporal Reranking",
+    "Oracle Temporal Filtering"
+  ],
+  "metrics": [
+    "nDCG@10",
+    "MAP@10",
+    "Recall@10",
+    "Hit@10"
+  ],
+  "results": "\"Experiments show consistent gains, up to +28.6% in nDCG@10 and +19.1% in Hit@10 across retrieval methods. TimelyRAG outperforms all deployable time-aware baselines under both sparse and dense retrieval.\"",
+  "limitations": [
+    "First, TimelyRAG uses an interpretable temporal distance function; extending it to model complex temporal logic, causal relations, and multi-event dependencies remains future work. Second, as a reranking framework, TimelyRAG benefits from a first-stage retriever that can include relevant document versions in the candidate pool. Third, temporal signals may be noisy or incomplete in real-world corpora."
+  ],
+  "future_work": [
+    "Modeling complex temporal logic and causal relations in temporal distance function.",
+    "Improving robustness to noisy temporal metadata.",
+    "Extending benchmark to more regulatory domains."
+  ],
+  "code_availability": "https://github.com/kaist-dmlab/TimelyRAG",
+  "relation_to_idea": {
+    "problem_overlap": 0.9,
+    "method_overlap": 0.85,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "Both proposals are highly similar; the main difference may be in the specific formulation of temporal distance or the benchmark construction details, which are not fully specified in the idea.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T09:14:12.860711Z"
+}

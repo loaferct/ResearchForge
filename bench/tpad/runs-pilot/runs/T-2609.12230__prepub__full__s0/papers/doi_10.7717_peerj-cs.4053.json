@@ -1,0 +1,34 @@
+{
+  "id": "doi:10.7717/peerj-cs.4053",
+  "title": "Retrieval-augmented generation for medical question answering: a multi-metric performance evaluation",
+  "authors": [
+    "Yunus Kökver"
+  ],
+  "year": 2026,
+  "published": "2026-08-04",
+  "venue": "PeerJ Computer Science",
+  "url": "https://www.semanticscholar.org/paper/ea3cff0dc2fa4725a32db089f9be9981df35732a",
+  "pdf_url": "https://peerj.com/articles/cs-4053.pdf",
+  "abstract": "The integration of large language models (LLMs) into healthcare is hindered by their tendency to generate hallucinations, a critical issue in medical question answering (MedQA). Retrieval-Augmented Generation (RAG) frameworks address this limitation by grounding LLM outputs in external, verifiable knowledge sources. In this study, RAG pipeline implemented without fine-tuning the base model is evaluated to enhance factual fidelity in MedQA. GPT-4 is integrated with a dense passage retrieval module based on Facebook AI Similarity Search (FAISS) and the BAAI/bge-small-en embedding model, and compared against a non-retrieval GPT-4 baseline.Evaluation is conducted on a held-out set of 1,000 questions from the MedQuAD dataset using widely adopted computational evaluation metrics, including BLEU-1 to BLEU-4, ROUGE-L, METEOR, text-level F1, Exact Match (EM), and embedding-based semantic similarity metrics such as BERTScore and SBERT. The RAG-enhanced configuration consistently outperforms the baseline across all evaluation metrics, with notable improvements including an increase in BLEU-4 from 0.3015 to 0.4224 and BERTScore from 0.8487 to 0.8691, indicating improved contextual coherence and semantic alignment. Qualitative analysis further indicates fewer omissions and more accurate use of domain-specific terminology. To assess generalization, cross-dataset experiments were conducted using the PubMedQA benchmark. The results reveal that while RAG significantly improves performance in in-domain settings, its effectiveness decreases under domain shift when the retrieval corpus is not well aligned with the target question distribution. Additional experiments with varying retrieval depths (k = 1, 3, and 5) demonstrate that increasing the number of retrieved passages can improve semantic similarity by providing richer contextual evidence. These findings provide empirical evidence that retrieval augmentation enhances both the factual reliability and semantic quality of LLM-generated answers in MedQA. The proposed framework offers a practical and scalable approach to mitigating hallucinations without requiring task-specific fine-tuning, highlighting the potential of retrieval-augmented approaches for trustworthy artificial intelligence (AI)-assisted healthcare applications.",
+  "doi": "10.7717/peerj-cs.4053",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "ea3cff0dc2fa4725a32db089f9be9981df35732a",
+  "source": "semantic_scholar",
+  "sources": [
+    "crossref",
+    "semantic_scholar"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T07:29:31.839007Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering dataset evaluation metric Hits@1 EM F1"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

@@ -1,0 +1,42 @@
+{
+  "id": "C002",
+  "statement": "The retrieved paper arxiv:2609.12230 explicitly implements the idea's combined recipe: same-source-chunk supporting triples attached to each primary KG triple to form a context graph, a KG-grounded vs CG-grounded two-supervision-setting comparison, and lower-hop RL evaluated on 3-hop/4-hop/5-hop QA.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "We propose a context-augmented KG supervision framework that attaches supporting triples from the same source text chunk to each primary KG triple, producing CG-grounded supervision alongside standard KG-grounded supervision.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 7",
+      "quote": "Section 3.3 introduces the CG construction procedure, where each primary KG triple is augmented with supporting triples from the same source text chunk.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "Motivated by these findings, we use lower-hop RL to optimize for both answer correctness and KG-path alignment, and then evaluate whether this improves generalization to harder 3-hop, 4-hop, and 5-hop question-answering.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "formalize",
+  "tags": [
+    "overlap",
+    "formalize",
+    "scooped"
+  ],
+  "recorded_at": "2026-09-30T05:02:21.560854Z"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.2139/ssrn.7304331",
+  "title": "Reliability-Aware Skin Lesion Decision Support: Cross-DatasetValidation of Selective Prediction, Calibration, and Class-Aware Deferral",
+  "authors": [
+    "Sghaier Guizan",
+    "Ahmed Altamimi",
+    "Habib Hamam"
+  ],
+  "year": 2026,
+  "published": null,
+  "venue": null,
+  "url": "https://doi.org/10.2139/ssrn.7304331",
+  "pdf_url": null,
+  "abstract": "Automated skin-lesion classifiers now approach ceiling performance on benchmark data, yet aggregate accuracy revealslittle about when an individual prediction can be trusted — the property that governs safe clinical use. We reframedermoscopic classification as a reliability-aware selective-prediction problem: rather than only maximizing accuracy,we ask when a model should commit to a prediction and when it should defer to a clinician. The proposed frameworkis evaluated on two publicly available dermoscopic datasets: HAM10000 and the Skin Cancer (ISIC 2018): Malignantvs. Benign dataset. On HAM10000, comprising 10,015 images, we train transparent tree-ensemble classifiers equippedwith a lightweight, retraining-free reliability layer combining maximum class confidence, predictive entropy, post-hoctemperature scaling, and confidence/entropy-based accept–defer rules. Although raw performance on HAM10000 is deliberatelymodest (accuracy 0.709; balanced accuracy 0.395 under severe class imbalance), the reliability layer is highlyinformative: maximum confidence detects incorrect predictions with AUROC 0.811, and temperature scaling reducesexpected calibration error from 0.120 to 0.028 (76.5% reduction). As a decision-support filter, accepting only the mostreliable half of cases raises accepted-case accuracy to 0.905 while routing 83.7% of all errors to expert review. Critically,global confidence deferral is majority-class driven and would still miss many melanomas, whereas a malignancy-awarereferral rule reduces the melanoma miss rate from 26.9% to 7.6% at matched coverage and below 1% at higher deferral.To assess generalizability, the same reliability framework is additionally evaluated on the Skin Cancer (ISIC 2018):Malignant vs. Benign dataset, which comprises 3,297 dermoscopic images, yielding a total of 13,312 images acrossboth cohorts. Reliability behavior remains consistent across datasets: temperature scaling reduces expected calibrationerror from 0.116 to 0.025 on ISIC 2018 (78.2% reduction), confidence-based error detection achieves AUROC 0.817,and selective prediction raises accepted-case accuracy to 0.967 at 50% coverage. These results show that reliabilityassessment, calibration correction, uncertainty-based error detection, and class-aware referral can transform probabilisticclassifiers into more trustworthy decision-support triage systems.",
+  "doi": "10.2139/ssrn.7304331",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T11:25:07.272794Z",
+  "relevance": 0.4091,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "selective prediction calibration"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

@@ -1,0 +1,36 @@
+{
+  "id": "doi:10.18653/v1/d18-1362",
+  "title": "Multi-Hop Knowledge Graph Reasoning with Reward Shaping",
+  "authors": [
+    "Xi Lin",
+    "Richard Socher",
+    "Caiming Xiong"
+  ],
+  "year": 2018,
+  "published": "2018-01-01",
+  "venue": null,
+  "url": "https://doi.org/10.18653/v1/d18-1362",
+  "pdf_url": "https://www.aclweb.org/anthology/D18-1362.pdf",
+  "abstract": "Multi-hop reasoning is an effective approach for query answering (QA) over incomplete knowledge graphs (KGs).The problem can be formulated in a reinforcement learning (RL) setup, where a policy-based agent sequentially extends its inference path until it reaches a target.However, in an incomplete KG environment, the agent receives low-quality rewards corrupted by false negatives in the training data, which harms generalization at test time.Furthermore, since no golden action sequence is used for training, the agent can be misled by spurious search trajectories that incidentally lead to the correct answer.We propose two modeling advances to address both issues: (1) we reduce the impact of false negative supervision by adopting a pretrained onehop embedding model to estimate the reward of unobserved facts; (2) we counter the sensitivity to spurious paths of on-policy RL by forcing the agent to explore a diverse set of paths using randomly generated edge masks.Our approach significantly improves over existing path-based KGQA models on several benchmark datasets and is comparable or better than embedding-based models.",
+  "doi": "10.18653/v1/d18-1362",
+  "arxiv_id": null,
+  "openalex_id": "W2889344053",
+  "s2_id": null,
+  "source": "openalex",
+  "sources": [
+    "openalex"
+  ],
+  "citation_count": 391,
+  "citation_count_source": "openalex",
+  "retrieved_at": "2026-09-30T05:01:11.341074Z",
+  "relevance": 0.6667,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "knowledge graph augmented language model pretraining multi-hop question answering context triples",
+    "multi-hop question answering knowledge graph reasoning path reinforcement learning"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "openalex",
+  "metadata_warnings": []
+}

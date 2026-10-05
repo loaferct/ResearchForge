@@ -1,0 +1,1168 @@
+[[page 1]]
+IEEE TRANSACTIONS ON [JOURNAL NAME], VOL. 00, NO. 0, [MONTH] 2020 1
+VLMT: Vision-Language Multimodal Transformer
+for Multimodal Multi-hop Question Answering
+Qi Zhi Lim, Chin Poo Lee, Senior Member, IEEE, Kian Ming Lim, Senior Member, IEEE,
+Kalaiarasi Sonai Muthu Anbananthen
+Abstract—The increasing availability of multimodal data
+across text, tables, and images presents new challenges for
+developing models capable of complex cross-modal reasoning.
+Existing methods for Multimodal Multi-hop Question Answer-
+ing (MMQA) often suffer from limited reasoning capabilities,
+reliance on modality conversion (e.g., image-to-text), and inade-
+quate alignment between visual and textual representations. To
+address these limitations, this paper introduces Vision-Language
+Multimodal Transformer (VLMT), a unified architecture that
+integrates a transformer-based vision encoder with a sequence-
+to-sequence language model. VLMT employs a direct token-
+level injection mechanism to fuse visual and textual inputs
+within a shared embedding space, eliminating the need for
+intermediate projection layers. To enhance cross-modal alignment
+and reasoning, a three-stage pretraining strategy is proposed to
+progressively align vision-language representations and improve
+the model’s capacity for multimodal understanding. Based on the
+pretrained backbone, two task-specific modules are instantiated
+to form a two-stage MMQA framework: a multimodal reranker
+that predicts document relevance scores and utilizes a relative
+threshold with top- k strategy for context retrieval, and a mul-
+timodal question answering model that generates contextually
+grounded answers based on the retrieved evidence. Compre-
+hensive experiments on two benchmark datasets demonstrate
+the effectiveness of the proposed approach. On MultimodalQA
+validation set, VLMT-Large achieves 76.5% Exact Match and
+80.1% F1, outperforming the previous state-of-the-art by +9.1%
+in Exact Match and +8.8% in F1. On WebQA, it attains a QA
+score of 47.6, surpassing prior models such as PERQA by +3.2.
+These results highlight VLMT’s strong capabilities in multimodal
+reasoning and its potential to advance real-world information
+retrieval and question answering systems.
+Index Terms —Computer Vision, Information Retrieval, Mul-
+timodal Multi-hop Question Answering, Natural Language Pro-
+cessing, Vision-Language Multimodal Transformer
+I. I NTRODUCTION
+The exponential growth of information in today’s dig-
+ital ecosystem has led to the proliferation of multimodal
+data—comprising text, tables, and images—across a wide
+range of platforms. This surge in heterogeneous content offers
+Qi Zhi Lim is with the Faculty of Information Science and Technology,
+Multimedia University, Jalan Ayer Keroh Lama, 75450 Melaka, Malaysia (e-
+mail: 1181103589@student.mmu.edu.my).
+Chin Poo Lee is with the School of Computer Science, University of
+Nottingham Ningbo China, 199 Taikang East Road, Yinzhou District, Ningbo,
+Zhejiang Province, 315100, China (e-mail: leechinpoo@outlook.com). Corre-
+sponding author: Chin Poo Lee.
+Kian Ming Lim is with the School of Computer Science, Univer-
+sity of Nottingham Ningbo China, 199 Taikang East Road, Yinzhou
+District, Ningbo, Zhejiang Province, 315100, China (e-mail: Kian-
+Ming.Lim@nottingham.edu.cn).
+Kalaiarasi Sonai Muthu Anbananthen is with the Faculty of Information
+Science and Technology, Multimedia University, Jalan Ayer Keroh Lama,
+75450 Melaka, Malaysia (e-mail: kalaiarasi@mmu.edu.my).
+unprecedented opportunities for knowledge extraction, but also
+introduces challenges for tasks that require joint understanding
+and reasoning across diverse modalities.
+Multimodal Multi-hop Question Answering (MMQA) [1],
+[2] has emerged as a representative task in this domain, reflect-
+ing real-world information-seeking behavior where relevant
+evidence is scattered across multiple sources and modalities.
+MMQA requires models to perform two interdependent op-
+erations: retrieving relevant multimodal context and reason-
+ing over the retrieved information to produce accurate and
+coherent answers. The dual nature of MMQA—retrieval and
+reasoning—necessitates robust cross-modal integration and
+effective multi-hop inference.
+Early solutions to MMQA have largely followed modular
+paradigms. Some approaches employ modality-specific models
+by classifying question types or decomposing complex queries
+into simpler sub-questions [1], [3]. While effective in uni-
+modal settings, these strategies often suffer from insufficient
+cross-modal interaction and fail to capture interdependencies
+among modalities. Other works address this limitation by con-
+verting non-textual content—particularly images—into textual
+descriptions through captioning or object detection [4], [5].
+This enables the use of pre-trained language models for both
+retrieval and answer generation. However, such conversion
+pipelines introduce a dependency on transformation quality
+and may incur semantic loss, impairing the model’s ability to
+capture fine-grained visual details.
+Recent advances in multimodal learning have led to the
+development of models capable of processing multiple modal-
+ities simultaneously [6], [7], [8]. These models integrate visual
+and textual features within unified architectures to enable joint
+reasoning. Nevertheless, robust alignment between modalities
+remains a persistent challenge, often resulting in degraded
+performance on tasks that require precise semantic grounding
+and fine-grained evidence aggregation.
+To overcome these limitations, this paper introduces Vision-
+Language Multimodal Transformer (VLMT), a unified multi-
+modal architecture designed specifically for MMQA. VLMT
+combines a transformer-based vision encoder with a sequence-
+to-sequence language model. It leverages a direct token-level
+injection mechanism, wherein visual embeddings are inserted
+into designated positions in the textual input. This design
+enables seamless multimodal fusion without the need for
+intermediary projection layers or modality-specific adapters,
+thereby preserving efficiency and reducing complexity.
+Given the architectural heterogeneity between the vision
+and language components, effective cross-modal integration
+requires dedicated pretraining. To this end, a three-stage
+arXiv:2504.08269v1  [cs.CV]  11 Apr 2025
+
+[[page 2]]
+IEEE TRANSACTIONS ON [JOURNAL NAME], VOL. 00, NO. 0, [MONTH] 2020 2
+pretraining framework is proposed to progressively enhance
+multimodal capabilities. The first stage aligns visual embed-
+dings with the frozen embedding space of the language model
+using instruction-following image-caption tasks. The second
+stage performs joint optimization using semantically enriched
+image-text pairs to refine fine-grained alignment. The final
+stage focuses on visual question answering, during which the
+language model is trained to perform multimodal reasoning
+while the vision encoder remains fixed. This progressive
+alignment strategy enhances the model’s ability to integrate
+and reason over multimodal information, ultimately improving
+its performance in downstream tasks.
+Building on the pretrained VLMT backbone, a two-stage
+MMQA framework is constructed. The first stage employs a
+multimodal reranker that scores candidate documents based
+on their relevance to a given question, and applies top- k
+strategy in conjunction with relative threshold to retrieve
+informative contexts. The second stage uses a multimodal
+question answering model that generates answer based on the
+selected content. Both modules operate in a fully multimodal
+fashion, sharing the VLMT backbone and benefiting from its
+robust alignment and reasoning capabilities.
+Extensive experiments on the MultimodalQA and WebQA
+datasets demonstrate that the proposed framework achieves
+state-of-the-art performance, significantly outperforming ex-
+isting methods in both retrieval and answer generation. These
+results validate the effectiveness of the proposed architecture
+and training strategy, establishing VLMT as a robust solution
+for complex multimodal reasoning tasks. The main contribu-
+tions of this work are summarized as follows:
+• Unified Multimodal Architecture: A novel Vision-
+Language Multimodal Transformer (VLMT) is proposed,
+which integrates a transformer-based vision encoder and a
+sequence-to-sequence language model within a unified ar-
+chitecture. VLMT employs a direct token-level injection
+mechanism to fuse visual and textual inputs in a shared
+embedding space, eliminating the need for intermediate
+projection modules.
+• Progressive Pretraining Framework: A dedicated
+three-stage pretraining strategy is introduced to progres-
+sively align vision and language representations. This
+framework strengthens multimodal integration and equips
+the model with strong visual-semantic reasoning capabil-
+ities critical for MMQA tasks.
+• Task-Specific MMQA Framework: A two-stage
+MMQA framework is developed, consisting of a mul-
+timodal reranker for context retrieval and a multimodal
+question answering model for answer generation. Both
+components are instantiated from the pretrained VLMT
+backbone and adapted to support document ranking and
+question answering, respectively.
+• Scalable Design and Empirical Validation: Two VLMT
+configurations—VLMT-Base and VLMT-Large—are in-
+troduced to support varying computational budgets. Ex-
+tensive experiments on the MultimodalQA and WebQA
+benchmarks demonstrate that both configurations outper-
+form existing methods, with VLMT-Large achieving new
+state-of-the-art results in both datasets.
+The remainder of this paper is organized as follows. Sec-
+tion II provides an overview of related work in multimodal
+multi-hop question answering and multimodal large language
+models. Section III introduces the proposed VLMT frame-
+work, detailing its unified architecture, progressive pretraining
+strategy, and task-specific components for reranking and ques-
+tion answering. Section IV outlines the experimental setup, in-
+cluding datasets, implementation details, inference procedures,
+and ablation studies, followed by a comprehensive evaluation
+on benchmark datasets. Finally, Section V concludes the paper
+and outlines promising directions for future work.
+II. R ELATED WORK
+This section examines research efforts most relevant to
+this study, focusing primarily on two key areas: multimodal
+multi-hop question answering (MMQA) and multimodal large
+language models (MLLMs). MMQA extends the scope of
+traditional question-answering by requiring multi-step reason-
+ing across different modalities, necessitating both advanced
+retrieval mechanisms and effective answer generation strate-
+gies. In parallel, MLLMs leverage large-scale vision-language
+modeling techniques to facilitate deep multimodal under-
+standing and cross-modal reasoning. The following subsection
+surveys the key advancements and methodologies in these
+areas, highlighting their technical contributions and associated
+limitations in addressing MMQA challenges.
+A. Multimodal Multi-hop Question Answering
+The task of multimodal question answering has attracted
+increasing attention due to its requirement to integrate and
+reason over information from distinct modalities. This task
+generalizes earlier text-only question answering paradigms [9]
+to include visual and structured sources, thereby demanding
+more comprehensive understanding and reasoning capabilities.
+The Visual Question Answering (VQA) dataset [10] served
+as an early benchmark in this field by pairing natural lan-
+guage questions with images. Follow-up datasets such as OK-
+VQA [11] and KVQA [12] further challenged models by
+requiring external knowledge in addition to visual grounding
+to generate accurate answers. Other studies explored reasoning
+across tables and text, as seen in HybridQA [13] and TAT-
+QA [14], highlighting the importance of modeling interactions
+across structured and unstructured modalities.
+Building on these efforts, recent works have introduced the
+MMQA task [1], [2], [15], which poses additional complexity
+by requiring reasoning over multiple steps and modalities
+simultaneously. Among existing datasets, MultimodalQA [1]
+and WebQA [2] are the most widely adopted resources for
+MMQA research. Unlike conventional settings in which the
+relevant context is provided exclusively, these datasets oper-
+ate under open-domain conditions. Thus, models must first
+retrieve relevant content from disparate sources and subse-
+quently perform answer generation, often involving multi-hop
+reasoning across diverse modalities.
+In response to the intricate requirements of MMQA, several
+baseline methods were introduced. AutoRouting and Implicit-
+Decomp [1] are two such models designed for MultimodalQA.
+
+[[page 3]]
+IEEE TRANSACTIONS ON [JOURNAL NAME], VOL. 00, NO. 0, [MONTH] 2020 3
+In AutoRouting, a question-type classifier is used to determine
+the target modality, and the question along with candidate
+contexts is routed to the appropriate single-modality question
+answering (QA) module. ImplicitDecomp employs a two-
+hop reasoning process in which a classifier predicts the
+question type, including the required modalities, reasoning
+order, and operations. At each hop, a combination of the
+original question, hop count, modality-specific contexts, and
+intermediate answers is passed into the corresponding QA
+module for answer generation. In both cases, the text and
+table QA modules are based on RoBERTa-large [16], while
+the image QA module utilizes VILBERT-MT [17] with Faster
+R-CNN [18] for visual feature extraction.
+For WebQA dataset, VLP and VLP+VinVL [2] have been
+proposed as baseline models. These generative architectures
+are based on encoder-decoder transformers, initialized from
+the pre-trained VLP backbone [19]. VLP+VinVL extends this
+architecture by integrating improved visual representations
+from VinVL [20]. The overall system is divided into two
+specialized components: a source retrieval module and a
+question answering module. In the retrieval phase, each source
+is concatenated with the question and scored using a VLP-
+based classifier. The top-ranked sources are then passed into
+the QA model for answer generation.
+Several more recent approaches have been developed to
+improve multimodal integration and reasoning. MuRAG [6]
+constructs an external memory using T5-base word embed-
+dings [21] and ViT-large [22] visual representations. Maximum
+inner product search is utilized for context retrieval, and the
+T5 encoder-decoder is responsible for answer generation.
+Another example is SKURG [7], which encodes multimodal
+inputs into a unified semantic space and incorporates an
+entity-centric fusion mechanism. The architecture uses OFA-
+base [23] as the vision encoder and BART-base [24] for
+both text and table encoding. Named entity recognition [25]
+and relation extraction [26] are employed to derive structured
+knowledge for enhanced performance.
+In contrast, Solar [4] proposes a unified language-space
+framework that converts tables into templated sentences and
+transforms images into text using BLIP [27] and VinVL [20].
+The model follows a three-stage process involving retrieval,
+ranking, and generation. BERT model [28] is employed to
+support the retrieval and ranking stages, while the answer
+generation stage is handled using T5 model [21].
+PERQA [8] adopts a progressive evidence refinement strat-
+egy composed of an initial screening module and an iterative
+retrieval mechanism. Visual descriptions are extracted using
+OFA-large [23] and Fast-RCNN [29], while BART-base [24]
+and DeBERTa-large [30] are used for encoding and screening
+evidence. The multi-turn QA stage utilizes mPlug-Owl [31],
+a vision-language model built upon ViT and LLaMA [32],
+fine-tuned with low-rank adaptation [33].
+UniRaG [5] introduces a three-stage pipeline comprising
+unification, retrieval, and generation. The model converts all
+modalities into text, employing LLaV A [34] for image cap-
+tioning to minimize information loss. A BERT-based classifier
+(ms-marco-MiniLM-L-12-v2 [35]) is fine-tuned for retrieval,
+while Flan-T5-Base [36] is used for answer generation.
+Despite substantial progress, existing models often require
+complex pre-processing pipelines or rely heavily on modality
+transformation quality. These dependencies may result in
+information degradation and introduce challenges for real-
+world deployment. Limitations also persist in terms of efficient
+alignment and reasoning across modalities, suggesting that
+further research is needed to improve both the performance
+and practicality of MMQA systems.
+B. Multimodal Large Language Models
+Large language models (LLMs) have demonstrated excep-
+tional capabilities in understanding and generating human
+language, significantly advancing the field of natural language
+processing across diverse applications. Building on these de-
+velopments, vision-language models have been introduced to
+extend the utility of LLMs by incorporating visual inputs.
+These models enable multimodal understanding and support a
+wide range of tasks such as image captioning, visual reasoning,
+and optical character recognition.
+Recent progress has led to the emergence of multimodal
+large language models (MLLMs) [37], [34], which have
+become a prominent paradigm for addressing multimodal
+tasks. MLLMs typically integrate a pre-trained language
+model with a vision encoder within a unified architecture.
+Instruction-following capability is considered essential for
+handling various downstream tasks, and therefore instruction-
+tuned LLMs [36], [38] are frequently adopted as the language
+backbone in these models. In parallel, visual encoders [39],
+[40] are utilized to extract semantically rich representations
+from visual data. To enable seamless interaction between
+visual and textual modalities, a projector module is commonly
+used to map visual features into the language embedding
+space. This configuration allows the language model to jointly
+process and reason over multimodal inputs.
+While MLLMs exhibit strong generalization capabilities
+and have achieved state-of-the-art performance on several
+vision-language benchmarks, their application to domain-
+specific tasks such as multimodal multi-hop question answer-
+ing (MMQA) [1], [2] remains limited. MMQA introduces
+distinct challenges, including open-domain retrieval from het-
+erogeneous modalities and multi-step reasoning over diverse
+information sources. Existing MLLM architectures are often
+not optimized for fine-grained modality alignment or scalable
+context retrieval, which are critical for accurate and contextu-
+ally grounded answer generation in MMQA.
+Despite the progress in MLLMs, there remains a lack of
+unified frameworks specifically tailored for MMQA tasks. Cur-
+rent models either rely heavily on pre-processing pipelines or
+depend on modality-specific transformations, which may lead
+to information loss and suboptimal cross-modal reasoning.
+Moreover, most MLLMs are not pretrained with objectives
+explicitly designed for visual reasoning in multi-hop set-
+tings. These limitations underscore the need for a specialized
+multimodal model that supports direct integration of vision
+and language features, incorporates progressive pretraining
+for vision-language alignment, and enables efficient retrieval
+and reasoning in MMQA scenarios. The proposed VLMT
+framework is introduced to address this gap.
+
+[[page 4]]
+IEEE TRANSACTIONS ON [JOURNAL NAME], VOL. 00, NO. 0, [MONTH] 2020 4
+Fig. 1. The proposed two-stage framework for MMQA. The first stage (left) employs a multimodal reranker to evaluate candidate documents and selects
+relevant contexts using a relative threshold with a top- k strategy. The second stage (right) utilizes a multimodal QA model to generate contextually coherent
+answers based on the input question and the retrieved multimodal contexts.
+III. M ETHODOLOGY
+This section presents the proposed Vision-Language Multi-
+modal Transformer (VLMT), a unified multimodal backbone
+model designed to address the challenges of MMQA. VLMT
+comprises a vision encoder and an instruction-tuned language
+model within a cohesive framework, enabling direct interaction
+between modalities through a token-level injection mechanism
+that eliminates the need for intermediate projection or transfor-
+mation layers. To further enhance vision-language alignment
+and reasoning capabilities, a three-stage pretraining framework
+is introduced, equipping VLMT with strong multimodal rep-
+resentations suitable for complex downstream tasks.
+Building on the pretrained VLMT backbone, a task-specific
+two-stage framework is constructed to handle MMQA. As
+illustrated in Fig. 1, the first stage employs a multimodal
+reranker to rank candidate documents based on their relevance
+to a given question. A relative threshold strategy with a top- k
+filter is applied to retrieve semantically meaningful contexts.
+The second stage utilizes a multimodal QA model that pro-
+cesses the input question along with the retrieved contexts to
+generate accurate and contextually grounded answers.
+Unlike most conventional MMQA pipelines that convert
+images into textual descriptions, the proposed framework
+enables implicit multimodal reasoning by directly processing
+images, text, and tables without explicit modality conversion.
+Both the reranker and QA model are instantiated from the
+pretrained VLMT backbone through task-specific adaptations.
+The remainder of this section details the core architecture of
+VLMT, the pretraining strategy, and the implementation of the
+reranker and QA modules.
+A. Vision-Language Multimodal Transformer (VLMT)
+The Vision-Language Multimodal Transformer (VLMT)
+serves as the backbone architecture of the proposed frame-
+work, designed to enable unified representation learning and
+cross-modal reasoning over both visual and textual modalities.
+VLMT is composed of a transformer-based vision encoder for
+extracting spatial and semantic representations from images,
+and a sequence-to-sequence language model that supports
+contextual understanding and natural language generation.
+These two components are jointly structured within a shared
+embedding space to facilitate seamless multimodal integration
+without the need for intermediary projection layers.
+Unlike conventional multimodal models that require image-
+to-text transformations or learned projection modules to con-
+nect heterogeneous modalities, VLMT achieves alignment by
+ensuring that the vision and language components operate
+on embeddings of equal dimensionality. This design allows
+direct fusion of visual and textual information through a token-
+level injection mechanism, which introduces visual embed-
+dings into the token sequence at predefined positions. The
+resulting representation is processed by the language model’s
+attention mechanism, enabling cross-modal interaction without
+additional architectural complexity.
+The overall structure of VLMT is illustrated in Fig. 2.
+Text inputs are tokenized and mapped to embeddings via a
+subword-based encoder, while image inputs are preprocessed
+and encoded into fixed-length visual tokens. These image
+embeddings are inserted into the text embedding sequence by
+replacing designated visual placeholder tokens. This mech-
+anism supports unified encoding of multimodal content and
+allows joint reasoning over both modalities.
+1) Multimodal Data Representation and Integration: The
+encoding process in VLMT begins by independently process-
+ing visual and textual inputs through dedicated pipelines. For
+textual data, including plain text and serialized tables, inputs
+are tokenized using a subword-level model and mapped to
+dense vector representations through an embedding layer that
+capture both semantic and structural information.
+Fig. 3 illustrates the visual feature extraction pipeline.
+Visual inputs are processed using a transformer-based archi-
+
+[[page 5]]
+IEEE TRANSACTIONS ON [JOURNAL NAME], VOL. 00, NO. 0, [MONTH] 2020 5
+Fig. 2. Architecture of VLMT. Textual inputs are processed via tokenization
+and embedding layers, while visual inputs are passed through a vision encoder.
+Given a shared embedding dimension, image embeddings are directly injected
+into the input token sequence by replacing designated visual placeholders,
+enabling seamless and efficient multimodal fusion.
+tecture that segments image into a grid of uniform patches.
+Let x∈ RH×W×C denote the input image, which is divided
+into N non-overlapping patches of size P×P , resulting in
+a sequence xp ∈ RN×(P 2·C). Each patch is flattened and
+linearly projected into the shared embedding space. Addi-
+tionally, positional embeddings are added to maintain the
+spatial relationships among patches. The resulting sequence
+of embeddings is then passed through a stack of transformer
+layers to generate the image embeddings.
+Fig. 3. Visual feature extraction using the vision encoder. Images are divided
+into patches, embedded, and encoded via transformer layers to produce
+spatially aware representations.
+After generating both textual and visual embeddings, multi-
+modal integration is performed by inserting the image embed-
+dings into the text embedding sequence at predefined positions.
+Formally, Etext ∈ RL×d denote the text embeddings, and
+Eimage ∈ RN×d denote the image embeddings. Given the
+designated positions for image tokens {i1,i 2,...,i N}, the
+fused representation Efused is defined as:
+Efused[ij, :] = Eimage[j, :], ∀j∈ [1,N ],
+Efused[k, :] = Etext[k, :], ∀k /∈{i1,i 2,...,i N}. (1)
+This direct injection strategy eliminates the need for inter-
+mediate fusion layers or modality-specific adapters, enabling
+efficient and scalable multimodal integration. The fused em-
+bedding sequence is then passed to the language model com-
+ponent of VLMT, which employs encoder-decoder architecture
+with cross-modal attention mechanisms to facilitate contextual
+reasoning and enable downstream generation.
+This architecture supports end-to-end training and inference
+over heterogeneous inputs while preserving the fine-grained
+semantics and structural integrity of each modality. It forms the
+foundation for both retrieval and generation tasks within the
+broader multimodal multi-hop question answering framework.
+2) VLMT Pretraining Framework: To support robust mul-
+timodal reasoning and effective vision-language integration,
+a three-stage pretraining framework is introduced for VLMT.
+The first two stages are designed to progressively align visual
+and linguistic representations, addressing the inherent incon-
+sistency that arises when combining independently trained
+vision and language components. The final stage focuses on
+enhancing the model’s capacity for visual question answering
+(VQA), enabling more accurate and contextually grounded
+reasoning over multimodal inputs.
+In the first stage, the model is trained using the LLaV A
+Visual Instruct Pretrain LCS-558K dataset [34], which refor-
+mulates image-caption pairs into instruction-following tasks.
+Each training sample consists of an image paired with a
+textual prompt requesting a brief description, while the original
+caption serves as the target output. During this phase, only
+the vision encoder is updated, while the language model
+remains frozen. This selective training encourages the vision
+encoder to produce embeddings compatible with the language
+model’s pre-trained word representations. However, the limited
+descriptiveness of the captions may constrain the depth of
+visual-linguistic alignment achieved.
+To overcome this limitation, the second stage employs
+ShareGPT4V-PT [41], a high-quality dataset comprising 1.2
+million image-caption pairs. The captions include detailed
+semantic content of the images, such as object attributes,
+spatial relations, and world knowledge. In this phase, both
+the vision encoder and language model are jointly optimized,
+promoting fine-grained alignment across modalities. The vi-
+sion encoder learns to capture richer visual features, while
+the language model learns to interpret and integrate this
+information, resulting in a more coherent and semantically
+aligned multimodal representation space.
+The third stage focuses on enhancing the model’s reasoning
+capabilities through VQA pretraining using the VQA v2.0
+dataset [42]. This dataset contains open-ended questions that
+require both visual understanding and contextual reasoning.
+To retain the visual features learned in earlier stages, the
+vision encoder is kept frozen, and only the language model
+is fine-tuned in this stage. This targeted adaptation enables
+the model to reason over visual inputs conditioned on natural
+language queries, improving its ability to generate accurate
+and contextually grounded answers.
+This three-stage pretraining framework equips VLMT with
+strong cross-modal alignment and visual reasoning capabili-
+
+[[page 6]]
+IEEE TRANSACTIONS ON [JOURNAL NAME], VOL. 00, NO. 0, [MONTH] 2020 6
+ties, forming a robust foundation for downstream tasks such
+as multimodal multi-hop question answering.
+B. VLMT as Multimodal Reranker
+The first stage of the proposed MMQA framework incorpo-
+rates a multimodal reranker to identify supporting documents
+from a candidate pool. Accurate identification of relevant
+context is essential for minimizing computational overhead
+during answer generation and enhancing the overall reasoning
+accuracy. To this end, the reranker computes relevance scores
+for each candidate document and applies a novel selection
+strategy that combines a relative threshold with a top- k con-
+straint. This dual mechanism balances the retrieval precision
+and recall by dynamically adapting to the score distribution
+while ensuring selection focus and diversity.
+Given a question and a candidate document, the input
+sequence is constructed by concatenating them with task-
+specific control tokens. A <cls> token is prepended to serve
+as a global sequence representation, and </s> tokens are
+inserted to separate question and document segments and
+denote the sequence boundaries.
+The reranker leverages the encoder of the pretrained VLMT
+backbone to process the input sequence. Since the reranking
+task involves classification rather than generation, only the
+encoder component is utilized. After encoding, the hidden
+state corresponding to the <cls> token is extracted and
+denoted as h∈ Rdenc, where denc is the embedding dimension
+of the encoder. This token serves as a global representation
+summarizing the entire input sequence.
+To compute a scalar relevance score from h, a lightweight
+classification head operates in three stages is applied. The
+scoring function is defined as follows:
+y =W2· Dropout (tanh (W1· Dropout(h) +b1)) +b2, (2)
+where W1∈ Rd×d and b1∈ Rd are the weights and bias of
+the intermediate linear transformation, and W2∈ R1×d and
+b2∈ R are the parameters of the final output layer.
+First, a dropout operation is applied to h for regularization.
+Then, the transformed vector W1·h +b1 is passed through a
+tanh activation to introduce non-linearity. A second dropout
+layer is applied to the output of the activation, followed by a
+final linear projection to obtain the output logit y∈ R. This
+scalar score reflects the model’s estimation of the document’s
+relevance to the input question.
+The raw logits are passed through a sigmoid function
+to normalize them to the range [0, 1]. Let ˆyi denote the
+normalized relevance score for thei-th candidate in a given set
+ofM candidates. Let ˆymax = max i∈[1,M ] ˆyi be the maximum
+relevance score in the candidate set. The proposed relative
+thresholding strategy selects documents that satisfy:
+ˆyi≥τ· ˆymax, ∀i∈ [1,M ], (3)
+whereτ∈ (0, 1] is a predefined threshold ratio. This criterion
+ensures that only candidates achieving a substantial proportion
+of the highest score are considered, making the selection
+adaptive to score distributions across different queries.
+To avoid an excessively large context set, the candidate pool
+is further refined using a top-k selection, which retains at most
+k documents from those satisfying Eq. (3). The final context
+setDretrieved is defined as:
+Dretrieved = Top-k ({di| ˆyi≥τ· ˆymax}). (4)
+This two-stage filtering approach is central to the reranker’s
+design. The relative threshold offers adaptivity across ques-
+tions with varying score distributions, while top- k ensures
+bounded retrieval cost. Together, they form a flexible and
+efficient strategy for multimodal context selection.
+1) Training Objective: The reranker is trained as a binary
+classifier. Each question is paired with a batch of N docu-
+ments, including one or more positive (supporting) samples
+labeled as yi = 1 , and several distractors labeled as yi = 0 .
+The objective is to distinguish the true supporting evidence
+from irrelevant content, which is optimized using the binary
+cross-entropy with logits loss:
+Lcls =− 1
+N
+NX
+i=1
+[yi· log (σ(ˆyi)) + (1−yi)· log (1−σ(ˆyi))],
+(5)
+whereσ denotes the sigmoid function applied to the predicted
+logit ˆyi. This loss formulation guides the model to maximize
+scores for supporting documents while minimizing scores for
+distractors, thereby improving the reranker’s precision and
+recall in context retrieval.
+C. VLMT as Multimodal Question Answering Model
+The second stage of the proposed MMQA framework em-
+ploys a multimodal QA model to generate responses based
+on the retrieved multimodal contexts. Given the inherently
+multimodal and multi-hop characteristics of the task, the model
+input is formulated by prepending the question to a sequence
+of retrieved documents, which may include text, table, and
+image-derived content. Instructional prompts are prepended to
+guide the model toward generating contextually relevant and
+semantically coherent answers, as depicted in Fig. 1.
+The QA model is instantiated from the full encoder-decoder
+architecture of the pretrained VLMT backbone. Unlike the
+reranker, which requires only discriminative capabilities, this
+stage necessitates generative modeling; thus, both the encoder
+and decoder components are utilized. The encoder processes
+the input sequence to produce contextualized hidden states,
+while the decoder performs autoregressive generation of the
+answer by attending to these representations.
+Let X = {x1,x 2,...,x L} represent the input token se-
+quence, comprising the question and associated multimodal
+context. The encoder maps X to a sequence of contextualized
+embeddings H ={h1, h2,..., hL}, which are attended to by
+the decoder at each generation step.
+A language modeling head is appended to the decoder,
+projecting each decoder hidden state zt ∈ Rddec into the
+tokenizer’s vocabulary space. Specifically, the probability of
+generating the t-th token yt is defined as:
+P (yt|X,y <t) = Softmax(Wo· zt +bo), (6)
+
+[[page 7]]
+IEEE TRANSACTIONS ON [JOURNAL NAME], VOL. 00, NO. 0, [MONTH] 2020 7
+where Wo∈ RV×ddec and bo∈ RV are the output projection
+weights and bias, V denotes the vocabulary size, and ddec is
+the dimensionality of the decoder hidden state.
+1) Training Objective: The training of the multimodal QA
+model is formulated as a sequence-to-sequence generation
+task. For each instance, the input consists of the question
+and its corresponding multimodal context, and the output
+is the ground-truth answer represented as a token sequence
+Y = {y1,y 2,...,y T}. The model is trained to maximize
+the conditional likelihood of generating the correct output
+sequence. The objective function employed for optimization
+is a token-level cross-entropy loss:
+Lgen =− 1
+T
+TX
+t=1
+logP (yt|X,y <t), (7)
+whereT is the target sequence length, and P (yt|X,y <t) de-
+notes the probability of predicting token yt conditioned on the
+input and previously generated tokens. This loss encourages
+the decoder to produce fluent, contextually grounded answers
+consistent with the multimodal evidence.
+By leveraging the pretrained VLMT backbone and adapting
+it to this generative question answering setting, the model
+effectively synthesizes information across different modalities
+and generates high-quality responses tailored to complex mul-
+timodal multi-hop queries.
+IV. E XPERIMENTS
+This section presents a comprehensive evaluation of the
+proposed VLMT framework. The experiments are designed
+to assess the effectiveness of VLMT in addressing the
+challenges of MMQA, focusing on its ability to retrieve
+relevant context and generate accurate, coherent answers.
+Evaluations are conducted on two widely used benchmark
+datasets—MultimodalQA and WebQA—encompassing both
+retrieval and answer generation tasks.
+The experimental setup includes rigorous implementation
+details covering model configurations, pretraining and fine-
+tuning strategies, and inference settings. Ablation studies are
+also performed to quantify the contribution of each stage in
+the proposed pretraining framework. Furthermore, comparative
+analyses against existing state-of-the-art methods demonstrate
+the advantages of the proposed VLMT in both architectural
+design and multimodal reasoning capabilities.
+A. Datasets
+To evaluate the effectiveness of the proposed framework,
+experiments are conducted using two widely adopted bench-
+mark datasets for multimodal multi-hop question answering:
+MultimodalQA and WebQA.
+1) MultimodalQA [1]: The MultimodalQA dataset consists
+of multimodal question-answer pairs that require complex
+reasoning across diverse modalities, including text, tables, and
+images. It encompasses a total of 16 question types, 13 of
+which are compositional in nature and necessitate cross-modal
+retrieval and multi-hop reasoning. The dataset includes 23.8K
+samples for training and 2.4K samples for validation, along
+with relevant supporting documents and distractors.
+As the ground-truth answers for the test set are not publicly
+available, model performance is evaluated on the validation
+set, which is consistent with prior studies. Answers in Mul-
+timodalQA are typically concise, comprising single words or
+short phrases. The metrics used for performance evaluation are
+Exact Match (EM) and average F1 score.
+2) WebQA [2]: The WebQA dataset includes both textual
+and visual information sources, in which each question is
+designed to be interpretable using one modality—either text
+or image. Approximately 44% of the image-based queries and
+99% of the text-based queries involve multi-hop reasoning,
+requiring the integration of information from two or more
+sources. Each question is accompanied by both relevant and
+distractor documents across modalities, reinforcing the impor-
+tance of accurate retrieval in addition to answer generation.
+The dataset provides 34.2K training, 5K validation, and 7.5K
+testing question-answer pairs.
+Answers in WebQA are complete, natural language sen-
+tences. Evaluation is conducted using two metrics: Retr-F1
+and QA. Retr-F1 measures retrieval accuracy based on the
+overlap between retrieved and supporting sources. The QA
+metric combines two components: QA-FL, computed using
+BARTScore [43] to assess fluency and coherence between gen-
+erated and reference answers, and QA-Acc, which evaluates
+the overlap of key entities to assess factual accuracy.
+B. Implementation Details
+1) VLMT Backbone: This study introduces two configu-
+rations of the proposed VLMT backbone, denoted as VLMT-
+Base and VLMT-Large. Both variants share a consistent archi-
+tectural design, comprising a vision encoder and a language
+model. They differ primarily in model capacity, including
+hidden size, number of layers, and attention heads. To enable
+direct multimodal fusion via token-level injection, the vision
+encoder and language model in each variant are configured
+to operate with identical hidden dimensions—768 for VLMT-
+Base and 1024 for VLMT-Large. This design eliminates the
+need for projection layers, simplifying the fusion of visual
+and textual representations. A summary of these architectural
+specifications is provided in Table I.
+TABLE I
+VLMT MODEL COMPONENTS AND CONFIGURATIONS .
+Model Component Hidden Size #Enc #Dec #Heads
+VLMT-Base Vision Encoder 768 12 0 12
+Language Model 768 12 12 12
+VLMT-Large Vision Encoder 1024 24 0 16
+Language Model 1024 24 24 16
+To optimize the model for downstream multimodal tasks,
+both variants are pretrained using the proposed three-stage
+framework outlined in Section III-A2. The pretraining hyper-
+parameters applied are consistent across both VLMT-Base and
+VLMT-Large, provided in Table II.
+
+[[page 8]]
+IEEE TRANSACTIONS ON [JOURNAL NAME], VOL. 00, NO. 0, [MONTH] 2020 8
+TABLE II
+PRETRAINING HYPERPARAMETERS FOR VLMT ACROSS THREE STAGES .
+Hyperparameter Stage 1 Stage 2 Stage 3
+Trainable weights VE VE & LM LM
+Global batch size 256 128 128
+Epoch 1 1 1
+LM learning rate N/A 1e-4 1e-4
+VE learning rate 1e-3 5e-4 N/A
+VE LLRD factor 0.5 0.5 N/A
+Weight decay 0.05 0.05 0.05
+Scheduler Cosine Cosine Cosine
+Optimizer AdamW AdamW AdamW
+Note: VE = vision encoder, LM = language model, and LLRD
+refers to layer-wise learning rate decay.
+Following prior work [44], [45], layer-wise learning rate
+decay is applied to the vision encoder during the first two
+pretraining stages. This strategy assigns higher learning rate
+to the top layer and lower learning rate to the bottom layers,
+preserving low-level visual features while encouraging high-
+level alignment with the language model. Such differential
+training approach facilitates stable convergence and improved
+cross-modal representation learning.
+2) VLMT Reranker and Question Answering Model: The
+reranker and question answering components are instanti-
+ated from the pretrained VLMT backbone, as detailed in
+Section III-B and Section III-C. Each model retains the
+backbone’s multimodal architecture while incorporating task-
+specific adaptations their respective tasks.
+During fine-tuning, the vision encoder is kept frozen for
+both models to preserve the visual representations acquired
+during pretraining. This design allows the optimization process
+to focus exclusively on the language model, ensuring stable
+convergence while reducing training complexity.
+To promote generalization and prevent overfitting, dropout
+regularization is applied according to model scale. A dropout
+rate of 0.05 is used for VLMT-Base, while VLMT-Large
+adopts a higher rate of 0.1, reflecting its increased parameter
+capacity. This regularization strategy supports robust perfor-
+mance across diverse datasets and task conditions.
+The fine-tuning procedure for both the reranker and QA
+model is standardized across the MultimodalQA and We-
+bQA benchmarks. The key hyperparameter configurations are
+provided in Table III, including batch sizes, learning rates,
+and optimization settings tailored to the distinct demands of
+context retrieval and answer generation.
+3) Inference Settings: During inference, a consistent re-
+trieval strategy is adopted across all datasets to ensure com-
+parability and fairness in evaluation. For context selection, a
+relative threshold of 0.5 is employed, whereby a candidate
+document is retained if its normalized relevance score is
+at least 50% of that of the highest-scoring candidate. This
+dynamic thresholding mechanism allows flexibility across dif-
+ferent question-document distributions. In conjunction with the
+threshold, a top-k constraint is imposed with k = 5, ensuring
+that only the five most relevant documents are selected for
+downstream processing. This dual criterion balances retrieval
+TABLE III
+FINE -TUNING HYPERPARAMETERS FOR THE VLMT RERANKER AND
+QUESTION ANSWERING MODEL .
+Hyperparameter Reranker QA Model
+Global batch size 256 16
+Epochs 3 5
+Learning rate 2e-4 5e-5
+Scheduler Cosine Cosine
+Optimizer AdamW AdamW
+precision and contextual coverage, and is uniformly applied to
+both the MultimodalQA and WebQA datasets.
+For answer generation, greedy decoding is used as the
+inference strategy. At each generation step, the token with
+the highest predicted probability is selected, yielding a de-
+terministic and computationally efficient decoding process.
+The maximum generation length is set to 64 tokens for
+MultimodalQA and 128 tokens for WebQA, accommodating
+the linguistic characteristics and expected answer lengths in
+the respective datasets.
+C. Ablation Study
+To evaluate the effectiveness of the proposed three-stage
+pretraining strategy, a series of ablation experiments were
+conducted to quantify the incremental impact of each stage on
+multimodal retrieval and question answering performance. The
+results, summarized in Table IV, provide empirical evidence
+of the necessity and effectiveness of progressive multimodal
+alignment and task-specific adaptation.
+TABLE IV
+ABLATION RESULTS OF THE VLMT PRETRAINING FRAMEWORK .
+Model MultimodalQA WebQA
+Retr-F1 EM F1 Retr-F1 QA
+VLMT-Baseline 82.9 57.6 62.0 85.7 39.4
++ Stage 1 PT 88.9 66.7 70.8 86.5 41.3
++ Stage 2 PT 89.2 67.9 71.8 86.6 42.4
++ Stage 3 PT 89.4 68.9 72.8 86.9 42.8
+The baseline configuration (denoted as VLMT-Baseline) is
+initialized from independently pretrained vision and language
+models without any joint multimodal pretraining. This set-
+ting results in notably lower performance across both Mul-
+timodalQA and WebQA tasks, highlighting the inadequacy
+of relying solely on pretrained unimodal components in the
+absence of dedicated cross-modal alignment.
+The first pretraining stage (Stage 1 PT) focuses on aligning
+visual embeddings from the vision encoder with the frozen
+embedding space of the language model. This alignment is
+achieved through an instruction-following paradigm based on
+image-caption pairs. The gains in both retrieval accuracy and
+question answering performance indicate that the one-sided
+alignment process substantially improves the model’s capacity
+to bridge visual and textual modalities.
+
+[[page 9]]
+IEEE TRANSACTIONS ON [JOURNAL NAME], VOL. 00, NO. 0, [MONTH] 2020 9
+The second stage (Stage 2 PT) performs joint optimization
+of both the vision encoder and the language model using se-
+mantically rich image-text pairs. This process strengthens fine-
+grained visual-semantic correspondence, allowing the model
+to better capture spatial, contextual, and attribute-level cues
+within multimodal inputs. The observed improvements in
+retrieval and generation metrics at this stage affirm the value
+of bidirectional vision-language training.
+The final stage (Stage 3 PT) targets visual question answer-
+ing by fine-tuning only the language model on QA supervision
+while keeping the vision encoder frozen. This phase enhances
+the model’s reasoning and answer generation capabilities with-
+out disrupting the already established visual representations.
+The incremental gains here are most pronounced in QA per-
+formance, demonstrating the utility of task-specific adaptation
+after multimodal pretraining.
+Overall, the consistent performance improvements across all
+stages validate the proposed three-stage framework. Each stage
+contributes distinct and complementary benefits, with earlier
+stages establishing robust multimodal representations and the
+final stage refining task-specific reasoning.
+D. Experimental Results
+The effectiveness of the proposed VLMT framework is
+evaluated on two widely adopted MMQA benchmarks: Mul-
+timodalQA [1] and WebQA [2]. The evaluation focuses on
+both retrieval and answer generation performance, highlighting
+the contributions of the proposed multimodal architecture,
+pretraining strategy, and context selection mechanisms.
+1) Results on MultimodalQA: Table V reports results
+on the validation split of the MultimodalQA dataset.
+VLMT-Base achieves state-of-the-art performance across all
+evaluation categories—single-modal, multi-modal, and over-
+all—outperforming strong baselines including Solar [4],
+PERQA [8], and UniRaG [5]. This improvement demonstrates
+the effectiveness of VLMT’s architecture, particularly the
+token-level injection mechanism that enables seamless fusion
+of visual and textual representations.
+TABLE V
+EXPERIMENTAL RESULTS ON THE MULTIMODAL QA DATASET
+(VALIDATION SET ).
+Model Single-Modal Multi-Modal All
+EM F1 EM F1 EM F1
+AutoRouting [1] 51.7 58.5 34.2 40.2 44.7 51.1
+ImplicitDecomp [1] 51.6 58.4 44.6 51.2 48.8 55.5
+SKURG [7] 66.1 69.7 52.5 57.2 59.8 64.0
+Solar [4] 69.7 74.8 55.5 65.4 59.8 66.1
+PERQA [8] 69.7 74.1 54.7 60.3 62.8 67.8
+UniRaG [5] 71.7 75.9 62.3 66.0 67.4 71.3
+VLMT-Base 74.2 78.1 62.6 66.6 68.9 72.8
+VLMT-Large 80.5 84.4 71.9 75.0 76.5 80.1
+VLMT-Large further improves performance by leveraging
+increased model capacity and richer representation depth. With
+its larger hidden size and more attention heads, VLMT-Large
+achieves notable improvements in EM and F1, particularly
+in multi-modal scenarios where fine-grained alignment and
+reasoning are essential. The outstanding results underscore the
+scalability of the proposed framework and validate the design
+choice of consistent hidden dimensions across vision encoder
+and language model components.
+2) Results on WebQA: Table VI presents results on the
+WebQA test set. The dataset poses additional challenges due to
+its open-domain nature and the requirement to generate fluent,
+full-sentence answers. VLMT-Base outperforms other base-
+sized models such as MuRAG [6], SKURG [7], and Solar [4]
+in terms of QA-FL and QA-Acc metrics, reflecting its ability
+to effectively integrate visual and textual information through
+the pretrained VLMT backbone.
+TABLE VI
+EXPERIMENTAL RESULTS ON THE WEBQA DATASET (TEST SET ).
+Model Retr-F1 QA-FL QA-Acc QA
+VLP [2] 68.9 42.6 36.7 22.6
+VLP + VinVL [2] 70.9 44.2 38.9 24.1
+MuRAG [6] 74.6 55.7 54.6 36.1
+SKURG [7] 88.2 55.4 57.1 37.7
+Solar [4] 89.4 60.9 58.9 40.9
+PERQA [8] 89.6 61.7 63.9 44.4
+VLMT-Base 86.9 61.1 61.4 42.8
+VLMT-Large 87.8 64.0 66.7 47.6
+Nevertheless, VLMT-Base shows slightly lower perfor-
+mance in QA compared to VLMT-Large, owing to limitations
+in generative capacity. The improvements achieved by VLMT-
+Large demonstrate the efficacy of scaling the architecture,
+which not only enhances fluency and factual accuracy but also
+strengthens multimodal reasoning.
+While the retrieval metric (Retr-F1) of VLMT remains
+slightly lower than some baselines, this is a result of the
+proposed relative threshold and top-k retrieval strategy, which
+prioritizes retrieval recall. This approach increases the diver-
+sity and completeness of the retrieved evidence, providing
+broader contextual grounding for the QA model at the cost
+of retrieval precision. However, the richer context positively
+contributes to downstream answer generation, as evidenced by
+the superior QA scores of VLMT-Large.
+V. C ONCLUSION
+This paper presents Vision-Language Multimodal Trans-
+former (VLMT), a unified and scalable framework designed
+to address the challenges of multimodal multi-hop question
+answering (MMQA). VLMT integrates a transformer-based
+vision encoder with a sequence-to-sequence language model
+within a shared embedding space, enabling direct token-level
+fusion of visual and textual representations. A three-stage pre-
+training framework is introduced to progressively align vision-
+language representations and enhance reasoning capabilities,
+significantly improving the model’s ability to process and
+synthesize multimodal evidence.
+Built on the pretrained VLMT backbone, a two-stage frame-
+work with task-specific modules are developed: a multimodal
+
+[[page 10]]
+IEEE TRANSACTIONS ON [JOURNAL NAME], VOL. 00, NO. 0, [MONTH] 2020 10
+reranker and a multimodal question answering (QA) model.
+The reranker predicts document relevance scores and utilizes
+a relative threshold with top-k selection strategy, ensuring the
+retrieval of diverse and informative contexts. The QA model
+performs answer generation by attending to both the input
+question and retrieved multimodal content.
+Extensive experiments on two benchmark datasets, Multi-
+modalQA and WebQA, prove the effectiveness of the proposed
+approach. On MultimodalQA, VLMT-Large achieves 80.5 EM
+and 84.4 F1 in single-modal settings, and 71.9 EM and 75.0
+F1 in multi-modal settings, outperforming prior state-of-the-
+art methods including UniRaG and PERQA. Similarly, on We-
+bQA, VLMT-Large achieves 64.0 QA-FL and 66.7 QA-Acc,
+surpassing the best-performing baseline, PERQA, and setting
+a new benchmark for multimodal answer generation. These
+results underscore the advantages of the proposed architecture,
+pretraining methodology, and retrieval mechanism.
+Looking forward, several directions remain open for future
+research. First, enhancing retrieval precision while maintaining
+high recall remains a key challenge in this domain. More adap-
+tive retrieval strategies that dynamically balance relevance and
+diversity could further improve the overall QA performance.
+Second, extending VLMT to handle additional modalities
+such as audio or video may broaden its applicability in real-
+world multimodal information systems. Finally, investigating
+the implementation of lightweight or distilled variants of
+VLMT could facilitate deployment in resource-constrained
+environments while preserving performance.
+REFERENCES
+[1] A. Talmor, O. Yoran, A. Catav, D. Lahav, Y . Wang, A. Asai, G. Ilharco,
+H. Hajishirzi, and J. Berant, “Multimodalqa: Complex question answer-
+ing over text, tables and images,” arXiv preprint arXiv:2104.06039 ,
+2021.
+[2] Y . Chang, M. Narang, H. Suzuki, G. Cao, J. Gao, and Y . Bisk,
+“Webqa: Multihop and multimodal qa,” in Proceedings of the IEEE/CVF
+conference on computer vision and pattern recognition , pp. 16495–
+16504, 2022.
+[3] H. Rajabzadeh, S. Wang, H. J. Kwon, and B. Liu, “Multimodal multi-hop
+question answering through a conversation between tools and efficiently
+finetuned large language models,” arXiv preprint arXiv:2309.08922 ,
+2023.
+[4] B. Yu, C. Fu, H. Yu, F. Huang, and Y . Li, “Unified language repre-
+sentation for question answering over text, tables, and images,” arXiv
+preprint arXiv:2306.16762, 2023.
+[5] Q. Z. Lim, C. P. Lee, K. M. Lim, and A. K. Samingan, “Unirag:
+Unification, retrieval, and generation for multimodal question answering
+with pre-trained language models,” IEEE Access , vol. 12, pp. 71505–
+71519, 2024.
+[6] W. Chen, H. Hu, X. Chen, P. Verga, and W. W. Cohen, “Murag:
+Multimodal retrieval-augmented generator for open question answering
+over images and text,” arXiv preprint arXiv:2210.02928 , 2022.
+[7] Q. Yang, Q. Chen, W. Wang, B. Hu, and M. Zhang, “Enhancing multi-
+modal multi-hop question answering via structured knowledge and uni-
+fied retrieval-generation,” in Proceedings of the 31st ACM International
+Conference on Multimedia , pp. 5223–5234, 2023.
+[8] S. Yang, A. Wu, X. Wu, L. Xiao, T. Ma, C. Jin, and L. He, “Progressive
+evidence refinement for open-domain multimodal retrieval question
+answering,” arXiv preprint arXiv:2310.09696 , 2023.
+[9] P. Rajpurkar, “Squad: 100,000+ questions for machine comprehension
+of text,” arXiv preprint arXiv:1606.05250 , 2016.
+[10] S. Antol, A. Agrawal, J. Lu, M. Mitchell, D. Batra, C. L. Zitnick, and
+D. Parikh, “Vqa: Visual question answering,” inProceedings of the IEEE
+international conference on computer vision , pp. 2425–2433, 2015.
+[11] K. Marino, M. Rastegari, A. Farhadi, and R. Mottaghi, “Ok-vqa: A
+visual question answering benchmark requiring external knowledge,” in
+Proceedings of the IEEE/cvf conference on computer vision and pattern
+recognition, pp. 3195–3204, 2019.
+[12] S. Shah, A. Mishra, N. Yadati, and P. P. Talukdar, “Kvqa: Knowledge-
+aware visual question answering,” inProceedings of the AAAI conference
+on artificial intelligence , vol. 33, pp. 8876–8884, 2019.
+[13] W. Chen, H. Zha, Z. Chen, W. Xiong, H. Wang, and W. Wang,
+“Hybridqa: A dataset of multi-hop question answering over tabular and
+textual data,” arXiv preprint arXiv:2004.07347 , 2020.
+[14] F. Zhu, W. Lei, Y . Huang, C. Wang, S. Zhang, J. Lv, F. Feng, and T.-S.
+Chua, “Tat-qa: A question answering benchmark on a hybrid of tabular
+and textual content in finance,” arXiv preprint arXiv:2105.07624, 2021.
+[15] D. Hannan, A. Jain, and M. Bansal, “Manymodalqa: Modality dis-
+ambiguation and qa over diverse inputs,” in Proceedings of the AAAI
+Conference on Artificial Intelligence , vol. 34, pp. 7879–7886, 2020.
+[16] Y . Liu, “Roberta: A robustly optimized bert pretraining approach,” arXiv
+preprint arXiv:1907.11692, vol. 364, 2019.
+[17] J. Lu, V . Goswami, M. Rohrbach, D. Parikh, and S. Lee, “12-in-1: Multi-
+task vision and language representation learning,” in Proceedings of
+the IEEE/CVF conference on computer vision and pattern recognition ,
+pp. 10437–10446, 2020.
+[18] S. Ren, K. He, R. Girshick, and J. Sun, “Faster r-cnn: Towards real-time
+object detection with region proposal networks,” IEEE transactions on
+pattern analysis and machine intelligence, vol. 39, no. 6, pp. 1137–1149,
+2016.
+[19] L. Zhou, H. Palangi, L. Zhang, H. Hu, J. Corso, and J. Gao, “Unified
+vision-language pre-training for image captioning and vqa,” in Proceed-
+ings of the AAAI conference on artificial intelligence, vol. 34, pp. 13041–
+13049, 2020.
+[20] P. Zhang, X. Li, X. Hu, J. Yang, L. Zhang, L. Wang, Y . Choi, and J. Gao,
+“Vinvl: Revisiting visual representations in vision-language models,”
+in Proceedings of the IEEE/CVF conference on computer vision and
+pattern recognition, pp. 5579–5588, 2021.
+[21] C. Raffel, N. Shazeer, A. Roberts, K. Lee, S. Narang, M. Matena,
+Y . Zhou, W. Li, and P. J. Liu, “Exploring the limits of transfer learning
+with a unified text-to-text transformer,” Journal of machine learning
+research, vol. 21, no. 140, pp. 1–67, 2020.
+[22] A. Dosovitskiy, “An image is worth 16x16 words: Transformers for
+image recognition at scale,” arXiv preprint arXiv:2010.11929 , 2020.
+[23] P. Wang, A. Yang, R. Men, J. Lin, S. Bai, Z. Li, J. Ma, C. Zhou, J. Zhou,
+and H. Yang, “Ofa: Unifying architectures, tasks, and modalities through
+a simple sequence-to-sequence learning framework,” in International
+conference on machine learning , pp. 23318–23340, PMLR, 2022.
+[24] M. Lewis, “Bart: Denoising sequence-to-sequence pre-training for natu-
+ral language generation, translation, and comprehension,” arXiv preprint
+arXiv:1910.13461, 2019.
+[25] M. E. Peters, W. Ammar, C. Bhagavatula, and R. Power, “Semi-
+supervised sequence tagging with bidirectional language models,” arXiv
+preprint arXiv:1705.00108, 2017.
+[26] X. Han, T. Gao, Y . Yao, D. Ye, Z. Liu, and M. Sun, “Opennre: An
+open and extensible toolkit for neural relation extraction,” arXiv preprint
+arXiv:1909.13078, 2019.
+[27] J. Li, D. Li, C. Xiong, and S. Hoi, “Blip: Bootstrapping language-image
+pre-training for unified vision-language understanding and generation,”
+in International conference on machine learning , pp. 12888–12900,
+PMLR, 2022.
+[28] J. Devlin, “Bert: Pre-training of deep bidirectional transformers for
+language understanding,” arXiv preprint arXiv:1810.04805 , 2018.
+[29] R. Girshick, “Fast r-cnn,” arXiv preprint arXiv:1504.08083 , 2015.
+[30] P. He, X. Liu, J. Gao, and W. Chen, “Deberta: Decoding-enhanced bert
+with disentangled attention,” arXiv preprint arXiv:2006.03654 , 2020.
+[31] Q. Ye, H. Xu, G. Xu, J. Ye, M. Yan, Y . Zhou, J. Wang, A. Hu, P. Shi,
+Y . Shi, et al. , “mplug-owl: Modularization empowers large language
+models with multimodality,” arXiv preprint arXiv:2304.14178 , 2023.
+[32] H. Touvron, T. Lavril, G. Izacard, X. Martinet, M.-A. Lachaux,
+T. Lacroix, B. Rozi `ere, N. Goyal, E. Hambro, F. Azhar, et al. ,
+“Llama: Open and efficient foundation language models,” arXiv preprint
+arXiv:2302.13971, 2023.
+[33] E. J. Hu, Y . Shen, P. Wallis, Z. Allen-Zhu, Y . Li, S. Wang, L. Wang,
+and W. Chen, “Lora: Low-rank adaptation of large language models,”
+arXiv preprint arXiv:2106.09685 , 2021.
+[34] H. Liu, C. Li, Y . Li, and Y . J. Lee, “Improved baselines with visual
+instruction tuning,” in Proceedings of the IEEE/CVF Conference on
+Computer Vision and Pattern Recognition , pp. 26296–26306, 2024.
+[35] N. Reimers, “Sentence-bert: Sentence embeddings using siamese bert-
+networks,” arXiv preprint arXiv:1908.10084 , 2019.
+
+[[page 11]]
+IEEE TRANSACTIONS ON [JOURNAL NAME], VOL. 00, NO. 0, [MONTH] 2020 11
+[36] H. W. Chung, L. Hou, S. Longpre, B. Zoph, Y . Tay, W. Fedus, Y . Li,
+X. Wang, M. Dehghani, S. Brahma, et al., “Scaling instruction-finetuned
+language models,” Journal of Machine Learning Research , vol. 25,
+no. 70, pp. 1–53, 2024.
+[37] H. Liu, C. Li, Q. Wu, and Y . J. Lee, “Visual instruction tuning,”
+Advances in neural information processing systems , vol. 36, 2024.
+[38] L. Zheng, W.-L. Chiang, Y . Sheng, S. Zhuang, Z. Wu, Y . Zhuang, Z. Lin,
+Z. Li, D. Li, E. Xing, et al. , “Judging llm-as-a-judge with mt-bench
+and chatbot arena,” Advances in Neural Information Processing Systems,
+vol. 36, pp. 46595–46623, 2023.
+[39] A. Radford, J. W. Kim, C. Hallacy, A. Ramesh, G. Goh, S. Agarwal,
+G. Sastry, A. Askell, P. Mishkin, J. Clark, et al., “Learning transferable
+visual models from natural language supervision,” in International
+conference on machine learning , pp. 8748–8763, PMLR, 2021.
+[40] X. Zhai, B. Mustafa, A. Kolesnikov, and L. Beyer, “Sigmoid loss
+for language image pre-training,” in Proceedings of the IEEE/CVF
+International Conference on Computer Vision , pp. 11975–11986, 2023.
+[41] L. Chen, J. Li, X. Dong, P. Zhang, C. He, J. Wang, F. Zhao, and D. Lin,
+“Sharegpt4v: Improving large multi-modal models with better captions,”
+in European Conference on Computer Vision , pp. 370–387, Springer,
+2025.
+[42] Y . Goyal, T. Khot, D. Summers-Stay, D. Batra, and D. Parikh, “Making
+the v in vqa matter: Elevating the role of image understanding in
+visual question answering,” in Proceedings of the IEEE conference on
+computer vision and pattern recognition , pp. 6904–6913, 2017.
+[43] W. Yuan, G. Neubig, and P. Liu, “Bartscore: Evaluating generated text
+as text generation,” Advances in Neural Information Processing Systems,
+vol. 34, pp. 27263–27277, 2021.
+[44] H. Bao, L. Dong, S. Piao, and F. Wei, “Beit: Bert pre-training of image
+transformers,” arXiv preprint arXiv:2106.08254 , 2021.
+[45] X. Dong, J. Bao, T. Zhang, D. Chen, S. Gu, W. Zhang, L. Yuan, D. Chen,
+F. Wen, and N. Yu, “Clip itself is a strong fine-tuner: Achieving 85.7%
+and 88.0% top-1 accuracy with vit-b and vit-l on imagenet,” arXiv
+preprint arXiv:2212.06138, 2022.
+Qi Zhi Lim received his Bachelor’s degree in Com-
+puter Science (Hons.) Artificial Intelligence from
+Multimedia University, Malaysia, in 2023. He is cur-
+rently pursuing a Ph.D. degree in Information Tech-
+nology, focusing on multimodal multi-hop question
+answering. His research interests include multimodal
+data processing, feature extraction and integration,
+information retrieval, and question answering.
+Chin Poo Lee (Senior Member, IEEE) received the
+M.Sc. and Ph.D. degrees in Information Technology,
+specializing in abnormal behavior detection and gait
+recognition. She is currently an Assistant Professor
+with the School of Computer Science, University of
+Nottingham Ningbo China. Her research interests in-
+clude computer vision, natural language processing,
+and deep learning.
+Kian Ming Lim (Senior Member, IEEE) received
+the B.IT. (Hons.) degree in Information Systems
+Engineering, the Master of Engineering Science
+(M.Eng.Sc.) degree, and the Ph.D. degree in In-
+formation Technology from Multimedia University,
+Malaysia. He is currently an Associate Professor
+with the School of Computer Science, University
+of Nottingham Ningbo China. His research interests
+include machine learning, deep learning, computer
+vision, and pattern recognition.
+Kalaiarasi Sonai Muthu Anbananthen received
+the Ph.D. degree in Artificial Intelligence. She is
+currently a Professor with the Faculty of Informa-
+tion Science and Technology, Multimedia University,
+Malaysia. She has served as the Program Coor-
+dinator for the Master of Information Technology
+(Information Systems) and as the Co-coordinator
+for the Business Intelligence and Analytics (BIA)
+program. She is a reviewer for various Scopus-
+and SCI-indexed technical journals. She has secured
+multiple national and international research grants
+as Principal Investigator and has published more than 120 journal articles,
+conference papers, and book chapters. Her current research interests include
+data mining, sentiment analysis, artificial intelligence, machine learning, deep
+learning, and text analytics.

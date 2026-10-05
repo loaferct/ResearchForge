@@ -1,0 +1,32 @@
+{
+  "paper_id": "doi:10.5753/jbcs.2025.5801",
+  "relevance_tier": "high",
+  "problem": "Despite advancements in Multi-hop Question Answering (MHQA) for English, resources for evaluating Large Language Models (LLMs) in Portuguese remain scarce.",
+  "method": "Introduces a publicly available Portuguese translation of the HotpotQA dataset. Evaluates several variants of Llama multilingual LLM across original and translated datasets, analyzing performance variations by language and impact of fine-tuning.",
+  "key_assumptions": [
+    "Translating HotpotQA to Portuguese provides valuable benchmark for multilingual MHQA research",
+    "Multilingual LLMs show language-dependent performance variations",
+    "Fine-tuning can improve MHQA performance in low-resource languages like Portuguese"
+  ],
+  "main_contribution": "Provides Portuguese translation of HotpotQA dataset and demonstrates that multilingual models perform better in English than Portuguese (gap narrows with model size), showing fine-tuning improves Portuguese MHQA performance.",
+  "datasets": [
+    "HotpotQA (English)",
+    "Pt-HotpotQA (Portuguese translation)"
+  ],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [],
+  "results": "Findings show multilingual models consistently perform better in English than Portuguese (gap narrows with increased model size), and fine-tuning improves MHQA performance in Portuguese.",
+  "limitations": [],
+  "future_work": [],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.3,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.9,
+    "conceptual_difference": "Pt-HotpotQA focuses on creating and evaluating a Portuguese translation of HotpotQA for multilingual LLM assessment, while our idea focuses on enriching triples with local context subgraphs and adaptive repair loops for KGQA training. Both involve multi-hop QA evaluation but Pt-HotpotQA addresses language resource gap while our idea targets training methodology improvement.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:49:43.972377Z"
+}

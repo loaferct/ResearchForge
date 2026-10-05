@@ -1,0 +1,34 @@
+{
+  "id": "arxiv:2608.13588",
+  "title": "IterCOMP: Reasoning-aware Adaptive Prompt Compression for Multi-hop Question Answering",
+  "authors": [
+    "JungMin Yun",
+    "YoungBin Kim"
+  ],
+  "year": 2026,
+  "published": "2026-07-12",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2608.13588",
+  "pdf_url": "https://arxiv.org/pdf/2608.13588v1",
+  "abstract": "Multi-hop question answering requires complex reasoning across multiple evidence segments, which often overwhelms retrieval-augmented generation systems with lengthy and noisy contexts, thereby undermining both efficiency and accuracy. While existing prompt compression methods attempt to address this issue, they are typically designed for single-turn queries and fail to capture interdependent reasoning steps. We propose IterCOMP, a unified, training-free prompt compression framework that incorporates multi-hop reasoning within an iterative compression loop. IterCOMP decomposes documents into evidence segments, evaluates question answerability, and generates targeted follow-up questions to iteratively integrate essential evidence, producing a compact, reasoning-oriented prompt. Experiments on MusiQue, 2WikiMultiHopQA, and HotpotQA demonstrate that IterCOMP achieves substantial improvements in Exact Match and F1 scores while reducing the token budget, outperforming existing baselines and exhibiting robustness as reasoning complexity increases.",
+  "doi": "10.18653/v1/2026.acl-long.1559",
+  "arxiv_id": "2608.13588",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T07:31:54.310995Z",
+  "relevance": 0.8,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "\"Exact Match\" multi-hop question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

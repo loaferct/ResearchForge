@@ -1,0 +1,35 @@
+{
+  "id": "G001",
+  "gap": "No study isolates whether the accuracy gain from context-augmented KG supervision comes from the coherence of the same-passage supporting triples or merely from the additional context tokens those triples introduce.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 14 (§3.5)",
+      "quote": "all four models are initialized from the same base model and trained using the same fine-tuning configuration, LoRA setup, optimizer, sequence length, batch size, number of epochs, and learning-rate schedule.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2609.10237",
+      "experiment_run_id": null,
+      "location": "p. 1 (abstract)",
+      "quote": "Holding the number of triples fixed and replacing every triple that is not on the chain with material from an unrelated entity changes answer accuracy by +0.003 F1, while removing the chain costs most of what the graph was worth.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2609.10237",
+    "arxiv:2202.13296"
+  ],
+  "why_unaddressed": "The one study that runs the training-time contrast (arxiv:2609.12230) matches the number of QA items, every hyperparameter, the optimizer and the schedule, but each CG item contains additional supporting triples, so the context-augmented arm consumes more context tokens per example; no random-distractor or unrelated-entity control arm was run, and its stated limitations do not mention this confound. The one study that did run a matched context/distractor swap (arxiv:2609.10237) held the triple count fixed at inference time over 125 questions with a frozen LLM and never fine-tuned, so its null cannot settle the training-time question.",
+  "research_question": "At a fixed context-token budget and a fixed number of optimization steps, does replacing same-passage supporting triples with random or unrelated-entity triples reduce the multi-hop accuracy gain from fine-tuning?",
+  "potential_experiment": "Run a three-arm fine-tuning comparison at a strictly matched context-token budget and identical optimizer steps: (i) target triple/path only, padded to the budget; (ii) target plus same-passage supporting triples; (iii) target plus an equal number of randomly sampled or unrelated-entity triples. Add a triple-order-shuffled arm to neutralise serialization. Report EM/F1 by hop depth with confidence intervals, using the same base model and hyperparameters across arms.",
+  "confidence": "high",
+  "verification_required": "The appendix of arxiv:2609.12230 was not read, so it is not yet confirmed that no token-matched or random-distractor ablation is reported there; a full-appendices read is required. Re-run a literature search when the paper budget resets, targeting token-matched context ablations and distractor-context controls in knowledge-grounded fine-tuning.",
+  "recorded_at": "2026-09-30T05:26:56.804130Z"
+}

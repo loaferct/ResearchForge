@@ -1,0 +1,55 @@
+{
+  "id": "G002",
+  "gap": "No controlled comparison varies both the base retriever and the form of the temporal signal: each published temporal-retrieval system hard-codes one temporal mechanism inside one pipeline (exponential decay inside a fixed three-signal hybrid; learnable decay inside graph-based retrieval; a hard as-of boundary inside a multimodal verifier), and the temporal pathologies are asserted to be architecture-agnostic without a transfer measurement. It is therefore unknown whether temporal re-ranking gains persist across BM25, dense and hybrid retrievers, and whether graded recency decay or valid-time membership is the appropriate signal for amended normative text.",
+  "evidence": [
+    {
+      "paper_id": "doi:10.2139/ssrn.7174868",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "We propose a three-signal hybrid framework integrating BM25 lexical matching, dense semantic embeddings, and exponential temporal decay, which achieves 99.8% temporal accuracy and 50.8% entity precision across all three languages",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.1109/iri69576.2026.00090",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Layer 2 integrates learnable exponential decay functions into graph-based retrieval",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2606.09724",
+      "experiment_run_id": null,
+      "location": "p. 8",
+      "quote": "The pathologies are architecture-agnostic.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "doi:10.2139/ssrn.7087840",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "BM25 outperforms hybrid on multihop queries (ROUGE-L 0.304 vs. 0.239)",
+      "support": "indirect",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "related_paper_ids": [
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.1109/iri69576.2026.00090",
+    "doi:10.3390/sym18091498",
+    "arxiv:2606.09724",
+    "doi:10.2139/ssrn.7087840"
+  ],
+  "why_unaddressed": "The three closest systems each integrate temporal handling into one architecture, and the legal framework paper that calls the pathologies architecture-agnostic reports no empirical comparison. The only retrieved regulatory comparison of sparse/dense/hybrid shows hybrid is not uniformly best (BM25 wins on multihop), which indicates base-retriever choice matters but was not tested with a temporal component.",
+  "research_question": "How do the gains from temporal re-ranking over amended normative text vary across base retrievers (BM25, dense, hybrid) and temporal signal forms (none, recency decay, valid-time membership), and does any form dominate consistently?",
+  "potential_experiment": "A factorial evaluation on a single held-out query set: base retriever in {BM25, dense, hybrid RRF} x temporal signal in {none, recency decay, valid-time gating, valid-time gating + semantic re-rank}, with matched retrieval depth and reader, reporting temporal contamination, nDCG/recall and answer accuracy per cell, plus a recency-only baseline and a hard as-of baseline.",
+  "confidence": "medium",
+  "verification_required": "Confirm by citation/full-text inspection that none of the closest systems reports a cross-retriever transfer study (the two closest were abstract-only here), and re-check recent literature once the search budget allows.",
+  "recorded_at": "2026-09-30T04:34:08.784128Z"
+}

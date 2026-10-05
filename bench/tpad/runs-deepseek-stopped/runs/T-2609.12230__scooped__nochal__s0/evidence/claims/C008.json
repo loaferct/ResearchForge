@@ -1,0 +1,52 @@
+{
+  "id": "C008",
+  "statement": "The main technical risk is that the central premise is false in the closest tested regime: off-chain context triples contributed +0.003 F1 at inference, extra triples are framed as noise by subgraph retrieval work, and the two auxiliary components (one-hop failure repair, low-hop RL) are already addressed by intermediate-supervision and reward-shaping mechanisms. If fine-tuning does not change this, the pipeline's contribution reduces to re-deriving known results with more compute.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.10237",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "arxiv:2202.13296",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "arxiv:2101.03737",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "doi:10.18653/v1/d18-1362",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "technical-risk",
+    "premise",
+    "repair-loop",
+    "reinforcement-learning"
+  ],
+  "recorded_at": "2026-09-30T05:14:08.412334Z"
+}

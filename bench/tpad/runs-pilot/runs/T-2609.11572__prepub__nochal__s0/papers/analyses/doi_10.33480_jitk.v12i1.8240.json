@@ -1,0 +1,50 @@
+{
+  "paper_id": "doi:10.33480/jitk.v12i1.8240",
+  "relevance_tier": "low",
+  "problem": "The paper addresses popularity bias in recommendation systems, where user interactions concentrate on popular items, leaving long-tail items undiscovered. It proposes to mitigate this bias using temporal decay weighting combined with hybrid ratings and Roulette Wheel Selection to improve long-tail discoverability.",
+  "method": "The authors integrate Roulette Wheel Selection with hybrid rating (combining multiple signals) and temporal decay weighting to create a stochastic framework for recommendation. They test on the Goodreads Poetry dataset using four embedding models (SBERT-Tuned, SBERT, FastText, Word2Vec) and compare stochastic (S) approach versus deterministic Top-N selection.",
+  "key_assumptions": [
+    "Temporal decay weighting can reduce popularity bias by giving less weight to older interactions.",
+    "Hybrid rating combines multiple signals to improve relevance estimation.",
+    "Roulette Wheel Selection provides stochasticity that enhances long-tail exposure without drastically hurting relevance."
+  ],
+  "main_contribution": "A novel stochastic framework that integrates Roulette Wheel Selection with hybrid rating and temporal decay weighting to improve long-tail discoverability in recommendation systems. Empirical validation on Goodreads Poetry dataset shows up to 461.71% increase in Catalog Coverage with minimal Recall reduction, decreased Gini-index, and improved Novelty scores, demonstrating robustness across embedding models.",
+  "datasets": [
+    "Goodreads Poetry dataset"
+  ],
+  "benchmarks": [
+    "Deterministic Top-N selection (baseline)"
+  ],
+  "baselines": [
+    "Deterministic (D) Top-N selection"
+  ],
+  "metrics": [
+    "Catalog Coverage",
+    "Recall",
+    "Gini-index",
+    "Novelty scores"
+  ],
+  "results": "\"SBERT-Tuned model achieved 461.71% increase in Catalog Coverage with 2.15% Recall reduction. FastText: 381.72% coverage increase. Word2Vec: 225.15% coverage increase. Gini-index decreased consistently. Novelty scores improved by +16% to +29%.\"",
+  "limitations": [
+    "Focused on recommendation domain, not question answering.",
+    "Evaluated only on a single dataset (Goodreads Poetry).",
+    "Does not address temporal evolution of document content or versioning.",
+    "Temporal decay weighting applied to user interactions, not document versions."
+  ],
+  "future_work": [
+    "Apply framework to other recommendation domains (e.g., news, movies).",
+    "Investigate hybrid temporal decay functions.",
+    "Explore integration with deep learning models for end-to-end training.",
+    "Evaluate on cold-start scenarios and temporal shifts in item popularity."
+  ],
+  "code_availability": "No code availability stated in the abstract.",
+  "relation_to_idea": {
+    "problem_overlap": 0.2,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.1,
+    "conceptual_difference": "The paper uses temporal decay weighting to mitigate popularity bias in recommendation systems, while our work proposes temporal relevance weighting to improve retrieval for time-specific open-domain question answering over evolving regulatory texts.",
+    "basis": "Heuristic: both use temporal weighting but different tasks (recommendation vs QA) and different temporal signals (user interaction age vs document version timestamp)."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T10:41:04.466553Z"
+}

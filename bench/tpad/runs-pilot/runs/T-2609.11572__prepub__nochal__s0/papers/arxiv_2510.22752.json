@@ -1,0 +1,39 @@
+{
+  "id": "arxiv:2510.22752",
+  "title": "Beyond Semantics: How Temporal Biases Shape Retrieval in Transformer and State-Space Models",
+  "authors": [
+    "Anooshka Bajaj",
+    "Deven Mahesh Mistry",
+    "Sahaj Singh Maini",
+    "Yash Aggarwal",
+    "Zoran Tiganj"
+  ],
+  "year": 2025,
+  "published": "2025-10-26",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2510.22752",
+  "pdf_url": "https://arxiv.org/pdf/2510.22752v2",
+  "abstract": "In-context learning is governed by both temporal and semantic relationships, shaping how Large Language Models (LLMs) retrieve contextual information. Analogous to human episodic memory, where the retrieval of specific events is enabled by separating events that happened at different times, this work probes the ability of various pretrained LLMs, including transformer and state-space models, to differentiate and retrieve temporally separated events. Specifically, we prompted models with sequences containing multiple presentations of the same token, which reappears at the sequence end. By fixing the positions of these repeated tokens and permuting all others, we removed semantic confounds and isolated temporal effects on next-token prediction. Across diverse sequences, models consistently placed the highest probabilities on tokens following a repeated token, but with a notable bias for those nearest the beginning or end of the input. An ablation experiment linked this phenomenon in transformers to induction heads. Extending the analysis to unique semantic contexts with partial overlap further demonstrated that memories embedded in the middle of a prompt are retrieved less reliably. Despite architectural differences, state-space and transformer models showed comparable temporal biases. Our findings deepen the understanding of temporal biases in in-context learning and offer an illustration of how these biases can enable temporal separation and episodic retrieval.",
+  "doi": null,
+  "arxiv_id": "2510.22752",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T10:48:57.864252Z",
+  "relevance": 0.2273,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal semantic retrieval"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": [
+    "abstract (from arxiv) never mentions 'Beyond Semantics'; it may belong to another work"
+  ]
+}

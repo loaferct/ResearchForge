@@ -1,0 +1,32 @@
+{
+  "paper_id": "doi:10.31803/tg-20230715000112",
+  "relevance_tier": "medium",
+  "problem": "Identifying effective information retrieval methods for document retrieval using latent semantic analysis (LSA) and temporal graph approaches.",
+  "method": "Uses LSA for dimensionality reduction and constructs a temporal graph based on citation and author occurrence to model document relevance over time.",
+  "key_assumptions": [
+    "Temporal relationships captured by citation/author occurrence reflect document relevance.",
+    "LSA effectively captures semantic similarity for retrieval."
+  ],
+  "main_contribution": "Demonstrates that LSA-based retrieval enhanced with temporal graph outperforms baseline keyword matching in expert finding tasks.",
+  "datasets": [],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [
+    "precision@5 (p@5)",
+    "mean average precision (MAP)",
+    "mean reciprocal rank (MRR)"
+  ],
+  "results": "[\"Achieves p@5 = 0.895, MAP = 0.839, MRR = 0.909, outperforming the baseline model.\"]",
+  "limitations": [],
+  "future_work": [],
+  "code_availability": "[]",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.1,
+    "conceptual_difference": "The paper uses temporal graph based on citation/author for expert finding; our idea focuses on versioned regulatory documents and uses temporal proximity between query date and version timestamp to adjust retrieval rankings.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T10:24:29.564990Z"
+}

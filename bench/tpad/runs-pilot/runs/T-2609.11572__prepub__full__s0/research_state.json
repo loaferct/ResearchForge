@@ -1,0 +1,975 @@
+{
+  "project": "T-2609.11572__prepub__full__s0",
+  "idea": "The reliability of open‑domain question answering drops sharply when source texts are continuously amended, as in statutes, policies, or regulations. In such settings each new amendment supersedes earlier clauses while retaining much of the original wording, creating a dense semantic overlap across successive versions. Existing time‑aware retrieval techniques treat each version as an isolated snapshot and therefore cannot distinguish which revision best matches a time‑specific query. We propose to develop a retrieval‑agnostic framework that enriches any standard document retriever with a temporal relevance component: the rank of a candidate passage will be adjusted according to the elapsed time between the query’s target date and the passage’s version timestamp, while still leveraging its semantic similarity to the query. To evaluate the approach, we will construct a benchmark comprising regulatory documents with overlapping revisions and time‑stamped queries, measuring how well the combined temporal‑semantic ranking improves answer accuracy.",
+  "created_at": "2026-09-30T10:09:40.248670Z",
+  "updated_at": "2026-09-30T11:20:47.638051Z",
+  "status": "incomplete",
+  "dsh_session_id": "session-c28cab5b-7082-42e2-a04d-e7794bde0b4e",
+  "provider": "ollama-cloud",
+  "model": "nemotron-3-super",
+  "phases": [
+    {
+      "name": "formalize",
+      "status": "complete",
+      "attempts": 2,
+      "started_at": "2026-09-30T10:09:40.251103Z",
+      "finished_at": "2026-09-30T10:14:49.379289Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 17,
+      "failed_tool_calls": 1
+    },
+    {
+      "name": "literature",
+      "status": "complete",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": "2026-09-30T10:14:49.381144Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "analysis",
+      "status": "complete",
+      "attempts": 5,
+      "started_at": "2026-09-30T10:16:49.579746Z",
+      "finished_at": "2026-09-30T10:25:06.480091Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 83,
+      "failed_tool_calls": 5
+    },
+    {
+      "name": "landscape",
+      "status": "complete",
+      "attempts": 1,
+      "started_at": "2026-09-30T10:25:06.498777Z",
+      "finished_at": "2026-09-30T10:26:57.014863Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 2,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "critique",
+      "status": "complete",
+      "attempts": 5,
+      "started_at": "2026-09-30T10:26:57.033462Z",
+      "finished_at": "2026-09-30T10:32:40.015667Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 104,
+      "failed_tool_calls": 20
+    },
+    {
+      "name": "gaps",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least one evidence-linked gap (record_gap), or record_no_gap if the evidence supports none"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "modifications",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least 2 modifications (have 0); call record_modification"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "experiments",
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "finished_at": null,
+      "missing": [
+        "at least one experiment plan (call record_experiment_plan)"
+      ],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    },
+    {
+      "name": "report",
+      "status": "complete",
+      "attempts": 0,
+      "started_at": "2026-09-30T11:20:47.605955Z",
+      "finished_at": "2026-09-30T11:20:47.638049Z",
+      "missing": [],
+      "notes": [],
+      "tool_calls": 0,
+      "failed_tool_calls": 0
+    }
+  ],
+  "error": null,
+  "loop_phase": "FINALIZE",
+  "current_action": "FINALIZE",
+  "current_focus": null,
+  "budget": {
+    "iterations": 13,
+    "tool_calls": 206,
+    "failed_tool_calls": 26,
+    "runtime_failures": 0,
+    "seconds": 4266.280000000001,
+    "tokens": 25591247
+  },
+  "decisions": [
+    {
+      "iteration": 0,
+      "phase": "INTAKE",
+      "action": "INTAKE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Research idea received.",
+      "evidence": "idea: The reliability of open‑domain question answering drops sharply when source texts are continuously amended, as in statutes, policies, or regulations. In such settings each new amendment supersedes ear",
+      "expected_outcome": "",
+      "outcome": "idea stored in the workspace",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:09:40.249278Z"
+    },
+    {
+      "iteration": 1,
+      "phase": "FORMALIZE",
+      "action": "FORMALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been formalized into a testable research question.",
+      "evidence": "0 papers from 0 searches, 0 analyzed, 0 claims (0 verified), 0 open uncertainties",
+      "expected_outcome": "Problem, hypothesis, variables, assumptions and search queries recorded.",
+      "outcome": "+85 papers; +4 searches; +6 uncertainties; idea formalized",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_idea_analysis",
+        "record_uncertainter__record_uncertainty",
+        "record_uncertainty",
+        "search_papers"
+      ],
+      "state_changes": {
+        "papers": 85,
+        "relevant_papers": 66,
+        "searches": 4,
+        "uncertainties_created": 6,
+        "idea_formalized": 1
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:09:40.250715Z"
+    },
+    {
+      "iteration": 2,
+      "phase": "PLAN",
+      "action": "PLAN",
+      "focus": null,
+      "focus_id": null,
+      "reason": "No investigation plan exists yet, so it is unclear what must be determined.",
+      "evidence": "85 papers from 4 searches, 0 analyzed, 0 claims (0 verified), 6 open uncertainties",
+      "expected_outcome": "Questions to answer, search topics and initial uncertainties recorded.",
+      "outcome": "+4 uncertainties; investigation plan recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_investigation_plan",
+        "record_uncertainty"
+      ],
+      "state_changes": {
+        "uncertainties_created": 4,
+        "plan_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:14:49.389850Z"
+    },
+    {
+      "iteration": 3,
+      "phase": "INVESTIGATE",
+      "action": "READ",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Retrieved papers have not been analyzed enough to judge overlap.",
+      "evidence": "85 papers from 4 searches, 0 analyzed, 0 claims (0 verified), 10 open uncertainties",
+      "expected_outcome": "Structured analyses of the most relevant papers.",
+      "outcome": "+6 analyses",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "list_papers",
+        "record_paper_analysis",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "analyses": 6
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:16:49.572310Z"
+    },
+    {
+      "iteration": 4,
+      "phase": "SYNTHESIZE",
+      "action": "SYNTHESIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Analyses exist but the field has not been mapped.",
+      "evidence": "85 papers from 4 searches, 6 analyzed, 0 claims (0 verified), 10 open uncertainties",
+      "expected_outcome": "A landscape placing the idea among approaches.",
+      "outcome": "landscape recorded",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_records",
+        "record_landscape"
+      ],
+      "state_changes": {
+        "landscape_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:25:06.491180Z"
+    },
+    {
+      "iteration": 5,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "The idea has not been challenged yet.",
+      "evidence": "85 papers from 4 searches, 6 analyzed, 0 claims (0 verified), 10 open uncertainties",
+      "expected_outcome": "Strongest objections recorded as critique and uncertainties.",
+      "outcome": "+11 claims; +5 verified claims; +6 uncertainties; +1 resolved uncertainties; critique recorded; uncertainties updated: U001, U002, U003, U004",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "record_claim",
+        "record_critique",
+        "record_uncertainty",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 11,
+        "verified_claims": 5,
+        "uncertainties_created": 6,
+        "uncertainties_resolved": 1,
+        "critique_recorded": 1
+      },
+      "info_gain": 8.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:26:57.025944Z"
+    },
+    {
+      "iteration": 6,
+      "phase": "CHALLENGE",
+      "action": "CHALLENGE",
+      "focus": "U017: Does published work contradict the current assessment: Our idea specifically targets versioned regulatory documents for open-domain question answering (not general IR), focuses on the problem where amendments supersede earlier clauses creating semantic overlap, proposes a retrieval-agnostic temporal component designed to work with any base retriever, and aims to construct a domain-specific benchmark with regulatory texts and time-stamped queries.?",
+      "focus_id": "U017",
+      "reason": "The critique's assessment has not been challenged yet (U017); look for published work that contradicts it before investing in anything that builds on it.",
+      "evidence": "85 papers from 4 searches, 6 analyzed, 11 claims (5 verified), 16 open uncertainties",
+      "expected_outcome": "Evidence that confirms, weakens or refutes the assessment (U017).",
+      "outcome": "+16 papers; +1 searches; +2 claims; +2 verified claims; +1 contradicted conclusions; +1 resolved uncertainties; uncertainties updated: U017",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "get_research_state",
+        "record_challenge_result",
+        "record_claim",
+        "search_paper_text",
+        "search_papers",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "papers": 16,
+        "relevant_papers": 5,
+        "searches": 1,
+        "claims": 2,
+        "verified_claims": 2,
+        "contradicted": 1,
+        "uncertainties_resolved": 1
+      },
+      "info_gain": 8.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:32:40.028406Z"
+    },
+    {
+      "iteration": 7,
+      "phase": "CRITIQUE",
+      "action": "CRITIQUE",
+      "focus": "Does published work contradict the current assessment: Our idea specifically targets versioned regulatory documents for open-domain question answering (not general IR), focuses on the problem where amendments supersede earlier clauses creating semantic overlap, proposes a retrieval-agnostic temporal",
+      "focus_id": null,
+      "reason": "The current critique predates contradicting evidence (U017 weakened); the assessment must be revised before continuing.",
+      "evidence": "101 papers from 5 searches, 6 analyzed, 13 claims (7 verified), 16 open uncertainties",
+      "expected_outcome": "A critique that accounts for the contradicting work.",
+      "outcome": "critique recorded; uncertainties updated: U012",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [
+        "get_records",
+        "record_critique",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "critique_recorded": 1
+      },
+      "info_gain": 1.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:40:08.490704Z"
+    },
+    {
+      "iteration": 8,
+      "phase": "UNCERTAINTY",
+      "action": "COMPARE",
+      "focus": "U007: Does a retrieval-agnostic framework that combines temporal relevance with semantic similarity for versioned documents already exist under different terminology (e.g., temporal relevance models, time-aware retrievers)?",
+      "focus_id": "U007",
+      "reason": "Most valuable next step for high-importance novelty question U007: score 1.2 = importance 3 x expected gain 0.6 x relevance 1 x evidence deficiency 1 / cost 1.5. Next best: COMPARE on U008 (1.2).",
+      "evidence": "101 papers from 5 searches, 6 analyzed, 13 claims (7 verified), 16 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U007.",
+      "outcome": "+4 claims; +3 verified claims; +2 uncertainties; +1 resolved uncertainties; uncertainties updated: U007",
+      "candidates": [
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U007",
+          "target": "Does a retrieval-agnostic framework that combines temporal relevance with semantic similarity for versioned documents already exist under different terminology (e.g., temporal relevance models, time-aware retrievers)?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.2
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U008",
+          "target": "Which existing time-aware retrieval techniques for versioned documents (e.g., time-travel phrase queries, temporal indexing) are the strongest baselines, and how does our proposed temporal-semantic combination differ in mechanism and assumptions?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.2
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U007",
+          "target": "Does a retrieval-agnostic framework that combines temporal relevance with semantic similarity for versioned documents already exist under different terminology (e.g., temporal relevance models, time-aware retrievers)?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.125
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U008",
+          "target": "Which existing time-aware retrieval techniques for versioned documents (e.g., time-travel phrase queries, temporal indexing) are the strongest baselines, and how does our proposed temporal-semantic combination differ in mechanism and assumptions?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.125
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U014",
+          "target": "How can we design experiments to isolate the effect of temporal relevance modeling from confounding factors such as semantic matching improvements, query formulation changes, or retrieval strategy alterations when evaluating our temporal-semantic framework for regulatory QA?",
+          "importance": 3.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.4",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.08
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U006",
+          "target": "How to handle conflicting information across versions where an amendment supersedes a clause, especially when the temporal component may still retrieve outdated versions?",
+          "importance": 3.0,
+          "expected_gain": 0.6,
+          "gain_basis": "prior 0.6",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.08
+        }
+      ],
+      "expected_gain": 0.6,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "get_paper",
+        "record_claim",
+        "record_uncertainty",
+        "search_paper_text",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 4,
+        "verified_claims": 3,
+        "uncertainties_created": 2,
+        "uncertainties_resolved": 1
+      },
+      "info_gain": 5.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:41:08.164619Z"
+    },
+    {
+      "iteration": 9,
+      "phase": "UNCERTAINTY",
+      "action": "COMPARE",
+      "focus": "U008: Which existing time-aware retrieval techniques for versioned documents (e.g., time-travel phrase queries, temporal indexing) are the strongest baselines, and how does our proposed temporal-semantic combination differ in mechanism and assumptions?",
+      "focus_id": "U008",
+      "reason": "Most valuable next step for high-importance overlap question U008: score 1.6 = importance 3 x expected gain 0.8 x relevance 1 x evidence deficiency 1 / cost 1.5. Next best: COMPARE on U020 (1.6).",
+      "evidence": "101 papers from 5 searches, 6 analyzed, 17 claims (10 verified), 17 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U008.",
+      "outcome": "+6 claims; uncertainties updated: U008",
+      "candidates": [
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U008",
+          "target": "Which existing time-aware retrieval techniques for versioned documents (e.g., time-travel phrase queries, temporal indexing) are the strongest baselines, and how does our proposed temporal-semantic combination differ in mechanism and assumptions?",
+          "importance": 3.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.6
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U020",
+          "target": "What are the most appropriate baseline methods for evaluating a temporal-semantic retrieval framework for open-domain QA over versioned regulatory documents, considering both general temporal IR approaches (like Re3) and domain-specific regulatory QA approaches?",
+          "importance": 3.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.6
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U006",
+          "target": "How to handle conflicting information across versions where an amendment supersedes a clause, especially when the temporal component may still retrieve outdated versions?",
+          "importance": 3.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.44
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U009",
+          "target": "What is the most effective way to combine temporal relevance and semantic similarity scores (e.g., learned weighting, gating, product) for improving retrieval accuracy in versioned document QA?",
+          "importance": 3.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.44
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U014",
+          "target": "How can we design experiments to isolate the effect of temporal relevance modeling from confounding factors such as semantic matching improvements, query formulation changes, or retrieval strategy alterations when evaluating our temporal-semantic framework for regulatory QA?",
+          "importance": 3.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.44
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U019",
+          "target": "Does Re3's query-aware gating mechanism effectively handle the specific challenge of versioned regulatory documents where amendments supersede earlier clauses (creating semantic overlap), or is a specialized temporal relevance function needed for this use case?",
+          "importance": 3.0,
+          "expected_gain": 0.8,
+          "gain_basis": "prior 0.6, observed mean over 1 earlier COMPARE steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.44
+        }
+      ],
+      "expected_gain": 0.8,
+      "estimated_cost": 1.5,
+      "tools_used": [
+        "get_paper",
+        "get_records",
+        "record_claim",
+        "search_paper_text",
+        "search_papers",
+        "update_uncertainty"
+      ],
+      "state_changes": {
+        "claims": 6
+      },
+      "info_gain": 0.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:48:30.673949Z"
+    },
+    {
+      "iteration": 10,
+      "phase": "UNCERTAINTY",
+      "action": "READ",
+      "focus": "U020: What are the most appropriate baseline methods for evaluating a temporal-semantic retrieval framework for open-domain QA over versioned regulatory documents, considering both general temporal IR approaches (like Re3) and domain-specific regulatory QA approaches?",
+      "focus_id": "U020",
+      "reason": "Most valuable next step for high-importance overlap question U020: score 1.125 = importance 3 x expected gain 0.75 x relevance 1 x evidence deficiency 1 / cost 2. Next best: PLAN_EXPERIMENT on U014 (1.08).",
+      "evidence": "101 papers from 5 searches, 6 analyzed, 23 claims (10 verified), 17 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U020.",
+      "outcome": "+6 analyses",
+      "candidates": [
+        {
+          "action": "READ",
+          "uncertainty_id": "U020",
+          "target": "What are the most appropriate baseline methods for evaluating a temporal-semantic retrieval framework for open-domain QA over versioned regulatory documents, considering both general temporal IR approaches (like Re3) and domain-specific regulatory QA approaches?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.125
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U014",
+          "target": "How can we design experiments to isolate the effect of temporal relevance modeling from confounding factors such as semantic matching improvements, query formulation changes, or retrieval strategy alterations when evaluating our temporal-semantic framework for regulatory QA?",
+          "importance": 3.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.4",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.08
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U020",
+          "target": "What are the most appropriate baseline methods for evaluating a temporal-semantic retrieval framework for open-domain QA over versioned regulatory documents, considering both general temporal IR approaches (like Re3) and domain-specific regulatory QA approaches?",
+          "importance": 3.0,
+          "expected_gain": 0.533,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.066
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U006",
+          "target": "How to handle conflicting information across versions where an amendment supersedes a clause, especially when the temporal component may still retrieve outdated versions?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.012
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U009",
+          "target": "What is the most effective way to combine temporal relevance and semantic similarity scores (e.g., learned weighting, gating, product) for improving retrieval accuracy in versioned document QA?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.012
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U013",
+          "target": "To what extent do versioned regulatory documents (statutes, codes, regulations) provide reliable, extractable timestamps for each version that can be used for temporal relevance modeling, and how do we handle cases where timestamps are missing, ambiguous, or follow complex versioning schemes?",
+          "importance": 3.0,
+          "expected_gain": 0.75,
+          "gain_basis": "prior 0.5, observed mean over 1 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.012
+        }
+      ],
+      "expected_gain": 0.75,
+      "estimated_cost": 2.0,
+      "tools_used": [
+        "fetch_paper_text",
+        "get_paper",
+        "list_papers",
+        "record_paper_analysis",
+        "search_paper_text"
+      ],
+      "state_changes": {
+        "analyses": 6
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:50:59.285459Z"
+    },
+    {
+      "iteration": 11,
+      "phase": "UNCERTAINTY",
+      "action": "READ",
+      "focus": "U006: How to handle conflicting information across versions where an amendment supersedes a clause, especially when the temporal component may still retrieve outdated versions?",
+      "focus_id": "U006",
+      "reason": "Most valuable next step for high-importance confounder question U006: score 1.125 = importance 3 x expected gain 0.833 x relevance 0.9 x evidence deficiency 1 / cost 2. Next best: READ on U009 (1.125).",
+      "evidence": "101 papers from 5 searches, 12 analyzed, 23 claims (10 verified), 17 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U006.",
+      "outcome": "+6 analyses",
+      "candidates": [
+        {
+          "action": "READ",
+          "uncertainty_id": "U006",
+          "target": "How to handle conflicting information across versions where an amendment supersedes a clause, especially when the temporal component may still retrieve outdated versions?",
+          "importance": 3.0,
+          "expected_gain": 0.833,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.125
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U009",
+          "target": "What is the most effective way to combine temporal relevance and semantic similarity scores (e.g., learned weighting, gating, product) for improving retrieval accuracy in versioned document QA?",
+          "importance": 3.0,
+          "expected_gain": 0.833,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.125
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U013",
+          "target": "To what extent do versioned regulatory documents (statutes, codes, regulations) provide reliable, extractable timestamps for each version that can be used for temporal relevance modeling, and how do we handle cases where timestamps are missing, ambiguous, or follow complex versioning schemes?",
+          "importance": 3.0,
+          "expected_gain": 0.833,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.125
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U014",
+          "target": "How can we design experiments to isolate the effect of temporal relevance modeling from confounding factors such as semantic matching improvements, query formulation changes, or retrieval strategy alterations when evaluating our temporal-semantic framework for regulatory QA?",
+          "importance": 3.0,
+          "expected_gain": 0.833,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.125
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U019",
+          "target": "Does Re3's query-aware gating mechanism effectively handle the specific challenge of versioned regulatory documents where amendments supersede earlier clauses (creating semantic overlap), or is a specialized temporal relevance function needed for this use case?",
+          "importance": 3.0,
+          "expected_gain": 0.833,
+          "gain_basis": "prior 0.5, observed mean over 2 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.125
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U014",
+          "target": "How can we design experiments to isolate the effect of temporal relevance modeling from confounding factors such as semantic matching improvements, query formulation changes, or retrieval strategy alterations when evaluating our temporal-semantic framework for regulatory QA?",
+          "importance": 3.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.4",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.08
+        }
+      ],
+      "expected_gain": 0.833,
+      "estimated_cost": 2.0,
+      "tools_used": [
+        "get_paper",
+        "record_paper_analysis"
+      ],
+      "state_changes": {
+        "analyses": 6
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:55:48.009300Z"
+    },
+    {
+      "iteration": 12,
+      "phase": "UNCERTAINTY",
+      "action": "READ",
+      "focus": "U009: What is the most effective way to combine temporal relevance and semantic similarity scores (e.g., learned weighting, gating, product) for improving retrieval accuracy in versioned document QA?",
+      "focus_id": "U009",
+      "reason": "Most valuable next step for high-importance validity question U009: score 1.181 = importance 3 x expected gain 0.875 x relevance 0.9 x evidence deficiency 1 / cost 2. Next best: READ on U013 (1.181).",
+      "evidence": "101 papers from 5 searches, 18 analyzed, 23 claims (10 verified), 17 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U009.",
+      "outcome": "+6 analyses",
+      "candidates": [
+        {
+          "action": "READ",
+          "uncertainty_id": "U009",
+          "target": "What is the most effective way to combine temporal relevance and semantic similarity scores (e.g., learned weighting, gating, product) for improving retrieval accuracy in versioned document QA?",
+          "importance": 3.0,
+          "expected_gain": 0.875,
+          "gain_basis": "prior 0.5, observed mean over 3 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.181
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U013",
+          "target": "To what extent do versioned regulatory documents (statutes, codes, regulations) provide reliable, extractable timestamps for each version that can be used for temporal relevance modeling, and how do we handle cases where timestamps are missing, ambiguous, or follow complex versioning schemes?",
+          "importance": 3.0,
+          "expected_gain": 0.875,
+          "gain_basis": "prior 0.5, observed mean over 3 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.181
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U014",
+          "target": "How can we design experiments to isolate the effect of temporal relevance modeling from confounding factors such as semantic matching improvements, query formulation changes, or retrieval strategy alterations when evaluating our temporal-semantic framework for regulatory QA?",
+          "importance": 3.0,
+          "expected_gain": 0.875,
+          "gain_basis": "prior 0.5, observed mean over 3 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.181
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U019",
+          "target": "Does Re3's query-aware gating mechanism effectively handle the specific challenge of versioned regulatory documents where amendments supersede earlier clauses (creating semantic overlap), or is a specialized temporal relevance function needed for this use case?",
+          "importance": 3.0,
+          "expected_gain": 0.875,
+          "gain_basis": "prior 0.5, observed mean over 3 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.181
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U014",
+          "target": "How can we design experiments to isolate the effect of temporal relevance modeling from confounding factors such as semantic matching improvements, query formulation changes, or retrieval strategy alterations when evaluating our temporal-semantic framework for regulatory QA?",
+          "importance": 3.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.4",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.08
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U020",
+          "target": "What are the most appropriate baseline methods for evaluating a temporal-semantic retrieval framework for open-domain QA over versioned regulatory documents, considering both general temporal IR approaches (like Re3) and domain-specific regulatory QA approaches?",
+          "importance": 3.0,
+          "expected_gain": 0.533,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.066
+        }
+      ],
+      "expected_gain": 0.875,
+      "estimated_cost": 2.0,
+      "tools_used": [
+        "get_paper",
+        "list_papers",
+        "record_paper_analysis"
+      ],
+      "state_changes": {
+        "analyses": 6
+      },
+      "info_gain": 3.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T10:58:23.262992Z"
+    },
+    {
+      "iteration": 13,
+      "phase": "UNCERTAINTY",
+      "action": "READ",
+      "focus": "U013: To what extent do versioned regulatory documents (statutes, codes, regulations) provide reliable, extractable timestamps for each version that can be used for temporal relevance modeling, and how do we handle cases where timestamps are missing, ambiguous, or follow complex versioning schemes?",
+      "focus_id": "U013",
+      "reason": "Most valuable next step for high-importance validity question U013: score 1.215 = importance 3 x expected gain 0.9 x relevance 0.9 x evidence deficiency 1 / cost 2. Next best: READ on U014 (1.215).",
+      "evidence": "101 papers from 5 searches, 24 analyzed, 23 claims (10 verified), 17 open uncertainties",
+      "expected_outcome": "Evidence that resolves or narrows U013.",
+      "outcome": "no recorded change; runtime note: phase exceeded 1200.0s and was stopped",
+      "candidates": [
+        {
+          "action": "READ",
+          "uncertainty_id": "U013",
+          "target": "To what extent do versioned regulatory documents (statutes, codes, regulations) provide reliable, extractable timestamps for each version that can be used for temporal relevance modeling, and how do we handle cases where timestamps are missing, ambiguous, or follow complex versioning schemes?",
+          "importance": 3.0,
+          "expected_gain": 0.9,
+          "gain_basis": "prior 0.5, observed mean over 4 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.215
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U014",
+          "target": "How can we design experiments to isolate the effect of temporal relevance modeling from confounding factors such as semantic matching improvements, query formulation changes, or retrieval strategy alterations when evaluating our temporal-semantic framework for regulatory QA?",
+          "importance": 3.0,
+          "expected_gain": 0.9,
+          "gain_basis": "prior 0.5, observed mean over 4 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.215
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U019",
+          "target": "Does Re3's query-aware gating mechanism effectively handle the specific challenge of versioned regulatory documents where amendments supersede earlier clauses (creating semantic overlap), or is a specialized temporal relevance function needed for this use case?",
+          "importance": 3.0,
+          "expected_gain": 0.9,
+          "gain_basis": "prior 0.5, observed mean over 4 earlier READ steps",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.215
+        },
+        {
+          "action": "PLAN_EXPERIMENT",
+          "uncertainty_id": "U014",
+          "target": "How can we design experiments to isolate the effect of temporal relevance modeling from confounding factors such as semantic matching improvements, query formulation changes, or retrieval strategy alterations when evaluating our temporal-semantic framework for regulatory QA?",
+          "importance": 3.0,
+          "expected_gain": 0.4,
+          "gain_basis": "prior 0.4",
+          "relevance": 0.9,
+          "deficiency": 1.0,
+          "cost": 1.0,
+          "score": 1.08
+        },
+        {
+          "action": "READ",
+          "uncertainty_id": "U016",
+          "target": "Does adding a temporal relevance component to a standard document retriever provide statistically significant improvements in answer accuracy (Exact Match/F1) for open-domain QA over versioned regulatory texts compared to strong baselines including semantic-only retrievers and existing temporal-aware methods?",
+          "importance": 3.0,
+          "expected_gain": 0.9,
+          "gain_basis": "prior 0.5, observed mean over 4 earlier READ steps",
+          "relevance": 0.8,
+          "deficiency": 1.0,
+          "cost": 2.0,
+          "score": 1.08
+        },
+        {
+          "action": "COMPARE",
+          "uncertainty_id": "U020",
+          "target": "What are the most appropriate baseline methods for evaluating a temporal-semantic retrieval framework for open-domain QA over versioned regulatory documents, considering both general temporal IR approaches (like Re3) and domain-specific regulatory QA approaches?",
+          "importance": 3.0,
+          "expected_gain": 0.533,
+          "gain_basis": "prior 0.6, observed mean over 2 earlier COMPARE steps",
+          "relevance": 1.0,
+          "deficiency": 1.0,
+          "cost": 1.5,
+          "score": 1.066
+        }
+      ],
+      "expected_gain": 0.9,
+      "estimated_cost": 2.0,
+      "tools_used": [
+        "fetch_paper_text",
+        "list_papers"
+      ],
+      "state_changes": {},
+      "info_gain": 0.0,
+      "closes_investigation": null,
+      "at": "2026-09-30T11:00:47.437807Z"
+    },
+    {
+      "iteration": 14,
+      "phase": "FINALIZE",
+      "action": "FINALIZE",
+      "focus": null,
+      "focus_id": null,
+      "reason": "Stopping: time budget reached (3600 s).",
+      "evidence": "101 papers from 5 searches, 24 analyzed, 23 claims (10 verified), 17 open uncertainties",
+      "expected_outcome": "Report what was established and what remains open.",
+      "outcome": "finalizing",
+      "candidates": [],
+      "expected_gain": null,
+      "estimated_cost": null,
+      "tools_used": [],
+      "state_changes": {},
+      "info_gain": null,
+      "closes_investigation": null,
+      "at": "2026-09-30T11:20:47.584007Z"
+    }
+  ],
+  "no_progress": {
+    "READ:U013": 1
+  },
+  "blocked_actions": [],
+  "critiques": 2,
+  "papers_at_last_critique": 101,
+  "finalize_reason": "Stopping: time budget reached (3600 s).",
+  "awaiting_approval": [],
+  "investigation_closed": null,
+  "investigation_closed_at": null,
+  "challenged_refs": [
+    "critique"
+  ],
+  "research_decision": "INSUFFICIENT_EVIDENCE",
+  "research_decision_basis": "high-importance questions remain unresolved (U001, U002, U005, U006, U008, U009, U010, U011, U012, U013, U014, U015, U016, U018, U019, U020)"
+}

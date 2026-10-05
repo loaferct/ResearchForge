@@ -1,0 +1,38 @@
+{
+  "id": "arxiv:2411.02617",
+  "title": "TeleOracle: Fine-Tuned Retrieval-Augmented Generation with Long-Context Support for Network",
+  "authors": [
+    "Nouf Alabbasi",
+    "Omar Erak",
+    "Omar Alhussein",
+    "Ismail Lotfi",
+    "Sami Muhaidat",
+    "Merouane Debbah"
+  ],
+  "year": 2024,
+  "published": "2024-11-04",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2411.02617",
+  "pdf_url": "https://arxiv.org/pdf/2411.02617v1",
+  "abstract": "The telecommunications industry's rapid evolution demands intelligent systems capable of managing complex networks and adapting to emerging technologies. While large language models (LLMs) show promise in addressing these challenges, their deployment in telecom environments faces significant constraints due to edge device limitations and inconsistent documentation. To bridge this gap, we present TeleOracle, a telecom-specialized retrieval-augmented generation (RAG) system built on the Phi-2 small language model (SLM). To improve context retrieval, TeleOracle employs a two-stage retriever that incorporates semantic chunking and hybrid keyword and semantic search. Additionally, we expand the context window during inference to enhance the model's performance on open-ended queries. We also employ low-rank adaption for efficient fine-tuning. A thorough analysis of the model's performance indicates that our RAG framework is effective in aligning Phi-2 to the telecom domain in a downstream question and answer (QnA) task, achieving a 30% improvement in accuracy over the base Phi-2 model, reaching an overall accuracy of 81.20%. Notably, we show that our model not only performs on par with the much larger LLMs but also achieves a higher faithfulness score, indicating higher adherence to the retrieved context.",
+  "doi": null,
+  "arxiv_id": "2411.02617",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:16:41.511136Z",
+  "relevance": 0.1154,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "fine-tuning language model on retrieved context documents improves open-domain question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

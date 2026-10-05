@@ -1,0 +1,34 @@
+{
+  "id": "arxiv:2601.15457",
+  "title": "Chunking, Retrieval, and Re-ranking: An Empirical Evaluation of RAG Architectures for Policy Document Question Answering",
+  "authors": [
+    "A. Maharjan",
+    "Umesh Yadav"
+  ],
+  "year": 2026,
+  "published": "2026-01-21",
+  "venue": "arXiv.org",
+  "url": "https://www.semanticscholar.org/paper/f3d7e0165df8da3fad6cbfb776e0371c31d68c48",
+  "pdf_url": null,
+  "abstract": "The integration of Large Language Models (LLMs) into the public health policy sector offers a transformative approach to navigating the vast repositories of regulatory guidance maintained by agencies such as the Centers for Disease Control and Prevention (CDC). However, the propensity for LLMs to generate hallucinations, defined as plausible but factually incorrect assertions, presents a critical barrier to the adoption of these technologies in high-stakes environments where information integrity is non-negotiable. This empirical evaluation explores the effectiveness of Retrieval-Augmented Generation (RAG) architectures in mitigating these risks by grounding generative outputs in authoritative document context. Specifically, this study compares a baseline Vanilla LLM against Basic RAG and Advanced RAG pipelines utilizing cross-encoder re-ranking. The experimental framework employs a Mistral-7B-Instruct-v0.2 model and an all-MiniLM-L6-v2 embedding model to process a corpus of official CDC policy analytical frameworks and guidance documents. The analysis measures the impact of two distinct chunking strategies, recursive character-based and token-based semantic splitting, on system accuracy, measured through faithfulness and relevance scores across a curated set of complex policy scenarios. Quantitative findings indicate that while Basic RAG architectures provide a substantial improvement in faithfulness (0.621) over Vanilla baselines (0.347), the Advanced RAG configuration achieves a superior faithfulness average of 0.797. These results demonstrate that two-stage retrieval mechanisms are essential for achieving the precision required for domain-specific policy question answering, though structural constraints in document segmentation remain a significant bottleneck for multi-step reasoning tasks.",
+  "doi": "10.48550/arxiv.2601.15457",
+  "arxiv_id": "2601.15457",
+  "openalex_id": null,
+  "s2_id": "f3d7e0165df8da3fad6cbfb776e0371c31d68c48",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 3,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T09:55:31.608972Z",
+  "relevance": 0.4167,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "versioned regulatory document question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": true,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

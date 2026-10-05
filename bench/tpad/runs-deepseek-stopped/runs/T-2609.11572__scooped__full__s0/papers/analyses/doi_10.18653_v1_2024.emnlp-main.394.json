@@ -1,0 +1,43 @@
+{
+  "paper_id": "doi:10.18653/v1/2024.emnlp-main.394",
+  "relevance_tier": "medium",
+  "problem": "Temporal Knowledge Graph QA: prior TKG-embedding and GNN methods fail to understand complex semantic information in time constraints, and LLMs suffer temporal hallucination.",
+  "method": "TimeR4: a Time-aware Retrieve-Rewrite-Retrieve-Rerank framework. A retrieve-rewrite module rewrites the question using TKG background knowledge to obtain explicit time constraints; a retriever is fine-tuned with a contrastive time-aware learning objective to retrieve semantically and temporally relevant facts; retrieved facts are reranked according to the temporal constraints.",
+  "key_assumptions": [
+    "Temporal knowledge is represented as timestamped graph facts",
+    "Time constraints can be made explicit by rewriting the question against the KG",
+    "A contrastively fine-tuned retriever is needed to capture temporal relevance"
+  ],
+  "main_contribution": "A time-aware retrieve-rewrite-rerank framework for TKGQA with relative gains of 47.8% and 22.5% on two datasets.",
+  "datasets": [
+    "Two temporal knowledge graph QA datasets (names not stated in the abstract)"
+  ],
+  "benchmarks": [
+    "Two TKGQA datasets (not named in the abstract)"
+  ],
+  "baselines": [
+    "Prior TKG-embedding and GNN-based TKGQA methods (not individually named in the abstract)"
+  ],
+  "metrics": [
+    "Not stated in abstract (relative improvement percentages reported)"
+  ],
+  "results": "Relative gains of 47.8% and 22.5% on two datasets.",
+  "limitations": [
+    "Operates over structured temporal knowledge graphs rather than versioned prose documents",
+    "Requires contrastive retriever fine-tuning, contradicting a training-free retrieval-agnostic wrapper",
+    "Dataset names, metrics and limitations are not available from the abstract; full text is not open access"
+  ],
+  "future_work": [
+    "Not stated in abstract"
+  ],
+  "code_availability": "Code available at https://github.com/qianxinying/TimeR4.",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.55,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "TimeR4 handles explicit temporal constraints over knowledge-graph facts with a learned time-aware retriever; the proposed idea is a training-free, retrieval-agnostic score adjustment over textual document versions distinguished by version timestamps.",
+    "basis": "Both introduce a temporal dimension into retrieval and reranking, but this works on structured timestamped facts and fine-tunes the retriever. Basis is the abstract only."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:11:08.152394Z"
+}

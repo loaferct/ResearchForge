@@ -1,0 +1,47 @@
+{
+  "id": "U009",
+  "question": "Is 'more same-passage context triples' monotonically beneficial for deeper-hop QA, or is the effect an inverted-U (excess context distracts) driven by context-size selection?",
+  "description": "The idea assumes that adding more same-passage context triples helps (H1, H4), but retrieved work points the other way in a related setting: arxiv:2406.09994 is titled 'Precision Empowers, Excess Distracts' and reports that the number of supplied triples matters, with variable/extracted triples beating a fixed larger supply, while arxiv:2202.13296 shows explicitly that larger subgraphs introduce noise and reduce QA Hits@1 even as answer coverage rises. The closest work (arxiv:2609.12230) uses SapBERT similarity with thresholding to bound context size, so context volume appears curated rather than maximized. It is therefore unresolved whether the benefit is from passage locality specifically or from an optimal context-size choice, and whether adding all same-chunk triples could ever hurt.",
+  "category": "contradiction",
+  "importance": "high",
+  "status": "partially_resolved",
+  "next_action": "VERIFY",
+  "possible_actions": [
+    "READ",
+    "COMPARE",
+    "VERIFY",
+    "CHALLENGE",
+    "PLAN_EXPERIMENT"
+  ],
+  "confidence": 0.65,
+  "confidence_basis": "Based on verified quotes from the closest work's threshold-selection procedure and from four adjacent works reporting size-dependent degradation, but no retrieved paper runs a supervised context-size dose-response in LLM KGQA, so the inverted-U for this exact setting is inferred rather than measured.",
+  "rationale": "This directly challenges the idea's mechanism claim (H1/H4): if excess context distracts, then the causal variable is context precision/selection rather than context presence, which changes the hypothesis and the required experiment (context-size sweep and precision-matched controls). Retrieved evidence is from adjacent settings (VQA, embedding KBQA), not yet from LLM KGQA SFT, so the contradiction is suggestive rather than conclusive.",
+  "resolution": "The comparison shows a genuine assumption conflict rather than an implementation detail, and shifts the balance toward the non-monotonic view without settling it. The closest work curates context rather than maximizing it: same-passage candidates are filtered by a SapBERT similarity threshold (theta = 0.65 and 0.60 per disease) selected by a per-disease sweep that maximized 1-hop accuracy while keeping a moderate number of context triples (mean 1.97 and 2.88 after filtering). Four adjacent works independently report size-dependent degradation or the need to bound expansion: embedding-BKBQA QA performance drops sharply beyond a large subgraph size even as coverage rises; merging retrieved subgraphs helps only 'up to some point'; entropy-aware retrieval is motivated by the lack of adaptive control over subgraph expansion; and fixed triple counts are described as producing inadequate information or unnecessary noise. What remains untested is an actual supervised context-size dose-response in LLM KGQA: the closest work's own sweep optimizes 1-hop accuracy, not 3-5-hop accuracy, so the optimum may be hop-depth dependent. The planned dose-response in experiment E001 (modification M003) is the recorded way to measure it.",
+  "paper_ids": [
+    "arxiv:2406.09994",
+    "arxiv:2202.13296",
+    "arxiv:2609.12230",
+    "doi:10.20944/preprints202505.1992.v1",
+    "doi:10.2139/ssrn.6794971"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2406.09994",
+    "arxiv:2202.13296",
+    "arxiv:2609.12230",
+    "doi:10.20944/preprints202505.1992.v1",
+    "doi:10.2139/ssrn.6794971"
+  ],
+  "contradicting_paper_ids": [],
+  "claim_ids": [
+    "C005",
+    "C014",
+    "C015",
+    "C016"
+  ],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 1,
+  "source": "INVESTIGATE",
+  "created_at": "2026-09-30T05:08:34.084330Z",
+  "updated_at": "2026-09-30T05:28:34.850453Z"
+}

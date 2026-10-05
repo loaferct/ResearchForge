@@ -1,0 +1,56 @@
+{
+  "paper_id": "arxiv:2506.21575",
+  "relevance_tier": "medium",
+  "problem": "LLMs falter on structured reasoning over relational (tables) and graph-structured data because they must ground entities, compose symbolic constraints, and follow logical paths.",
+  "method": "STRuCT-LLM jointly trains an LLM on Text-to-SQL and Text-to-Cypher with RL plus Chain-of-Thought supervision, using a topology-aware reward based on graph edit distance. It exploits shared abstractions between SQL and Cypher to induce cross-formalism transfer, and evaluates zero-shot generalization on downstream QA.",
+  "key_assumptions": [
+    "SQL and Cypher share abstractions (schema grounding, filtering, joins, path composition) that permit cross-formalism transfer even without shared schemas.",
+    "Executable queries are effective scaffolds for structured reasoning.",
+    "RL with CoT supervision plus LLM-judge/execution rewards is a workable training signal.",
+    "Graph edit distance is an appropriate topology-aware reward."
+  ],
+  "main_contribution": "A unified RL + CoT framework for structured semantic parsing over tables and graphs with a topology-aware reward, demonstrating cross-formalism transfer and zero-shot downstream generalization without QA-specific supervision; code released.",
+  "datasets": [
+    "Spider",
+    "Text2Cypher",
+    "TableBench",
+    "CR-LT-KGQA"
+  ],
+  "benchmarks": [
+    "Text-to-SQL (Spider)",
+    "Text-to-Cypher",
+    "TableBench",
+    "CR-LT-KGQA"
+  ],
+  "baselines": [
+    "Qwen2.5-1.5B",
+    "Qwen2.5-14B",
+    "QwQ-32B",
+    "Qwen3-14B"
+  ],
+  "metrics": [
+    "semantic-parsing relative improvement",
+    "execution accuracy",
+    "zero-shot downstream QA accuracy"
+  ],
+  "results": "QwQ-32B improves Spider by 13.5% and Text2Cypher by 73.1%; zero-shot downstream gains on TableBench (+8.5%) and CR-LT-KGQA (+1.7%) with no QA-specific supervision.",
+  "limitations": [
+    "Largest results use a 32B model (QwQ-32B), a heavy compute footprint for a full RL pipeline.",
+    "No hop-depth analysis; downstream KGQA gain is small (+1.7%).",
+    "Transfer is across query formalisms, not across reasoning depth.",
+    "Depends on executable-query supervision, which multi-hop KGQA over incomplete KGs may not provide."
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "Code available (paper states: https://github.com/bouv/STRuCT-LLM); repository could not be inspected (GitHub tools unavailable in this investigation).",
+  "relation_to_idea": {
+    "problem_overlap": 0.4,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.25,
+    "conceptual_difference": "STRuCT-LLM's transfer is cross-formalism (SQL training improving Cypher, and vice versa), not shallow-hop to deep-hop transfer; its supervision is executable query programs, not KG triples/paths enriched with same-passage context. It provides the closest evidence that RL over graph tasks yields zero-shot downstream KGQA gains, but does not test context-enriched supervision or a repair loop.",
+    "basis": "Problem overlap moderate: graph-structured reasoning with LLMs, shared interest in RL. Method overlap moderate: RL + CoT supervision and graph-aware rewards, but no context-subgraph supervision. Evaluation overlap low-moderate: downstream KGQA is only a zero-shot side metric (CR-LT-KGQA +1.7%), not the benchmark suite of the idea."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T05:09:51.296501Z"
+}

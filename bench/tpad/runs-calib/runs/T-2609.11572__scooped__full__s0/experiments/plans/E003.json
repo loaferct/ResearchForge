@@ -1,0 +1,84 @@
+{
+  "id": "E003",
+  "title": "Stage-0 problem quantification: version-confusion rate of existing retrievers on amended legal clauses, with pre-registered stop/go thresholds",
+  "research_question": "Do existing retrievers (sparse, dense, hybrid, and the published recency-decay hybrid) select the in-force clause version on amended legal text often enough that version confusion is immaterial - that is, what is the measured version-contamination rate on queries whose authoritative version is not the latest?",
+  "hypothesis": "Existing retrievers - including the published lexical+dense+recency-decay hybrid - exhibit a non-trivial version-contamination rate (materially above zero) on amended legal clauses when the authoritative version is not the latest, and the contamination is concentrated in queries whose in-force version is old while a recent near-duplicate exists; on latest-gold queries contamination is near zero.",
+  "proposed_method": "Descriptive measurement before mechanism testing. Curate clause version chains from a public consolidated legal corpus with per-version validity dates; construct time-stamped queries whose target dates fall inside each version's validity window, oversampling non-latest-gold and near-duplicate cases; label gold by version identity. Run BM25, dense, hybrid RRF, the published three-signal decay hybrid (with a decay-rate sweep reported at its best) and a recency-only ranker over the same candidate pool and k, and additionally run each with an oracle valid-time gate to bound headroom. Report contamination, point-in-time recovery and version confusion per stratum with confidence intervals, and apply pre-registered stop/go thresholds: proceed to mechanism testing only if the non-latest-gold contamination of the strongest baseline exceeds a fixed level (about 10%) or if the oracle gate recovers at least a fixed margin (about 10 points); otherwise record the negative premise result and stop.",
+  "baselines": [
+    "BM25 sparse retrieval (budget-matched baseline)",
+    "Dense retrieval with BAAI/bge-small-en-v1.5 (budget-matched baseline)",
+    "Hybrid BM25+dense with reciprocal rank fusion (strong baseline, as evaluated in the public regulatory benchmark)",
+    "Published three-signal hybrid with exponential decay (strongest directly comparable baseline)",
+    "Recency-only ranker (always the latest version) as a floor/ceiling reference",
+    "Oracle valid-time gate as an upper bound on achievable performance"
+  ],
+  "datasets": [
+    "Stage 0 primary: a curated set of clause version chains from a public consolidated legal/regulatory corpus with machine-readable entry-into-force and applicability dates; target at least 60 clauses with 2+ versions and 150-300 time-stamped queries",
+    "Required subsets: non-latest-gold (at least 50 queries), near-duplicate version pairs, deep chains (3+ versions), and no-version-in-force queries",
+    "Reusable infrastructure: the public RMA regulatory QA repository for chunking/index/evaluation patterns only; its corpus is static with no versioning or target dates",
+    "Not used: financial-filing and ESG corpora (domain mismatch), web QA datasets (not clause-versioned)"
+  ],
+  "workloads": [
+    "Non-latest-gold queries: target date inside a superseded version's validity window, with the current near-duplicate version present in the candidate pool",
+    "Latest-gold queries: expected low-contamination control stratum",
+    "Near-duplicate chains with high inter-version lexical and embedding similarity",
+    "Deep chains with three or more versions",
+    "No-version-in-force queries where correct behaviour is to return nothing"
+  ],
+  "hardware": "CPU-only: BM25 indexing plus BAAI/bge-small-en-v1.5 embedding of a few hundred clause versions is comfortably laptop-scale. No GPU, no external API, no reader LLM required for Stage 0.",
+  "software_environment": "",
+  "metrics": [
+    "Primary: version contamination - fraction of retrieved passages not in force at the target date, reported overall and per stratum",
+    "Primary: clause-level point-in-time recovery - fraction of non-latest-gold queries whose top-ranked passage is the in-force version",
+    "Primary: version confusion - fraction of queries whose selected version differs from the gold version",
+    "Diagnostic: contamination by age gap, chain depth and inter-version similarity",
+    "Diagnostic: headroom - contamination of each retriever minus contamination with the oracle valid-time gate",
+    "Diagnostic: natural-prevalence-weighted contamination alongside the oversampled-stratum estimate",
+    "Diagnostic: metadata coverage - fraction of chains with verifiable per-version validity dates"
+  ],
+  "ablations": [
+    "Retriever family: BM25, dense, hybrid RRF, hybrid + exponential decay at several rates",
+    "Age gap between the in-force version and the latest version (small, medium, large)",
+    "Chain depth (2, 3, 4+ versions)",
+    "Lexical and embedding similarity between successive versions (near-duplicate vs moderately edited)",
+    "Target-date granularity (day, month, year)",
+    "With and without an oracle valid-time gate, to bound the headroom available to any temporal layer"
+  ],
+  "controls": [
+    "Identical candidate pool, chunking, k and query set for every retriever",
+    "Version-identity gold labels assigned by hand from amendment metadata",
+    "Per-stratum and recency-decoupled reporting rather than a single pooled rate",
+    "Pre-registered decision thresholds fixed before measuring",
+    "Corpus snapshot and date source pinned and documented",
+    "Every reported rate accompanied by a confidence interval and the number of queries it is computed from"
+  ],
+  "confounders_addressed": [
+    "The problem might vanish because amendments change wording enough that similarity resolves version - addressed by stratifying on measured inter-version similarity and reporting failure rates within the near-duplicate stratum",
+    "The problem might be an artifact of corpus construction in which only the current version exists - addressed by requiring chains that include superseded versions and reporting how many documents are available per version",
+    "Answers may be identical across versions - avoided entirely because Stage 0 measures retrieval, not answers",
+    "A recency prior could look good because most queries are latest-gold - addressed by reporting per-stratum rates and the natural-prevalence-weighted estimate",
+    "Failure could reflect date-metadata noise rather than retrieval - addressed by manual verification of validity dates for the curated chains and reporting metadata provenance"
+  ],
+  "expected_outcomes": "Existing retrievers show a non-trivial version-contamination rate on non-latest-gold queries - expected to be highest for the decay-free retrievers and for the three-signal decay hybrid specifically on old-window queries - with low contamination on latest-gold queries. The oracle gate bounds the headroom. If contamination is instead near zero everywhere, the premise fails and the direction should be dropped rather than reinterpreted.",
+  "failure_conditions": [
+    "Version contamination is near zero (for example under 2-3%) for all retrievers on the non-latest-gold and near-duplicate strata, within confidence intervals - the problem premise fails and the direction should be dropped",
+    "Contamination exists only on queries whose gold version is the latest - recency already solves the problem and no temporal layer is needed",
+    "The only way to obtain measurable contamination is to construct queries that no real user would ask - the finding is then an artifact of the query construction",
+    "Fewer than about 40 clauses with documented per-version validity dates can be assembled - the measurement would be underpowered and the benchmark infeasible at clause granularity",
+    "Inter-version wording differences are large in every sampled chain - the targeted near-duplicate regime cannot be populated from accessible corpora"
+  ],
+  "reproducibility_notes": "No execution spec is attached: no open implementation with versioned legal clauses and target dates was found, and the only adjacent public repository (RMA regulatory QA benchmark) is an interactive Jupyter notebook whose static corpus lacks versioning and target dates, requires downloading third-party PDFs and an OpenRouter API key, and emits no JSON metrics file. Stage 0 is deliberately CPU-only and requires no LLM, so it is cheap to replicate. Deliverables to release: the curated version chains with validity dates and provenance, the query set with stratum assignments, per-query rankings for every retriever, and the exact threshold definitions fixed before measurement.",
+  "related_modification_id": "M005",
+  "related_paper_ids": [
+    "doi:10.3390/sym18091498",
+    "doi:10.2139/ssrn.7174868",
+    "doi:10.2139/ssrn.7087840",
+    "arxiv:2606.09724",
+    "arxiv:2608.21409",
+    "arxiv:2109.06157",
+    "doi:10.1109/iri69576.2026.00090"
+  ],
+  "execution": null,
+  "status": "planned",
+  "recorded_at": "2026-09-30T04:40:41.030824Z"
+}

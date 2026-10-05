@@ -1,0 +1,30 @@
+{
+  "id": "M003",
+  "title": "Version-confusion metric with recency-decoupled queries and a recency-only baseline",
+  "description": "Make version-level temporal contamination a primary outcome: for each query and each retrieved passage, label whether it is in force, superseded, or not yet in force at the target date, and report contamination rate and near-duplicate version-confusion alongside answer accuracy. Construct the query set so that a substantial share of queries have an authoritative version that is not the most recent, and always report a pure recency-only baseline.",
+  "why_differs": "Legal benchmarks found in the review are static or multiple-choice and do not evaluate which version of a clause is retrieved; the closest temporal metrics measure answer accuracy or (in finance) evidence leakage. This modification makes the version-selection error the measured quantity and forces the design to separate recency from validity.",
+  "technical_mechanism": "Tag every corpus passage with a status relative to the target date derived from its validity interval: in-force, superseded, or not-yet-in-force. Define contamination as the fraction of retrieved (and of reader-cited) passages that are not in force at the target date, and version confusion as retrieving a different version of the gold clause. Sample queries in strata defined by whether the gold in-force version is the latest, including a dedicated non-latest stratum whose target dates lie before later amendments; compare all systems on the same stratified query set with a recency-only ranker as an explicit control.",
+  "expected_benefit": "Removes the confound that answer accuracy is blind when the superseded version yields the same answer text; prevents a trivial recency prior from masquerading as temporal relevance; makes the mechanism claim falsifiable.",
+  "potential_novelty": "Hedged: temporal-leakage-style metrics exist in point-in-time financial QA, but no retrieved work applies version-contamination measurement to amended legal text, and no reviewed benchmark decouples recency from correctness.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "The metric is a rule over retrieved passage ids and their validity intervals; the adaptation is conceptually straightforward from point-in-time financial QA's temporal-leakage metric.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Requires careful annotation of the in-force version per query (or reliable automated derivation), plus a deliberate sampling strategy for non-latest authoritative versions; the metric computation itself is straightforward.",
+  "main_risk": "If near-duplicate versions genuinely produce identical answers, even the contamination metric may show small differences on end-task quality; the honest result may be a measurement paper rather than an accuracy-improvement paper.",
+  "required_baselines": [
+    "Recency-only ranking (always prefer the latest version)",
+    "Semantic-only ranking",
+    "Random temporal assignment control"
+  ],
+  "related_paper_ids": [
+    "doi:10.3390/sym18091498",
+    "arxiv:2505.20243",
+    "arxiv:2608.21409",
+    "doi:10.2139/ssrn.7087840"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T04:34:42.845979Z"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "U001",
+  "question": "Has context-enriched (passage-local subgraph) triple supervision for multi-hop KGQA already been proposed and evaluated, so that the proposed mechanism is largely covered by existing subgraph-retrieval or KG-grounded training work?",
+  "description": "Subgraph retrieval enhanced KBQA (arxiv:2202.13296), GraftNet (doi:10.18653/v1/2020.emnlp-main.99) and subgraph retrieval/link scoring for multi-hop QA (doi:10.1007/s10489-024-05935-8) already use multi-triple subgraphs rather than isolated triples at inference/training time. The idea's distinguishing claim — that the subgraph is drawn from the SAME source passage and used as a training-time supervision enrichment at matched budget — needs to be checked against these.",
+  "category": "novelty",
+  "importance": "high",
+  "status": "resolved",
+  "next_action": "REFINE",
+  "possible_actions": [
+    "SEARCH",
+    "READ",
+    "COMPARE"
+  ],
+  "confidence": 0.8,
+  "confidence_basis": "Based on a full-text reading of the matching paper plus its problem statement, method and results sections; the match is explicit at the component level, not inferred from lexical similarity.",
+  "rationale": "If the mechanism and evaluation are already covered, the contribution reduces to a replication; overlap must be established before investing in the experiment plan.",
+  "resolution": "Resolved in the direction of coverage. arxiv:2609.12230 (Fonseka and Jha, 2026, 'Repair Before Reinforce: Context-Augmented Knowledge Graph Reasoning for Multi-Hop Question Answering') already proposes and validates the full three-component pipeline: attach supporting triples from the same source text chunk to each primary triple to form a context graph, compare KG-grounded versus CG-grounded supervision by fine-tuning Qwen3-14B, run an LLM-judged history-aware adaptive repair loop over unresolved one-hop failures with targeted corrective examples and triple quarantine, then RL on lower-hop items evaluated on 3/4/5-hop. Earlier subgraph-retrieval work (arxiv:2202.13296) and intermediate-supervision work (arxiv:2101.03737) covered the adjacent space, but this paper covers the idea itself. The remaining differences are implementation choices: SapBERT-similarity context selection, biomedical disease KGs, multiple-choice answer format, GRPO with a path-alignment reward, and synthetic QA.",
+  "paper_ids": [
+    "arxiv:2202.13296",
+    "doi:10.18653/v1/2020.emnlp-main.99",
+    "doi:10.1007/s10489-024-05935-8",
+    "arxiv:2609.12230",
+    "arxiv:2101.03737"
+  ],
+  "supporting_paper_ids": [
+    "arxiv:2202.13296",
+    "arxiv:2101.03737",
+    "doi:10.18653/v1/2020.emnlp-main.99",
+    "doi:10.20944/preprints202505.1992.v1"
+  ],
+  "contradicting_paper_ids": [
+    "arxiv:2609.10237"
+  ],
+  "claim_ids": [],
+  "challenge_verdict": null,
+  "target_ref": null,
+  "attempts": 0,
+  "source": "FORMALIZE",
+  "created_at": "2026-09-30T05:05:09.166199Z",
+  "updated_at": "2026-09-30T05:22:36.829863Z"
+}

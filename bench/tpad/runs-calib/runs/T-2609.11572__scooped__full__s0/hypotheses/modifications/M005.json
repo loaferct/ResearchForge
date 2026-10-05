@@ -1,0 +1,34 @@
+{
+  "id": "M005",
+  "title": "Recency-decoupled, version-identity-labelled evaluation with claim-matched dual scoring and an answer-differential screen",
+  "description": "Combine the recency-decoupled query design with a claim-matched outcome hierarchy. Walk each clause's amendment chain and sample target dates inside each version's validity interval, including a deliberately oversampled stratum whose gold in-force version is not the latest, with gold assigned by version identity. Scoring is matched to the claim rather than averaged: (1) for retrieval-level claims, primary outcome is version-level temporal contamination and version confusion, scored as whether the returned passage was in force at the target date; (2) for end-to-end claims, co-primary outcome is answer accuracy restricted to the answer-differential stratum, where retrieving a non-gold version yields a different reference answer; (3) diagnostic outcomes are citation-validity failure rate scored independently of answer content, plus nDCG/recall and abstention. Report the screen pass rate, per-stratum results, and the pre-registered rule stating which metric adjudicates which claim; always include a recency-only baseline; and report the contamination-to-content-error ratio so the two definitions cannot be conflated.",
+  "why_differs": "Reviewed legal benchmarks are static or multiple-choice and never evaluate which version was retrieved; temporal metrics elsewhere report either answer accuracy or (in finance) leakage as a single outcome, with no stratification by whether the gold version is the latest, no screen for whether version choice can change the answer, and no explicit rule pairing each metric to the claim it adjudicates. This modification makes both the version-selection error and the conditions under which it matters part of the measured design, and separates citation validity from answer content so the two harm channels are never merged into one number.",
+  "technical_mechanism": "For each clause version chain, derive validity intervals from amendment metadata and construct queries at sampled target dates inside each interval; label gold by version identity. Tag retrieved passages as in-force, superseded or not-yet-in-force relative to the target date and compute contamination/confusion for all queries. Separately, obtain a reference answer per candidate version with a fixed reader; mark queries answer-differential if the gold version's answer differs from at least one competing version's answer, and evaluate answer accuracy only on that subset, reporting the pass rate. Score citation validity as an independent rule on the same retrieved ids so a content-matching but out-of-force citation still counts as a retrieval failure. Partition queries into latest-gold and oversampled non-latest-gold strata, compare all systems within strata with paired tests, always include the recency-only ranker, and pre-register which metric adjudicates the retrieval claim and which the end-to-end claim.",
+  "expected_benefit": "Makes the claim identifiable and the two harm channels separable: on the non-latest stratum a recency prior cannot win by construction; version-identity labels avoid the confound that identical wording yields identical answers; the answer-differential pass rate quantifies how often version confusion can change a user-visible answer; and pre-registering which metric adjudicates which claim prevents dual reporting from being read as metric-shopping while keeping both the retrieval-level and user-visible failures visible.",
+  "potential_novelty": "Hedged: the contamination metric adapts point-in-time financial QA's leakage measure and alternative-context annotation exists in web QA (SituatedQA), but the combination of version-identity labels, a recency-decoupled stratum, a claim-matched dual scoring rule and an answer-differential screen for amended legal text was not found in any retrieved work.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "Contamination and confusion are rules over retrieved passage ids, validity intervals and query strata; the answer-differential screen can be automated with a fixed reader plus spot checks; citation-validity scoring is a second independent rule over the same retrieved ids.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Requires amendment chains with usable validity intervals, enough non-latest gold queries for power, a per-version reference answer before the screen can be applied, and pre-registration of the metric-to-claim mapping; the metric computations themselves are simple.",
+  "main_risk": "The non-latest stratum may be too small even after oversampling, or most query-version pairs may fail the answer-differential screen, reducing the result to a metric-level finding; conversely, version-identity scoring may count immaterial version differences - versions whose text is unchanged - as failures, inflating the retrieval-level metric.",
+  "required_baselines": [
+    "Recency-only ranking per stratum (always prefer the latest version)",
+    "Semantic-only ranking",
+    "Hard as-of filter",
+    "Random temporal assignment control",
+    "Oracle valid-time gate, to bound the achievable contamination reduction"
+  ],
+  "related_paper_ids": [
+    "arxiv:2109.06157",
+    "doi:10.3390/sym18091498",
+    "arxiv:2505.20243",
+    "arxiv:2606.09724",
+    "arxiv:2608.21409",
+    "doi:10.2139/ssrn.7087840"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T04:44:38.922069Z"
+}

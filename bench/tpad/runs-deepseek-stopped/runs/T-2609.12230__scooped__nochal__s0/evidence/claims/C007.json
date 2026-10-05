@@ -1,0 +1,69 @@
+{
+  "id": "C007",
+  "statement": "The closest existing work is the cluster that manipulates a multi-triple set around a target fact: arxiv:2609.10237 (holds triple count fixed and swaps non-chain triples), doi:10.20944/preprints202505.1992.v1 (merges and orders triplets), arxiv:2202.13296 and doi:10.18653/v1/2020.emnlp-main.99 (subgraph as model input), arxiv:2101.03737 and doi:10.1145/3336191.3371812 (intermediate/stepwise supervision). These overlap on the problem (multi-hop QA over KG facts) and on the manipulation of which triples accompany a target, but none runs the idea's exact contrast: training-time fine-tuning with isolated triples versus passage-derived context triples at matched budget. No directly matching work was found in the searched literature.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.10237",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "arxiv:2202.13296",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "doi:10.18653/v1/2020.emnlp-main.99",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "arxiv:2101.03737",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "doi:10.20944/preprints202505.1992.v1",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    },
+    {
+      "paper_id": "doi:10.1145/3336191.3371812",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": null,
+      "support": "indirect",
+      "verified": false,
+      "verification_note": "no quote provided"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "critique",
+  "tags": [
+    "closest-work",
+    "overlap",
+    "novelty"
+  ],
+  "recorded_at": "2026-09-30T05:13:38.937587Z"
+}

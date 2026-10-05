@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2208.10297",
+  "relevance_tier": "high",
+  "problem": "Multi-hop reasoning requires aggregating multiple documents to answer a complex question. Existing methods usually decompose the multi-hop question into simpler single-hop questions to solve the problem for illustrating the explainable reasoning process. However, they ignore grounding on the supporting facts of each reasoning step, which tends to generate inaccurate decompositions.",
+  "method": "Proposes an interpretable stepwise reasoning framework (StepReasoner) that incorporates both single-hop supporting sentence identification and single-hop question generation at each intermediate step, and utilizes the inference of the current hop for the next until reasoning out the final result. Employs a unified reader model for both intermediate hop reasoning and final hop inference and adopts joint optimization for more accurate and robust multi-hop reasoning. The framework locates single-hop supporting sentences at each step to generate more fact-grounded and informative single-hop sub-questions without genuine or pseudo supervision, and integrates the sequential reasoning process into a unified multi-hop reader. It uses a pre-trained simple question generator and takes identified supporting sentences as base to generate single-hop questions, obviating the need for constructed supervision. To address exposure bias between training and inference (where predicted supporting sentences may deviate from oracle ones), two measures are proposed to reduce the discrepancy between train-test single-hop supporting sentences.",
+  "key_assumptions": [
+    "Grounding on supporting facts improves reasoning step accuracy",
+    "Unified reader model for intermediate and final hop reasoning enables joint optimization",
+    "Inference from current hop can guide next hop reasoning",
+    "Addressing exposure bias between train-test supporting sentences improves robustness"
+  ],
+  "main_contribution": "Interpretable stepwise reasoning framework (StepReasoner) that improves performance and interpretability without decomposition supervision, using unified reader model, joint optimization, and exposure bias mitigation techniques.",
+  "datasets": [
+    "HotpotQA",
+    "2WikiMultiHopQA"
+  ],
+  "benchmarks": [],
+  "baselines": [],
+  "metrics": [
+    "Answer prediction",
+    "Supporting fact prediction (EM, F1)",
+    "Joint EM/F1"
+  ],
+  "results": "StepReasoner outperforms all models in terms of both answer prediction and joint evaluation on HotpotQA and 2WikiMultiHopQA, achieving comparable performance in supporting fact prediction. Specifically, it performs better than both question decomposition based and one-step reading based methods.",
+  "limitations": [
+    "Potential exposure bias between training and inference when predicted supporting sentences deviate from oracle ones (addressed by proposed two measures)",
+    "Framework may still be limited by the quality of the initial context retrieval step"
+  ],
+  "future_work": [],
+  "code_availability": "Codes are publicly available at https://github.com/WangsyGit/StepwiseQA.",
+  "relation_to_idea": {
+    "problem_overlap": 0.9,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.8,
+    "conceptual_difference": "Locate Then Ask focuses on stepwise reasoning with supporting sentence identification and question generation for text-based multi-hop QA, while our idea focuses on enriching triples with local context subgraphs from source passages and adaptive repair loops for KGQA training. Both aim to improve multi-hop reasoning but Locate Then Ask works on text documents while our idea targets knowledge graph triples.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T06:08:33.276697Z"
+}

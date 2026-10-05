@@ -1,0 +1,37 @@
+{
+  "id": "arxiv:2603.21440",
+  "title": "KG-Hopper: Empowering Compact Open LLMs with Knowledge Graph Reasoning via Reinforcement Learning",
+  "authors": [
+    "Shuai Wang",
+    "Yinan Yu"
+  ],
+  "year": 2026,
+  "published": "2026-03-22",
+  "venue": "arXiv.org",
+  "url": "https://arxiv.org/abs/2603.21440",
+  "pdf_url": "https://arxiv.org/pdf/2603.21440v4",
+  "abstract": "Large Language Models (LLMs) demonstrate impressive natural language capabilities but often struggle with knowledge-intensive reasoning tasks. Knowledge Base Question Answering (KBQA), which leverages structured Knowledge Graphs (KGs) exemplifies this challenge due to the need for accurate multi-hop reasoning. Existing approaches typically perform sequential reasoning steps guided by predefined pipelines, restricting flexibility and causing error cascades due to isolated reasoning at each step. To address these limitations, we propose KG-Hopper, a novel Reinforcement Learning (RL) framework that empowers compact open LLMs with the ability to perform integrated multi-hop KG reasoning within a single inference round. Rather than reasoning step-by-step, we train a Reasoning LLM that embeds the entire KG traversal and decision process into a unified ``thinking'' stage, enabling global reasoning over cross-step dependencies and dynamic path exploration with backtracking. Experimental results on eight KG reasoning benchmarks show that KG-Hopper, based on a 7B-parameter LLM, consistently outperforms larger multi-step systems (up to 70B) and achieves competitive performance with proprietary models such as GPT-3.5-Turbo and GPT-4o-mini, while remaining compact, open, and data-efficient. The code is publicly available at: https://github.com/Wangshuaiia/KG-Hopper.",
+  "doi": "10.48550/arxiv.2603.21440",
+  "arxiv_id": "2603.21440",
+  "openalex_id": null,
+  "s2_id": "2ab393c3d5a752e30d691fbfa048dd7e33652011",
+  "source": "arxiv",
+  "sources": [
+    "arxiv",
+    "semantic_scholar"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:01:12.153856Z",
+  "relevance": 0.7778,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering knowledge graph reasoning path reinforcement learning"
+  ],
+  "code_urls": [
+    "https://github.com/Wangshuaiia/KG-Hopper"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

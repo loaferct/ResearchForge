@@ -1,0 +1,34 @@
+{
+  "id": "G002",
+  "gap": "No retrieved work decomposes multi-hop KGQA failures by type (incorrect base fact vs. entity-linking/retrieval failure vs. composition error) before generating corrective training examples, even though documented failure sources are heterogeneous: GNN-RAG attributes failures to missing answer nodes and entity-linking errors, and NSM attributes them to missing intermediate supervision producing spurious paths.",
+  "evidence": [
+    {
+      "paper_id": "doi:10.18653/v1/2025.findings-acl.856",
+      "experiment_run_id": null,
+      "location": "p. 9, Section 8 Limitations",
+      "quote": "GNN-RAG assumes that the KG subgraph, on which the GNN reasons, contains answer nodes. However, this may not be true for all questions or when errors in entity linking happen.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2101.03737",
+      "experiment_run_id": null,
+      "location": "p. 1",
+      "quote": "Besides the correct path (with red arrows), two spurious paths (with blue arrows) which include entities who are directors at the first step can also reach the correct answer. It is mainly due to the lack of supervision signals at the intermediate reasoning steps",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "related_paper_ids": [
+    "doi:10.18653/v1/2025.findings-acl.856",
+    "arxiv:2101.03737"
+  ],
+  "why_unaddressed": "Retrieved work either sidesteps the question (NSM learns intermediate supervision rather than diagnosing failures; GNN-RAG notes the limitation but does not attribute errors) or reports only aggregate final-answer accuracy, which cannot distinguish base-fact errors from retrieval/composition errors.",
+  "research_question": "Are one-hop failures in multi-hop KGQA predominantly caused by incorrect base facts (repairable by corrective examples), or by entity-linking/retrieval and composition errors that a fact-repair loop cannot fix?",
+  "potential_experiment": "Instrument a multi-hop KGQA pipeline to label each failing instance by failure type using controlled perturbations: (i) inject a wrong base triple, (ii) corrupt an entity link, (iii) require an extra composition step. Measure each perturbation's effect on one-hop accuracy, then run the proposed repair loop and report the per-type repair rate. The claim 'one-hop failures diagnose bad base facts' survives only if type-(i) failures dominate and are repaired.",
+  "confidence": "medium",
+  "verification_required": "Verify whether any KGQA work reports an error-type taxonomy or a repair loop with per-type repair rates; run the perturbation study before building the repair loop.",
+  "recorded_at": "2026-09-30T05:27:29.103084Z"
+}

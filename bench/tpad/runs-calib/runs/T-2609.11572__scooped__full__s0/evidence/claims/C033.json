@@ -1,0 +1,43 @@
+{
+  "id": "C033",
+  "statement": "A point-in-time financial QA system reports that plain hybrid RAG leaks temporally invalid evidence at a rate of 10.8%, which as-of enforcement reduces to 1.7%, with answer accuracy rising from 66.7% to 78.9% and hallucination falling from 17.3% to 7.9%; the setup assumes a query as-of date and treats evidence as valid only once it has become public.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "improves answer accuracy from 66.7% to 78.9% over hybrid RAG while reducing temporal evidence leakage from 10.8% to 1.7% and hallucination from 17.3% to 7.9%",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "a disclosure may support a query only after becoming public",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "doi:10.3390/sym18091498",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Given a question, company, and as-of date, the framework enforces the information boundary defined by U.S. Securities and Exchange Commission (SEC) filing availability",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [
+    "temporal leakage",
+    "quantitative baseline",
+    "point-in-time",
+    "premise evidence"
+  ],
+  "recorded_at": "2026-09-30T04:40:40.986911Z"
+}

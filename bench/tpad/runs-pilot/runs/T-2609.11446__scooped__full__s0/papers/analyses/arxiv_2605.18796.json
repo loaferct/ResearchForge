@@ -1,0 +1,51 @@
+{
+  "paper_id": "arxiv:2605.18796",
+  "relevance_tier": "high",
+  "problem": "LLM cascades use uncalibrated confidence scores requiring per-workload threshold tuning, causing a gap between theoretical promise and actual performance.",
+  "method": "UCCI: calibration-first router that maps token-level margin uncertainty to per-query error probability via isotonic regression, selects escalation threshold by constrained cost minimization under three explicit assumptions (large-model cost > small-model cost, large-model accuracy invariant to routing, access to calibrated error probability).",
+  "key_assumptions": [
+    "cℓ > cs (large model cost greater than small model cost)",
+    "fℓ achieves fixed accuracy αℓ on test distribution invariant to which queries are escalated",
+    "access to calibrated error probability ˆp(x) = g(u(x))"
+  ],
+  "main_contribution": "A calibration-first router for LLM cascades using isotonic regression to calibrate token-margin uncertainty to error probability, threshold selection via constrained cost minimization, theoretical optimality proof, and empirical demonstration of 31% inference cost reduction at same accuracy.",
+  "datasets": [
+    "production named entity recognition workload of 75,000 labeled queries with 6 entity types"
+  ],
+  "benchmarks": [
+    "entropy thresholding",
+    "split-conformal routing",
+    "FrugalGPT-style learned threshold"
+  ],
+  "baselines": [
+    "entropy thresholding",
+    "split-conformal routing",
+    "FrugalGPT-style learned threshold"
+  ],
+  "metrics": [
+    "inference cost (relative to large-model-only)",
+    "micro-F1",
+    "expected calibration error (ECE)"
+  ],
+  "results": "\"UCCI cuts inference cost by 31% (95% CI: [27%, 35%]) at micro-F1 = 0.91 while reducing ECE from 0.12 to 0.03; outperforms entropy thresholding, split-conformal routing, and FrugalGPT-style learned threshold at the same operating point.\"",
+  "limitations": [
+    "Assumption of large-model accuracy invariance to routing may not hold in other domains",
+    "Reliance on isotonic regression requiring a calibration set",
+    "Focus on structured JSON extraction may limit generalization to other NER formats"
+  ],
+  "future_work": [
+    "Replicate method on public NER benchmark (e.g., CoNLL-2003)",
+    "Test with different small/large model families",
+    "Investigate robustness to heavy-tailed uncertainty"
+  ],
+  "code_availability": "not stated in abstract; no public repository found via GitHub search",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.7,
+    "evaluation_overlap": 0.6,
+    "conceptual_difference": "UCCI focuses on LLM cascades using token-margin uncertainty and isotonic regression for structured prediction; the idea is broader, targeting any diverse set of models with post-hoc calibration of output probabilities and common thresholds across models.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T11:29:11.934236Z"
+}

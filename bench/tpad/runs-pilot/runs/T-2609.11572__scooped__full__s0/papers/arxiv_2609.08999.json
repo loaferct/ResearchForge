@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2609.08999",
+  "title": "Concentrate After Imagination: Text-Conditioned Evidence Grounding for Partially Relevant Video Retrieval",
+  "authors": [
+    "Shuaiqi Cheng",
+    "Siyu You",
+    "Yanbi Wu",
+    "Yuxi Chen",
+    "Jiahao Zhang",
+    "Xuming Hu"
+  ],
+  "year": 2026,
+  "published": "2026-09-08",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2609.08999",
+  "pdf_url": "https://arxiv.org/pdf/2609.08999v1",
+  "abstract": "Partially Relevant Video Retrieval (PRVR) retrieves untrimmed videos when queries describe only short moments. Although recent methods improve local representations, uncertainty modeling, and global context, final ranking often still trusts the strongest local response; a coincidentally similar fragment can therefore produce an unsupported peak. We identify this failure as the query-agnostic concentration bottleneck and propose TRACE, a score-level evidence verification operator for PRVR. Given a query and global video registers, TRACE activates query-relevant registers, routes their support to frame-level evidence, and smoothly marginalizes alternative query-to-register-to-frame paths before localized temporal selection. Unlike representation-level feature fusion, TRACE uses this evidence only as a query-conditioned residual calibration of the original local score. On ActivityNet Captions, Charades-STA, and TVR, TRACE achieves the best SumR on all three benchmarks and improves the DreamPRVR backbone by 1.2, 1.1, and 1.5 points, respectively. Ablation, routing-corruption, hard-negative, and cross-backbone transfer analyses support the interpretation that the gains arise from query-conditioned evidence verification rather than a generic score offset.",
+  "doi": null,
+  "arxiv_id": "2609.08999",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T09:39:32.505313Z",
+  "relevance": 0.1333,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "retriever agnostic temporal relevance"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": [
+    "abstract (from arxiv) never mentions 'Concentrate After Imagination'; it may belong to another work"
+  ]
+}

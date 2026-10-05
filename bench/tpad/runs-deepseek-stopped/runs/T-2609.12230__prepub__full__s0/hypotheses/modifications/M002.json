@@ -1,0 +1,29 @@
+{
+  "id": "M002",
+  "title": "Inference-context-matched, format-controlled evaluation with a training-free context baseline",
+  "description": "Redesign the evaluation so that the supervision regime is not confounded with the inference-time context. Evaluate every trained model under the same test-time context (both no-context and context-provided settings), add a training-free context baseline and a KG-neighborhood baseline at matched token budget, use byte-identical templates across arms, and score with a format-controlled metric that cannot be affected by the grounding instruction.",
+  "why_differs": "Existing systems measure context effects only at inference, and existing training works do not hold inference context constant across arms. This modification makes the training-time claim separable from the dominant inference-time paradigm (the exact gap G001).",
+  "technical_mechanism": "Fix the inference-time prompt to include a specified context for all models (and repeat with none), so the only difference between the compared models is their training supervision. Use identical templates and a scorer that extracts the answer rather than judging response format.",
+  "expected_benefit": "Makes the central claim identifiable: it distinguishes 'learning to use context' from 'being given context at test time', and it answers U010 directly instead of leaving it as an assumption. If the training-time effect disappears once inference context is controlled, the paper reports that cleanly rather than overclaiming.",
+  "potential_novelty": "Hedged: the evaluation protocol (training effect measured under matched inference context with a shuffled-context control) was not found in the retrieved literature and would be a reusable methodological contribution independent of the outcome.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "Prompting and scoring changes only; the training-free baseline can reuse an existing GraphRAG-style pipeline.",
+  "experimental_difficulty": "moderate",
+  "experimental_difficulty_basis": "Requires running each trained model under several inference-context conditions, plus a training-free baseline and a format-controlled scorer; it multiplies evaluation runs but needs no new training method.",
+  "main_risk": "A format-controlled scorer may itself be less sensitive, potentially washing out real effects; this must be reported with a sensitivity analysis rather than hidden.",
+  "required_baselines": [
+    "Training-free context baseline (Co-E-style / GraphRAG) at matched budget",
+    "KG-neighborhood context baseline",
+    "No-context and context-provided test-time conditions for every trained model"
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.10237",
+    "arxiv:2607.23278",
+    "arxiv:2509.21035"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": false,
+  "recorded_at": "2026-09-30T05:26:11.443814Z"
+}

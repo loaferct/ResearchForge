@@ -1,0 +1,41 @@
+{
+  "id": "arxiv:2409.11283",
+  "title": "Zero-resource Hallucination Detection for Text Generation via Graph-based Contextual Knowledge Triples Modeling",
+  "authors": [
+    "Xinyue Fang",
+    "Zhen Huang",
+    "Zhiliang Tian",
+    "Minghui Fang",
+    "Ziyi Pan",
+    "Quntian Fang",
+    "Zhihua Wen",
+    "Hengyue Pan",
+    "Dongsheng Li"
+  ],
+  "year": 2024,
+  "published": "2024-09-17",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2409.11283",
+  "pdf_url": "https://arxiv.org/pdf/2409.11283v4",
+  "abstract": "LLMs obtain remarkable performance but suffer from hallucinations. Most research on detecting hallucination focuses on the questions with short and concrete correct answers that are easy to check the faithfulness. Hallucination detections for text generation with open-ended answers are more challenging. Some researchers use external knowledge to detect hallucinations in generated texts, but external resources for specific scenarios are hard to access. Recent studies on detecting hallucinations in long text without external resources conduct consistency comparison among multiple sampled outputs. To handle long texts, researchers split long texts into multiple facts and individually compare the consistency of each pairs of facts. However, these methods (1) hardly achieve alignment among multiple facts; (2) overlook dependencies between multiple contextual facts. In this paper, we propose a graph-based context-aware (GCA) hallucination detection for text generations, which aligns knowledge facts and considers the dependencies between contextual knowledge triples in consistency comparison. Particularly, to align multiple facts, we conduct a triple-oriented response segmentation to extract multiple knowledge triples. To model dependencies among contextual knowledge triple (facts), we construct contextual triple into a graph and enhance triples' interactions via message passing and aggregating via RGCN. To avoid the omission of knowledge triples in long text, we conduct a LLM-based reverse verification via reconstructing the knowledge triples. Experiments show that our model enhances hallucination detection and excels all baselines.",
+  "doi": null,
+  "arxiv_id": "2409.11283",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T06:28:10.727466Z",
+  "relevance": 0.5,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "extracting triples from text for knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

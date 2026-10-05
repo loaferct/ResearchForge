@@ -1,0 +1,42 @@
+{
+  "paper_id": "doi:10.1109/ikt65497.2024.10892619",
+  "relevance_tier": "high",
+  "problem": "Multi-hop question answering struggles with effective retrieval across documents, leading to incomplete or inaccurate answers when integrating information from multiple sources.",
+  "method": "Enhance Graph-based Retrieval-Augmented Generation (Graph RAG) by constructing individual knowledge graphs for each document (entities as nodes, relationships as edges enriched with contextual properties), integrating them into a unified graph capturing cross-document relationships, and utilizing vector embeddings of graph relations for improved retrieval and multi-hop reasoning.",
+  "key_assumptions": [
+    "Document-level knowledge graphs can be effectively integrated into a unified cross-document graph.",
+    "Vector embeddings of graph relations improve retrieval accuracy for multi-hop QA."
+  ],
+  "main_contribution": "A novel graph-based retrieval mechanism leveraging vector embeddings of graph relations within the Graph RAG framework, plus a dataset of 500 documents and 296 multi-hop questions requiring cross-document information retrieval.",
+  "datasets": [
+    "500 documents",
+    "296 multi-hop questions requiring cross-document information retrieval"
+  ],
+  "benchmarks": [
+    "Baseline Graph RAG (implicit)"
+  ],
+  "baselines": [
+    "Standard Graph RAG"
+  ],
+  "metrics": [
+    "RAGAS framework (factual accuracy, semantic similarity)",
+    "LLM-based evaluator (answer comprehensiveness, empowerment, directness)"
+  ],
+  "results": "[\"Significantly outperforms baseline in factual accuracy and semantic similarity; superior performance in answer comprehensiveness, empowerment, and directness.\"]",
+  "limitations": [
+    "Not stated in abstract."
+  ],
+  "future_work": [
+    "Not stated in abstract."
+  ],
+  "code_availability": "[\"Available at https://github.com/AmiriShavaki/KG-based-RAG-for-Multi-hop-QA\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.9,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.2,
+    "conceptual_difference": "This work focuses on constructing document-level knowledge graphs and using vector embeddings of relations for retrieval-augmented generation. Our idea enriches each target triple with local context subgraphs from the same passage and adds an adaptive repair loop for one-hop failures, targeting the training data and iterative correction rather than document-level KG integration for retrieval.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T06:38:23.072664Z"
+}

@@ -1,0 +1,41 @@
+{
+  "paper_id": "arxiv:2501.16350",
+  "relevance_tier": "high",
+  "problem": "Answering multi-hop complex questions in Persian Knowledge Graph Question Answering is challenging due to the difficulty of accurately understanding and transforming natural language questions into semantically equivalent SPARQL queries.",
+  "method": "Proposes a four-component pipeline: (1) question parsing, (2) named entity recognition, (3) conversion of complex questions into SPARQL queries via MRDCPQ (Multi-hop Relation Decomposition and Conversion to Persian Question) component, and (4) SPARQL query execution and response composition. Additionally, a dataset of 5,600 Persian multi-hop complex questions is created and used to train Persian language models.",
+  "key_assumptions": [
+    "Decomposing complex questions into simpler sub-questions improves the accuracy of SPARQL generation.",
+    "Training language models on the decomposed question dataset enhances semantic understanding for KGQA."
+  ],
+  "main_contribution": "A novel method for Persian multi-hop KGQA that integrates question decomposition, NER, SPARQL generation, and execution, along with a newly created dataset of 5,600 Persian multi-hop questions.",
+  "datasets": [
+    "PeCoQ dataset (Persian complex question dataset)",
+    "created dataset of 5,600 Persian multi-hop complex questions"
+  ],
+  "benchmarks": [
+    "PeCoQ dataset"
+  ],
+  "baselines": [
+    "Etezadi’s method (comparable approach)"
+  ],
+  "metrics": [
+    "Precision, Recall, F1-score, Accuracy"
+  ],
+  "results": "[\"Our method achieved Precision 84.36%, Recall 68.41%, F1 75.55%, Accuracy 74.81%, demonstrating an improvement of 12.57% in F1 and 12.06% in accuracy over the best comparable method (Etezadi’s).\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "Expanding the dataset for question decomposition to include broader domains; improving language models; exploring additional enhancements."
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.5,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "The paper focuses on question decomposition and SPARQL generation for Persian KGQA, while our idea emphasizes context subgraph enrichment from source passages, adaptive repair loop, and RL transfer for general KGQA.",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T07:38:56.013091Z"
+}

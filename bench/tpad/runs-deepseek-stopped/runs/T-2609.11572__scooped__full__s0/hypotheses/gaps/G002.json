@@ -1,0 +1,43 @@
+{
+  "id": "G002",
+  "gap": "Soft temporal score fusion and hard validity-interval filtering have never been compared under identical corpora, retrievers and tuning conditions, and the temporal weight has never been selected with leakage controls. TempRALM tunes its scaling factor for relative importance with no reported held-out split, while Prior et al. evaluate only a hard filter and report no soft re-ranking arm.",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "importance relative to the importance of the semantic score",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 8",
+      "quote": "take into account the temporal validity of a statute as a hard constraint",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2605.23497",
+      "experiment_run_id": null,
+      "location": "p. 3",
+      "quote": "By injecting synthetic publication dates into candidate passages while keeping their content unchanged, Fang et al. show that documents labeled as more recent are systematically promoted in the ranking",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2401.13222",
+    "arxiv:2605.23497"
+  ],
+  "why_unaddressed": "The two lines of work are disjoint in the retrieved literature: the soft-score paper is evaluated on web/Wikipedia content without validity intervals and without a hard-filter baseline, and the hard-filter paper is evaluated on statutory QA without any soft re-ranking arm or retrieval metrics. Neither reports a leakage control for the temporal weight even though date injection alone is shown to shift rankings.",
+  "research_question": "Under leakage-controlled tuning, does a soft temporal score add any version-selection or answer-accuracy benefit over hard in-force filtering and over a timestamp-shuffled control?",
+  "potential_experiment": "A leakage-controlled head-to-head study: identical index and top-k; arms for semantic-only, future-mask-only, recency-only, soft elapsed-time decay, hard in-force filtering and an oracle filter; lambda tuned on a held-out question split; controls that shuffle version timestamps and shift query dates; results reported per query-date regime.",
+  "confidence": "high",
+  "verification_required": "Requires executing the recorded experiment plan E001 and verifying its runs; no published result currently settles it.",
+  "recorded_at": "2026-09-30T05:24:06.027304Z"
+}

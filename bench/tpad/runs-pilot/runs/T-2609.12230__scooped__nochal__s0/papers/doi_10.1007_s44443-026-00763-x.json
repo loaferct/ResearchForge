@@ -1,0 +1,34 @@
+{
+  "id": "doi:10.1007/s44443-026-00763-x",
+  "title": "PaGLR: A path-aware GNN-LLM framework for evidence-grounded multi-hop knowledge graph question answering",
+  "authors": [
+    "Yu-Teng Sun",
+    "Yang Su"
+  ],
+  "year": 2026,
+  "published": "2026-04-18",
+  "venue": "Journal of King Saud University: Computer and Information Sciences",
+  "url": "https://www.semanticscholar.org/paper/58751dcdd5279b27b1b6438640398e9e706a4f72",
+  "pdf_url": "https://doi.org/10.1007/s44443-026-00763-x",
+  "abstract": "Multi-hop knowledge graph question answering (KGQA) requires retrieving compact evidence and performing structured reasoning while maintaining graph-consistent explanations. Existing LLM-only prompting is easily distracted by irrelevant triples, and many GNN-LLM hybrids do not explicitly exploit path-level signals during subgraph construction and downstream reasoning. To address this, we propose PaGLR, a path-aware GNN-LLM framework that couples subgraph construction and reasoning via path-level modeling. Specifically, PaGLR predicts feasible reasoning paths to assemble a question-centric subgraph, and conducts dual-channel inference by integrating GNN-encoded structural representations with LLM reasoning over serialized triples conditioned on structure-aware soft prompts. We further introduce reward-guided path selection with path-level supervision to encourage concise, evidence-aligned explanation paths. Experiments on WebQSP, an entity-centric multi-hop KGQA benchmark, and ExplaGraphs, a complementary benchmark with graph-structured explanation supervision, show that PaGLR improves answer performance and explanation quality on the evaluated settings, suggesting the benefit of jointly training path scoring and downstream reasoning modules under answer and path supervision.",
+  "doi": "10.1007/s44443-026-00763-x",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "58751dcdd5279b27b1b6438640398e9e706a4f72",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T06:48:21.321207Z",
+  "relevance": 0.3421,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "local context subgraph training triples knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

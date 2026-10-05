@@ -1,0 +1,41 @@
+{
+  "id": "arxiv:2307.11035",
+  "title": "Cascade-DETR: Delving into High-Quality Universal Object Detection",
+  "authors": [
+    "Mingqiao Ye",
+    "Lei Ke",
+    "Siyuan Li",
+    "Yu-Wing Tai",
+    "Chi-Keung Tang",
+    "Martin Danelljan",
+    "Fisher Yu"
+  ],
+  "year": 2023,
+  "published": "2023-07-20",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2307.11035",
+  "pdf_url": "https://arxiv.org/pdf/2307.11035v1",
+  "abstract": "Object localization in general environments is a fundamental part of vision systems. While dominating on the COCO benchmark, recent Transformer-based detection methods are not competitive in diverse domains. Moreover, these methods still struggle to very accurately estimate the object bounding boxes in complex environments. We introduce Cascade-DETR for high-quality universal object detection. We jointly tackle the generalization to diverse domains and localization accuracy by proposing the Cascade Attention layer, which explicitly integrates object-centric information into the detection decoder by limiting the attention to the previous box prediction. To further enhance accuracy, we also revisit the scoring of queries. Instead of relying on classification scores, we predict the expected IoU of the query, leading to substantially more well-calibrated confidences. Lastly, we introduce a universal object detection benchmark, UDB10, that contains 10 datasets from diverse domains. While also advancing the state-of-the-art on COCO, Cascade-DETR substantially improves DETR-based detectors on all datasets in UDB10, even by over 10 mAP in some cases. The improvements under stringent quality requirements are even more pronounced. Our code and models will be released at https://github.com/SysCV/cascade-detr.",
+  "doi": null,
+  "arxiv_id": "2307.11035",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T11:34:11.145367Z",
+  "relevance": 0.1667,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "confidence cascade calibration"
+  ],
+  "code_urls": [
+    "https://github.com/SysCV/cascade-detr"
+  ],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

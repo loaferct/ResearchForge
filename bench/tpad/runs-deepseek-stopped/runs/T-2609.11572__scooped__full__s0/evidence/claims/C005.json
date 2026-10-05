@@ -1,0 +1,33 @@
+{
+  "id": "C005",
+  "statement": "The closest existing work is TempRALM (arxiv:2401.13222): the idea's core mechanism - a retrieval-agnostic, training-free addition of an elapsed-time temporal term to a retriever's semantic score, without re-indexing - is already published. The residual difference for the proposed idea is the application domain (amended statutes instead of web/Wikipedia versions) and the benchmark, which is a domain-transfer rather than a new mechanism.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "we define an auxiliary retrieval scoring function𝑇𝑒𝑚𝑝𝑅𝑒𝑡 𝑡 , which is the sum of the semantic score 𝑠(𝑞,𝑑) and the temporal score𝜏(𝑞𝑡,𝑑𝑡)",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2401.13222",
+      "experiment_run_id": null,
+      "location": "p. 4",
+      "quote": "our approach could be used to extend any retriever that ranks documents using a numerical similarity score between a query and a document corpus",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "critique",
+  "tags": [
+    "novelty",
+    "overlap",
+    "closest-work"
+  ],
+  "recorded_at": "2026-09-30T05:14:28.090566Z"
+}

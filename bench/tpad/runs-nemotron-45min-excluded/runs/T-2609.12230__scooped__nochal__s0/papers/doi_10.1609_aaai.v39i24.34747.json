@@ -1,0 +1,42 @@
+{
+  "id": "doi:10.1609/aaai.v39i24.34747",
+  "title": "Harnessing Large Language Models for Knowledge Graph Question Answering via Adaptive Multi-Aspect Retrieval-Augmentation",
+  "authors": [
+    "De-Rong Xu",
+    "Xin-Hang Li",
+    "Ziheng Zhang",
+    "Zhenxi Lin",
+    "Zhihong Zhu",
+    "Zhi Zheng",
+    "Xian Wu",
+    "Xiang-Yu Zhao",
+    "Tong Xu",
+    "En-Hong Chen"
+  ],
+  "year": 2025,
+  "published": "2025-04-11",
+  "venue": "AAAI Conference on Artificial Intelligence",
+  "url": "https://www.semanticscholar.org/paper/2bbcf9638bb779d4ca2bff3b4fbf52ffc9225c83",
+  "pdf_url": "https://doi.org/10.1609/aaai.v39i24.34747",
+  "abstract": "Large Language Models (LLMs) demonstrate remarkable capabilities, yet struggle with hallucination and outdated knowledge when tasked with complex knowledge reasoning, resulting in factually incorrect outputs. Previous studies have attempted to mitigate it by retrieving factual knowledge from large-scale knowledge graphs (KGs) to assist LLMs in logical reasoning and prediction of answers. However, this kind of approach often introduces noise and irrelevant data, especially in situations with extensive context from multiple knowledge aspects. In this way, LLM attention can be potentially mislead from question and relevant information. In our study, we introduce an Adaptive Multi-Aspect Retrieval-augmented over KGs (Amar) framework. This method retrieves knowledge including entities, relations, and subgraphs, and converts each piece of retrieved text into prompt embeddings. The Amar framework comprises two key sub-components: 1) a self-alignment module that aligns commonalities among entities, relations, and subgraphs to enhance retrieved text, thereby reducing noise interference; 2) a relevance gating module that employs a soft gate to learn the relevance score between question and multi-aspect retrieved data, to determine which information should be used to enhance LLMs' output, or even filtered altogether. Our method has achieved state-of-the-art performance on two common datasets, WebQSP and CWQ, showing a 1.9% improvement in accuracy over its best competitor and a 6.6% improvement in logical form generation over a method that directly uses retrieved text as context prompts. These results demonstrate the effectiveness of Amar in improving the reasoning of LLMs.",
+  "doi": "10.1609/aaai.v39i24.34747",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "2bbcf9638bb779d4ca2bff3b4fbf52ffc9225c83",
+  "source": "semantic_scholar",
+  "sources": [
+    "semantic_scholar"
+  ],
+  "citation_count": 22,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T06:01:14.543974Z",
+  "relevance": 0.4583,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "adaptive repair loop knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

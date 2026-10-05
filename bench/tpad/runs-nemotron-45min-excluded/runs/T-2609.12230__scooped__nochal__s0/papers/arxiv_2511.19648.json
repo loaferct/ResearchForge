@@ -1,0 +1,34 @@
+{
+  "id": "arxiv:2511.19648",
+  "title": "Efficient Multi-Hop Question Answering over Knowledge Graphs via LLM Planning and Embedding-Guided Search",
+  "authors": [
+    "Manil Shrestha",
+    "Edward Kim"
+  ],
+  "year": 2025,
+  "published": "2025-11-24",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2511.19648",
+  "pdf_url": "https://arxiv.org/pdf/2511.19648v1",
+  "abstract": "Multi-hop question answering over knowledge graphs remains computationally challenging due to the combinatorial explosion of possible reasoning paths. Recent approaches rely on expensive Large Language Model (LLM) inference for both entity linking and path ranking, limiting their practical deployment. Additionally, LLM-generated answers often lack verifiable grounding in structured knowledge. We present two complementary hybrid algorithms that address both efficiency and verifiability: (1) LLM-Guided Planning that uses a single LLM call to predict relation sequences executed via breadth-first search, achieving near-perfect accuracy (micro-F1 > 0.90) while ensuring all answers are grounded in the knowledge graph, and (2) Embedding-Guided Neural Search that eliminates LLM calls entirely by fusing text and graph embeddings through a lightweight 6.7M-parameter edge scorer, achieving over 100 times speedup with competitive accuracy. Through knowledge distillation, we compress planning capability into a 4B-parameter model that matches large-model performance at zero API cost. Evaluation on MetaQA demonstrates that grounded reasoning consistently outperforms ungrounded generation, with structured planning proving more transferable than direct answer generation. Our results show that verifiable multi-hop reasoning does not require massive models at inference time, but rather the right architectural inductive biases combining symbolic structure with learned representations.",
+  "doi": null,
+  "arxiv_id": "2511.19648",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T05:41:15.833708Z",
+  "relevance": 0.8333,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "MetaQA multi-hop knowledge graph question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

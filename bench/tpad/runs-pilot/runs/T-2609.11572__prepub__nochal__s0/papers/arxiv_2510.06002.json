@@ -1,0 +1,35 @@
+{
+  "id": "arxiv:2510.06002",
+  "title": "Deterministic Legal Agents: A Canonical Primitive API for Auditable Reasoning over Temporal Knowledge Graphs",
+  "authors": [
+    "Hudson de Martim"
+  ],
+  "year": 2025,
+  "published": "2025-10-07",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2510.06002",
+  "pdf_url": "https://arxiv.org/pdf/2510.06002v3",
+  "abstract": "In high-stakes legal domains, retrieval must preserve not only semantic relevance, but also the hierarchy, temporality, and causal provenance of legal norms. Standard Retrieval-Augmented Generation (RAG), based mainly on semantic similarity over text fragments, cannot reliably provide this level of control. Prior work on SAT-Graph RAG addressed the representation problem by modeling legal materials as structure-aware temporal knowledge graphs. This paper addresses the next problem: how an LLM-based reasoning agent can interact with such a graph without reintroducing unreliable retrieval behavior. We specify the SAT-Graph API, a canonical primitive interface for auditable reasoning over temporal knowledge graphs, developed and illustrated in the legal domain. The API exposes typed, atomic, and composable primitives that mediate between a probabilistic language model and a deterministic symbolic substrate. Its design follows Probability Isolation: uncertainty is confined to intent translation, semantic anchoring, and final narrative synthesis, while structural, temporal, and causal graph traversals are executed through deterministic operations over canonical anchors. The interface shifts legal RAG from single-shot Retrieve-then-Generate to active Reason-Act-Observe. An agent decomposes a legal question into an explicit execution plan, invokes primitives for point-in-time retrieval, context reconstruction, provenance tracing, and impact analysis, and produces an answer grounded in an auditable log of graph operations. The result is a formal architectural specification, not an empirical benchmark: a secure interaction protocol that decouples legal knowledge representation from agentic reasoning. Although illustrated in law, the primitive model is domain-portable to other temporally versioned, provenance-sensitive, and authority-governed knowledge bases.",
+  "doi": null,
+  "arxiv_id": "2510.06002",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T10:48:57.864134Z",
+  "relevance": 0.2727,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal semantic retrieval"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": [
+    "abstract (from arxiv) never mentions 'Deterministic Legal Agents'; it may belong to another work"
+  ]
+}

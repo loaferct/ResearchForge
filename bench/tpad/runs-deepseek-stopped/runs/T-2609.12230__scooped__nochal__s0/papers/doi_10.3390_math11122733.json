@@ -1,0 +1,35 @@
+{
+  "id": "doi:10.3390/math11122733",
+  "title": "Multitask Fine Tuning on Pretrained Language Model for Retrieval-Based Question Answering in Automotive Domain",
+  "authors": [
+    "Zhiyi Luo",
+    "Sirui Yan",
+    "Shuyun Luo"
+  ],
+  "year": 2023,
+  "published": "2023-06-16",
+  "venue": "Mathematics",
+  "url": "https://doi.org/10.3390/math11122733",
+  "pdf_url": null,
+  "abstract": "Retrieval-based question answering in the automotive domain requires a model to comprehend and articulate relevant domain knowledge, accurately understand user intent, and effectively match the required information. Typically, these systems employ an encoder–retriever architecture. However, existing encoders, which rely on pretrained language models, suffer from limited specialization, insufficient awareness of domain knowledge, and biases in user intent understanding. To overcome these limitations, this paper constructs a Chinese corpus specifically tailored for the automotive domain, comprising question–answer pairs, document collections, and multitask annotated data. Subsequently, a pretraining–multitask fine-tuning framework based on masked language models is introduced to integrate domain knowledge as well as enhance semantic representations, thereby yielding benefits for downstream applications. To evaluate system performance, an evaluation dataset is created using ChatGPT, and a novel retrieval task evaluation metric called mean linear window rank (MLWR) is proposed. Experimental results demonstrate that the proposed system (based on BERTbase), achieves accuracies of 77.5% and 84.75% for Hit@1 and Hit@3, respectively, in the automotive domain retrieval-based question-answering task. Additionally, the MLWR reaches 87.71%. Compared to a system utilizing a general encoder, the proposed multitask fine-tuning strategy shows improvements of 12.5%, 12.5%, and 28.16% for Hit@1, Hit@3, and MLWR, respectively. Furthermore, when compared to the best single-task fine-tuning strategy, the enhancements amount to 0.5%, 1.25%, and 0.95% for Hit@1, Hit@3, and MLWR, respectively.",
+  "doi": "10.3390/math11122733",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "crossref",
+  "sources": [
+    "crossref"
+  ],
+  "citation_count": 6,
+  "citation_count_source": "crossref",
+  "retrieved_at": "2026-09-30T05:16:42.281414Z",
+  "relevance": 0.1923,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "fine-tuning language model on retrieved context documents improves open-domain question answering"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "crossref",
+  "metadata_warnings": []
+}

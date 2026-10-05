@@ -1,0 +1,40 @@
+{
+  "id": "arxiv:2110.12679",
+  "title": "Improving Embedded Knowledge Graph Multi-hop Question Answering by introducing Relational Chain Reasoning",
+  "authors": [
+    "Weiqiang Jin",
+    "Biao Zhao",
+    "Hang Yu",
+    "Xi Tao",
+    "Ruiping Yin",
+    "Guizhong Liu"
+  ],
+  "year": 2021,
+  "published": "2021-10-25",
+  "venue": "Data Mining and Knowledge Discovery (2022)",
+  "url": "https://arxiv.org/abs/2110.12679",
+  "pdf_url": "https://arxiv.org/pdf/2110.12679v3",
+  "abstract": "Knowledge Graph Question Answering (KGQA) aims to answer user-questions from a knowledge graph (KG) by identifying the reasoning relations between topic entity and answer. As a complex branch task of KGQA, multi-hop KGQA requires reasoning over the multi-hop relational chain preserved in KG to arrive at the right answer. Despite recent successes, the existing works on answering multi-hop complex questions still face the following challenges: i) The absence of an explicit relational chain order reflected in user-question stems from a misunderstanding of a user's intentions. ii) Incorrectly capturing relational types on weak supervision of which dataset lacks intermediate reasoning chain annotations due to expensive labeling cost. iii) Failing to consider implicit relations between the topic entity and the answer implied in structured KG because of limited neighborhoods size constraint in subgraph retrieval-based algorithms.To address these issues in multi-hop KGQA, we propose a novel model herein, namely Relational Chain based Embedded KGQA (Rce-KGQA), which simultaneously utilizes the explicit relational chain revealed in natural language question and the implicit relational chain stored in structured KG. Our extensive empirical study on three open-domain benchmarks proves that our method significantly outperforms the state-of-the-art counterparts like GraftNet, PullNet and EmbedKGQA. Comprehensive ablation experiments also verify the effectiveness of our method on the multi-hop KGQA task. We have made our model's source code available at github: https://github.com/albert-jin/Rce-KGQA.",
+  "doi": "10.1007/s10618-022-00891-8",
+  "arxiv_id": "2110.12679",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T07:29:39.234411Z",
+  "relevance": 0.9167,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "knowledge graph multi-hop question answering dataset"
+  ],
+  "code_urls": [
+    "https://github.com/albert-jin/Rce-KGQA"
+  ],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

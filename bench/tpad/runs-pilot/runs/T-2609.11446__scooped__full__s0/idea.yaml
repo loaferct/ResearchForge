@@ -1,0 +1,87 @@
+raw_idea: We aim to improve collaborative inference among a set of diverse models
+  by establishing a unified reliability metric for their confidence scores. The plan
+  is to first apply a model‑specific calibration step, using held‑out validation data,
+  so that each model’s output probabilities reflect true likelihoods. Once calibrated,
+  we will define common thresholds that determine whether a prediction can be accepted
+  immediately, whether a more powerful model should be consulted, or whether multiple
+  model outputs should be combined. By basing decisions on calibrated confidence,
+  the routing policy becomes independent of the particular models or computational
+  budget in use. We will also develop a theoretical link between calibration and the
+  expected selective risk, and evaluate the approach on language and vision benchmarks.
+analysis:
+  raw_idea: We aim to improve collaborative inference among a set of diverse models
+    by establishing a unified reliability metric for their confidence scores. The
+    plan is to first apply a model‑specific calibration step, using held‑out validation
+    data, so that each model’s output probabilities reflect true likelihoods. Once
+    calibrated, we will define common thresholds that determine whether a prediction
+    can be accepted immediately, whether a more powerful model should be consulted,
+    or whether multiple model outputs should be combined. By basing decisions on calibrated
+    confidence, the routing policy becomes independent of the particular models or
+    computational budget in use. We will also develop a theoretical link between calibration
+    and the expected selective risk, and evaluate the approach on language and vision
+    benchmarks.
+  problem: Improving collaborative inference among a set of diverse models by establishing
+    a unified reliability metric for their confidence scores.
+  target_domain: Machine learning ensembles, model calibration, conditional computation
+  proposed_method: 'Apply model-specific calibration using held-out validation data
+    to adjust each model''s output probabilities to reflect true likelihoods. Define
+    common thresholds based on calibrated confidence to route inputs: accept immediately,
+    consult a more powerful model, or combine multiple model outputs. Develop a theoretical
+    link between calibration and expected selective risk.'
+  hypothesis: After calibration, using a unified reliability metric (calibrated confidence)
+    with common thresholds will improve the accuracy-efficiency tradeoff of collaborative
+    inference compared to uncalibrated baselines or heuristic thresholds.
+  research_question: Does post-hoc calibration of individual model confidence scores
+    enable a unified reliability metric that, when used with common thresholds optimized
+    on validation data, improve the accuracy-efficiency tradeoff of collaborative
+    inference compared to uncalibrated baselines or heuristic thresholding methods
+    across diverse models and benchmarks?
+  expected_contribution: A calibration method for diverse models to a unified reliability
+    metric; a routing policy based on calibrated confidence that is model- and budget-independent;
+    theoretical analysis linking calibration to selective risk; empirical evaluation
+    on language and vision benchmarks.
+  assumptions:
+  - Held-out validation data is available and representative of the test distribution.
+  - Models are already trained and we only adjust their confidence scores (post-hoc
+    calibration is sufficient).
+  - The set of diverse models includes models of varying capacities and architectures
+    (e.g., small, medium, large).
+  - Standard calibration methods (temperature scaling, Platt scaling, isotonic regression)
+    are effective for each model.
+  - Common thresholds can be set meaningfully after calibration (e.g., by optimizing
+    a validation metric).
+  - We will evaluate on language (e.g., GLUE) and vision (e.g., ImageNet) benchmarks.
+  variables:
+    independent:
+    - Calibration method (temperature scaling, isotonic regression, etc.)
+    - Model diversity (model sizes, architectures)
+    - Threshold values (derived from calibration)
+    dependent:
+    - Selective risk (or risk-coverage curve)
+    - Average computation cost (FLOPs, latency)
+    - Calibration error (Expected Calibration Error, ECE)
+    controls:
+    - Validation set used for calibration
+    - Test set for evaluation
+    - Base models (without calibration) as baseline
+  target_system: ''
+  expected_benefits:
+  - Improved accuracy-efficiency tradeoff
+  - Model- and budget-independent routing policy
+  - Theoretical grounding via calibration-selective risk link
+  potential_risks:
+  - Calibration may not be effective for all model types
+  - Common thresholds may not be optimal across diverse models
+  - Theoretical assumptions may not hold under distribution shift
+  ambiguities: []
+  keywords:
+  - model calibration
+  - confidence thresholding
+  - ensemble routing
+  - selective inference
+  - uncertainty quantification
+  search_queries:
+  - confidence calibration threshold routing ensemble
+  - uncalibrated vs calibrated confidence ensemble selection
+  - theoretical link calibration selective risk
+  recorded_at: '2026-09-30T11:23:24.628023Z'

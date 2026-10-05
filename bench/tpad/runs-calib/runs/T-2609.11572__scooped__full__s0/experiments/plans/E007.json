@@ -1,0 +1,78 @@
+{
+  "id": "E007",
+  "title": "Prevalence reweighting and sensitivity analysis for oversampled version-contamination rates",
+  "research_question": "What is the natural prevalence of non-latest-authoritative questions in realistic legal QA, and how much do reported contamination rates change when oversampled per-stratum measurements are reweighted to plausible deployment prevalence?",
+  "hypothesis": "Non-latest-authoritative questions are a minority of realistic legal QA traffic (plausibly low single digits to roughly 30%), so unweighted oversampled contamination rates overstate deployment impact; the prevalence-weighted rate is smaller but still non-trivial if the non-latest stratum contamination is large, and contamination on latest-gold queries contributes materially to the deployment-weighted figure.",
+  "proposed_method": "Combine the per-stratum contamination measurements from the benchmark with an explicit prevalence model instead of relying on oversampled rates. Estimate the prevalence of date-constrained questions from proxy legal QA sources by classifying questions into current-law and past-state presupposing categories, report classifier agreement against a hand-labelled sample, then compute the deployment-expected contamination as a weighted sum over strata, sweeping the prevalence assumption from 2% to 50% to produce a sensitivity curve. Report stratum-separated rates and the weighted rate together, and repeat the weighting separately for the answer-differential subset so that expected user-visible error, not only retrieval error, is quantified.",
+  "baselines": [
+    "The unweighted oversampled rate (the current default) as the reference that is being corrected",
+    "The prevalence-weighted rate under the web-QA analogue (16.5% context-dependent) as the central assumption",
+    "A conservative bound using the lowest plausible prevalence (2-5%)",
+    "An upper bound for a historical-research deployment where most queries target past dates",
+    "Stratum-separated reporting, which requires no prevalence assumption at all"
+  ],
+  "datasets": [
+    "Per-stratum contamination rates from the Stage-0/E004 measurement over curated clause version chains",
+    "Query-mix proxies for prevalence: existing legal QA sets with enough metadata to distinguish questions that presuppose a past legal state, and the web-QA analogue as a fallback prior",
+    "Optional: a small manually labelled sample of realistic legal information-seeking questions to anchor the legal prevalence estimate",
+    "Not used as prevalence sources: ESG disclosures and financial filing QA, whose query mixes differ from legal practice"
+  ],
+  "workloads": [
+    "Date-constrained (past-state presupposing) question identification in proxy legal corpora",
+    "Stratum-separated contamination from the benchmark, latest-gold and non-latest-gold",
+    "Weighted estimates under several deployment profiles: routine compliance questions, litigation over past conduct, historical legal research",
+    "Answer-differential subset weighted separately to estimate expected user-visible error"
+  ],
+  "hardware": "CPU-only: the work is measurement aggregation plus lightweight query classification. No GPU, no LLM fine-tuning; an embedding model or a small hosted classifier suffices, with cached responses.",
+  "software_environment": "",
+  "metrics": [
+    "Estimated prevalence of date-constrained questions with confidence intervals, per proxy source and per user population",
+    "Prevalence-weighted contamination rate, with propagated interval",
+    "Sensitivity curve of weighted contamination against assumed prevalence (2% to 50%)",
+    "Ratio of unweighted to weighted contamination, quantifying the oversampling distortion",
+    "Stratum-separated contamination (latest-gold and non-latest-gold) requiring no prevalence assumption",
+    "Accuracy of the date-constrained question classifier on a hand-labelled sample",
+    "Weighted answer-accuracy expectation on the answer-differential subset"
+  ],
+  "ablations": [
+    "Prevalence assumption swept over a wide range (for example 2%, 5%, 10%, 16.5%, 30%, 50%) to produce a sensitivity curve rather than a point estimate",
+    "Query-proxy source: existing legal QA sets vs a small sample of realistic legal information-seeking questions vs the web-QA analogue",
+    "Whether the weighting includes contamination on latest-gold queries or only the non-latest stratum",
+    "Prevalence estimated per subject area or jurisdiction, to test heterogeneity",
+    "Optimistic vs conservative contamination definitions (top-1 vs top-k)"
+  ],
+  "controls": [
+    "The same per-stratum contamination measurements are used across all prevalence assumptions; only the weights change",
+    "Prevalence assumptions pre-registered before computing weighted rates",
+    "Stratum-separated rates reported alongside every weighted figure",
+    "Confidence intervals propagated from both the stratum estimates and the prevalence estimate",
+    "Classifier for date-constrained questions validated on a hand-labelled sample with agreement reported"
+  ],
+  "confounders_addressed": [
+    "Oversampling inflates the apparent failure rate - addressed by prevalence weighting and an explicit sensitivity curve",
+    "Web-QA prevalence may not transfer to legal practice - addressed by treating prevalence as a swept parameter rather than a fixed constant and by reporting stratum-separated rates that need no assumption",
+    "Contamination on latest-gold queries is easy to overlook - addressed by including the latest-gold stratum in the weighted estimate",
+    "Classification of queries as date-constrained may be noisy - addressed by reporting classifier agreement and by using a coarse two-way split with a reported error rate",
+    "Deployment prevalence may differ by user population (compliance vs litigation vs research) - addressed by reporting per-population bounds"
+  ],
+  "expected_outcomes": "The unweighted oversampled contamination rate substantially overstates deployment impact, and prevalence weighting on plausible legal ranges (single digits to roughly 30%) yields a materially smaller but still non-trivial expected failure rate - provided the non-latest stratum contamination is large. The sensitivity curve makes the dependence explicit, and the weighted estimate for the latest-gold stratum shows contamination that would be invisible in a purely oversampled design. If the weighted rate falls below about one percent across all plausible prevalences, the practical significance claim fails even if the mechanism works.",
+  "failure_conditions": [
+    "No proxy corpus supports even a coarse split between current-law and date-constrained questions, so prevalence cannot be estimated and only a range-based sensitivity analysis is possible",
+    "The prevalence-weighted contamination rate is negligible (under roughly 1%) across all plausible assumptions - deployment impact is small and the practical significance claim fails",
+    "Contamination on the latest-gold stratum is near zero and prevalence of the non-latest stratum is low (near 2-5%), so the weighted expected failure rate is trivially small",
+    "Prevalence estimates differ so wildly across proxy sources that the weighted figure is uninformative - then only stratum-separated reporting should be retained",
+    "The date-constrained classifier is too unreliable to support any split, making the weighting exercise circular"
+  ],
+  "reproducibility_notes": "No execution spec is attached: this analysis builds on per-stratum measurements that do not yet exist and on proxy legal QA corpora that must be downloaded and labelled, and no public implementation of the pipeline exists to invoke. Reproducibility measures: pre-register the prevalence range and weighting formula, publish the date-constrained classifier with its hand-labelled validation sample, report agreement and confusion counts, publish the stratum-separated rates feeding the weights, and present the sensitivity curve rather than a single headline number so that any reader can substitute their own prevalence.",
+  "related_modification_id": "M005",
+  "related_paper_ids": [
+    "arxiv:2109.06157",
+    "arxiv:2608.21409",
+    "doi:10.3390/sym18091498",
+    "doi:10.2139/ssrn.7087840",
+    "arxiv:2606.09724"
+  ],
+  "execution": null,
+  "status": "planned",
+  "recorded_at": "2026-09-30T04:42:34.274736Z"
+}

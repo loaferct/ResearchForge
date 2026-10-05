@@ -1,0 +1,41 @@
+{
+  "paper_id": "doi:10.1109/cscwd68734.2026.11582373",
+  "relevance_tier": "high",
+  "problem": "Existing KGQA methods based on static retrieval struggle with multi-hop reasoning and long path search, lacking coherence and completeness in path reasoning for complex questions.",
+  "method": "Models KGQA as a reinforcement learning problem, proposes a path-matching-based RL method that combines question semantics, entities, and relationship information to improve reasoning path quality, and introduces a baseline policy gradient algorithm to reduce variance and enhance stability and convergence.",
+  "key_assumptions": [
+    "Reinforcement learning can effectively optimize reasoning paths in KGQA.",
+    "Path matching mechanism improves coherence and completeness of reasoned paths.",
+    "Baseline policy gradient reduces variance in traditional RL algorithms."
+  ],
+  "main_contribution": "A path-matching-based reinforcement learning method for KGQA that enhances reasoning path quality and stability via baseline policy gradient.",
+  "datasets": [
+    "not stated in abstract"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "most existing strong baseline methods (not specified)"
+  ],
+  "metrics": [
+    "not stated in abstract"
+  ],
+  "results": "[\"Experimental results show that the proposed method outperforms most existing strong baseline methods on benchmark datasets.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.8,
+    "method_overlap": 0.5,
+    "evaluation_overlap": 0.4,
+    "conceptual_difference": "The paper uses RL with path matching and baseline policy gradient, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T07:48:40.394731Z"
+}

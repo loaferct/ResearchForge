@@ -1,0 +1,221 @@
+{
+  "field_name": "Multi-hop question answering over knowledge graphs (KGQA) and knowledge-graph-grounded language-model training",
+  "categories": [
+    {
+      "name": "Multi-hop QA over knowledge graphs (root)",
+      "parent": null,
+      "description": "Reasoning over chains of KG facts to answer questions, spanning embedding-KBQA reasoning, RL path walking, and LLM prompting over serialized subgraphs.",
+      "paper_ids": []
+    },
+    {
+      "name": "Retrieval + neural reasoning over a bounded subgraph",
+      "parent": "Multi-hop QA over knowledge graphs (root)",
+      "description": "First extract a question-specific subgraph, then reason over it with a learned model. This is the dominant research line in the retrieved set.",
+      "paper_ids": [
+        "arxiv:2202.13296",
+        "arxiv:2101.03737",
+        "doi:10.18653/v1/2020.emnlp-main.99",
+        "arxiv:1709.04071"
+      ]
+    },
+    {
+      "name": "Trainable subgraph retrieval",
+      "parent": "Retrieval + neural reasoning over a bounded subgraph",
+      "description": "Learn which entity/relation triples to retrieve before reasoning; subgraph size trades answer coverage against noise.",
+      "paper_ids": [
+        "arxiv:2202.13296"
+      ]
+    },
+    {
+      "name": "Intermediate supervision / teacher-student",
+      "parent": "Retrieval + neural reasoning over a bounded subgraph",
+      "description": "Manufacture per-step supervision because only final answers are labelled; covers differentiable teachers over intermediate entity distributions and stepwise weak-supervision reasoning.",
+      "paper_ids": [
+        "arxiv:2101.03737",
+        "doi:10.1145/3336191.3371812"
+      ]
+    },
+    {
+      "name": "Latent / variational path reasoning",
+      "parent": "Retrieval + neural reasoning over a bounded subgraph",
+      "description": "Treat the reasoning path as a latent variable and marginalise it while handling question/entity-linking noise.",
+      "paper_ids": [
+        "arxiv:1709.04071"
+      ]
+    },
+    {
+      "name": "Graph reasoning module over an extracted subgraph (GNN + paths)",
+      "parent": "Retrieval + neural reasoning over a bounded subgraph",
+      "description": "Bolt a multi-hop relational module onto a pretrained language model and run it over an external-KG subgraph.",
+      "paper_ids": [
+        "doi:10.18653/v1/2020.emnlp-main.99"
+      ]
+    },
+    {
+      "name": "Reinforcement-learning path walking over KG",
+      "parent": "Multi-hop QA over knowledge graphs (root)",
+      "description": "A policy agent extends an inference path hop by hop, rewarded by reaching the answer; the main knobs are reward quality and exploration.",
+      "paper_ids": [
+        "doi:10.18653/v1/d18-1362",
+        "doi:10.1016/j.knosys.2023.110760",
+        "doi:10.1016/j.eswa.2024.124652",
+        "doi:10.1016/j.ins.2022.11.042"
+      ]
+    },
+    {
+      "name": "Inference-time GraphRAG: triple selection, serialization and prompting",
+      "parent": "Multi-hop QA over knowledge graphs (root)",
+      "description": "Retrieve or construct a subgraph and place it in the prompt of a frozen LLM; studies which triples, in what syntax, in what order, under which instruction.",
+      "paper_ids": [
+        "arxiv:2609.10237",
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    },
+    {
+      "name": "Multi-hop QA benchmarks and evaluation methodology",
+      "parent": "Multi-hop QA over knowledge graphs (root)",
+      "description": "Datasets and diagnostics that control hop depth, gold evidence paths, and whether reasoning steps are genuinely executed.",
+      "paper_ids": [
+        "arxiv:2011.01060",
+        "arxiv:2406.13397"
+      ]
+    },
+    {
+      "name": "Context-enriched triple supervision for language-model fine-tuning (the proposed idea)",
+      "parent": "Multi-hop QA over knowledge graphs (root)",
+      "description": "Vary what supervision the LM is trained on — isolated triple/path versus a passage-coherent group of triples — at matched token budget. Not represented by any retrieved work: the closest neighbours enrich the model input (retrieval/GNN), the reward (RL), or the prompt (GraphRAG), but none changes the training-time supervision text and holds the token budget fixed.",
+      "paper_ids": []
+    }
+  ],
+  "idea_position": "The idea sits in an unoccupied cell of the retrieval+reasoning branch: it keeps the training-time, parameter-updating regime of the embedding-KBQA line but moves the lever from 'which triples to retrieve and feed a graph reasoner' to 'what text supervision the language model sees'. It is adjacent to, but distinct from, three occupied branches: (i) retrieval/GNN subgraph methods (arxiv:2202.13296, doi:10.18653/v1/2020.emnlp-main.99) that use the subgraph as model input; (ii) RL path walking (doi:10.18653/v1/d18-1362) whose reward shaping already repairs noisy one-hop supervision; (iii) inference-time GraphRAG prompting (arxiv:2609.10237, doi:10.20944/preprints202505.1992.v1) that manipulates the same triple set but without gradient updates. Its adaptive repair loop and low-hop RL stage are the parts with the least direct precedent, but arxiv:2101.03737 and doi:10.18653/v1/d18-1362 already occupy the conceptual space of 'fix unreliable intermediate supervision'.",
+  "dominant_approaches": [
+    "Retrieve a bounded, question-specific subgraph (2-hop for WebQSP, 4-hop for CWQ) and reason over it with an embedding/neural state machine or GNN (arxiv:2202.13296, arxiv:2101.03737, doi:10.18653/v1/2020.emnlp-main.99)",
+    "Formulate multi-hop QA as RL path walking and improve reward quality/exploration rather than the input representation (doi:10.18653/v1/d18-1362, plus the four no-abstract RL papers)",
+    "Prompt a frozen LLM with serialized triples and tune which triples / syntax / order are presented (arxiv:2609.10237, doi:10.20944/preprints202505.1992.v1)",
+    "Learn intermediate/per-step supervision from final-answer-only labels (arxiv:2101.03737, doi:10.1145/3336191.3371812, arxiv:1709.04071)",
+    "Report Hits@1/F1 on WebQSP, CWQ and MetaQA-1/2/3hop, or answer F1 on path-annotated passage/KG benchmarks"
+  ],
+  "common_assumptions": [
+    "Reasoning happens over a bounded, question-specific subgraph rather than the full knowledge base",
+    "Adding triples beyond a small relevant set is primarily a noise/coverage trade-off, not a source of supportive context (arxiv:2202.13296)",
+    "Final-answer-only supervision is too weak, so some form of intermediate supervision or reward shaping is required (arxiv:2101.03737, doi:10.18653/v1/d18-1362)",
+    "The triples on the reasoning chain carry essentially all the answer-relevant signal, while off-chain triples are distractors (arxiv:2609.10237)",
+    "Evaluation should be stratified or annotated by hop depth so that shallow shortcuts can be detected (arxiv:2011.01060, arxiv:2406.13397)",
+    "A per-triple source passage is not needed, because subgraphs are induced from entity/relation neighbourhoods (arxiv:2202.13296, arxiv:2101.03737)"
+  ],
+  "common_datasets": [
+    "Freebase (via WebQSP / CWQ topic-centric subgraphs)",
+    "Wikidata",
+    "Wikipedia text (2WikiMultiHopQA, MoreHopQA sources)",
+    "MetaQA movie KG",
+    "CommonsenseQA / OpenbookQA concept graphs",
+    "LC-QuAD 2.0 and QALD-10 (Wikidata-grounded GraphRAG corpus)"
+  ],
+  "common_benchmarks": [
+    "WebQSP (WebQuestionsSP)",
+    "CWQ (ComplexWebQuestions)",
+    "MetaQA-1hop / 2hop / 3hop",
+    "2WikiMultiHopQA",
+    "MoreHopQA (HotpotQA + 2WikiMultihopQA + MuSiQue extended)",
+    "CommonsenseQA",
+    "OpenbookQA",
+    "LC-QuAD 2.0",
+    "QALD-10"
+  ],
+  "common_metrics": [
+    "Hits@1 (entity ranking)",
+    "F1 (token-level answer F1)",
+    "Exact Match / answer accuracy",
+    "Answer Coverage Rate (retrieval-side)",
+    "Perfect-reasoning rate over decomposed sub-questions (arxiv:2406.13397)",
+    "Reasoning-path / evidence faithfulness as a secondary diagnostic (arxiv:2011.01060)"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Missing intermediate/per-hop supervision makes training unstable or ineffective; virtually every line proposes a different fix, which shows the problem is acknowledged but not solved uniformly.",
+      "paper_ids": [
+        "arxiv:2101.03737",
+        "doi:10.1145/3336191.3371812",
+        "doi:10.18653/v1/d18-1362"
+      ]
+    },
+    {
+      "description": "Extra triples beyond a small relevant set are treated as noise, so the field optimises retrieval precision/recall rather than asking whether coherent context is useful.",
+      "paper_ids": [
+        "arxiv:2202.13296",
+        "arxiv:2609.10237"
+      ]
+    },
+    {
+      "description": "Subgraph and reasoning methods have no notion of the document or passage a triple came from, so passage-level provenance is unavailable or unused.",
+      "paper_ids": [
+        "arxiv:2202.13296",
+        "arxiv:2101.03737"
+      ]
+    },
+    {
+      "description": "Short-hop splits are saturated (MetaQA-2hop reported at 99.9), so any context-enrichment effect on 1-2 hop data would be unmeasurable and the headroom is concentrated at 3+ hops and on WebQSP/CWQ.",
+      "paper_ids": [
+        "arxiv:2101.03737"
+      ]
+    },
+    {
+      "description": "Evaluation corpora are small or confounded: depth perfectly aliased with source benchmark and only 125 questions in the most relevant controlled study.",
+      "paper_ids": [
+        "arxiv:2609.10237"
+      ]
+    },
+    {
+      "description": "The most relevant contextual studies are inference-time/prompting only, so there is no causal training-time test of whether context changes what the model learns.",
+      "paper_ids": [
+        "arxiv:2609.10237",
+        "doi:10.20944/preprints202505.1992.v1"
+      ]
+    },
+    {
+      "description": "RL methods depend on incomplete-KG rewards and can be misled by spurious paths that incidentally reach the answer, and none of the retrieved abstracts reports hop-depth transfer.",
+      "paper_ids": [
+        "doi:10.18653/v1/d18-1362"
+      ]
+    }
+  ],
+  "underexplored_combinations": [
+    "A training-time, token-budget-matched comparison of isolated triple/path supervision versus passage-coherent context supervision for an LM — no retrieved paper runs this contrast",
+    "Using source-passage provenance, rather than graph neighbourhood or entity overlap, as the organising principle for which context triples accompany a target fact",
+    "An adaptive repair loop that converts detected one-hop failures into new training examples (nearest neighbours are differentiable intermediate supervision, arxiv:2101.03737, and embedding-based reward estimation, doi:10.18653/v1/d18-1362)",
+    "Measuring whether RL or repair-iteration gains obtained at 1-2 hops transfer to 3+ hops, i.e. hop-stratified transfer of a low-hop training stage",
+    "Combining retrieval that is optimised for passage coherence with a model that reasons over it, instead of optimising retrieval precision or subgraph size (arxiv:2202.13296, arxiv:2609.10237)",
+    "Distinguishing passage-coherence effects from triple ordering/serialization effects within one controlled design (doi:10.20944/preprints202505.1992.v1, arxiv:2609.10237)"
+  ],
+  "contradictions": [
+    {
+      "description": "Triple ordering and subgraph merging are reported to improve answer precision (SG-RAG MOT), whereas a larger controlled sweep finds syntax, triple order and subgraph size produce no measurable effect at multi-hop depth.",
+      "paper_ids": [
+        "doi:10.20944/preprints202505.1992.v1",
+        "arxiv:2609.10237"
+      ]
+    },
+    {
+      "description": "Extra triples are framed as noise that must be filtered to avoid reasoning bias, versus the idea's premise that surrounding triples carry supportive context; and the strongest controlled evidence finds off-chain triples contribute ~0.003 F1 at inference time.",
+      "paper_ids": [
+        "arxiv:2202.13296",
+        "arxiv:2609.10237"
+      ]
+    },
+    {
+      "description": "Unreliable intermediate supervision is repaired by learning intermediate entity distributions with a bidirectional teacher, versus by estimating unobserved-fact rewards with a pretrained one-hop embedding and forcing exploration — incompatible mechanisms addressing the same failure.",
+      "paper_ids": [
+        "arxiv:2101.03737",
+        "doi:10.18653/v1/d18-1362"
+      ]
+    },
+    {
+      "description": "Subgraph-based reasoners report large gains from richer subgraphs, while the prompt-level control study reports that only chain membership matters at inference time; the two results are not comparable because one updates a reasoner and the other prompts a frozen LLM, which is precisely the gap the idea proposes to test.",
+      "paper_ids": [
+        "arxiv:2202.13296",
+        "arxiv:2609.10237"
+      ]
+    }
+  ],
+  "recorded_at": "2026-09-30T05:12:21.623790Z"
+}

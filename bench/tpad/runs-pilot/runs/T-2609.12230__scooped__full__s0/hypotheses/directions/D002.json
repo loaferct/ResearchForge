@@ -1,0 +1,29 @@
+{
+  "id": "D002",
+  "direction": "Modify the method to incorporate cross-passage context enrichment and external knowledge-base verification for the adaptive repair loop, and evaluate on open-domain multi-hop QA benchmarks.",
+  "hypothesis": "Fine-tuning language models on context-enriched triple subgraphs that incorporate cross-passage evidence and using external KG-verified adaptive repair, followed by staged RL transfer, yields higher multi-hop QA EM/F1 on open-domain benchmarks than training on isolated triples or on same-passage context alone.",
+  "rationale": "The core idea overlaps substantially with existing work (arXiv:2609.12230, UniKGQA, Co-E, SG-RAG MOT). To recover novelty and address unresolved validity and feasibility uncertainties (U003, U004), we refine the mechanism by broadening context beyond the same passage and adding objective verification, which are not present in the closest prior work. This direction targets the gap of missing open-domain evaluation (G001) and leverages the proposed modifications M001 and M002.",
+  "change_type": "MODIFY_METHOD",
+  "previous_direction_id": "D001",
+  "research_question": null,
+  "confidence": "medium",
+  "modification_id": null,
+  "paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2212.00959",
+    "arxiv:2607.23278",
+    "doi:10.20944/preprints202505.1992.v1",
+    "arxiv:2406.06027",
+    "doi:10.5753/sbbd.2025.247297",
+    "doi:10.1109/kse50997.2020.9287471"
+  ],
+  "uncertainty_ids": [
+    "U005",
+    "U006",
+    "U007",
+    "U008",
+    "U009",
+    "U010"
+  ],
+  "recorded_at": "2026-09-30T07:21:10.050930Z"
+}

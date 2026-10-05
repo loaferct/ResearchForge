@@ -1,0 +1,1263 @@
+[[page 1]]
+Dynamic Semantic Graph Construction and Reasoning for
+Explainable Multi-hop Science Question Answering∗
+Weiwen Xu, Huihui Zhang, Deng Cai and Wai Lam
+The Chinese University of Hong Kong
+{wwxu,hhzhang,wlam}@se.cuhk.edu.hk
+thisisjcykcd@gmail.com
+Abstract
+Knowledge retrieval and reasoning are two
+key stages in multi-hop question answering
+(QA) at web scale. Existing approaches suf-
+fer from low conﬁdence when retrieving evi-
+dence facts to ﬁll the knowledge gap and lack
+transparent reasoning process. In this paper,
+we propose a new framework to exploit more
+valid facts while obtaining explainability for
+multi-hop QA by dynamically constructing a
+semantic graph and reasoning over it. We em-
+ploy Abstract Meaning Representation (AMR)
+as semantic graph representation. Our frame-
+work contains three new ideas: (a) AMR-SG,
+an AMR-based Semantic Graph, constructed
+by candidate fact AMRs to uncover any hop
+relations among question, answer and multi-
+ple facts. (b) A novel path-based fact an-
+alytics approach exploiting AMR-SG to ex-
+tract active facts from a large fact pool to an-
+swer questions. (c) A fact-level relation mod-
+eling leveraging graph convolution network
+(GCN) to guide the reasoning process. Re-
+sults on two scientiﬁc multi-hop QA datasets
+show that we can surpass recent approaches
+including those using additional knowledge
+graphs while maintaining high explainability
+on OpenBookQA and achieve a new state-of-
+the-art result on ARC-Challenge in a computa-
+tionally practicable setting.
+1 Introduction
+Multi-hop QA is one of the most challenging tasks
+that beneﬁts from explainability as it mimics the
+human question answering setting, where multi-
+hop QA requires both the collection of information
+from large external knowledge resources and the
+aggregation of retrieved facts to answer complex
+natural language questions (Yang et al., 2018).
+∗ The work described in this paper is substantially sup-
+ported by a grant from the Research Grant Council of the
+Hong Kong Special Administrative Region, China (Project
+Code: 14204418).
+Question:           Predators eat __. 
+Answer Choice:  bunnies
+Hypothesis:        Predators eat bunnies.
+Fact 1:                A bunny is a small rabbit.
+Fact 2:                Most predators eat rabbits.
+eat-01
+predator bunny
+ARG0 ARG1
+Rarabbit-01
+small
+bunny
+mod
+domain
+most
+quant
+eat-01
+predator Rarabbit-01
+ARG0 ARG1
+Figure 1: The AMR of the hypothesis (black), Fact 1
+and Fact 2. A hypothesis is a statement derived from
+a question and a choice. The hypothesis AMR can be
+inferred by relevant fact AMRs.
+Currently, external knowledge is mostly stored
+in two forms – textual and graph structure (e.g.
+Knowledge Graph (KG)). Textual corpora contain
+rich and diverse evidence facts, which are ideal
+knowledge resources for multi-hop QA. Especially
+with the success of pretrained models (Devlin et al.,
+2019; Liu et al., 2019; Lan et al., 2019), we can
+get powerful representations for such textual facts.
+However, retrieving relevant and useful facts to ﬁll
+the knowledge gap for inferring the answer is still
+a challenging problem. In addition, the reasoning
+process over the facts is hidden by the unexplain-
+able neural network, which hinders the deployment
+of real-life applications. On the other hand, KG
+is able to provide structural clues about relevant
+entities for explainable predictions (Feng et al.,
+arXiv:2105.11776v1  [cs.CL]  25 May 2021
+
+[[page 2]]
+2020; Saxena et al., 2020; Xu et al., 2020). But it
+is known to suffer from sparsity, where complex
+question clues are unlikely to be covered by the
+closed-form relations in KG (Zhao et al., 2020;
+Zhang et al., 2020b). Another issue is that KG
+requires large human labor and is easy to become
+outdated if not maintained timely.
+To take advantages of both rich textual corpora
+and explicit graph structure and make it compatible
+to all textual knowledge, we explore the usefulness
+of Abstract Meaning Representation (AMR) as a
+graph annotation to a textual fact. AMR (Banarescu
+et al., 2013) is a semantic formalism that represents
+the meaning of a sentence into a rooted, directed
+graph. Figure 1 shows some examples of AMR
+graphs, where nodes represent concepts and edges
+represent the relations. Unlike other semantic role
+labeling that only considers the relations between
+predicates and their arguments (Song et al., 2019),
+the aim of AMR is to capture every meaningful con-
+tent in high-level abstraction while removing away
+inﬂections and function words in a sentence. As a
+result, AMR allows us to explore textual facts and
+simultaneously attributes them with explicit graph
+structure for explainable fact quality assessment
+and reasoning.
+In this paper, we propose a novel framework
+that incorporates AMR to make explainable knowl-
+edge retrieval and reasoning for multi-hop QA. Our
+framework works on textual knowledge, which is
+easy to obtain and allows us to get informative
+facts. The introduced AMR serves as a bridge that
+enables an explicit reasoning process over a graph
+structure among questions, answers and relevant
+facts. As exempliﬁed in Figure 1, a hypothesis is
+ﬁrst derived from a question and an answer choice.
+We then parse the hypothesis and a large number
+of facts to corresponding AMRs. After that, we
+dynamically construct AMR-SG for each question-
+choice pair by merging the AMRs of its hypothe-
+sis and relevant facts. Unlike previous works on
+multi-hop QA that rely on existing KGs to ﬁnd rela-
+tions among entities (Wang et al., 2020; Feng et al.,
+2020), our proposed AMR-SG is dynamically con-
+structed, which reveals intrinsic relations of facts
+and can naturally form any-hop connections. After
+construction, we analyze all connected paths start-
+ing from the question to the answer on AMR-SG.
+We focus the consideration of facts on those paths
+because they together connect the question with
+the answer, indicating their active roles in ﬁlling
+the knowledge gap. The connections of facts on
+AMR-SG can be further used as the supervision
+for downstream reasoning. Therefore, we adopt
+GCN (Kipf and Welling, 2017) to model the fact-
+level information passing.
+Experimental results demonstrate that our ap-
+proach outperforms previous approaches that use
+additional KGs. It obtains 81.6 accuracy on Open-
+BookQA (Mihaylov et al., 2018), and pushes the
+state-of-the-art result on ARC-Challenge (Clark
+et al., 2018) to 68.94 in a computationally practica-
+ble setting.
+2 Related Work
+Multi-hop QA with External Resource. De-
+spite the success of pretrained model in most Natu-
+ral Language Processing (NLP) tasks, it performs
+poorly in multi-hop QA, where some information
+is missing to answer questions (Zhu et al., 2021b).
+Textual corpora contain rich and diverse knowl-
+edge, which is likely to cover the clues to answer
+complex questions. Banerjee et al. (2019) demon-
+strate some carefully designed queries can effec-
+tively retrieve relevant facts. Yadav et al. (2019);
+Deng et al. (2020) extract groups of evidence facts
+considering the relevance, overlap and coverage,
+but such method requires exponential computation
+in the retrieval step. Feldman and El-Yaniv (2019);
+Yadav et al. (2020) construct a fact chain by it-
+eratively reformulating the query to focus on the
+missing information. However, the fact chain of-
+ten grows obliquely as a result of the failure of
+ﬁrst fact retrieval, making the QA model brittle.
+As some recent QA datasets (Yang et al., 2018;
+Mihaylov et al., 2018; Khot et al., 2020) annotate
+a gold evidence fact for each question, it enables
+training supervised classiﬁer to identify the correct
+fact driven by a query (Nie et al., 2019; Qiu et al.,
+2019; Tu et al., 2020; Banerjee and Baral, 2020).
+Min et al. (2018) take a further step to jointly pre-
+dict the answer span and select evidence facts in a
+uniﬁed model. Though these supervised retrievers
+have achieved impressive improvement, they heav-
+ily rely on the annotated gold facts, which are not
+always available in real-world applications.
+In addition, previous works also explore the ef-
+fectiveness of structured knowledge by either en-
+coding the nodes (Yang and Mitchell, 2017; Wang
+et al., 2019), triples (Mihaylov and Frank, 2018;
+Wang et al., 2020), paths (Lin et al., 2019; Lei et al.,
+2020) or tabular (Zhu et al., 2021a) to capture the
+
+[[page 3]]
+Question 
+Answer Choice
+Hypothesis
+Generation
+Fact Extraction
+(𝑄𝑄𝑖𝑖, 𝐶𝐶𝑖𝑖𝑖𝑖)
+(𝐻𝐻𝑖𝑖𝑖𝑖)
+( �𝐹𝐹)
+𝐻𝐻𝑖𝑖𝑖𝑖 SEPCLS …𝐹𝐹1 𝐹𝐹𝑛𝑛
+(𝐻𝐻𝑖𝑖𝑖𝑖, 𝐹𝐹)
+Textual Corpus
+GCN(𝐴𝐴)
+Fact
+Retrieval
+Semantic Graph 
+Construction & Analytics
+Hypothesis 
+Assessment
+Classification
+hypothesis
+fact1
+fact2
+fact3
+fact4
+Active Fact-level
+Connection Graph
+Question nodes
+Choice nodes
+AMR-SG
+GCN
+… K Layers
+𝜎𝜎
+RoBERTa
+𝑥𝑥𝐻𝐻
+𝐾𝐾 𝑥𝑥𝑐𝑐𝑐𝑐𝑐𝑐
+𝑥𝑥𝐻𝐻 𝑥𝑥1 𝑥𝑥2 𝑥𝑥3
+Max Pooling
+Figure 2: Overall architecture of our proposed model. The black dash lines in AMR-SG indicate that we cut the
+connection between question nodes and choice nodes. The pink arrows indicate two paths that can be spotted
+in AMR-SG. Facts with red background are active facts detected. The dashed node Active Fact-level Connection
+Graph indicates fact4 is not considered as a valid node as it is not an active fact.
+missing information. Other works avoid the spar-
+sity of KGs by constructing KGs directly from tex-
+tual knowledge. OpenIE (Saha and Mausam, 2018)
+is widely used in knowledge base question answer-
+ing to extract entity-relation triples (Bosselut et al.,
+2019; Zhao et al., 2020; Deng et al., 2019). How-
+ever, OpenIE favors precision over recall, which
+is not necessarily effective to form connections
+among diverse evidence facts for multi-hop QA.
+Wikipedia contains internal hyperlinks, which are
+effective to build graph connections from unstruc-
+tured articles (Asai et al., 2020; Liu et al., 2020).
+However, such hyperlinks are not available in most
+textual corpora.
+AMR. Recent success in AMR research makes it
+possible to beneﬁt downstream tasks, such as sum-
+marization (Takase et al., 2016; Dohare et al., 2017;
+Liao et al., 2018), event detection (Li et al., 2015)
+and machine translation (Song et al., 2019). In the
+domain of QA, AMR has been used to form logic
+queries and conduct symbolic reasoning (Mitra and
+Baral, 2016; Kapanipathi et al., 2020). Comparing
+to name entity (Zhong et al., 2020) or other cross-
+sentence annotations (Lei et al., 2018; Zhang et al.,
+2020a), we use AMR to build our semantic graph
+because it is align-free and can be easily adapted
+to powerful pretrained models.
+3 Framework Description
+In this paper, we consider the multi-hop QA in the
+form of multi-choice, where a questionQi is pro-
+vided withJ answer choicesCij,j ∈{ 1, 2,...,J}.
+As shown in Figure 2, our framework consists of
+three components: (1) a Fact Retrieval component
+to retrieve evidence facts ˆF ={ ˆF 1,..., ˆFm}1 for
+each question-choice pair from a large textual cor-
+pus; (2) a Semantic Graph Construction & An-
+alytics component that dynamically constructs a
+semantic graph, named AMR-SG, to select active
+factsF ={F 1,...,F n} from ˆF and capture their
+relationsA; and (3) a Hypothesis Assessment com-
+ponent that classiﬁes whether the question-choice
+is correct, given the active facts and their relations
+in (2).
+3.1 Fact Retrieval
+Hypothesis Generation. As shown in Figure 2,
+we ﬁrst generate a hypothesisHij for theith ques-
+tion and the jth choice. A hypothesis is a com-
+pleted statement derived from each question-choice
+pair. Comparing to simply concatenating the ques-
+tion and the choice, a hypothesis contains less
+meaningless words and maintain a good grammati-
+cal structure, which can avoid retrieving noisy facts
+and allow AMR parser to generate high-quality
+AMR graphs. We generate hypotheses by the rule-
+based model of Demszky et al. (2018). For some
+unsolvable cases, we directly concatenate the ques-
+tion and the choice. We apply this process for all
+training, develop and test sets.
+1We omit the subscript ij for simplicity.
+
+[[page 4]]
+Fact Extraction. We retrieve a pool of evidence
+facts ˆF for each hypothesis separately using Elas-
+ticsearch (Gormley and Tong, 2015). We set a large
+sizem of the fact pool to cover as many valid facts
+as possible.
+3.2 Semantic Graph Construction &
+Analytics
+Active facts F are facts that really ﬁll the knowl-
+edge gap between question and choice. The ac-
+tiveness of a fact cannot be simply determined by
+comparing it with the hypothesis, as multi-hop QA
+requires multiple facts to complete the reasoning
+chain. Therefore, we need to ﬁlter out facts that
+are just partially related and focus on the consider-
+ation of active facts and their roles in the reason-
+ing chain. In this component, we ﬁrst construct
+AMR-SG. Then, we propose a path-based analytics
+approach to extract active facts and construct an
+Active Fact-level Connection Graphto capture their
+relations with the question and the answer choice.
+3.2.1 AMR-SG Construction
+As the nodes of AMR are high-level abstraction
+of concepts conveyed in the corresponding textual
+fact, two AMRs sharing the same node indicate
+that they concern about the same concept, which
+shows their correlation. This motivates us to con-
+struct AMR-SG, shown in Figure 2, to represent
+the relations of the corresponding hypothesis and
+evidence facts for each question-choice pair.
+We leverage the state-of-the-art AMR
+parser (Cai and Lam, 2020) to generate AMR
+G ={GH,G 1,...,G m} for a hypothesis and all
+facts in the corresponding fact pool, where GH,
+Gi are the AMR of the hypothesis and the ith
+fact respectively. AMR is also a directed and
+edge-labeled graph, which implies information
+speciﬁed in the edge is propagated in one pre-
+deﬁned direction. However, such inner-AMR
+(edge labels and directions) information does not
+contribute to inter-AMR relations. Therefore, we
+only care about if there exists an edge between two
+nodes but ignore the edge labels and directions.
+During construction, we regardGH as the start
+point of AMR-SG. Then, we incrementally ﬁnd one
+fact AMR in the fact pool sharing some nodes
+with it and add this fact AMR onto it by merg-
+ing the shared nodes. The merging operation
+stops when no AMR can be added onto AMR-SG
+or the fact pool is empty. In fact, as shown
+in Figure 2, we do not change the architecture
+of each individual AMR, but reuse some shared
+nodes as the nodes in AMR-SG. Note that, some
+nodes are over-general, which are not appropri-
+ate to connect two AMRs (e.g. (p/planet
+:name(n/name :op1"Earth")) , the node
+n/name is an over-general concept). Fortunately,
+such over-general nodes always have non-node at-
+tributes (e.g. Earth of n/name) that shows the
+speciﬁc referent. Therefore, we replace the nodes
+with their non-node attributes if any to address this
+issue.
+3.2.2 Path-based Analytics
+Current multi-hop QA models are hindered by the
+quality of retrieved facts (Banerjee et al., 2019).
+We address this issue by a path-based analytics
+approach to guarantee the selected facts having a
+positive effect to answer the question.
+As shown in Figure 2, AMR-SG reveals any-hop
+relations of the hypothesis and all facts. Completed
+paths can be spotted out of GH to connect the
+question nodes with the choice nodes by passing
+through multiple facts. These facts, which together
+provide the missing knowledge to maintain com-
+plete reasoning chains, are active facts that we want
+to extract.
+Speciﬁcally, we split the nodes of GH into
+question nodesQH and choice nodesCH. Ques-
+tion nodes represent the concepts extracted in the
+question text. As one question is provided with
+J choices, where we can generate J hypothesis
+AMRs. We take the shared nodes of these AMRs
+asQH, while the remaining asCH:
+QH
+ij =∩J
+j=1{v|v∈GH
+ij} (1)
+CH
+ij ={v|v∈GH
+ij,v /∈QH
+ij},j = 1,...,J (2)
+We cut the edges betweenQH andCH to guaran-
+tee the paths are spotted outsideGH. Then we ap-
+ply depth-ﬁrst search on AMR-SG to ﬁnd all paths
+that connect at least one question node and one
+choice node, including the path that does not have
+a minimum length (e.g. the path passing through
+fact3 in Figure 2). All facts that the paths pass
+through (one node in and another node out) are
+considered as active facts. This is because we try
+to cover more facts as long as they do not devi-
+ate from the correct reasoning direction to provide
+enough information for QA model.
+In addition, the any-hop relations of the hypoth-
+esis and active facts in AMR-SG can be used for a
+hypothesis to precisely aggregate knowledge from
+
+[[page 5]]
+relevant facts to reduce ambiguity during the rea-
+soning process. Therefore, we construct an Active
+Fact-level Connection Graphfrom AMR-SG to cap-
+ture such relations among the hypothesis and all
+active facts. As shown in Figure 2, each node in
+Active Fact-level Connection Graph is either the
+hypothesis or an active fact. We draw an edge be-
+tween two facts (include hypothesis) if they share
+one concept node in AMR-SG.
+3.3 Hypothesis Assessment with Fact-level
+Reasoning
+As shown in Figure 2, we concatenate the hypoth-
+esis with all active facts, where [SEP] token is
+inserted between the two texts and [CLS] is put
+at the beginning of the sequence. We feed the
+whole sequence into a pretrained model based on
+RoBERTa (Liu et al., 2019) architecture to get the
+hidden representation of each token.
+Then, Active Fact-level Connection Graph is
+used as an additional supervision in fact-level mod-
+eling to guide the reasoning process. Formally, let
+sH
+1:lH∈ RlH ×d,si
+1:li∈ Rli×d be the hidden repre-
+sentations of the hypothesis and theith active fact
+respectively, wherelH,li denote the length andd is
+the dimension of the representation. A max pooling
+layer is applied over these hidden representations
+to get the node representations respectively:
+xH = MaxPool(sH
+1:lH)∈ R1×d
+xi = MaxPool(si
+1:li)∈ R1×d,i = 1,...,n (3)
+The connections of hypothesis ( 0th) and active
+facts in Active Fact-level Connection Graph can be
+viewed as an adjacency matrixA∈ R(n+1)×(n+1),
+where
+Aij =
+{ 1 ifFi is connected withFj
+0 otherwise (4)
+As there is no edge information in the graph, a
+simple GCN is enough to model the knowledge
+fusion among the hypothesis and multiple active
+facts in the reasoning process. We also introduce
+multi-head mechanism (Vaswani et al., 2017) to
+stabilize the learning of different knowledge:
+X (k) = [head(k)
+1 :... :head(k)
+h ] (5)
+where [:] denotes concatenation operation, X (k)
+is the node states at the kth layer, X (0) =
+[xH;x1;...;xn], [; ] denotes the sequential concate-
+nation operation, headi is the ith head. Speciﬁ-
+cally, we compute the nodes states by aggregating
+Train Dev Test
+OpenBookQA 4957 500 500
+ARC-Challenge 8992 299 1172
+Table 1: Number of instances in each dataset.
+knowledge from their neighboring nodes in each
+layer:
+head(k)
+i = ReLU(ΛX (k−1)W (k)
+i ) (6)
+whereW (k)
+i ∈ Rd×(d/h) is the projection matrix of
+headi at thekth layer,h is the head number. Λ is
+the normalization constant to avoid scale changing:
+Λ =D−1/2AD−1/2
+Dii =∑
+jAij
+(7)
+After that, a σ gate is applied to calculate how
+much knowledge can be propagated to score the
+question-choice pair:
+λ =σ(Wλ[xcls :x(K)
+H ] +bλ) (8)
+s(q,a ) =Wo(λx(K)
+H + (1−λ)xcls) +bo (9)
+whereWλ∈ R1×2d,Wo∈ Rd×d,bλ,bo are the
+parameters. We get the ﬁnal probability by normal-
+ize all question-choice pairs with softmax.
+4 Experiments
+4.1 Datasets
+We evaluate our approach on two multi-choice
+multi-hop QA datasets: ARC-Challenge (Clark
+et al., 2018) and OpenBookQA (Mihaylov et al.,
+2018). The textual corpus we use for both datsets
+is ARC Corpus (Clark et al., 2018), which con-
+tains about 14M science facts. OpenBookQA and
+ARC-Challenge have their leaderboards with train,
+develop and test sets publicly available. we fol-
+low AllenAI (2019) to combine the training set of
+OpenBookQA (4957), ARC-Easy (2251), ARC-
+Challenge (1119) and RegLivEnv (665) as the ﬁnal
+training set of ARC-Challenge task. The data splits
+is shown in Table 1.
+For ARC-Challenge, we retrieve 100 facts to
+form the fact pool. Based on this, we select up to
+20 active facts using our approach as the context
+for each question-choice pair.2 OpenBookQA pro-
+vides an accompanying open-book of 1326 science
+2We can only reproduce the results similar to AllenAI
+(2019) using 20 facts as the context.
+
+[[page 6]]
+facts, which are highly related to the questions in
+this dataset. Therefore, for OpenBookQA, we re-
+trieve 10 facts from the open-book and another 90
+facts from ARC Corpus, forming the 100 facts in
+the fact pool. We then select up to 15 active facts
+using our approach as the context.
+4.2 Implementation
+We implement our approach on two pretrained
+models: RoBERTa (Liu et al., 2019) and Aris-
+toRoBERTa (AllenAI, 2019). AristoRoBERTa
+employs the RoBERTa architecture but uses
+RACE (Lai et al., 2017) to ﬁrst ﬁne-tune the
+RoBERTa model. We prepare active facts as the
+context to further ﬁne-tune the model with the tar-
+get dataset. For OpenBookQA, we continue to
+ﬁne-tune the QA model following the same proce-
+dure as AllenAI (2019), where the initial learning
+rate is 2e-5, the batch size is 12 and the max se-
+quence length is 256. For ARC-Challenge, the
+initial learning rate, the batch size and the max se-
+quence length are 1e-5, 6, and 416 respectively. We
+use grid search to ﬁnd optimal hyper-parameters,
+where the learning rate is chosen from{5e-6, 1e-
+5, 2e-5}, the batch size is chosen from {4, 6, 8,
+12, 16}. The number of GCN layer K is chosen
+from{1,2,3,4}, while the head number h is the
+RoBERTa-Large default value.3
+We introduce 6M parameters of the fact-level rea-
+soning module in addition to 355M of RoBERTa-
+Large. We run all experiments on one TITAN RTX
+card, which takes about 1 hour and 3 hours to
+complete the training of OpenBookQA and ARC-
+Challenge respectively.
+4.3 Comparison Methods
+We compare with recent existing methods that
+make use of similar power of pretrained models
+in order to conduct a fair comparison. These in-
+clude the baseline AristoRoBERTaV7 (AllenAI,
+2019) ﬁnetuned on top of AristoRoBERTa, KF-
+SIR (Banerjee and Baral, 2020) that exploits the
+knowledge fusion among facts, FreeLB (Zhu et al.,
+2020) that tackles the robustness issue and another
+three methods leveraging an additional knowledge
+graph (Speer et al., 2017) in addition to the tex-
+tual knowledge: PG (Wang et al., 2020), MH-
+GRN (Feng et al., 2020), AlBERT + KB. PG(albert
++ gpt2, roberta + gpt2) are two implementations
+3Our code is available at: https://github.com/
+wwxu21/AMR-SG
+Methods Model
+Architecture
+Additional
+KG
+Test
+Acc.
+PG albert + gpt2 ✓ 81.8
+PG roberta + gpt2 ✓ 80.2
+AlBERT + KB albert ✓ 81.0
+MHGRN roberta ✓ 80.6
+KF-SIR roberta × 80.0
+AristoRoBERTaV7 roberta × 77.8
++ AMR-SG-Full roberta × 81.6
+Table 2: Test accuracy on OpenBookQA. Methods us-
+ing additional KG are ticked.
+with different pretrained model architectures (Liu
+et al., 2019; Lan et al., 2019; Radford et al., 2019),
+where the latter is more fair to compare with us.
+5 Results
+5.1 Main Results
+OpenBookQA. The test set accuracy is shown in
+Table 2. AMR-SG-Full is our full model based on
+AristoRoBERTa. Results show that AMR-SG-Full
+can surpass models leveraging additional KG. It
+demonstrates that the fundamental improvement of
+AMR-SG-Full comes from the knowledge mining
+of the textual corpus. However, such knowledge
+resource has not been fully investigated by exist-
+ing methods and contains richer and more diverse
+evidence facts than KGs. We do not compare with
+UniﬁedQA (Khashabi et al., 2020) and T5 3B (Raf-
+fel et al., 2020) as they rely on extremely large
+pretrained models (at least 3B parameters), which
+are not fair for comparison.
+ARC-Challenge. We also implement AMR-SG-
+Full on another difﬁcult multi-hop QA dataset:
+ARC-Challenge. It consists of the questions only
+answered incorrectly by both a retrieval-based algo-
+rithm and a word co-occurrence algorithm (Clark
+et al., 2018), which theoretically is not friendly to
+our approach. As shown in Table 3, we can still
+obtain 2.47 accuracy improvement comparing to
+AristoRoBERTaV7 and achieve a new state-of-the-
+art performance in a computationally practicable
+setting.
+5.2 Ablation Study
+We conduct ablation study by incrementally adding
+each component of AMR-SG-Full to investigate its
+effectiveness on two pretrained models in Table 4.
+We include the analysis on RoBERTa because it is
+a more general and widely used pretrained model.
+
+[[page 7]]
+Methods Test Acc.
+FreeLB (Zhu et al., 2020) 67.75
+arcRoberta 67.15
+xlnet+Roberta 67.06
+AristoRoBERTaV7 (AllenAI, 2019) 66.47
++ AMR-SG-Full 68.94
+Table 3: Test accuracy on ARC-Challenge. All models
+use RoBERTa architecture for the pretrained model and
+do not leverage additional KG.
+Methods Dev Test
+RoBERTa
+No Fact 66.8 64.8
++ Fact Context 68.2 68.8 (+4.0)
++ Fact Analytics 73.2 73.0 (+4.2)
++ Fact-level Reasoning 72.8 74.2 (+1.2)
+AristoRoBERTa
+No Fact 71.0 70.0
++ Fact Context♠ 78.2 78.4 (+8.4)
++ Fact Analytics 79.4 81.4 (+3.0)
++ Fact-level Reasoning 79.6 81.6 (+0.2)
+Table 4: Ablation study of model components on Open-
+BookQA (adding one component incrementally). ♠ is
+our reimplementation of (AllenAI, 2019).
+We start from the vanilla pretrained models,
+where no textual facts are provided (denoted as
+No Fact). We retrieve 15 facts as the context to
+create the ﬁrst variant (denoted as + Fact Context).
+The purpose is to test the contribution of the facts
+retrieved by the simple information retrieval (IR)
+system (Elasticsearch). We continue to add the
+path-based fact analytics component (denoted as
++ Fact Analytics). In fact, this variant merely use
+the facts selected from AMR-SG to ﬁne-tune the
+pretrained models. On top of both two pretrained
+models, we observe a great performance improve-
+ment, where the improvement brought by + Fact
+Analytics is higher than + Fact Context on top of
+RoBERTa, which demonstrates this component can
+effectively select useful facts to ﬁll the knowledge
+gap that have not been covered by the IR system.
+We ﬁnally equip our model with the fact-level rea-
+soning component (denoted as + Fact-level Rea-
+soning). From the results, we can observe that
+this component performs well on top of RoBERTa,
+but has very little effect on top of AristoRoBERTa.
+This is because this component tries to infuse some
+fact-level connections to ease the reasoning process
+of the model. Such information can be learned auto-
+matically by the model itself if exposed to enough
+in-domain data (AristoRoBERTa). Nevertheless,
+the fact-level reasoning is a more general method
+when such data is unavailable.
+6 Explainability Analysis
+6.1 Analysis of AMR-SG
+Impact of Evidence Facts. As discussed above,
+the major improvement of our approach comes
+from more useful facts selected for each question-
+choice pair. In this section, we take a deep look
+at the quality and the composition of those facts
+on OpenBookQA. We derive ﬁve variants by vary-
+ing the composition of core (facts retrieved from
+open-book) or common (facts from ARC Corpus)
+facts. For core facts, as open-book annotates one
+gold core fact for each question, the retrieval accu-
+racy of the gold fact is a natural way to evaluate
+the quality. For common facts, we conduct human
+analysis to evaluate the quality from three aspects:
+(1) Relatedness: Does the retrieved fact related to
+the question or the answer? (2) Informativeness:
+Does the retrieved fact provided useful informa-
+tion to answer the question? (3) Completeness: Do
+all retrieved facts together ﬁll the knowledge gap
+to completely answer the question? We randomly
+sample 50 questions and evaluate the evidence facts
+corresponding to the correct answer choice, where
+one fact would contribute 1 score if it meets the
+requirement of Relatedness or Informativeness re-
+spectively and all 15 facts contribute 1 score if they
+together meet the requirement of Completeness.
+Evaluation results are presented in Table 5.
+When varying the fact composition of IR vari-
+ants, we ﬁnd the gold core fact retrieval accuracy
+has a positive impact on the ﬁnal accuracy on top of
+RoBERTa. At this stage, some questions can be in-
+ferred sufﬁciently with the gold core facts. Higher
+retrieval accuracy accounts for more questions of
+this kind to be correctly answered. However, this
+advantage is not as obvious for AristoRoBERTa.
+Our human evaluation reveals that such facts are un-
+likely to form a complete reasoning chain, making
+it hard for real multi-hop reasoning.
+On the other hand, our approach directly mod-
+els the intrinsic fact relations, where the path-
+based analytics ensures that the facts selected are
+in the reasoning chain from the question to the
+answer. Results show that our approach makes
+an overall improvement with regard to Related-
+ness, Informativeness and Completeness and is
+
+[[page 8]]
+Facts Composition Core Fact Human Evaluation Test set Accuracy
+(total 15 facts) Retrieval Accuracy Rel. Info. Comp. RoBERTa AristoRoBERTa
+IR (5/10) 56.4 5.86 2.50 0.46 68.8 78.4
+IR (10/5) 63.6 5.20 2.24 0.42 70.4 77.4
+IR (15/0) 68.4 3.36 1.62 0.26 72.2 77.4
+AMR-SG (10/30) 61.0 5.85 2.58 0.48 72.4 80.4
+AMR-SG (10/100) 61.0 6.22 2.98 0.56 74.2 81.6
+Table 5: Automatic and Human Evaluation of the evidence facts on OpenBookQA. IR (x/y) indicates we use simple
+IR system to retrieve x core facts and y common facts. AMR-SG (x/y) indicates we construct AMR-SG with x core
+facts and y common facts, based on which we then select 15 active facts and extract their relations.
+less harmful to core fact retrieval. We also ﬁnd
+that AMR-SG (10/100) can make a further improve-
+ment compared to AMR-SG (10/30) by including
+more facts to construct AMR-SG. It demonstrates
+that AMR-SG has the capability of detecting useful
+facts from a large and noisy fact pool, thus making
+up for the deﬁciency of the IR system.
+Impact of AMR Consistency. We investigate
+the quality consistency of AMR graphs to see how
+it affects the construction of AMR-SG and thus af-
+fects the QA model. We prepare AMR in three con-
+sistency levels, where Fully-Automatic is generated
+by automatic AMR parser; Mixed is that we manu-
+ally annotate the error-free AMRs for the core facts
+in open-book (1326 in total) and use the error-free
+core fact AMRs and other automatically generated
+AMRs to construct AMR-SG; Error-Free-Adapted
+is that we use the error-free AMRs annotated to
+ﬁne-tune the AMR parser and use the tuned parser
+to generate AMR for all the remaining facts (includ-
+ing hypotheses and common facts, about 900k in
+total). The test set accuracy are 81.6, 80.2, 80.4 for
+Fully-Automatic, Mixed and Error-Free-Adapted
+respectively. It is interesting to note that using
+Fully-Automatic AMRs results in higher QA accu-
+racy than Mixed and Error-Free-Adapted, where
+the latter two contain a mix of AMRs with different
+levels of quality. This phenomenon has also been
+observed in other AMR applications (Liu et al.,
+2015; Hardy and Vlachos, 2018), where automatic
+parses perform well than manual parses. We con-
+jecture that this can be attributed to the discrepancy
+between the error-free AMRs and the automatically
+parsed AMRs in the choices of AMR concepts with
+similar meaning. This small difference in concept
+choices may omit potential connections, results in
+some important facts failing to be detected. In con-
+Question: A seismograph can accurately de-
+scribe (A) how rough the footing will be (B)
+how bad the weather will be (C) how stable the
+ground will be (D) how shaky the horse will be
+Useful facts retrieved by IR: N.A.
+Additional facts from path-based analytics:
+A seismograph is a kind of tool for measuring
+the size of an earthquake.
+An earthquake is a shockwave travelling through
+the ground.
+Relevant path in AMR-SG:
+seismograph→tool→measure-01→
+size-01→earthquake→ground
+Table 6: A case study showing how our framework se-
+lects useful facts to completely ﬁll the knowledge gap.
+trast, automatically parsed AMRs contain errors,
+but they are consistent in their concept choices,
+which is more likely for AMRs to form connections.
+The 0.2 accuracy improvement between Mixed and
+Error-Free-Adapted also demonstrates our assump-
+tion, since the parser is ﬁnetuned on the error-free
+AMRs, where its parsed AMRs should be more
+consistent with the error-free AMRs.
+6.2 Case Study
+Table 6 shows one case study of evidence facts
+selected by our framework. Since the important
+term earthquake is missing from the search query,
+the IR system assigns low retrieval scores for the
+two facts, causing a low ranking. However, the two
+facts can form a complete reasoning chain with the
+question and the answer via several concept nodes,
+where our approach can successfully extract the
+two facts despite the low retrieval scores. More
+cases can be found in Appendix A.1.
+
+[[page 9]]
+0
+100
+200
+300
+0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
+Count
+Confidence
+w/o fact-level reasoning
+w/ fact-level reasoning
+(a) (b)
+81
+81.2
+81.4
+81.6
+81.8
+82
+0 1 2 3 4
+Accuracy
+K
+Figure 3: Analysis of fact-level reasoning on Open-
+BookQA. (a) presents the distribution of prediction con-
+ﬁdence with or without fact-level reasoning module.
+(b) shows the QA performance with different GCN
+layer K. Size 0 denotes the original pretrained model.
+6.3 Analysis of Fact-level Reasoning
+Why Fact-level reasoning. Figure 3(a) shows
+that fact-level reasoning improves the performance
+by making a more conﬁdent prediction for the cor-
+rect answer. This is because the fact-level connec-
+tions of AMR-SG inform the model how these ac-
+tive facts are intrinsically related, which allows the
+model to precisely receive knowledge from related
+facts.
+Impact of Number of Hops (K). We vary the
+hyper-parameter K to consider the impact of K-
+hop neighbors on OpenBookQA. As show in Fig-
+ure 3(b), the performance reaches the top atK = 2.
+It indicates that most of the questions can be well
+answered using two evidence facts, which is consis-
+tent with the construction of this dataset. However,
+the performance drops when K > 2. It might
+be attributed to exponential noise found in longer
+reasoning chains.
+7 Conclusion
+We propose to dynamically construct AMR-SG that
+can reﬂect the intrinsic relations of relevant facts
+leveraging AMR, a graph annotation. AMR-SG
+combines the advantages of rich textual corpus and
+graph structure, where we can select useful facts
+that completely form the reasoning chain and make
+fact-level modeling. Experimental results show that
+AMR-SG can maintain high explainability, and suc-
+cessfully couple with strong pretrained models to
+achieve signiﬁcant improvement on OpenBookQA
+and ARC-Challenge over approaches leveraging
+additional KGs.
+References
+AllenAI. 2019. Aristorobertav7. In AristoRoBER-
+TAv7.
+Akari Asai, Kazuma Hashimoto, Hannaneh Hajishirzi,
+Richard Socher, and Caiming Xiong. 2020. Learn-
+ing to retrieve reasoning paths over wikipedia graph
+for question answering. In International Conference
+on Learning Representations.
+Laura Banarescu, Claire Bonial, Shu Cai, Madalina
+Georgescu, Kira Grifﬁtt, Ulf Hermjakob, Kevin
+Knight, Philipp Koehn, Martha Palmer, and Nathan
+Schneider. 2013. Abstract Meaning Representation
+for sembanking. In Proceedings of the 7th Linguis-
+tic Annotation Workshop and Interoperability with
+Discourse, pages 178–186, Soﬁa, Bulgaria. Associa-
+tion for Computational Linguistics.
+Pratyay Banerjee and Chitta Baral. 2020. Knowl-
+edge fusion and semantic knowledge ranking for
+open domain question answering. arXiv preprint
+arXiv:2004.03101.
+Pratyay Banerjee, Kuntal Kumar Pal, Arindam Mi-
+tra, and Chitta Baral. 2019. Careful selection of
+knowledge to solve open book question answering.
+In Proceedings of the 57th Annual Meeting of the
+Association for Computational Linguistics , pages
+6120–6129, Florence, Italy. Association for Compu-
+tational Linguistics.
+Antoine Bosselut, Hannah Rashkin, Maarten Sap, Chai-
+tanya Malaviya, Asli Celikyilmaz, and Yejin Choi.
+2019. COMET: Commonsense transformers for au-
+tomatic knowledge graph construction. In Proceed-
+ings of the 57th Annual Meeting of the Association
+for Computational Linguistics , pages 4762–4779,
+Florence, Italy. Association for Computational Lin-
+guistics.
+Deng Cai and Wai Lam. 2020. AMR parsing via graph-
+sequence iterative inference. In Proceedings of the
+58th Annual Meeting of the Association for Compu-
+tational Linguistics, pages 1290–1301, Online. As-
+sociation for Computational Linguistics.
+Peter Clark, Isaac Cowhey, Oren Etzioni, Tushar Khot,
+Ashish Sabharwal, Carissa Schoenick, and Oyvind
+Tafjord. 2018. Think you have solved question an-
+swering? try arc, the ai2 reasoning challenge. arXiv
+preprint arXiv:1803.05457.
+Dorottya Demszky, Kelvin Guu, and Percy Liang. 2018.
+Transforming question answering datasets into nat-
+ural language inference datasets. arXiv preprint
+arXiv:1809.02922.
+Yang Deng, Yuexiang Xie, Yaliang Li, Min Yang, Nan
+Du, Wei Fan, Kai Lei, and Ying Shen. 2019. Multi-
+task learning with multi-view attention for answer
+selection and knowledge base question answering.
+In The Thirty-Third AAAI Conference on Artiﬁcial
+Intelligence, AAAI 2019, pages 6318–6325.
+
+[[page 10]]
+Yang Deng, Wenxuan Zhang, and Wai Lam. 2020.
+Multi-hop inference for question-driven summariza-
+tion. In Proceedings of the 2020 Conference on
+Empirical Methods in Natural Language Processing,
+EMNLP 2020, pages 6734–6744.
+Jacob Devlin, Ming-Wei Chang, Kenton Lee, and
+Kristina Toutanova. 2019. BERT: Pre-training of
+deep bidirectional transformers for language under-
+standing. In Proceedings of the 2019 Conference
+of the North American Chapter of the Association
+for Computational Linguistics: Human Language
+Technologies, Volume 1 (Long and Short Papers) ,
+pages 4171–4186, Minneapolis, Minnesota. Associ-
+ation for Computational Linguistics.
+Shibhansh Dohare, Harish Karnick, and Vivek Gupta.
+2017. Text summarization using abstract meaning
+representation. arXiv preprint arXiv:1706.01678.
+Yair Feldman and Ran El-Yaniv. 2019. Multi-hop para-
+graph retrieval for open-domain question answering.
+In Proceedings of the 57th Annual Meeting of the
+Association for Computational Linguistics , pages
+2296–2309, Florence, Italy. Association for Compu-
+tational Linguistics.
+Yanlin Feng, Xinyue Chen, Bill Yuchen Lin, Peifeng
+Wang, Jun Yan, and Xiang Ren. 2020. Scalable
+multi-hop relational reasoning for knowledge-aware
+question answering. In Proceedings of the 2020
+Conference on Empirical Methods in Natural Lan-
+guage Processing (EMNLP), pages 1295–1309, On-
+line. Association for Computational Linguistics.
+Clinton Gormley and Zachary Tong. 2015. Elastic-
+search: the deﬁnitive guide: a distributed real-time
+search and analytics engine . ” O’Reilly Media,
+Inc.”.
+Hardy Hardy and Andreas Vlachos. 2018. Guided neu-
+ral language generation for abstractive summariza-
+tion using Abstract Meaning Representation. In Pro-
+ceedings of the 2018 Conference on Empirical Meth-
+ods in Natural Language Processing , pages 768–
+773, Brussels, Belgium. Association for Computa-
+tional Linguistics.
+Pavan Kapanipathi, Ibrahim Abdelaziz, Srinivas Rav-
+ishankar, Salim Roukos, Alexander Gray, Ramon
+Astudillo, Maria Chang, Cristina Cornelio, Saswati
+Dana, Achille Fokoue, et al. 2020. Question an-
+swering over knowledge bases by leveraging seman-
+tic parsing and neuro-symbolic reasoning. arXiv
+preprint arXiv:2012.01707.
+Daniel Khashabi, Sewon Min, Tushar Khot, Ashish
+Sabharwal, Oyvind Tafjord, Peter Clark, and Han-
+naneh Hajishirzi. 2020. UNIFIEDQA: Crossing for-
+mat boundaries with a single QA system. In Find-
+ings of the Association for Computational Linguis-
+tics: EMNLP 2020 , pages 1896–1907, Online. As-
+sociation for Computational Linguistics.
+Tushar Khot, Peter Clark, Michal Guerquin, Peter
+Jansen, and Ashish Sabharwal. 2020. Qasc: A
+dataset for question answering via sentence compo-
+sition. In AAAI, pages 8082–8090.
+Thomas N. Kipf and Max Welling. 2017. Semi-
+Supervised Classiﬁcation with Graph Convolutional
+Networks. In Proceedings of the 5th International
+Conference on Learning Representations, ICLR ’17.
+Guokun Lai, Qizhe Xie, Hanxiao Liu, Yiming Yang,
+and Eduard Hovy. 2017. RACE: Large-scale ReAd-
+ing comprehension dataset from examinations. In
+Proceedings of the 2017 Conference on Empirical
+Methods in Natural Language Processing , pages
+785–794, Copenhagen, Denmark. Association for
+Computational Linguistics.
+Zhenzhong Lan, Mingda Chen, Sebastian Goodman,
+Kevin Gimpel, Piyush Sharma, and Radu Soricut.
+2019. Albert: A lite bert for self-supervised learn-
+ing of language representations. arXiv preprint
+arXiv:1909.11942.
+Wenqiang Lei, Yuanxin Xiang, Yuwei Wang, Qian
+Zhong, Meichun Liu, and Min-Yen Kan. 2018. Lin-
+guistic properties matter for implicit discourse rela-
+tion recognition: Combining semantic interaction,
+topic continuity and attribution. In Proceedings of
+the AAAI Conference on Artiﬁcial Intelligence , vol-
+ume 32.
+Wenqiang Lei, Gangyi Zhang, Xiangnan He, Yisong
+Miao, Xiang Wang, Liang Chen, and Tat-Seng Chua.
+2020. Interactive path reasoning on graph for con-
+versational recommendation. Proceedings of the
+26th ACM SIGKDD.
+Xiang Li, Thien Huu Nguyen, Kai Cao, and Ralph Gr-
+ishman. 2015. Improving event detection with Ab-
+stract Meaning Representation. In Proceedings of
+the First Workshop on Computing News Storylines ,
+pages 11–15, Beijing, China. Association for Com-
+putational Linguistics.
+Kexin Liao, Logan Lebanoff, and Fei Liu. 2018. Ab-
+stract Meaning Representation for multi-document
+summarization. In Proceedings of the 27th Inter-
+national Conference on Computational Linguistics ,
+pages 1178–1190, Santa Fe, New Mexico, USA. As-
+sociation for Computational Linguistics.
+Bill Yuchen Lin, Xinyue Chen, Jamin Chen, and Xi-
+ang Ren. 2019. KagNet: Knowledge-aware graph
+networks for commonsense reasoning. In Proceed-
+ings of the 2019 Conference on Empirical Methods
+in Natural Language Processing and the 9th Inter-
+national Joint Conference on Natural Language Pro-
+cessing (EMNLP-IJCNLP), pages 2829–2839, Hong
+Kong, China. Association for Computational Lin-
+guistics.
+Dayiheng Liu, Yeyun Gong, Jie Fu, Yu Yan, Jiusheng
+Chen, Daxin Jiang, Jiancheng Lv, and Nan Duan.
+2020. Rikinet: Reading wikipedia pages for natural
+question answering.
+
+[[page 11]]
+Fei Liu, Jeffrey Flanigan, Sam Thomson, Norman
+Sadeh, and Noah A. Smith. 2015. Toward abstrac-
+tive summarization using semantic representations.
+In Proceedings of the 2015 Conference of the North
+American Chapter of the Association for Computa-
+tional Linguistics: Human Language Technologies ,
+pages 1077–1086, Denver, Colorado. Association
+for Computational Linguistics.
+Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Man-
+dar Joshi, Danqi Chen, Omer Levy, Mike Lewis,
+Luke Zettlemoyer, and Veselin Stoyanov. 2019.
+Roberta: A robustly optimized bert pretraining ap-
+proach. arXiv preprint arXiv:1907.11692.
+Todor Mihaylov, Peter Clark, Tushar Khot, and Ashish
+Sabharwal. 2018. Can a suit of armor conduct elec-
+tricity? a new dataset for open book question answer-
+ing. In EMNLP.
+Todor Mihaylov and Anette Frank. 2018. Knowledge-
+able reader: Enhancing cloze-style reading compre-
+hension with external commonsense knowledge. In
+Proceedings of the 56th Annual Meeting of the As-
+sociation for Computational Linguistics (Volume 1:
+Long Papers), pages 821–832, Melbourne, Australia.
+Association for Computational Linguistics.
+Sewon Min, Victor Zhong, Richard Socher, and Caim-
+ing Xiong. 2018. Efﬁcient and robust question an-
+swering from minimal context over documents. In
+Proceedings of the 56th Annual Meeting of the As-
+sociation for Computational Linguistics (Volume 1:
+Long Papers), pages 1725–1735, Melbourne, Aus-
+tralia. Association for Computational Linguistics.
+Arindam Mitra and Chitta Baral. 2016. Addressing a
+question answering challenge by combining statis-
+tical methods with inductive rule learning and rea-
+soning. In Proceedings of the AAAI Conference on
+Artiﬁcial Intelligence, volume 30.
+Yixin Nie, Songhe Wang, and Mohit Bansal. 2019.
+Revealing the importance of semantic retrieval for
+machine reading at scale. In Proceedings of the
+2019 Conference on Empirical Methods in Natu-
+ral Language Processing and the 9th International
+Joint Conference on Natural Language Processing
+(EMNLP-IJCNLP), pages 2553–2566, Hong Kong,
+China. Association for Computational Linguistics.
+Lin Qiu, Yunxuan Xiao, Yanru Qu, Hao Zhou, Lei
+Li, Weinan Zhang, and Yong Yu. 2019. Dynami-
+cally fused graph network for multi-hop reasoning.
+In Proceedings of the 57th Annual Meeting of the
+Association for Computational Linguistics , pages
+6140–6150, Florence, Italy. Association for Compu-
+tational Linguistics.
+Alec Radford, Jeffrey Wu, Rewon Child, David Luan,
+Dario Amodei, and Ilya Sutskever. 2019. Language
+models are unsupervised multitask learners. OpenAI
+blog, 1(8):9.
+Colin Raffel, Noam Shazeer, Adam Roberts, Katherine
+Lee, Sharan Narang, Michael Matena, Yanqi Zhou,
+Wei Li, and Peter J Liu. 2020. Exploring the lim-
+its of transfer learning with a uniﬁed text-to-text
+transformer. Journal of Machine Learning Research,
+21(140):1–67.
+Swarnadeep Saha and Mausam. 2018. Open informa-
+tion extraction from conjunctive sentences. In Pro-
+ceedings of the 27th International Conference on
+Computational Linguistics, pages 2288–2299, Santa
+Fe, New Mexico, USA. Association for Computa-
+tional Linguistics.
+Apoorv Saxena, Aditay Tripathi, and Partha Taluk-
+dar. 2020. Improving multi-hop question answering
+over knowledge graphs using knowledge base em-
+beddings. In Proceedings of the 58th Annual Meet-
+ing of the Association for Computational Linguistics,
+pages 4498–4507, Online. Association for Computa-
+tional Linguistics.
+Linfeng Song, Daniel Gildea, Yue Zhang, Zhiguo
+Wang, and Jinsong Su. 2019. Semantic neural ma-
+chine translation using AMR. Transactions of the
+Association for Computational Linguistics, 7:19–31.
+Robyn Speer, Joshua Chin, and Catherine Havasi. 2017.
+Conceptnet 5.5: An open multilingual graph of gen-
+eral knowledge. In Proceedings of the AAAI Confer-
+ence on Artiﬁcial Intelligence, volume 31.
+Sho Takase, Jun Suzuki, Naoaki Okazaki, Tsutomu
+Hirao, and Masaaki Nagata. 2016. Neural head-
+line generation on Abstract Meaning Representation.
+In Proceedings of the 2016 Conference on Empiri-
+cal Methods in Natural Language Processing, pages
+1054–1059, Austin, Texas. Association for Compu-
+tational Linguistics.
+Ming Tu, Kevin Huang, Guangtao Wang, Jing Huang,
+Xiaodong He, and Bowen Zhou. 2020. Select, an-
+swer and explain: Interpretable multi-hop reading
+comprehension over multiple documents. In AAAI,
+pages 9073–9080.
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob
+Uszkoreit, Llion Jones, Aidan N Gomez, Ł ukasz
+Kaiser, and Illia Polosukhin. 2017. Attention is all
+you need. In Advances in Neural Information Pro-
+cessing Systems, volume 30, pages 5998–6008. Cur-
+ran Associates, Inc.
+Peifeng Wang, Nanyun Peng, Filip Ilievski, Pedro
+Szekely, and Xiang Ren. 2020. Connecting the dots:
+A knowledgeable path generator for commonsense
+question answering. In Findings of the Association
+for Computational Linguistics: EMNLP 2020, pages
+4129–4140, Online. Association for Computational
+Linguistics.
+Xiaoyan Wang, Pavan Kapanipathi, Ryan Musa,
+Mo Yu, Kartik Talamadupula, Ibrahim Abdelaziz,
+Maria Chang, Achille Fokoue, Bassem Makni,
+
+[[page 12]]
+Nicholas Mattei, et al. 2019. Improving natural lan-
+guage inference using external knowledge in the sci-
+ence questions domain. In Proceedings of the AAAI
+Conference on Artiﬁcial Intelligence , volume 33,
+pages 7208–7215.
+Yichong Xu, Chenguang Zhu, Ruochen Xu, Yang Liu,
+Michael Zeng, and Xuedong Huang. 2020. Fusing
+context into knowledge graph for commonsense rea-
+soning. arXiv preprint arXiv:2012.04808.
+Vikas Yadav, Steven Bethard, and Mihai Surdeanu.
+2019. Quick and (not so) dirty: Unsupervised se-
+lection of justiﬁcation sentences for multi-hop ques-
+tion answering. In Proceedings of the 2019 Con-
+ference on Empirical Methods in Natural Language
+Processing and the 9th International Joint Confer-
+ence on Natural Language Processing (EMNLP-
+IJCNLP), pages 2578–2589, Hong Kong, China. As-
+sociation for Computational Linguistics.
+Vikas Yadav, Steven Bethard, and Mihai Surdeanu.
+2020. Unsupervised alignment-based iterative evi-
+dence retrieval for multi-hop question answering. In
+Proceedings of the 58th Annual Meeting of the Asso-
+ciation for Computational Linguistics , pages 4514–
+4525, Online. Association for Computational Lin-
+guistics.
+Bishan Yang and Tom Mitchell. 2017. Leveraging
+knowledge bases in LSTMs for improving machine
+reading. In Proceedings of the 55th Annual Meet-
+ing of the Association for Computational Linguistics
+(Volume 1: Long Papers) , pages 1436–1446, Van-
+couver, Canada. Association for Computational Lin-
+guistics.
+Zhilin Yang, Peng Qi, Saizheng Zhang, Yoshua Bengio,
+William Cohen, Ruslan Salakhutdinov, and Christo-
+pher D. Manning. 2018. HotpotQA: A dataset
+for diverse, explainable multi-hop question answer-
+ing. In Proceedings of the 2018 Conference on Em-
+pirical Methods in Natural Language Processing ,
+pages 2369–2380, Brussels, Belgium. Association
+for Computational Linguistics.
+Wenxuan Zhang, Yang Deng, and Wai Lam. 2020a.
+Answer ranking for product-related questions via
+multiple semantic relations modeling. In Proceed-
+ings of the 43rd International ACM SIGIR confer-
+ence on research and development in Information
+Retrieval, SIGIR 2020, pages 569–578.
+Yao Zhang, Xu Zhang, Jun Wang, Hongru Liang,
+Adam Jatowt, Wenqiang Lei, and Zhenglu Yang.
+2020b. Gmh: A general multi-hop reasoning model
+for kg completion.
+Chen Zhao, Chenyan Xiong, Xin Qian, and Jordan
+Boyd-Graber. 2020. Complex factoid question an-
+swering with a free-text knowledge graph. In Pro-
+ceedings of The Web Conference 2020, pages 1205–
+1216.
+Wanjun Zhong, Jingjing Xu, Duyu Tang, Zenan Xu,
+Nan Duan, Ming Zhou, Jiahai Wang, and Jian Yin.
+2020. Reasoning over semantic-level graph for fact
+checking. In Proceedings of the 58th Annual Meet-
+ing of the Association for Computational Linguistics,
+pages 6170–6180, Online. Association for Computa-
+tional Linguistics.
+Chen Zhu, Yu Cheng, Zhe Gan, Siqi Sun, Tom Gold-
+stein, and Jingjing Liu. 2020. Freelb: Enhanced ad-
+versarial training for natural language understanding.
+In International Conference on Learning Represen-
+tations.
+Fengbin Zhu, Wenqiang Lei, Youcheng Huang, Chao
+Wang, Shuo Zhang, Jiancheng Lv, Fuli Feng, and
+Tat-Seng Chua. 2021a. Tat-qa: A question answer-
+ing benchmark on a hybrid of tabular and textual
+content in ﬁnance.
+Fengbin Zhu, Wenqiang Lei, Chao Wang, Jianming
+Zheng, Soujanya Poria, and Tat-Seng Chua. 2021b.
+Retrieving and reading: A comprehensive survey on
+open-domain question answering. arXiv preprint
+arXiv:2101.00774.
+A Appendix
+A.1 Case Study
+More case studies can be found in Table 7.
+
+[[page 13]]
+(a) Case Study 1
+Question: Algae can be found in (A) reservoir (B) meat (C) street (D) tree
+Useful facts retrieved by IR: Algae is found in bodies of water.
+Additional facts from path-
+based analytics:
+Water reservoir: a large quantity of water is stored in a reservoir (or
+dam).
+Relevant path in AMR-SG: Algae → find-01 → body → water → store-01
+→ reservoir
+(b) Case Study 2
+Question: Photosynthesis can be performed by (A) a cabbage cell (B) a bee
+cell (C) a bear cell (D) a cat cell
+Useful facts retrieved by IR: N.A.
+Additional facts from path-
+based analytics:
+Plant cells can perform photosynthesis.
+Description: skunk cabbage is a ﬂowering perennial plant that is one
+of the ﬁrst plants to emerge in the spring.
+Relevant path in AMR-SG: Photosynthesis → plant → cabbage
+(c) Case Study 3
+Question: Which is recyclable? (A) An Elephant (B) A school notebook (C)
+A boat (D) A lake
+Useful facts retrieved by IR: Paper is recyclable.
+Additional facts from path-
+based analytics:
+Take notes on notebook paper.
+Relevant path in AMR-SG: recycle-01 → paper → notebook
+(d) Case Study 4
+Question: Which requires energy to move? (A) weasel (B) willow (C) mango
+(D) poison ivy
+Useful facts retrieved by IR: An animal requires energy to move.
+Additional facts from path-
+based analytics:
+The long and slender body of the weasel allows it to move, almost
+ﬂow, over terrain.
+Relevant path in AMR-SG: energy → move-01 → weasel
+(e) Case Study 5
+Question: A person wants to be able to have more natural power in their home.
+They choose to cease using a traditional electric company to source
+this electricity, and so decide to install (A) sun grafts (B) sunlight
+shields (C) panels collecting sunlight (D) solar bees
+Useful facts retrieved by IR: A home with solar electric panels on the roof might be able to make
+most of its own electricity, for example.
+Additional facts from path-
+based analytics:
+Solar thermal panels generate hot water from the natural energy in
+sunlight.
+Relevant path in AMR-SG: natural-03 → energy → generate-01 →
+sunlight → panel
+Table 7: More case studies in addition to Table 6

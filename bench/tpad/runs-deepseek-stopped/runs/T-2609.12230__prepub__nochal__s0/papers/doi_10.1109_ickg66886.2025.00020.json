@@ -1,0 +1,38 @@
+{
+  "id": "doi:10.1109/ickg66886.2025.00020",
+  "title": "Evaluating Knowledge Graph-Enhanced Context for Multiple-Choice Question Answering",
+  "authors": [
+    "Maryam Ghanbari",
+    "Renata Dividino"
+  ],
+  "year": 2025,
+  "published": "2025-11-13",
+  "venue": "2025 IEEE International Conference on Knowledge Graph (ICKG)",
+  "url": "https://www.semanticscholar.org/paper/0a1e7300ab325d8287bb1d9152cc8c278bfcd09e",
+  "pdf_url": null,
+  "abstract": "Despite their impressive capabilities, Large Language Models (LLMs) struggle to access knowledge not encoded during pre-training. In-context learning (ICL) addresses this limitation by embedding relevant information directly in the prompt, enabling LLMs to use external knowledge without updating their parameters. Recent research has explored integrating knowledge from knowledge graphs (KGs) into prompts, as KGs offer structured and factual representations of concepts and their relationships. A common strategy involves identifying key concepts in the task, grounding them in the KG, extracting subgraphs that connect question and answer concepts, and incorporating the corresponding statements into the prompts. However, a major challenge in ICL is selecting appropriate knowledge, that is, information that supports the model's reasoning and improves performance, while minimizing irrelevant or noisy content that can reduce accuracy. This study investigates how the representation of knowledge in prompts and the relevance and scope of task-grounded KG knowledge affect LLM performance on multiple-choice question answering (MCQA) tasks. We compare triple-based versus path-based representations, assess relevance filtering strategies, and evaluate different knowledge processing approaches. Our findings show that path-based representations outperform triple-based approaches but are more sensitive to noise. While KG-based knowledge can enhance LLM reasoning, imprecise selection of relevant knowledge can degrade performance below the zero-shot baseline (where no additional context is provided), highlighting the challenge of integrating KG knowledge without task-specific selection strategies. Expanding the scope of extracted subgraphs increases recall (retrieving more relevant information) but reduces precision (as more noise is also included). These findings underscore the critical importance of balancing informativeness with noise reduction in KG-enhanced LLM systems. Source code is publicly available at https://github.com/maryam-ghanbari/KGSweetSpot.",
+  "doi": "10.1109/ickg66886.2025.00020",
+  "arxiv_id": null,
+  "openalex_id": null,
+  "s2_id": "0a1e7300ab325d8287bb1d9152cc8c278bfcd09e",
+  "source": "semantic_scholar",
+  "sources": [
+    "crossref",
+    "semantic_scholar"
+  ],
+  "citation_count": 0,
+  "citation_count_source": "semantic_scholar",
+  "retrieved_at": "2026-09-30T05:03:46.759671Z",
+  "relevance": 0.25,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "subgraph context enhanced knowledge graph embedding training beyond isolated triples",
+    "irrelevant distractor context knowledge graph question answering robustness ablation"
+  ],
+  "code_urls": [
+    "https://github.com/maryam-ghanbari/KGSweetSpot"
+  ],
+  "has_full_text": false,
+  "abstract_source": "semantic_scholar",
+  "metadata_warnings": []
+}

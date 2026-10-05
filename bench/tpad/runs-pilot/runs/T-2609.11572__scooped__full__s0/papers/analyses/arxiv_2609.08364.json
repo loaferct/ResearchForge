@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2609.08364",
+  "relevance_tier": "high",
+  "problem": "Oncology care operates at constant pressure of absorbing rapidly evolving evidence base in biomedicine. The American Society of Clinical Oncology (ASCO) addresses this through living guidelines, but the format introduces a new burden: any recommendation can change at any point, across multiple versioned documents. Existing retrieval-augmented tools, including ASCO’s own AI assistant, treat each guideline as static: they cannot detect superseded recommendations.",
+  "method": "We present SENTRYLINE, a living guideline-aware clinical question answering system. SENTRYLINE retrieves guideline passages through a vectorless hierarchical RAG pipeline and returns a role-specific answer with inline citations, factual and temporal verification reports, and drift detection notes that surface when a guideline has been updated. We construct ASCOBENCH, a benchmark of 405 three-turn conversations across four question categories with gold answers from expert annotators (clinicians).",
+  "key_assumptions": [
+    "Guideline updates are reflected in versioned documents and can be detected via temporal metadata.",
+    "A vectorless hierarchical RAG pipeline can effectively retrieve relevant passages from evolving guidelines."
+  ],
+  "main_contribution": "(1) SENTRYLINE, a living guideline-aware clinical QA system with verification and drift detection; (2) ASCOBENCH, a benchmark for evaluating QA over living guidelines.",
+  "datasets": [
+    "ASCOBENCH (405 three-turn conversations across four question categories)"
+  ],
+  "benchmarks": [
+    "ASCOBENCH"
+  ],
+  "baselines": [
+    "Five baselines (including standard RAG and ASCO’s guideline assistant)"
+  ],
+  "metrics": [
+    "LLM-as-judge evaluation (not explicitly stated but implied)"
+  ],
+  "results": "\"Experiments across three generation backbones show consistent improvements over four retrieval baselines and ASCO’s guideline assistant, with particularly strong gains on Reasoning and Role-Specific questions where multi-hop synthesis and role adaptation are required.\"",
+  "limitations": [
+    "Not explicitly stated in abstract; may include dependency on quality of guideline versioning and availability of temporal metadata."
+  ],
+  "future_work": [
+    "Not explicitly stated in abstract."
+  ],
+  "code_availability": "\"Stated as available via [Project Page] [Video] [Code] in abstract\"",
+  "relation_to_idea": {
+    "problem_overlap": 0.7,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "SENTRYLINE focuses on verification and drift detection via a vectorless hierarchical RAG pipeline, whereas the proposed idea emphasizes adjusting retrieval rank with a temporal relevance component based on elapsed time between query date and version timestamp.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T09:14:49.206034Z"
+}

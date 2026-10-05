@@ -1,0 +1,28 @@
+{
+  "id": "M001",
+  "title": "Context subgraph selection heuristic based on entity centrality and relation specificity",
+  "description": "Instead of using all triples from the source passage, select a fixed-size subgraph (e.g., top‑K triples) ranked by a combination of entity degree in the KG and relation specificity (inverse relation frequency) to retain informative context while reducing noise from irrelevant or overly frequent triples.",
+  "why_differs": "Prior work such as UniKGQA uses an abstract subgraph for retrieval, and MRE uses trajectory sampling, but neither selects context triples based on entity centrality and relation specificity for triple‑level enrichment.",
+  "technical_mechanism": "For each source passage, extract all triples, compute a score = log(entity_degree_head + entity_degree_tail) + log(1 / relation_frequency), sort descending, and keep the top‑K triples to form the local context subgraph presented with the target triple.",
+  "expected_benefit": "Lower noise in the enrichment signal, leading to more stable training and higher Hits@1, especially in passages with many trivial or high‑frequency relations.",
+  "potential_novelty": "The selection heuristic combines graph‑structural metrics with relation rarity, which has not been explicitly applied to triple‑level context enrichment in KGQA training.",
+  "implementation_difficulty": "low",
+  "implementation_difficulty_basis": "Requires only additional preprocessing and scoring; no changes to model architecture.",
+  "experimental_difficulty": "low",
+  "experimental_difficulty_basis": "Can be implemented as a data‑pipeline variant; experiments reuse the same training and evaluation code.",
+  "main_risk": "If K is too small, useful context may be omitted; if K too large, noise returns. Requires tuning.",
+  "required_baselines": [
+    "triple‑only baseline",
+    "triple+full‑passage context baseline"
+  ],
+  "related_paper_ids": [
+    "arxiv:2212.00959",
+    "arxiv:2601.01195",
+    "doi:10.1016/j.eswa.2024.124652"
+  ],
+  "addresses_gap_ids": [
+    "G001"
+  ],
+  "recommended": true,
+  "recorded_at": "2026-09-30T07:59:56.775115Z"
+}

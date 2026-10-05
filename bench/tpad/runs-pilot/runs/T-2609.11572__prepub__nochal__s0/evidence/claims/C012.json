@@ -1,0 +1,20 @@
+{
+  "id": "C012",
+  "statement": "Unsupervised dense retrievers struggle to capture temporal relevance, retrieving semantically related but temporally misaligned documents. We propose TPOUR (Temporal Preference Optimization for Unsupervised Retriever), which uses Temporal Retrieval Preference Optimization (TRPO) to reinterprets preference learning in the temporal dimension, guiding the retriever to favor temporally aligned documents.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2606.17664",
+      "experiment_run_id": null,
+      "location": "abstract",
+      "quote": "Unsupervised dense retrievers offer scalability by learning semantic similarity from unlabeled documents via contrastive learning, but they struggle to capture the temporal relevance, retrieving semantically related but temporally misaligned documents-an important aspect when a document collection spans multiple time periods (e.g., retrieving documents from 2018-2025 for \"Who is the president in 2019?\" introduces temporal ambiguity). Existing methods rely on supervised training with explicit timestamps, which are not always feasible. We propose TPOUR (Temporal Preference Optimization for Unsupervised Retriever), which uses our novel training method Temporal Retrieval Preference Optimization (TRPO). TRPO reinterprets preference learning in the temporal dimension, guiding the retriever to favor temporally aligned documents.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    }
+  ],
+  "confidence": "high",
+  "phase": "",
+  "tags": [],
+  "recorded_at": "2026-09-30T10:50:00.556209Z"
+}

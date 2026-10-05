@@ -1,0 +1,32 @@
+{
+  "paper_id": "doi:10.1145/3404835.3463073",
+  "relevance_tier": "medium",
+  "problem": "Online search latency is a major bottleneck when deploying large pre-trained language models (e.g., BERT) in retrieval applications.",
+  "method": "Contextualized Offline Relevance Weighting (CORW) uses a powerful BERT ranker to weight neighbour documents collected by generated pseudo-queries for each document offline; online retrieval reduces to matching query to pseudo-query, making it efficient.",
+  "key_assumptions": [
+    "Generated pseudo-queries capture sufficient document context for relevance weighting.",
+    "Offline precomputation of neighbourhoods does not significantly degrade effectiveness."
+  ],
+  "main_contribution": "CORW method that trades offline relevance weighting for online retrieval efficiency while maintaining effectiveness.",
+  "datasets": [
+    "MS MARCO (passage and document ranking)"
+  ],
+  "benchmarks": [
+    "MS MARCO"
+  ],
+  "baselines": [],
+  "metrics": [],
+  "results": "[\"Extensive experiments on MS MARCO demonstrate promising results in both online efficiency and effectiveness.\"]",
+  "limitations": [],
+  "future_work": [],
+  "code_availability": "[]",
+  "relation_to_idea": {
+    "problem_overlap": 0.2,
+    "method_overlap": 0.1,
+    "evaluation_overlap": 0.1,
+    "conceptual_difference": "CORW focuses on improving retrieval efficiency via offline pseudo-query weighting; our idea adds a temporal relevance component to adapt rankings based on version timestamps for QA over versioned texts.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T10:23:57.344445Z"
+}

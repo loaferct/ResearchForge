@@ -1,0 +1,66 @@
+{
+  "id": "E001",
+  "title": "Evaluating Temporal Relevance Component for Question Answering over Versioned Regulatory Documents",
+  "research_question": "Does adding a temporal relevance component that adjusts passage rankings based on elapsed time between query target date and version timestamp improve answer accuracy (Exact Match and F1) over semantic-only retrievers and existing time-aware baselines for open-domain question answering on versioned regulatory documents?",
+  "hypothesis": "Combining temporal relevance with semantic similarity in document ranking will significantly improve answer accuracy (Exact Match and F1) over semantic-only retrievers and existing time-aware baselines on a benchmark of versioned regulatory documents with overlapping revisions and time-stamped queries.",
+  "proposed_method": "A retrieval-agnostic temporal relevance component that computes a temporal score as a decaying function of elapsed time (e.g., exponential decay) between the query's target date and the document version's timestamp. This temporal score is combined with semantic similarity scores from a retriever (dense or sparse) via a weighted sum or lightweight gating mechanism, without modifying the retriever's core ranking algorithm. The framework is applied to both dense (DPR) and sparse (BM25) retrievers to demonstrate agnosticism.",
+  "baselines": [
+    "BM25 (semantic-only)",
+    "DPR (semantic-only)",
+    "Date-filtering baseline (retrieve documents with version timestamp <= query date)",
+    "Timestamp-aware re-ranking using Re3's query-aware gating mechanism applied to retriever output",
+    "Random temporal bias (shuffle temporal scores)"
+  ],
+  "datasets": [
+    "Constructed benchmark of versioned regulatory documents (e.g., U.S. Code, Code of Federal Regulations) with version timestamps and overlapping revisions",
+    "Time-stamped queries generated from amendment logs where answer validity depends on specific version at a given date",
+    "Evaluation set annotated by legal experts or via automated verification against official amendment history"
+  ],
+  "workloads": [
+    "Question answering over regulatory text"
+  ],
+  "hardware": "[\"Single GPU (NVIDIA RTX 3090 or equivalent) for dense retriever experiments\", \"CPU-only for sparse retriever (BM25) experiments\"]",
+  "software_environment": "[\"Python 3.9+\", \"PyTorch 2.0+\", \"HuggingFace Transformers\", \"Faiss or Elasticsearch for vector/BM25 retrieval\", \"NumPy, pandas\"]",
+  "metrics": [
+    "Exact Match",
+    "F1 score",
+    "Mean Reciprocal Rank (MRR)",
+    "Recall@5"
+  ],
+  "ablations": [
+    "No temporal component (semantic-only)",
+    "Linear temporal decay function",
+    "Step temporal decay function",
+    "Weighted sum combination vs. gating mechanism",
+    "Dense retriever only",
+    "Sparse retriever only"
+  ],
+  "controls": [
+    "Same underlying retriever configuration across conditions",
+    "Identical document indexing and preprocessing",
+    "Fixed query set and evaluation splits",
+    "Consistent random seeds for reproducibility",
+    "Same hardware and software environment for comparable runs"
+  ],
+  "confounders_addressed": [
+    "Recency bias (by including queries where the correct version is not the most recent)",
+    "Timestamp noise (by using exact version timestamps from official sources)",
+    "Semantic similarity confounding (by selecting document pairs with high lexical overlap but different temporal validity)",
+    "Query ambiguity (by ensuring each query has a clear target date)"
+  ],
+  "expected_outcomes": "[\"Statistically significant improvement in Exact Match and F1 scores for the proposed temporal relevance component over all baselines, particularly on queries requiring non‑most‑recent versions.\", \"Ablations show that both the temporal decay function and combination method contribute to gains.\"]",
+  "failure_conditions": [
+    "No significant improvement (p > 0.05) over semantic‑only baselines",
+    "Degradation in performance on queries requiring older versions indicating recency bias dominance",
+    "High variance across runs suggesting instability"
+  ],
+  "reproducibility_notes": "[\"Provide open‑source code repository with scripts for benchmark construction, retrieval implementation, training/inference, and evaluation.\", \"Include detailed README, versioned data preprocessing steps, random seed configuration, and hardware specifications.\", \"Release the constructed benchmark under a permissive license.\"]",
+  "related_modification_id": null,
+  "related_paper_ids": [
+    "arxiv:2509.01306",
+    "arxiv:2401.13222"
+  ],
+  "execution": null,
+  "status": "planned",
+  "recorded_at": "2026-09-30T10:29:09.871012Z"
+}

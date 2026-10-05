@@ -1,0 +1,38 @@
+{
+  "id": "arxiv:2606.17664",
+  "title": "Temporal Preference Optimization for Unsupervised Retrieval",
+  "authors": [
+    "HyunJin Kim",
+    "Jaejun Shim",
+    "Young Jin Kim",
+    "JinYeong Bak"
+  ],
+  "year": 2026,
+  "published": "2026-06-16",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2606.17664",
+  "pdf_url": "https://arxiv.org/pdf/2606.17664v1",
+  "abstract": "Unsupervised dense retrievers offer scalability by learning semantic similarity from unlabeled documents via contrastive learning, but they struggle to capture the temporal relevance, retrieving semantically related but temporally misaligned documents-an important aspect when a document collection spans multiple time periods (e.g., retrieving documents from 2018-2025 for \"Who is the president in 2019?\" introduces temporal ambiguity). Existing methods rely on supervised training with explicit timestamps, which are not always feasible. We propose TPOUR (Temporal Preference Optimization for Unsupervised Retriever), which uses our novel training method Temporal Retrieval Preference Optimization (TRPO). TRPO reinterprets preference learning in the temporal dimension, guiding the retriever to favor temporally aligned documents. TPOUR further generalizes to unseen time periods via interpolation in a learned time embedding, enabling continuous temporal alignment. Experiments on temporal information retrieval (T-IR), TPOUR outperforms both unsupervised and supervised baselines. Compared to Qwen-Embedding-8B, despite being about 72.7x smaller, TPOUR Contriever improves average nDCG@5 by +4.04 (+12.15%) on explicit and +4.98 (+15.21%) on implicit queries. We provide our code at https://github.com/agwaBom/TPOUR.",
+  "doi": null,
+  "arxiv_id": "2606.17664",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T10:48:57.863753Z",
+  "relevance": 0.3636,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "temporal semantic retrieval"
+  ],
+  "code_urls": [
+    "https://github.com/agwaBom/TPOUR"
+  ],
+  "has_full_text": true,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

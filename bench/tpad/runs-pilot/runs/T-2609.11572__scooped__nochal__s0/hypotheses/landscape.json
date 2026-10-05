@@ -1,0 +1,94 @@
+{
+  "field_name": "Temporal Information Retrieval for Question Answering over Versioned Text",
+  "categories": [
+    {
+      "name": "Temporal Relevance Ranking Methods",
+      "parent": null,
+      "description": "Methods that combine temporal relevance scores with semantic similarity to re-rank retrieved documents, often using gating functions or inverse time differences.",
+      "paper_ids": [
+        "arxiv:2509.01306",
+        "arxiv:2401.13222"
+      ]
+    },
+    {
+      "name": "Versioned Document Query Processing",
+      "parent": null,
+      "description": "Techniques for querying versioned documents, such as temporal top-k queries, branch versioning management, and document listing over versioned collections.",
+      "paper_ids": [
+        "doi:10.1007/978-3-319-08010-9_55",
+        "doi:10.1007/978-3-540-75288-2_9",
+        "doi:10.1007/978-3-319-02432-5_12"
+      ]
+    },
+    {
+      "name": "Surveys on Temporal/Multi-versioned XML",
+      "parent": null,
+      "description": "Survey papers summarizing techniques for handling temporal and multi-versioned XML documents.",
+      "paper_ids": [
+        "doi:10.1016/j.ipm.2013.08.003"
+      ]
+    }
+  ],
+  "idea_position": "Temporal Relevance Ranking Methods",
+  "dominant_approaches": [
+    "Temporal relevance scoring combined with semantic similarity",
+    "Query-aware gating mechanisms",
+    "Inverse time difference scoring"
+  ],
+  "common_assumptions": [
+    "Timestamps are available for queries and documents",
+    "Temporal relevance decreases with time difference",
+    "Semantic similarity from retrievers is a relevant signal"
+  ],
+  "common_datasets": [
+    "Re2Bench",
+    "Tennis grand slam time-sensitive dataset",
+    "Versioned XML document collections (not specified)"
+  ],
+  "common_benchmarks": [
+    "Re2Bench",
+    "TPQ-2019/TPQ-2020",
+    "Temporal top-k query benchmarks (not specified)"
+  ],
+  "common_metrics": [
+    "Recall@1",
+    "Exact Match",
+    "F1",
+    "Recall@5"
+  ],
+  "repeated_limitations": [
+    {
+      "description": "Limited to specific retriever types (e.g., dense only)",
+      "paper_ids": [
+        "arxiv:2401.13222"
+      ]
+    },
+    {
+      "description": "Evaluation on synthetic or narrow datasets",
+      "paper_ids": [
+        "arxiv:2401.13222",
+        "arxiv:2509.01306"
+      ]
+    },
+    {
+      "description": "Lack of generalization to regulatory text",
+      "paper_ids": []
+    },
+    {
+      "description": "No consideration of dense semantic overlap across versions",
+      "paper_ids": []
+    }
+  ],
+  "underexplored_combinations": [
+    "Retrieval-agnostic temporal relevance for open-domain QA over regulatory text",
+    "Handling dense semantic overlap across successive amendments",
+    "Benchmark with overlapping versioned regulatory documents and time-stamped queries"
+  ],
+  "contradictions": [
+    {
+      "description": "Existing time-aware retrieval techniques treat each version as an isolated snapshot, making it difficult to distinguish which revision matches a time-specific query.",
+      "paper_ids": []
+    }
+  ],
+  "recorded_at": "2026-09-30T09:51:38.647264Z"
+}

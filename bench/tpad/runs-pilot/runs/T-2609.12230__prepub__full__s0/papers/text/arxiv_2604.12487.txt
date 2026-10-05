@@ -1,0 +1,1344 @@
+[[page 1]]
+KG-Reasoner: A Reinforced Model for End-to-End Multi-Hop Knowledge
+Graph Reasoning
+Shuai Wang Yinan Yu
+Department of Computer Science and Engineering
+Chalmers University of Technology and University of Gothenburg
+SE-41296 Gothenburg, Sweden
+{shuaiwa, yinan}@chalmers.se
+Abstract
+Large Language Models (LLMs) exhibit
+strong abilities in natural language understand-
+ing and generation, yet they struggle with
+knowledge-intensive reasoning. Structured
+Knowledge Graphs (KGs) provide an effective
+form of external knowledge representation and
+have been widely used to enhance performance
+in classical Knowledge Base Question An-
+swering (KBQA) tasks. However, performing
+precise multi-hop reasoning over KGs for
+complex queries remains highly challenging.
+Most existing approaches decompose the
+reasoning process into a sequence of isolated
+steps executed through a fixed pipeline. While
+effective to some extent, such designs con-
+strain reasoning flexibility and fragment the
+overall decision process, often leading to in-
+coherence and the loss of critical intermediate
+information from earlier steps. In this paper,
+we introduce KG-Reasoner, an end-to-end
+framework that integrates multi-step reasoning
+into a unified "thinking" phase of a Reasoning
+LLM. Through Reinforcement Learning (RL),
+the LLM is trained to internalize the KG
+traversal process, enabling it to dynamically
+explore reasoning paths, and perform back-
+tracking when necessary. Experiments on eight
+multi-hop and knowledge-intensive reasoning
+benchmarks demonstrate that KG-Reasoner
+achieves competitive or superior performance
+compared to the state-of-the-art methods. 1
+1 Introduction
+Large Language Models (LLMs) have achieved
+remarkable success across diverse domains but
+still exhibit notable shortcomings, such as hallu-
+cinations and factual inaccuracies, particularly in
+knowledge-intensive tasks (Agrawal et al., 2024).
+This stems from the implicit encoding of knowl-
+edge within model weights, making knowledge
+1Codes are available at the repository: https://github.
+com/Wangshuaiia/KG-Reasoner.
+… …
+KG
+Query Query Query
+Retrieval
+Reason
+(One LLM Call)
+Answer
+Retrieval
+Retrieval
+Reason
+(One LLM Call)
+Reason
+(One LLM Call)
+Retrieval
+Retrieval
+Reason text
+(Continuous)
+Reason text
+(Continuous)
+Answer Answer
+(b) Incremental step-
+wise reasoning on KG
+(c) Holistic
+reasoning on KG
+(a) Vanilla
+RAG with KG
+1-hop
+2-hops
+3-hops
+(One LLM Call)pipeline
+Start
+dead-ends
+backtrack
+Topic entity Start
+Figure 1: Comparison of KG-based reasoning
+paradigms. (a) and (b) illustrate two representa-
+tive pipeline-style approaches that leverage knowl-
+edge graphs through staged retrieval and reasoning.
+(c) shows our proposed end-to-end holistic reasoning
+framework, which integrates retrieval and multi-hop
+reasoning within a unified thinking process.
+updates cumbersome and resource-intensive when
+relying on fine-tuning. To address this limita-
+tion, Retrieval-Augmented Generation (RAG) has
+emerged as an effective strategy, enabling LLMs to
+dynamically access external knowledge during in-
+ference (Gao et al., 2023). Compared with textual
+data, knowledge graphs (KGs) provide structured
+and explicit relations between entities, allowing
+LLM reasoners to “hop” across connected enti-
+ties and discover links that traditional semantic
+retrieval may miss. This graph-based nature signif-
+icantly broadens the retrievable knowledge domain
+and enhances reasoning potential.
+A direct approach to leveraging KGs involves
+prompting LLMs to generate structured queries,
+such as SPARQL (Li et al., 2024; Zahera et al.,
+2024), which are then executed to retrieve relevant
+information, as illustrated in Figure 1(a). To better
+incorporate contextual information, some methods
+retrieve subgraphs and prune them to keep only rel-
+evant information (Hu et al., 2025; Xu et al., 2024).
+arXiv:2604.12487v1  [cs.CL]  14 Apr 2026
+
+[[page 2]]
+GraphRAG (Edge et al., 2024) further improves re-
+trieval accuracy and coverage on large-scale KGs
+by partitioning the graph into topic-centric sub-
+graphs via community detection and performing
+retrieval within each subgraph. Despite their effec-
+tiveness, these retrieval-based methods mainly han-
+dle low-hop questions, where answers are close to
+topic entities. In contrast, many real-world queries
+require multi-hop reasoning, involving intermedi-
+ate inferences across distant entities. For example,
+answering “What is the official flower of the area
+affected by Tropical Storm Fabio?” requires first
+identifying the affected area and then retrieving its
+official flower. In such cases, one-shot retrieval
+and prompting are often insufficient.
+To handle multi-hop reasoning over KGs, typi-
+cal methods first identify entities in the question,
+then progressively expand along graph edges to
+collect relevant paths. Such pipeline is shown in
+Figure 1(b). For example, KG-CoT (Zhao et al.,
+2024) models reasoning as a stepwise transition
+process with a learned transition matrix. More re-
+cent LLM-based approaches treat the KG as an in-
+teractive environment, where an LLM-based agent
+performs iterative reasoning and decides at each
+step which neighboring entity to explore next (Sun
+et al., 2024; Xiong et al., 2024). Building on this
+paradigm, additional techniques such as memory
+mechanisms (Jiang et al., 2025; Chen et al., 2024)
+or Monte Carlo Tree Search (MCTS) (Luo et al.,
+2025) have been incorporated to enhance the ex-
+ploration of reasoning paths.
+However, most existing multi-hop reasoning
+pipelines invoke LLMs separately at each reason-
+ing step. Intuitively, this design is suboptimal,
+as it fragments the reasoning process into a se-
+quence of isolated decisions, whereas answering
+complex questions ideally requires continuous and
+coherent reasoning. Moreover, errors introduced
+at early stages tend to propagate and amplify in
+downstream steps. Although error detection and
+backtracking could mitigate this issue in princi-
+ple, such mechanisms are difficult to implement
+effectively under the current pipeline-style setting,
+where intermediate reasoning steps are executed
+independently.
+To address these limitations, we seek a uni-
+fied approach that integrates reasoning and re-
+trieval within a single framework. Unlike existing
+pipelined approaches, we consider using a single
+LLM to perform multiple reasoning and retrieval
+steps in an end-to-end manner, as shown in Figure
+1(c). Inspired by recent advancements inReason-
+ing LLMs, such asGPT-5 thinking(OpenAI, 2025)
+andDeepSeek-R1(Guo et al., 2025), these mod-
+els prioritize an extended internal reasoning phase
+before generating a final response. Through rein-
+forcement learning (RL) and self-play, the model
+acquires advanced cognitive abilities, including
+backtracking from incorrect paths and verifying
+intermediate steps. These capabilities are precisely
+what multi-hop reasoning requires. We therefore
+embed both retrieval and reasoning operations di-
+rectly into a unified long-thinking process, preserv-
+ing reasoning continuity while enabling efficient
+multi-step inference.
+In this paper, we propose a reinforcement-based
+model for end-to-end multi-hop knowledge graph
+reasoning. Retrieval calls and multi-hop reasoning
+are jointly conducted within a single LLM thinking
+process. We introduce a graph-based backtracking
+mechanism that enables the model to revisit his-
+torical reasoning paths and reselect entities upon
+error detection. Additionally, we employ a graph
+attention network for entity selection, allowing the
+model to aggregate richer contextual information
+from the KG and improve selection accuracy. To
+further enhance multi-hop reasoning over the KG,
+we train the model using RL with carefully de-
+signed reward functions. Our contributions are
+summarized as follows:
+• We propose an end-to-end framework for multi-
+hop KBQA that unifies retrieval and reasoning
+within a single thinking phase of an LLM call,
+enabling coherent multi-step reasoning.
+• We enhance multi-hop reasoning via reinforce-
+ment learning with tailored rewards, GNN-
+based entity selection, and explicit error back-
+tracking mechanism.
+• We conduct extensive experiments on eight
+multi-hop and knowledge-intensive reasoning
+benchmarks, demonstrating the effectiveness
+of the proposed approach.
+2 Related Work
+2.1 Knowledge Graph Reasoning
+Knowledge Base Question Answering (KBQA) is a
+prevalent task aimed at reasoning over a KG to find
+answers to given questions. Traditional KBQA ap-
+proaches are mainly categorized into Information
+Retrieval (IR)-based and Semantic Parsing (SP)-
+based methods. IR-based methods retrieve relevant
+
+[[page 3]]
+entities and relations from the KG to infer answers,
+while SP-based methods translate questions into
+executable queries (e.g., SPARQL) that are directly
+executed on the KG (Saxena et al., 2020; Dai et al.,
+2023; Chen et al., 2022).
+With the advent of LLMs, recent studies have
+leveraged these models to enhance KG reasoning
+by decomposing complex questions into sequential
+sub-questions (Ma et al., 2025a; Jiang et al., 2025;
+Ao et al., 2025; Zhang and Zhao, 2025; Sun et al.,
+2024). Owing to the structured nature of KGs,
+RL has been widely used to guide reasoning path
+exploration. Prior RL-based approaches typically
+adopt RNN agents to iteratively predict paths (Das
+et al., 2018; Lin et al., 2018; Cui et al., 2023; Wang
+and Yu, 2026), but often suffer from inefficient ex-
+ploration in multi-hop reasoning. To address this,
+Zhang et al. (Zhang and Zhao, 2025) proposed a
+collaborative framework combining LLM priors
+with RL. However, existing approaches still rely on
+incremental, separate reasoning steps, leading to
+limited context retention and potential error propa-
+gation.
+2.2 Reasoning LLMs
+Recent progress demonstrates that explicitly
+prompting LLMs to perform thinking before give
+an answer significantly enhances their problem-
+solving capabilities (Li et al., 2025b; Wu et al.,
+2025). Reinforcement Learning has further
+strengthened these abilities by enabling LLMs to it-
+eratively reflect and reason effectively (Wang et al.,
+2024; Zhu et al., 2025), as evidenced byReason-
+ing LLMssuch as Deepseek-R1 (Guo et al., 2025),
+Kimi-k1.5 (Team et al., 2025) and GPT-5 think-
+ing (OpenAI, 2025). RL has also facilitated the
+integration of LLMs with external retrieval tools,
+particularly in multi-hop RAG frameworks (Song
+et al., 2025; Li et al., 2025a; Chen et al., 2025;
+Sun et al., 2025), which typically involve itera-
+tive searches without strict structural constraints.
+In contrast, multi-step reasoning over KGs poses
+greater challenges, since paths must be explored
+within a rigid, structured space. To address this,
+we place the reasoning process inside the LLM’s
+“thinking” phase, thereby leveraging the capabili-
+ties of reasoning LLMs to perform efficient end-to-
+end KG reasoning.
+Question: Which sea borders the country that shares a land border 
+with Hungary and uses the Euro?
+<think> First, retrieve countries that share a land border with 
+Hungary. <search> Hungary </search>
+<triples>(Hungary, borders, Slovakia), ... </triples>
+Check which neighboring country uses the Euro. <search>
+Slovakia </search> <triples> (Slovakia, currency, Euro),
+(Slovakia, located_in, Europe) </triples>
+Slovakia uses the Euro but has no coastline, so this path is 
+discarded. Backtracking to previous entities.
+<search> Hungary, Backtrack=True </search> <triples>
+(Hungary, borders, Slovenia) </triples>
+Verify Slovenia’s sea border. <search> Slovenia </search> 
+<triples> (Slovenia, currency, Euro), (Slovenia, borders_sea, 
+Adriatic Sea) </triples>
+Thus, Slovenia satisfies all constraints. </think>
+<answer> Adriatic Sea </answer>
+Internal Thinking Process
+KG
+Hungary
+Slovakia
+Slovenia
+Euro
+Adriatic Sea
+dead-ends 
+Candidate
+entities
+Reasoning over KG
+backtrack
+Europe
+searchtriples
+Figure 2: The architecture of our end-to-end reasoning
+framework.
+3 Task Definition
+We address the task of Knowledge Base Ques-
+tion Answering (KBQA) over a knowledge graph
+G={(e,r,e ′)|e,e ′ ∈ E,r∈ R}, where E
+denotes the set of entities and R denotes the set
+of relations. Each triple (e,r,e′) represents a fac-
+tual relationr between two distinct entitiese and
+e′. Given a natural language question q, along
+with an identified topic entity et∈E mentioned
+in the question, the objective is to infer the correct
+answer entityea∈E by reasoning over the knowl-
+edge graph G. The answering process typically
+starts from the topic entityet and involves explor-
+ing the graph to identify the answer entity ea. In
+practice, large-scale knowledge graphs are often
+sparse and incomplete, making it difficult to locate
+the answer through simple one-hop queries. As a
+result, multi-hop reasoning is frequently required,
+where the answer entityea may reside several hops
+away from the topic entityet.
+
+[[page 4]]
+4 Method
+The overall framework of our method is illustrated
+in Figure 2. Our approach builds upon a reasoning-
+oriented large language model (LLM) that is capa-
+ble of performing multi-hop search and inference
+in an end-to-end manner. During the reasoning
+phase, the LLM autonomously invokes the search
+tool multiple times and evaluates the correctness of
+the intermediate reasoning after each search step.
+Once sufficient evidence has been collected and
+the reasoning process is completed, the LLM tran-
+sitions to the answering phase to generate the final
+answer. The reasoning workflow of our approach
+is summarized in Algorithm 1.
+4.1 Retrieval Calling
+To enable the LLM to interact with external tools,
+we follow a similar approach to previous stud-
+ies (Song et al., 2025; Chen et al., 2025), where
+the model generates specific tokens to invoke tools.
+Specifically, we define special tokens <search>
+and </search> that, when generated by the LLM,
+automatically trigger a custom retrieval tool. The
+retrieved results are then wrapped with a special
+tag <triples>, allowing the model to continue
+reasoning or perform further searches based on
+the retrieved content. To help the LLM learn to
+generate such tokens and adapt to such reasoning
+pattern, we fine-tune it using a dataset formatted
+in this format. Below is an example of the data
+format. Given the question:“What timezone is
+Utah in?”The simplified response is:
+<think>Given the information, I don’t have spe-
+cific knowledge about Utah’s timezone. I will per-
+form a search for the required information. The
+query to search for is <search>utah</search>
+<triples> (Utah, timeZone, Mountain Time
+Zone)<triples>. Based on the search results,
+I found that Utah is in the Mountain Time
+Zone.[...]</think> <answer>Mountain Standard
+Time</answer>
+After each retrieval step, the LLM continuously
+assesses the relevance of the retrieved content and
+correctness of the reasoning process. If the LLM
+determines that the information is unrelated or in-
+correct, the custom KG retrieval tool is called again
+with the parameter Backtrack=True. This reason-
+ing process continues until sufficient information
+has been gathered.
+Details of the custom KG retrieval tool are pre-
+sented in Section 4.2, and the construction of the
+Algorithm 1:Reasoning with LLM over
+Knowledge Graph
+Input:Questionqwith topic entitye topic,
+Knowledge GraphG
+Output:Answerato questionq
+Initialize LLM input withq;
+Start with<think>to begin reasoning;
+whilenot reached<answer>stagedo
+LLM analyzes current context and
+generates query entityeq within
+<search>and</search>tags;
+if</search>is emittedthen
+Execute retrieval overGusinge q;
+Obtain result triplesT;
+WrapTin<searched_triples>
+and feed back to LLM;
+// LLM reflects on current entities and
+triples;
+ifretrieved information is sufficient
+then
+End reasoning with</think>;
+LLM proceeds to generate final
+answer within<answer>and
+</answer>;
+else
+LLM decides whether to continue
+exploring or revise query;
+Extract answerafrom the<answer>tag;
+returna;
+fine-tuning dataset is provided in the Appendix.
+4.2 Knowledge Graph Retrieval Tool
+Large-scale knowledge graphs are typically stored
+in graph databases and queried using SPARQL for
+retrieval. Our retrieval process starts from a topic
+entity and expands the search on the KG.
+4.2.1 One-Hop Neighbor Retrieval
+Given a topic entity, we use SPARQL to retrieve
+all predicates and corresponding object entities
+linked to it from data bases. For example, given the
+question“What books did J.K. Rowling write?”,
+the topic entity is J.K. Rowling . The following
+SPARQL query is issued to retrieve all outgoing
+predicates and their objects:
+SELECT ?predicate ?object
+WHERE {
+ns:m.05b6w ?predicate ?object .
+}
+
+[[page 5]]
+Here, ns:m.05b6w denotes the Freebase ID for J.K.
+Rowling, ?predicate retrieves all relations where
+she appears as the subject, and?object returns the
+corresponding object entities. Similarly, we query
+incoming predicates where the entity appears as
+the object.
+4.2.2 GNN-based Entity Ranking
+Since not all entities in the knowledge graph are
+relevant to the question, we perform entity rank-
+ing to score their relevance and select the top- k
+entities as candidates. The semantic information
+carried by an entity alone is often limited; however,
+its one-hop neighbors can provide rich contextual
+information. For instance, an entity’s attributes
+are often represented as one-hop neighbors in the
+graph.
+To effectively incorporate such contextual sig-
+nals, we adopt a graph neural network (GNN) that
+aggregates information from an entity’s neighbors.
+We employ an attention mechanism to selectively
+focus on the neighbors most relevant to the ques-
+tion. Given an entityh with a set of one-hop neigh-
+bors (hi,ti) connected via relationri, the enhanced
+representation ˆhis computed as:
+si =a(Wq;W(t i⊙ri))
+αi = softmax(si)
+ˆh=σ
+
+Wh[h∥
+X
+(hi,ti)∈N(h)
+αi ti]
+ (1)
+Here,a:R d×Rd→R is a function that com-
+putes attention scores between the question q and
+each neighbor representation. W is a shared linear
+transformation,⊙ denotes element-wise multipli-
+cation, andσ(·) is a nonlinear activation function
+such as ReLU.
+We then feed ˆh through a two-layer MLP to per-
+form a binary classification (relevant vs. irrelevant).
+Formally,
+ˆy= Softmax
+ 
+W2σ(W1 ˆh+b 1) +b 2
+
+,(2)
+where W1,W 2 are weight matrices, b1,b 2 are bi-
+ases. Then, the probability of the “relevant” class
+in the Softmax output is used as the relevance
+score:
+score= ˆy[1]∈(0,1).(3)
+The top-k entities with the highest scores are se-
+lected as supporting evidence.
+1
+4
+5
+7 8
+32
+6
+Backtrack
+Step 1
+Backtrack
+Step 2
+Backtrack
+Step 3
+Re-selected 
+Entity
+Reasoning Chain
+Think
+Think
+Think
+Think
+Figure 3: Backtrack for error correction.
+The model is trained using cross-entropy loss
+with one-hot labels:
+L=−
+2X
+i=1
+yi log(ˆ yi).(4)
+whereyi and ˆyi denote the ground-truth label and
+predicted probability for classi, respectively.
+4.2.3 Error Correction
+To prevent error propagation in the reasoning chain,
+we enable the LLM to detect and correct reason-
+ing errors during the process. To teach the LLM
+how to identify errors, we intentionally introduce
+errors into correct reasoning chains and then revise
+them back to the correct form. Then we use these
+“error–correction” pairs to fine-tune the LLM. The
+detailed procedure is provided in the Appendix.
+To further support error correction, we introduce
+a parameterBacktrackas an input to the retrieval
+tool. This parameter is set to False by default,
+indicating no correction is needed. When an er-
+ror is detected, the parameter is switched to True,
+triggering a backtracking process. The backtrack-
+ing relies on the previously traversed retrieval path,
+enabling the model to reselect candidate entities
+from the most semantically relevant context and
+continue reasoning.
+An example of this process is illustrated in Fig-
+ure 4. Given a reasoning path 1→2→4→5 , if
+the LLM determines that entity 5 cannot support
+further reasoning, it backtracks to its parent entity
+4 and attempts to select an alternative entity. If no
+suitable candidate is found, the process continues
+backtracking to higher-level entities (e.g., entity 2)
+until a new valid reasoning path is identified or the
+initial topic entity is reached.
+
+[[page 6]]
+4.3 RL-Based Enhancement
+Given the discrete nature of the reasoning process
+with multiple decisions and tool calls, we adopt
+reinforcement learning (RL) to improve the LLM’s
+overall reasoning performance. We design three
+reward functions to encourage correct tool usage
+and accurate answers.
+The first is theRetrieval Reward, which encour-
+ages the model to acquire knowledge through ex-
+ternal retrieval rather than relying solely on its own
+knowledge:
+Rsearch = min(0.5·n,0.8),(5)
+where n denotes the number of retrieval ac-
+tions. The reward is capped at 0.8 to avoid over-
+encouraging excessive retrieval.
+The second is theFormat Reward, which ensures
+that the model generates correct structural tags for
+reasoning, tool invocation, and answer generation,
+i.e.,<think>,<search>, and<answer>:
+Rformat =
+(
+0.5if the format is correct,
+0otherwise. (6)
+Finally, theAnswer Rewardevaluates the cor-
+rectness of the final output:
+Ranswer =
+(
+1if the answer is correct,
+0otherwise. (7)
+The final reward is computed as the sum of the
+above components:
+Rfinal =R search +R format +R answer (8)
+We adopt the classic Group Relative Policy Op-
+timization (GRPO) method (Shao et al., 2024) to
+optimize the LLM. The objective is to maximize
+the expected final reward over trajectories gener-
+ated by the policy:
+θ∗ = arg max
+θ
+Eq∼π θ
+
+Rfinal(q)
+
+,(9)
+whereπθ denotes the policy of the LLM parame-
+terized byθ.
+Hard cases Resample.In the first training
+episode, RL is applied to the full training dataset
+to obtain a stable initial policy. In subsequent
+episodes, training is restricted to difficult samples
+in order to improve learning efficiency and focus
+the optimization on challenging cases. We identify
+hard samples based on the next-token prediction
+loss computed during the supervised fine-tuning
+stage described in Sections 4.1 and 4.2:
+Lsft =− 1
+T
+TX
+t=1
+logP(a s
+t|a s
+<t,q;θ)(10)
+Since a higher loss indicates a more difficult in-
+stance, we select samples satisfying Lsft > ϵas
+hard cases, whereϵ is a predefined threshold. Fur-
+thermore, we filter these hard cases to retain only
+those that require multi-hop reasoning. The result-
+ing set of hard multi-hop instances is then used in
+the subsequent stages of RL training.
+5 Experiments
+5.1 Datasets
+We evaluate our approach on eight widely-used
+datasets for KBQA, leveraging two large-scale
+general-purpose knowledge graphs: Freebase and
+WikiData. Four of the datasets are based on the
+Freebase knowledge graph and are standard KBQA
+benchmarks: ComplexWebQuestions (CWQ) (Tal-
+mor and Berant, 2018), WebQuestionsSP (We-
+bQSP) (Yih et al., 2016), WebQuestions (Berant
+et al., 2013), and GrailQA (Gu et al., 2021).
+The other four datasets are grounded in the Wiki-
+Data knowledge graph. Among them, QALD10-en
+(Perevalov et al., 2022) is a KBQA dataset, while
+T-REx (Elsahar et al., 2018) and Zero-Shot RE
+(Petroni et al., 2021) are designed for slot filling
+tasks, and Creak (Onoe et al.) focuses on factual
+verification. Due to page limitations, the results on
+the four WikiData-based datasets are reported in
+the Appendix.
+The characteristics of all datasets are provided in
+Table 4 in Appendix B. Following prior work (Sun
+et al., 2024; Zhao et al., 2024; Xiong et al., 2024),
+we use Hit@1 score as the evaluation metric for
+both question answering and slot filling tasks. The
+implementation details are provided in Appendix
+A.
+5.2 Main Results
+We compare our approach with a range of recent
+and representative methods, which can be grouped
+into two categories: approaches based on fine-
+tuned open-source LLMs, including LightPROF
+(Ao et al., 2025), RoG (Luo et al., 2025), KG-
+Agent (Jiang et al., 2025), and KBQA-o1 (Luo
+
+[[page 7]]
+Table 1: Comparison of different methods across multiple benchmarks. Results marked with ‘*’ are taken directly
+from the corresponding original papers. Bold numbers indicate thebest performance, while underlined numbers
+denote the second-best (Hits@1).
+Method LLM Size Multi-hop reasoning Generalization
+CWQ WebQSP WebQuestion GrailQA
+PoG (Chen et al., 2024) GPT-4 - 75.0 ∗ 87.3∗ 84.7∗ -
+ToG (Sun et al., 2024) GPT-4 - 67.6 ∗ 82.6∗ 57.9∗ 81.4∗
+LightPROF (Ao et al., 2025) LLaMA3 8B 59.3 ∗ 83.8∗ - -
+RoG (Luo et al., 2024) LLaMA2 7B 62.6 ∗ 85.7∗ - -
+KBQA-o1 (Luo et al., 2025) LLaMA3 70B 72.0 88.3 82.5 72.9
+KG-Agent (Jiang et al., 2025) LLaMA3 7B 72.2 ∗ 83.3∗ - 86.1 ∗
+ORT (Liu et al., 2025) DeepSeek-v3 671B 72.9 ∗ 89.4∗ - -
+iQUEST (Wang and Yu, 2025) GPT-4o - 73.8 ∗ 88.9∗ 81.2∗ 73.5∗
+LMP (Wan et al., 2025) GPT-4 -82.2 ∗ 90.0∗ 80.4∗ 89.3∗
+KG-Reasoner (Ours)Qwen3 30B 78.14 93.15 86.0276.86
+Table 2: Effect of unified reasoning and backtracking under different backbone LLMs.
+Backbone LLM MethodCWQ WebQSP WebQuestion GrailQA
+Qwen3-30B-A3B Pipeline Reasoning (based on ToG) 67.68 82.08 74.21 61.78
+Qwen3-30B-A3B Unified Reasoning (w/o Backtracking) 75.25 (+7.57) 91.86 (+9.78) 84.76 (+10.55) 73.63 (+11.85)
+Qwen3-30B-A3B Unified Reasoning (w/ Backtracking) 78.14 (+2.89) 93.15 (+1.29) 86.02 (+1.26) 76.86 (+3.23)
+LLaMA-3.1-8B Pipeline Reasoning (based on ToG) 58.91 79.21 66.46 47.86
+LLaMA-3.1-8B Unified Reasoning (w/o Backtracking) 66.18 (+7.27) 86.45 (+7.24) 76.63 (+10.17) 60.70 (+12.84)
+LLaMA-3.1-8B Unified Reasoning (w/ Backtracking) 69.27 (+3.09) 87.68 (+1.23) 80.99 (+4.36) 63.53 (+2.83)
+et al., 2025), and methods that rely on strong
+closed-source or extremely large LLMs, including
+PoG (Chen et al., 2024), ToG (Sun et al., 2024),
+iQUEST (Wang and Yu, 2025), LMP (Wan et al.,
+2025), and ORT (Liu et al., 2025).
+The results are shown in Table 7. Despite using
+a 30B LLM, our KG-Reasoner consistently sur-
+passes KBQA-o1, which fine-tunes a 70B model.
+While KG-Agent achieves competitive results by
+relying on a customized sub-KG extracted from
+the original Freebase KG, it effectively simplifies
+the task by artificially narrowing the search space.
+In contrast, our more general-purpose approach
+avoids such restrictive constraints.
+In general, methods leveraging closed-source
+LLMs like GPT-4 tend to exhibit stronger perfor-
+mance due to their vast internal knowledge and
+superior reasoning depth. Among them, LMP per-
+forms best on CWQ by repeatedly invoking LLMs
+many times to identify second-hop entities, encode
+sub-graphs into natural language, and finally gen-
+erate answers. This design incurs a large number
+of LLM calls, resulting in high computational cost
+and latency, which limits its practical deployment.
+Despite the strong capacity of GPT-4, our approach
+outperforms other GPT-4–based methods on three
+multi-hop reasoning datasets.
+On the GrailQA dataset, which primarily evalu-
+ates the generalization capabilities of models, per-
+formance is typically highly correlated with param-
+eter scale. Nevertheless, our 30B KG-Reasoner
+still outperforms the 70B KBQA-o1, highlighting
+the effectiveness of our reinforced reasoning and
+backtracking mechanisms. Overall, the consistent
+performance of our KG-Reasoner demonstrates its
+robustness and efficiency in complex knowledge
+graph reasoning tasks.
+5.3 Effectiveness of the End-to-End
+Reasoning Framework
+We compare our end-to-end unified reasoning
+framework with a ToG-based pipeline and evaluate
+variants without and with backtracking. Experi-
+ments with Qwen3-30B-A3B and LLaMA-3.1-8B
+are summarized in Table 2.
+Benefits of Coherent Reasoning and Interleaved
+Retrieval.ComparingPipeline Reasoningwith
+Unified Reasoning (w/o Backtracking), we ob-
+serve substantial and consistent performance gains
+across all benchmarks. For instance, on QWEN3-
+30B-A3B, unified reasoning improves Hits@1 by
+
+[[page 8]]
+Table 3: Ablation study of reinforcement learning components in KG-Reasoner using Qwen3-30B-A3B.
+VariantCWQ WebQSP WebQuestion GrailQA
+Full Model 78.14 93.15 86.02 76.86
+– SFT Warm-Up 74.33 89.42 83.35 74.91
+– Hard-Case Sampling 75.63 90.16 84.21 75.06
+– Search Reward (Rsearch) 75.41 90.66 84.79 73.23
+– Format Reward (Rformat) 76.82 91.38 83.54 74.48
+– Answer Reward (Ranswer) 67.55 80.23 75.45 68.41
++7.57 on CWQ and +9.78 on WebQSP, while
+achieving gains exceeding +10 points on both
+WebQuestion and GrailQA. Similar trends are ob-
+served with LLAMA-3.1-8B, demonstrating the
+robustness of the unified framework across dif-
+ferent backbone models. These improvements
+are primarily attributed to the ability of the uni-
+fied framework to perform continuous reasoning
+with interleaved retrieval. Unlike fixed pipeline ap-
+proaches that decompose multi-hop reasoning into
+independent LLM calls, our framework maintains
+a coherent reasoning trajectory, enabling stronger
+dependencies between reasoning steps.
+Effect of Backtracking for Error Correction.
+Introducing backtracking mechanism further en-
+hances performance, as results ofw/ Backtrackin
+Table 2 shows. During the internal thinking phase,
+this mechanism allows the model to autonomously
+identify logical dead-ends and explore alternative
+paths, thereby increasing the probability of locat-
+ing relevant entities. Furthermore, training the
+model with error-correction data encourages it to
+self-evaluate intermediate reasoning steps. Over-
+all, these results demonstrate that backtracking is a
+crucial mechanism for robust multi-hop reasoning
+over knowledge graphs.
+5.4 Analysis of Reinforcement Learning
+Components
+To analyze the contributions of individual compo-
+nents in the RL process, we conduct a detailed
+ablation study on three key modules: SFT warm-
+up, hard-case sampling, and reward functions. The
+results are reported in Table 3.
+Effect of SFT Warm-Up for RL Training.Be-
+fore RL training, we perform SFT using task-
+specific data to teach the LLM how to invoke re-
+trieval tools and adapt to the reasoning pattern.
+As shown in Table 3, removing the SFT warm-up
+stage leads to consistent performance degradation
+across all benchmarks. The reason is that SFT
+warm-up provides an effective policy initialization,
+preventing the model from deviating in the early
+stages of RL training. SFT warm-up enables more
+reliable optimization and results in higher-quality
+reasoning trajectories.
+Efficiency Gains from Hard-Case Sampling.
+The removal of hard-case sampling (– Hard-Case
+Samplingin Table 3) results in a obvious perfor-
+mance decline. The reason is that focusing on chal-
+lenging multi-hop queries prevents the RL process
+from over-fitting to trivial samples and incentivizes
+the model to explore more complex reasoning tra-
+jectories. Additional analyses of training dynam-
+ics, including reward curves, response length, and
+retrieval frequency, are visualized in Figure 4 (Ap-
+pendix B).
+Ablation of Reward Functions.The ablation re-
+sults in Table 3 show that removing any individual
+reward component consistently degrades perfor-
+mance, confirming the complementary nature of
+our reward design. The answer rewardRanswer has
+the largest impact, as it provides direct supervision
+from ground-truth labels and aligns the model with
+the primary task objective. In addition, the search
+rewardRsearch and format rewardRformat offer ef-
+fective guidance by encouraging proactive knowl-
+edge retrieval and adherence to the predefined re-
+sponse structure, respectively. Overall, these re-
+sults highlight the importance of a multi-faceted
+reward design for RL-based KG reasoning.
+6 Conclusion
+In this paper, we presented KG-Reasoner, an
+end-to-end framework for multi-hop knowledge
+graph question answering that unifies retrieval and
+reasoning within a single long-thinking process
+of a reasoning-oriented LLM. By internalizing
+KG traversal through reinforcement learning, the
+model is able to perform coherent multi-step rea-
+soning, dynamically explore reasoning paths, and
+backtrack from erroneous decisions. Experimental
+
+[[page 9]]
+results on eight challenging benchmarks demon-
+strate that KG-Reasoner achieves competitive or
+superior performance compared to state-of-the-art
+methods. Our results highlight the potential of
+reinforcement-trained reasoning LLMs as a unified
+solution for complex multi-hop KBQA tasks.
+Limitations
+While our approach has shown promising effective-
+ness, it still faces several limitations. First, improv-
+ing the reasoning capability of LLMs during the
+"think" stage often requires reinforcement learning.
+Optimization algorithms such as Group Relative
+Policy Optimization (GRPO) involve coordinating
+the policy model, reference model, value model,
+and reward models, which incurs substantial com-
+putational overhead. In future work, we plan to
+investigate more resource-efficient optimization
+strategies.
+Second, our method does not directly address
+the incompleteness and noise present in underlying
+knowledge graphs. This is a well-known challenge
+in KBQA. Since reasoning relies heavily on the
+correctness of entities and edges, missing or erro-
+neous links can cause inference failures. As future
+work, we plan to explore incorporating redundant
+evidence and developing more robust retrieval tech-
+niques to mitigate the impact of KG imperfections.
+Acknowledgment
+This work was partially funded by the Autonomous
+Systems and Software Program (W ASP), supported
+by the Knut and Alice Wallenberg Foundation, and
+the Chalmers Artificial Intelligence Research Cen-
+tre (CHAIR).
+References
+Garima Agrawal, Tharindu Kumarage, Zeyad Al-
+ghamdi, and Huan Liu. 2024. Can knowledge graphs
+reduce hallucinations in llms?: A survey. InProceed-
+ings of the 2024 Conference of the North American
+Chapter of the Association for Computational Lin-
+guistics: Human Language Technologies (Volume 1:
+Long Papers), pages 3947–3960.
+Tu Ao, Yanhua Yu, Yuling Wang, Yang Deng, Zirui
+Guo, Liang Pang, Pinghui Wang, Tat-Seng Chua,
+Xiao Zhang, and Zhen Cai. 2025. Lightprof: A
+lightweight reasoning framework for large language
+model on knowledge graph. InProceedings of
+the AAAI Conference on Artificial Intelligence, vol-
+ume 39, pages 23424–23432.
+Jonathan Berant, Andrew Chou, Roy Frostig, and Percy
+Liang. 2013. Semantic parsing on freebase from
+question-answer pairs. InProceedings of the 2013
+conference on empirical methods in natural language
+processing, pages 1533–1544.
+Liyi Chen, Panrong Tong, Zhongming Jin, Ying Sun,
+Jieping Ye, and Hui Xiong. 2024. Plan-on-graph:
+Self-correcting adaptive planning of large language
+model on knowledge graphs.Advances in Neural
+Information Processing Systems, 37:37665–37691.
+Mingyang Chen, Tianpeng Li, Haoze Sun, Yijie Zhou,
+Chenzheng Zhu, Haofen Wang, Jeff Z Pan, Wen
+Zhang, Huajun Chen, Fan Yang, and 1 others.
+2025. Research: Learning to reason with search
+for llms via reinforcement learning.arXiv preprint
+arXiv:2503.19470.
+Ziyang Chen, Xiang Zhao, Jinzhi Liao, Xinyi Li, and
+Evangelos Kanoulas. 2022. Temporal knowledge
+graph question answering via subgraph reasoning.
+Knowledge-Based Systems, 251:109134.
+Sitao Cheng, Ziyuan Zhuang, Yong Xu, Fangkai Yang,
+Chaoyun Zhang, Xiaoting Qin, Xiang Huang, Ling
+Chen, Qingwei Lin, Dongmei Zhang, and 1 others.
+2024. Call me when necessary: Llms can efficiently
+and faithfully reason over structured environments.
+InFindings of the Association for Computational
+Linguistics ACL 2024, pages 4275–4295.
+Hai Cui, Tao Peng, Feng Xiao, Jiayu Han, Ridong Han,
+and Lu Liu. 2023. Incorporating anticipation em-
+bedding into reinforcement learning framework for
+multi-hop knowledge graph question answering.In-
+formation Sciences, 619:745–761.
+Rong Dai, Xun Yang, Yan Sun, Li Shen, Xin-
+mei Tian, Meng Wang, and Yongdong Zhang.
+2023. Fedgamma: Federated learning with global
+sharpness-aware minimization.IEEE Transactions
+on Neural Networks and Learning Systems.
+Rajarshi Das, Shehzaad Dhuliawala, Manzil Zaheer,
+Luke Vilnis, Ishan Durugkar, Akshay Krishnamurthy,
+Alex Smola, and Andrew McCallum. 2018. Go for a
+walk and arrive at the answer: Reasoning over paths
+in knowledge bases using reinforcement learning. In
+International Conference on Learning Representa-
+tions.
+Darren Edge, Ha Trinh, Newman Cheng, Joshua
+Bradley, Alex Chao, Apurva Mody, Steven Truitt,
+Dasha Metropolitansky, Robert Osazuwa Ness, and
+Jonathan Larson. 2024. From local to global: A
+graph rag approach to query-focused summarization.
+arXiv preprint arXiv:2404.16130.
+Hady Elsahar, Pavlos V ougiouklis, Arslen Remaci,
+Christophe Gravier, Jonathon Hare, Frederique
+Laforest, and Elena Simperl. 2018. T-rex: A large
+scale alignment of natural language with knowledge
+base triples. InProceedings of the Eleventh Inter-
+national Conference on Language Resources and
+Evaluation (LREC 2018).
+
+[[page 10]]
+Yunfan Gao, Yun Xiong, Xinyu Gao, Kangxiang
+Jia, Jinliu Pan, Yuxi Bi, Yixin Dai, Jiawei Sun,
+Haofen Wang, and Haofen Wang. 2023. Retrieval-
+augmented generation for large language models: A
+survey.arXiv preprint arXiv:2312.10997, 2(1).
+Yu Gu, Sue Kase, Michelle Vanni, Brian Sadler, Percy
+Liang, Xifeng Yan, and Yu Su. 2021. Beyond iid:
+three levels of generalization for question answering
+on knowledge bases. InProceedings of the Web
+Conference 2021, pages 3477–3488.
+Daya Guo, Dejian Yang, Haowei Zhang, Junxiao
+Song, Ruoyu Zhang, Runxin Xu, Qihao Zhu, Shi-
+rong Ma, Peiyi Wang, Xiao Bi, and 1 others. 2025.
+Deepseek-r1: Incentivizing reasoning capability in
+llms via reinforcement learning.arXiv preprint
+arXiv:2501.12948.
+Xiaoxin He, Yijun Tian, Yifei Sun, Nitesh Chawla,
+Thomas Laurent, Yann LeCun, Xavier Bresson, and
+Bryan Hooi. 2024. G-retriever: Retrieval-augmented
+generation for textual graph understanding and ques-
+tion answering.Advances in Neural Information
+Processing Systems, 37:132876–132907.
+Yuntong Hu, Zhihan Lei, Zheng Zhang, Bo Pan, Chen
+Ling, and Liang Zhao. 2025. GRAG: Graph retrieval-
+augmented generation. InFindings of the Associa-
+tion for Computational Linguistics: NAACL 2025,
+pages 4145–4157, Albuquerque, New Mexico.
+Jinhao Jiang, Kun Zhou, Xin Zhao, Yang Song, Chen
+Zhu, Hengshu Zhu, and Ji-Rong Wen. 2025. KG-
+agent: An efficient autonomous agent framework
+for complex reasoning over knowledge graph. In
+Proceedings of the 63rd Annual Meeting of the As-
+sociation for Computational Linguistics (Volume 1:
+Long Papers), pages 9505–9523, Vienna, Austria.
+Xiaoxi Li, Jiajie Jin, Guanting Dong, Hongjin Qian, Yu-
+tao Zhu, Yongkang Wu, Ji-Rong Wen, and Zhicheng
+Dou. 2025a. Webthinker: Empowering large rea-
+soning models with deep research capability.arXiv
+preprint arXiv:2504.21776.
+Zhenyu Li, Sunqi Fan, Yu Gu, Xiuxing Li, Zhichao
+Duan, Bowen Dong, Ning Liu, and Jianyong Wang.
+2024. Flexkbqa: A flexible llm-powered framework
+for few-shot knowledge base question answering. In
+Proceedings of the AAAI Conference on Artificial
+Intelligence, volume 38, pages 18608–18616.
+Zhong-Zhi Li, Duzhen Zhang, Ming-Liang Zhang, Ji-
+axin Zhang, Zengyan Liu, Yuxuan Yao, Haotian Xu,
+Junhao Zheng, Pei-Jie Wang, Xiuyi Chen, and 1 oth-
+ers. 2025b. From system 1 to system 2: A survey
+of reasoning large language models.arXiv preprint
+arXiv:2502.17419.
+Xi Victoria Lin, Richard Socher, and Caiming Xiong.
+2018. Multi-hop knowledge graph reasoning with
+reward shaping. InProceedings of the 2018 Con-
+ference on Empirical Methods in Natural Language
+Processing, pages 3243–3253.
+Runxuan Liu, Luobei Luobei, Jiaqi Li, Baoxin Wang,
+Ming Liu, Dayong Wu, Shijin Wang, and Bing Qin.
+2025. Ontology-guided reverse thinking makes large
+language models stronger on knowledge graph ques-
+tion answering. InProceedings of the 63rd Annual
+Meeting of the Association for Computational Lin-
+guistics (Volume 1: Long Papers), pages 15269–
+15284.
+Haoran Luo, E Haihong, Yikai Guo, Qika Lin, Xiaobao
+Wu, Xinyu Mu, Wenhao Liu, Meina Song, Yifan Zhu,
+and Anh Tuan Luu. 2025. Kbqa-o1: Agentic knowl-
+edge base question answering with monte carlo tree
+search. InForty-second International Conference on
+Machine Learning.
+L Luo, YF Li, G Haffari, and S Pan. 2024. Reasoning
+on graphs: Faithful and interpretable large language
+model reasoning. InICLR 2024: The Twelfth Inter-
+national Conference on Learning Representations.
+ICLR.
+Jie Ma, Zhitao Gao, Qi Chai, Wangchun Sun, Pinghui
+Wang, Hongbin Pei, Jing Tao, Lingyun Song, Jun
+Liu, Chen Zhang, and 1 others. 2025a. Debate
+on graph: a flexible and reliable reasoning frame-
+work for large language models. InProceedings of
+the AAAI Conference on Artificial Intelligence, vol-
+ume 39, pages 24768–24776.
+Shengjie Ma, Chengjin Xu, Xuhui Jiang, Muzhi Li,
+Huaren Qu, Cehao Yang, Jiaxin Mao, and Jian Guo.
+2025b. Think-on-graph 2.0: Deep and faithful large
+language model reasoning with knowledge-guided
+retrieval augmented generation. InThe Thirteenth
+International Conference on Learning Representa-
+tions.
+Yasumasa Onoe, Michael JQ Zhang, Eunsol Choi, and
+Greg Durrett. Creak: A dataset for commonsense
+reasoning over entity knowledge. InThirty-fifth Con-
+ference on Neural Information Processing Systems
+Datasets and Benchmarks Track (Round 2).
+OpenAI. 2025. Introducing gpt-5. https://openai.
+com/index/introducing-gpt-5.
+Aleksandr Perevalov, Dennis Diefenbach, Ricardo Us-
+beck, and Andreas Both. 2022. Qald-9-plus: A mul-
+tilingual dataset for question answering over dbpedia
+and wikidata translated by native speakers. In2022
+IEEE 16th International Conference on Semantic
+Computing (ICSC), pages 229–234. IEEE.
+Fabio Petroni, Aleksandra Piktus, Angela Fan, Patrick
+Lewis, Majid Yazdani, Nicola De Cao, James Thorne,
+Yacine Jernite, Vladimir Karpukhin, Jean Maillard,
+and 1 others. 2021. Kilt: a benchmark for knowledge
+intensive language tasks. InProceedings of the 2021
+Conference of the North American Chapter of the
+Association for Computational Linguistics: Human
+Language Technologies, pages 2523–2544.
+Apoorv Saxena, Aditay Tripathi, and Partha Talukdar.
+2020. Improving multi-hop question answering over
+
+[[page 11]]
+knowledge graphs using knowledge base embed-
+dings. InProceedings of the 58th annual meeting of
+the association for computational linguistics, pages
+4498–4507.
+Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu,
+Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan
+Zhang, YK Li, Y Wu, and 1 others. 2024. Deepseek-
+math: Pushing the limits of mathematical reason-
+ing in open language models.arXiv preprint
+arXiv:2402.03300.
+Huatong Song, Jinhao Jiang, Yingqian Min, Jie Chen,
+Zhipeng Chen, Wayne Xin Zhao, Lei Fang, and Ji-
+Rong Wen. 2025. R1-searcher: Incentivizing the
+search capability in llms via reinforcement learning.
+arXiv preprint arXiv:2503.05592.
+Hao Sun, Zile Qiao, Jiayan Guo, Xuanbo Fan, Yingyan
+Hou, Yong Jiang, Pengjun Xie, Fei Huang, and Yan
+Zhang. 2025. Zerosearch: Incentivize the search
+capability of llms without searching.arXiv preprint
+arXiv:2505.04588.
+Jiashuo Sun, Chengjin Xu, Lumingyuan Tang, Saizhuo
+Wang, Chen Lin, Yeyun Gong, Lionel Ni, Heung-
+Yeung Shum, and Jian Guo. 2024. Think-on-graph:
+Deep and responsible reasoning of large language
+model on knowledge graph. InThe Twelfth Interna-
+tional Conference on Learning Representations.
+Alon Talmor and Jonathan Berant. 2018. The web as
+a knowledge-base for answering complex questions.
+InProceedings of the 2018 Conference of the North
+American Chapter of the Association for Computa-
+tional Linguistics: Human Language Technologies,
+Volume 1 (Long Papers), pages 641–651.
+Kimi Team, Angang Du, Bofei Gao, Bowei Xing,
+Changjiu Jiang, Cheng Chen, Cheng Li, Chenjun
+Xiao, Chenzhuang Du, Chonghua Liao, and 1 others.
+2025. Kimi k1. 5: Scaling reinforcement learning
+with llms.arXiv preprint arXiv:2501.12599.
+Junhong Wan, Tao Yu, Kunyu Jiang, Yao Fu, Weihao
+Jiang, and Jiang Zhu. 2025. Digest the knowledge:
+Large language models empowered message pass-
+ing for knowledge graph question answering. In
+Proceedings of the 63rd Annual Meeting of the As-
+sociation for Computational Linguistics (Volume 1:
+Long Papers), pages 15426–15442.
+Peiyi Wang, Lei Li, Zhihong Shao, Runxin Xu, Damai
+Dai, Yifei Li, Deli Chen, Yu Wu, and Zhifang Sui.
+2024. Math-shepherd: Verify and reinforce llms step-
+by-step without human annotations. InProceedings
+of the 62nd Annual Meeting of the Association for
+Computational Linguistics (Volume 1: Long Papers),
+pages 9426–9439.
+Shuai Wang and Yinan Yu. 2025. iQUEST: An itera-
+tive question-guided framework for knowledge base
+question answering. InProceedings of the 63rd An-
+nual Meeting of the Association for Computational
+Linguistics (Volume 1: Long Papers), pages 15616–
+15628.
+Shuai Wang and Yinan Yu. 2026. Kg-hopper: Em-
+powering compact open llms with knowledge graph
+reasoning via reinforcement learning.arXiv preprint
+arXiv:2603.21440.
+Tianhao Wu, Janice Lan, Weizhe Yuan, Jiantao Jiao,
+Jason E Weston, and Sainbayar Sukhbaatar. 2025.
+Thinking llms: General instruction following with
+thought generation. InForty-second International
+Conference on Machine Learning.
+Guanming Xiong, Junwei Bao, and Wen Zhao. 2024.
+Interactive-KBQA: Multi-turn interactions for knowl-
+edge base question answering with large language
+models. InProceedings of the 62nd Annual Meet-
+ing of the Association for Computational Linguistics
+(Volume 1: Long Papers), pages 10561–10582.
+Zhentao Xu, Mark Jerome Cruz, Matthew Guevara,
+Tie Wang, Manasi Deshpande, Xiaofeng Wang, and
+Zheng Li. 2024. Retrieval-augmented generation
+with knowledge graphs for customer service question
+answering. InProceedings of the 47th international
+ACM SIGIR conference on research and development
+in information retrieval, pages 2905–2909.
+Wen-tau Yih, Matthew Richardson, Christopher Meek,
+Ming-Wei Chang, and Jina Suh. 2016. The value of
+semantic parse labeling for knowledge base question
+answering. InProceedings of the 54th Annual Meet-
+ing of the Association for Computational Linguistics
+(Volume 2: Short Papers), pages 201–206.
+Peng Yixing, Quan Wang, Licheng Zhang, Yi Liu, and
+Zhendong Mao. 2024. Chain-of-question: A progres-
+sive question decomposition approach for complex
+knowledge base question answering. InFindings of
+the Association for Computational Linguistics ACL
+2024, pages 4763–4776.
+Hamada M Zahera, Manzoor Ali, Mohamed Ahmed
+Sherif, Diego Moussallem, and Axel-Cyrille Ngonga
+Ngomo. 2024. Generating sparql from natural lan-
+guage using chain-of-thoughts prompting. InSE-
+MANTICS, pages 353–368.
+Zhiqiang Zhang and Wen Zhao. 2025. A collabora-
+tive reasoning framework powered by reinforcement
+learning and large language models for complex
+questions answering over knowledge graph. InPro-
+ceedings of the 31st International Conference on
+Computational Linguistics, pages 10672–10684.
+Ruilin Zhao, Feng Zhao, Long Wang, Xianzhi Wang,
+and Guandong Xu. 2024. KG-CoT: Chain-of-
+thought prompting of large language models over
+knowledge graphs for knowledge-aware question an-
+swering. InProceedings of the Thirty-Third Inter-
+national Joint Conference on Artificial Intelligence
+(IJCAI-24), pages 6642–6650. International Joint
+Conferences on Artificial Intelligence.
+Fangwei Zhu, Peiyi Wang, and Zhifang Sui. 2025.
+Chain-of-thought tokens are computer program vari-
+ables.arXiv preprint arXiv:2505.04955.
+
+[[page 12]]
+A Implementation Details
+We conduct experiments using two instruction-
+tuned language models as backbones: LLaMA-3.1-
+8B-Instruct and Qwen3-30B-A3B. To mitigate the
+unstable cold-start phase of reinforcement learn-
+ing, we first construct a set of 500 high-quality
+examples to teach the models how to properly in-
+voke the knowledge retrieval tool. We randomly
+sample 2,000 examples from 8 datasets for RL
+training. The scoring model fr for the reasoning
+process is Llama-3.3-70B, while the modelfa used
+to determine whether the predicted answer matches
+the ground truth is Llama-3.2-3B. In the main ex-
+periments, to ensure fair comparison, we employ
+GPT-4o within the KG retrieval tool to assist in se-
+lecting relevant entities. We restrict its use strictly
+to the KG retrieval module, while the reasoning
+process relies solely on LLaMA-3.1-8B or Qwen-
+2.5-7B. In all other experiments, no external large
+language models such as GPT-4o are introduced,
+in order to better isolate and evaluate the capabil-
+ities of our proposed framework. Starting from
+the second epoch, we apply a resampling strategy
+to dynamically filter out trivial questions and re-
+tain more informative ones for continued training.
+The training is performed on 8 NVIDIA A100 80G
+GPUs in total. For each input query, we generate
+16 outputs (rollouts). We train for 2 epochs with a
+batch size of 16 and a learning rate of 1e−6. The
+rollout temperature is set to 1, the PPO clip ratio is
+0.2, and the KL divergence penalty coefficient is
+1e−5.
+B Additional Experimental Details
+B.1 Impact of Graph-Based Context
+Aggregation.
+We evaluate the effectiveness of the proposed
+graph-based context aggregation module (Sec-
+tion 4.2.2) across two backbone LLMs, with results
+summarized in Table 5. Incorporating the GNN
+module consistently improves performance across
+all benchmarks. By aggregating information from
+neighboring entities, the module enriches entity
+representations beyond isolated semantics, leading
+to more accurate retrieval. Overall, these results
+demonstrate that graph-based context aggregation
+provides a robust and easily pluggable enhance-
+ment that effectively leverages local KG structure
+to improve retrieval performance.
+C Prompts
+
+[[page 13]]
+Table 4: Overview of datasets for KBQA and related tasks
+Dataset KG Task Train Test Complexity Reasoning Annotation Source
+CWQ Freebase KBQA 27,689 3,531 Complex Qs Multi-hop SPARQL, Ans. Web-derived
+WebQSP Freebase KBQA 3,098 1,639 Moderate Qs Single-hop (most) SPARQL, Ans. Web-derived
+WebQuestion Freebase KBQA 3,778 2,032 Simple–Moderate Qs Single-hop (most) Ans. only Web-derived
+GrailQA Freebase KBQA 35,138 1,000 Complex (varied) Multi-hop Logic forms, Ans. Human-controlled
+QALD10-en Wikidata KBQA 412 394 Complex Qs Multi-hop SPARQL, Ans. Human experts
+T-REx Wikidata Slot Filling∼11M 5,000 Text (abstracts) N/A (extraction) Triples + text Wikidata
+Zero-Shot RE Wikidata Slot Filling∼860k 3,724 Text (sentences) N/A (inference) Text + rel. defs. Wikidata
+Creak Wikidata Fact Verify 10,176 1,371 Complex claims Factual and CS infer. Labels, expls. Human-authored
+0 50 100 150 200 250
+Training Steps
+0.75
+1.00
+1.25
+1.50
+1.75
+2.00
+Reward
+W/ sample
+W/O sample
+0 50 100 150 200 250
+Training Steps
+500
+1000
+1500
+2000
+2500
+Response Length
+W/ sample
+W/O sample
+0 50 100 150 200 250
+Training Steps
+1
+2
+3
+4
+Retrieval Count
+W/ sample
+W/O sample
+Figure 4: The RL training process under two settings: with and without hard case sampling. The figure shows how
+reward, response length, and retrieval count change over training steps.
+Table 5: Impact of GNN-based context aggregation in KG-Reasoner across different backbone LLMs.
+Backbone LLM MethodCWQ WebQSP WebQuestion GrailQA
+Qwen3-30B-A3B KG-Reasoner (w/o Context Aggregation) 75.62 90.90 81.68 71.87
+Qwen3-30B-A3B KG-Reasoner (w/ Context Aggregation) 78.14 (+2.52) 93.15 (+2.25) 86.02 (+4.34) 76.86 (+4.99)
+LLaMA-3.1-8B KG-Reasoner (w/o Context Aggregation) 64.88 84.37 70.45 57.70
+LLaMA-3.1-8B KG-Reasoner (w/ Context Aggregation) 69.27 (+4.39) 87.68 (+3.31) 80.99 (+10.54) 63.53 (+5.83)
+Prompt for Constructing Warm Up Data
+You are a knowledgeable assistant that answers user questions through explicit reasoning and,
+when necessary, knowledge graph searches.
+Instructions:
+1. The assistant first thinks through the reasoning process before providing the final answer.
+2. The reasoning process must be enclosed in ‘<think> ... </think>‘ tags.
+3. The final answer must be enclosed in ‘<answer> ... </answer>‘ tags.
+4. If the assistant lacks specific knowledge during reasoning, it may query a knowledge graph by
+issuing a search request using the format: ‘<search> [ENTITY] </search>‘
+* Only one entity is allowed per search. * The entity must be related to the question (e.g., a topic
+entity or one present in previously retrieved triples).
+5. The system will respond with relevant knowledge in the format: ‘<searched_triples> (subject,
+predicate, object) </searched_triples>‘
+6. The assistant must incorporate any retrieved triples into its reasoning process.
+Example:
+User: What timezone is Utah in? Topic Entity: Utah
+Assistant:
+“‘ <think> I am unsure about the timezone of Utah. I will perform a search to retrieve relevant
+information. <search>Utah</search> <searched_triples> (Utah, timeZone, Mountain Time Zone)
+</searched_triples> Based on the search results, I found that Utah is in the Mountain Time Zone.
+</think> <answer>Mountain Time Zone</answer> “‘
+Now begin answering the question.
+User: [INPUT_QUESTION] Topic Entity: [TOPIC_ENTITY]
+
+[[page 14]]
+System Prompt for LLMs
+The User asks a question, and the Assistant solves it. The Assistant first thinks about the reasoning
+process in the mind and then provides the User with the final answer. The output format of
+reasoning process and final answer are enclosed within <think> </think> and <answer> </answer>
+tags, respectively, i.e., "<think> reasoning process here </think> <answer> final answer here
+</answer>". During the thinking process, the Assistant can perform searching for uncertain
+knowledge from a knowledge graph if necessary with the format of "<search> search query
+(only one entity) </search>". The entity must be involved in the searched triples or topic entities.
+Then, the system will provide the Assistant with helpful information with the format of "<triples>
+...search results... </triples>".
+User: [INPUT_QUESTION] Topic Entity: [TOPIC_ENTITY]
+Assistant:
+Table 6: Full Results (including ablation study) on the datasets using WikiData.
+Method Size WikiData
+QALD10-en T-REx Zero-Shot RE Creak
+LLM w/o KG
+Qwen-2.5-7B 7B 41.88 31.15 7.84 73.26
+LLaMA-3.1-8B 8B 40.25 23.00 12.54 75.80
+LLaMA-3.3-70B 70B 56.00 20.12 18.55 83.72
+DeepSeek-R1-Distill-Llama-70B 70B 43.10 34.21 22.27 79.10
+GPT-4o-mini – 51.98 26.90 18.85 83.72
+GPT-4o – 56.20 44.46 48.20 90.70
+KG + LLMs w/o Fine-Tuning
+Qwen-2.5-7B + KG 7B 56.54 64.21 70.32 79.04
+LLaMA-3.1-8B + KG 8B 55.73 65.80 68.66 80.50
+LLaMA-3.3-70B + KG 70B 71.78 65.42 80.42 87.04
+DeepSeek-R1-Distill-Llama-70B + KG 70B 66.10 72.04 78.04 91.20
+GPT-4o-mini + KG – 72.86 69.70 75.12 90.20
+ToG with GPT 3.5-Turbo (Sun et al., 2024) – 50.2 ∗ 76.8∗ 88.0∗ 91.2∗
+ToG with GPT 4 (Sun et al., 2024) – 53.8 ∗ 77.1∗ 88.3∗ 95.6∗
+ToG-2.0 (ICL)(GPT-3.5-turbo) (Ma et al., 2025b) - 54.1 ∗ - 91.0 ∗ 93.5∗
+KG + LLM with Fine-Tuning (LLM Backbone Fine-Tuning)
+Qwen-2.5-7B (SFT) + KG 7B 65.18 68.77 71.46 83.43
+LLaMA-3.1-8B (SFT) + KG 8B 59.63 70.23 64.08 84.47
+KG-Reasoner with Qwen-2.5-7B (Ours)7B83.73 83.68 91.43 97.45
+
+[[page 15]]
+Table 7: Full results (including ablation study) on four datasets using Freebase.
+Method Size Freebase
+CWQ WebQSP WebQuestion GrailQA
+LLM w/o KG
+Qwen-2.5-7B 7B 31.25 46.97 44.23 29.53
+LLaMA-3.1-8B 8B 32.33 45.07 45.88 28.35
+LLaMA-3.3-70B 70B 37.20 71.12 59.73 33.79
+DeepSeek-R1-Distill-Llama-70B 70B 31.92 77.43 68.84 31.70
+GPT-4o-mini – 42.32 65.97 57.26 36.22
+GPT-4o – 41.77 72.55 64.79 35.01
+KG + LLMs w/o Fine-Tuning
+Qwen-2.5-7B + KG 7B 44.82 72.60 56.33 41.10
+LLaMA-3.1-8B + KG 8B 45.64 71.32 57.05 40.40
+LLaMA-3.3-70B + KG 70B 44.00 81.90 72.60 57.70
+DeepSeek-R1-Distill-Llama-70B + KG 70B 52.38 81.34 75.80 59.02
+GPT-4o-mini + KG – 54.35 84.40 81.02 60.00
+PoG with GPT-4 (Chen et al., 2024) - 75.0 ∗ 87.3∗ 84.7∗ -
+ToG with GPT 4 (Sun et al., 2024) – 67.6 ∗ 82.6∗ 57.9∗ 81.4∗
+Readi with GPT-4 (Cheng et al., 2024) - 67.0 ∗ 78.7∗ - -
+KG + LLM with Fine-Tuning (Small Models Fine-Tuning)
+KG-CoT with GPT 4 (Zhao et al., 2024) – 62.3 ∗ 84.9∗ 68.0∗ -
+Chain-of-Question (Yixing et al., 2024) -78.8 ∗ 78.10∗ - -
+FlexKBQA (Li et al., 2024) - 46.20 ∗ - 68.90 ∗ -
+LightPROF (LLaMA3-8B) (Ao et al., 2025) 8B 59.3 ∗ 83.8∗ - -
+KG + LLM with Fine-Tuning (LLM Backbone Fine-Tuning)
+Qwen-2.5-7B (SFT) + KG 7B 51.84 74.80 61.42 46.18
+LLaMA-3.1-8B (SFT) + KG 8B 47.40 72.98 60.00 47.70
+G-Retriever (He et al., 2024) 7B - 73.79 ∗ - -
+Interactive-KBQA (7B) (Xiong et al., 2024) 7B 39.9 ∗ 43.57∗ - -
+Interactive-KBQA (13B) (Xiong et al., 2024) 13B 42.5 ∗ 54.86∗ - -
+RoG (Luo et al., 2024) 7B 62.6 ∗ 85.7∗ - -
+KBQA-o1 (Luo et al., 2025) - 67.0 ∗ - 81.6 ∗ -
+KG-Agent (Jiang et al., 2025) - 72.2 ∗ 83.3∗ -86.1 ∗
+KG-Reasoner (Ours)30B 78.14 93.15 86.0276.86
+Table 8: Performance comparison of different reasoning and training strategies on WikiData benchmarks.
+Method QALD10-en T-REx Zero-Shot RE Creek
+Qwen3-30B-A3B 55.93 19.68 17.89 83.35
+Qwen3-30B-A3B + KG rag 71.86 65.39 80.43 86.83
+Qwen3-30B-A3B + fixed pipeline 73.06 70.48 83.71 87.67
+Qwen3-30B-A3B + RL 81.65 80.32 88.05 93.76
+Qwen3-30B-A3B + RL + GAT 83.73 83.68 91.43 97.45
+LLaMA-3.1-8B 40.25 23.04 12.54 75.80
+LLaMA-3.1-8B + KG rag 55.73 65.80 68.66 80.50
+LLaMA-3.1-8B + fixed pipeline 60.90 69.59 75.48 85.66
+LLaMA-3.1-8B + RL 67.39 74.07 79.98 90.03
+LLaMA-3.1-8B + RL + GAT 73.43 78.12 85.04 93.04

@@ -1,0 +1,47 @@
+{
+  "paper_id": "arxiv:2608.21409",
+  "relevance_tier": "medium",
+  "problem": "LLMs are expected to show legal competence by analogy to medicine, but legal truth is contingent on jurisdiction, temporal validity and authority hierarchy; models appear unable to determine when retrieved citations are applicable and valid.",
+  "method": "A four-axis comparative diagnostic (knowledge recall, grounding, confidence, robustness) evaluating LLMs on a new legal multiple-choice benchmark that encodes temporal validity and normative relationships, contrasted with a matched medical reference domain.",
+  "key_assumptions": [
+    "Legal truth is contingent on jurisdiction, temporal validity and authority hierarchy",
+    "Multiple-choice diagnosis over normative-act relationships isolates legal grounding without requiring document comprehension"
+  ],
+  "main_contribution": "LEGAL-LINK-EU, a legal benchmark encoding temporal validity and normative relationships, plus a comparative diagnostic showing legal LLMs (unlike medical ones) fail to judge when retrieved citations are useful, are overconfident under authoritative perturbations, and worsen with scale.",
+  "datasets": [
+    "LEGAL-LINK-EU: legal MCQA encoding temporal validity and normative relationships between EU normative acts",
+    "A medical reference dataset for domain comparison"
+  ],
+  "benchmarks": [
+    "LEGAL-LINK-EU (L2-EU), a new legal multiple-choice benchmark",
+    "Medical reference-domain comparison"
+  ],
+  "baselines": [
+    "Multiple open LLMs compared (e.g., GPT-OSS 120B, GPT-OSS 20B, Ministral-3 14B, Llama-3.1 8B) and medical-domain baselines"
+  ],
+  "metrics": [
+    "Knowledge Recall (KR)",
+    "Knowledge Grounding (KG)",
+    "Confidence",
+    "Robustness to authoritative perturbations"
+  ],
+  "results": "Sharp domain asymmetry: medical LLMs benefit from verified sources while legal LLMs struggle to assess when retrieved citations are useful or misleading, show overconfidence in perturbed contexts, and increased scale amplifies the tendency.",
+  "limitations": [
+    "Benchmark is multiple-choice and deliberately independent of direct access to source text, so it does not test retrieval of versioned passages",
+    "Focus is model robustness/sycophancy rather than retrieval ranking",
+    "Static set of normative relationships; no near-duplicate successive versions of the same clause"
+  ],
+  "future_work": [
+    "not captured in the sections read"
+  ],
+  "code_availability": "Dataset referenced as disi-unibo-nlp/legal-link-eu",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "It measures LLM reasoning/robustness about legal effects of normative acts, not retrieval ranking over versioned text; there is no base retriever, no temporal relevance term, and no passage-level validity. It nonetheless occupies the claim 'a legal benchmark encoding temporal validity exists'.",
+    "basis": "Full text read: the benchmark explicitly encodes temporal validity in the legal domain, which overlaps with the proposed benchmark's target property, but it is MCQA and explicitly independent of source-text access, so it does not evaluate version-aware retrieval or near-duplicate amended clauses."
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T04:33:39.093288Z"
+}

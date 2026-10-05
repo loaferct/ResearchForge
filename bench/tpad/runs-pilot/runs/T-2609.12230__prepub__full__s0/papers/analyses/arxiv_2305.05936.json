@@ -1,0 +1,40 @@
+{
+  "paper_id": "arxiv:2305.05936",
+  "relevance_tier": "high",
+  "problem": "Current zero-shot commonsense question answering frameworks ignore multi-hop relationships in commonsense knowledge graphs (KGs), which are essential for commonsense reasoning, and fine-tuning paradigms only apply to specific tasks rather than learning general commonsense reasoning ability.",
+  "method": "Proposes a novel multi-hop commonsense knowledge injection framework: (1) explores multi-hop reasoning paradigm in KGs that conform to linguistic logic; (2) proposes two multi-hop QA generation methods based on KGs; (3) utilizes contrastive learning to pre-train the model with the synthetic QA dataset to inject multi-hop commonsense knowledge.",
+  "key_assumptions": [
+    "Synthetic QA datasets generated from KGs can effectively inject multi-hop commonsense knowledge via contrastive learning.",
+    "Multi-hop reasoning in KGs that conforms to linguistic logic is beneficial for commonsense question answering."
+  ],
+  "main_contribution": "The proposed framework achieves state-of-the-art performance on five commonsense question answering benchmarks by injecting multi-hop commonsense knowledge through contrastive pre-training with synthetically generated multi-hop QA samples.",
+  "datasets": [
+    "five commonsense question answering benchmarks (not specified in abstract)"
+  ],
+  "benchmarks": [
+    "not stated in abstract"
+  ],
+  "baselines": [
+    "not stated in abstract"
+  ],
+  "metrics": [
+    "not stated in abstract (likely accuracy)"
+  ],
+  "results": "[\"Achieves state-of-the-art performance on five commonsense QA benchmarks.\"]",
+  "limitations": [
+    "not stated in abstract"
+  ],
+  "future_work": [
+    "not stated in abstract"
+  ],
+  "code_availability": "[\"not stated in abstract\"]",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.2,
+    "evaluation_overlap": 0.3,
+    "conceptual_difference": "The paper injects multi-hop commonsense knowledge via contrastive learning from synthetic QA, while our idea enriches triple supervision with local context subgraphs from source passages and applies an adaptive repair loop before RL transfer.",
+    "basis": ""
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T08:11:00.303044Z"
+}

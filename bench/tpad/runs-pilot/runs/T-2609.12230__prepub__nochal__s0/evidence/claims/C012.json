@@ -1,0 +1,29 @@
+{
+  "id": "C012",
+  "statement": "While the MRE framework samples reasoning trajectories and uses those yielding correct answers as positive examples for training, the proposed adaptive repair loop detects one-hop failures and generates corrective examples to iteratively refine the model, representing a complementary approach that focuses on learning from failures rather than reinforcing correct trajectories.",
+  "kind": "inference",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2601.01195",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "we sample diverse multi-hop reasoning trajectories from a few-shot dataset under varying temperature settings",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    },
+    {
+      "paper_id": "arxiv:2601.01195",
+      "experiment_run_id": null,
+      "location": "p. 2",
+      "quote": "Trajectories that produce the correct final answers are identified as positive examples",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "medium",
+  "phase": "",
+  "tags": [],
+  "recorded_at": "2026-09-30T08:04:40.505125Z"
+}

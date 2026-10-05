@@ -1,0 +1,44 @@
+{
+  "paper_id": "doi:10.20944/preprints202505.1992.v1",
+  "relevance_tier": "medium",
+  "problem": "LLMs hallucinate on domain-specific and reasoning-heavy tasks; plain RAG and retrieval of redundant triplets give the LLM noisy or unordered evidence for multi-hop KGQA.",
+  "method": "GraphRAG-style SG-RAG: use Cypher queries to search a KG and retrieve the necessary subgraph, then a Merging and Ordering Triplets (MOT) step hierarchically merges retrieved subgraphs to reduce triplet redundancy and orders triplets by BFS traversal before LLM answer generation.",
+  "key_assumptions": [
+    "A retrieved subgraph plus ordered triplets is sufficient context for the LLM to answer multi-hop questions.",
+    "Redundancy reduction (merging up to some point) and BFS ordering improve LLM answer precision.",
+    "MetaQA (movies domain) is representative of multi-hop KGQA. [abstract]"
+  ],
+  "main_contribution": "Extends SG-RAG with a Merging and Ordering Triplets step that reduces retrieved-subgraph redundancy and orders triplets by BFS, improving multi-hop answer accuracy over Chain-of-Thought and Graph Chain-of-Thought on MetaQA.",
+  "datasets": [
+    "MetaQA (movies-domain multi-hop QA benchmark) [abstract]"
+  ],
+  "benchmarks": [
+    "MetaQA"
+  ],
+  "baselines": [
+    "Chain-of-Thought (CoT)",
+    "Graph Chain-of-Thought",
+    "previous SG-RAG without MOT"
+  ],
+  "metrics": [
+    "Answer accuracy (exact metric not stated in the abstract)"
+  ],
+  "results": "SG-RAG MOT provides more accurate answers than Chain-of-Thought and Graph Chain-of-Thought on MetaQA; merging overlapping subgraphs (up to a point) and ordering triplets helps the LLM generate more precise answers.",
+  "limitations": [
+    "Retrieval and ordering happen at inference only; no fine-tuning, no supervision-design ablation, and no repair loop.",
+    "Only MetaQA is reported in the abstract; hop-depth breakdown and error analysis not stated in the abstract."
+  ],
+  "future_work": [
+    "Not stated in the abstract."
+  ],
+  "code_availability": "Not stated in the abstract (no code URL in the retrieved record).",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "SG-RAG MOT retrieves and orders a context subgraph at inference time to condition an untrained LLM; the idea instead bakes same-passage context triples into the training supervision signal of a fine-tuned LLM and adds repair and RL. Both posit that surrounding triples (and their ordering/number) matter for multi-hop QA, but only the idea studies supervision regimes and iterative training.",
+    "basis": "Problem overlap 0.6 because both target multi-hop KGQA with subgraph context for an LLM; method overlap 0.4 because subgraph/triplet context construction is shared in spirit but SG-RAG MOT is a retrieval+prompting pipeline with no SFT, SFT-regime comparison, repair, or RL; evaluation overlap 0.5 because both use multi-hop QA accuracy, but on different benchmarks (MetaQA vs the idea's open/undetermined setting)."
+  },
+  "analyzed_from": "abstract",
+  "recorded_at": "2026-09-30T05:08:14.293878Z"
+}

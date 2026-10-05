@@ -1,0 +1,27 @@
+{
+  "id": "G001",
+  "gap": "Lack of evaluation of context‑enriched triple training with adaptive repair and RL transfer on standard open‑domain multi-hop QA benchmarks (e.g., HotpotQA, MuSiQue, WebQSP, CWQ).",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2609.12230",
+      "experiment_run_id": null,
+      "location": "p. 7",
+      "quote": "Although generally applicable, in Fig. 2, we show how the pipeline can be adapted to the biomedical arena, specifically for gastroparesis. From the corresponding articles, available from PubMed Central [66], we construct a disease-specific KG using GraphMERT.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "related_paper_ids": [
+    "arxiv:2609.12230",
+    "arxiv:2212.00959",
+    "arxiv:2607.23278",
+    "doi:10.20944/preprints202505.1992.v1"
+  ],
+  "why_unaddressed": "Existing work either focuses on disease-specific KGs (arXiv:2609.12230) or lacks the combined context enrichment, adaptive repair, and RL transfer components (UniKGQA, Co‑E, SG‑RAG MOT).",
+  "research_question": "Does fine‑tuning language models on context‑enriched triple subgraphs with an adaptive repair loop and RL transfer yield significant improvements in EM/F1 on open‑domain multi-hop QA benchmarks compared to training on isolated triples?",
+  "potential_experiment": "Train a model using the proposed framework on a standard KG (e.g., Freebase or Wikidata) with QA pairs derived from HotpotQA, evaluate KG‑grounded and CG‑grounded supervision, include adaptive repair and RL transfer stages, and measure EM/F1 against baselines.",
+  "confidence": "high",
+  "verification_required": "",
+  "recorded_at": "2026-09-30T07:10:20.712285Z"
+}

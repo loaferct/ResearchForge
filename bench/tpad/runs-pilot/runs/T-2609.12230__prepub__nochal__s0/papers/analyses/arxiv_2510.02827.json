@@ -1,0 +1,46 @@
+{
+  "paper_id": "arxiv:2510.02827",
+  "relevance_tier": "high",
+  "problem": "Challenges persist in integrating iterative reasoning steps with external knowledge retrieval; existing GraphRAG methods rely on ad-hoc strategies that fail to exploit full potential of multi-hop reasoning.",
+  "method": "StepChain GraphRAG builds a global index over the corpus; at inference, retrieves passages are parsed on-the-fly into a knowledge graph; the complex query is split into sub-questions; for each sub-question, a BFS-based traversal dynamically expands along relevant edges, assembling explicit evidence chains without overwhelming the language model with superfluous context; incremental graph augmentation merges results.",
+  "key_assumptions": [
+    "BFS-based traversal can efficiently find relevant evidence along edges without excessive expansion.",
+    "Incremental graph augmentation preserves relevant information while avoiding overwhelm.",
+    "Question decomposition into sub-questions is effective for multi-hop reasoning."
+  ],
+  "main_contribution": "StepChain GraphRAG achieves state-of-the-art Exact Match and F1 scores on MuSiQue, 2WikiMultiHopQA, and HotpotQA, lifting average EM by 2.57% and F1 by 2.13% over the SOTA method, with the largest gain on HotpotQA (+4.70% EM, +3.44% F1), and fosters enhanced explainability by preserving the chain-of-thought across intermediate retrieval steps.",
+  "datasets": [
+    "MuSiQue",
+    "2WikiMultiHopQA",
+    "HotpotQA"
+  ],
+  "benchmarks": [
+    "MuSiQue",
+    "2WikiMultiHopQA",
+    "HotpotQA"
+  ],
+  "baselines": [
+    "SOTA method (unspecified in abstract)"
+  ],
+  "metrics": [
+    "Exact Match (EM)",
+    "F1 score"
+  ],
+  "results": "StepChain GraphRAG lifts average EM by 2.57% and F1 by 2.13% over SOTA; largest gain on HotpotQA: +4.70% EM, +3.44% F1.",
+  "limitations": [
+    "Reliance on explicit graph construction imposes extra computational overhead and memory demands; LLMs can hallucinate, allowing spurious facts to propagate; errors or uncertainty in early sub-questions can make retrieval for later sub-questions brittle."
+  ],
+  "future_work": [
+    "Mitigate computational overhead and address potential hallucinations from large language models to refine efficiency and reliability in multi-hop QA."
+  ],
+  "code_availability": "not stated in abstract",
+  "relation_to_idea": {
+    "problem_overlap": 0.6,
+    "method_overlap": 0.4,
+    "evaluation_overlap": 0.5,
+    "conceptual_difference": "Both involve graph-based reasoning: StepChain builds a knowledge graph from retrieved passages and uses BFS traversal, while the idea enriches training triples with local context subgraphs from the same passage and uses an adaptive repair loop for one-hop failures. Overlap in using graph structures to support reasoning; differences in context source (retrieved passages vs same-passage triples) and mechanism (BFS traversal vs failure-driven example generation).",
+    "basis": ""
+  },
+  "analyzed_from": "full_text",
+  "recorded_at": "2026-09-30T08:13:21.543952Z"
+}

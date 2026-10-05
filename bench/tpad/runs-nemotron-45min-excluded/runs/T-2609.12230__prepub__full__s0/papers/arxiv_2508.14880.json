@@ -1,0 +1,48 @@
+{
+  "id": "arxiv:2508.14880",
+  "title": "MedResearcher-R1: Expert-Level Medical Deep Researcher via A Knowledge-Informed Trajectory Synthesis Framework",
+  "authors": [
+    "Ailing Yu",
+    "Lan Yao",
+    "Jingnan Liu",
+    "Zhe Chen",
+    "Jiajun Yin",
+    "Yuan Wang",
+    "Xinhao Liao",
+    "Zhiling Ye",
+    "Ji Li",
+    "Yun Yue",
+    "Hansong Xiao",
+    "Hualei Zhou",
+    "Chunxiao Guo",
+    "Peng Wei",
+    "Junwei Liu",
+    "Jinjie Gu"
+  ],
+  "year": 2025,
+  "published": "2025-08-20",
+  "venue": "arXiv (preprint)",
+  "url": "https://arxiv.org/abs/2508.14880",
+  "pdf_url": "https://arxiv.org/pdf/2508.14880v3",
+  "abstract": "Recent developments in Large Language Model (LLM)-based agents have shown impressive capabilities spanning multiple domains, exemplified by deep research systems that demonstrate superior performance on complex information-seeking and synthesis tasks. While general-purpose deep research agents have shown impressive capabilities, they struggle significantly with medical domain challenges, as evidenced by leading proprietary systems achieving limited accuracy on complex medical benchmarks. The key limitations are: (1) the model lacks sufficient dense medical knowledge for clinical reasoning, and (2) the framework is constrained by the absence of specialized retrieval tools tailored for medical contexts. We present a medical deep research agent that addresses these challenges through two core innovations. First, we develop a novel data synthesis framework using medical knowledge graphs, extracting the longest chains from subgraphs around rare medical entities to generate complex multi-hop question-answer pairs. Second, we integrate a custom-built private medical retrieval engine alongside general-purpose tools, enabling accurate medical information synthesis. Our approach generates 2100+ diverse trajectories across 12 medical specialties, each averaging 4.2 tool interactions. Through a two-stage training paradigm combining supervised fine-tuning and online reinforcement learning with composite rewards, our MedResearcher-R1-32B model demonstrates exceptional performance, establishing new state-of-the-art results on medical benchmarks while maintaining competitive performance on general deep research tasks. Our work demonstrates that strategic domain-specific innovations in architecture, tool design, and training data construction can enable smaller open-source models to outperform much larger proprietary systems in specialized domains.",
+  "doi": null,
+  "arxiv_id": "2508.14880",
+  "openalex_id": null,
+  "s2_id": null,
+  "source": "arxiv",
+  "sources": [
+    "arxiv"
+  ],
+  "citation_count": null,
+  "citation_count_source": null,
+  "retrieved_at": "2026-09-30T06:25:22.789594Z",
+  "relevance": 0.1875,
+  "relevance_basis": "heuristic: lexical overlap between idea keywords and title/abstract",
+  "queries": [
+    "multi-hop question answering knowledge graph context subgraph training"
+  ],
+  "code_urls": [],
+  "has_full_text": false,
+  "abstract_source": "arxiv",
+  "metadata_warnings": []
+}

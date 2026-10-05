@@ -1,0 +1,33 @@
+{
+  "id": "C003",
+  "statement": "The absence of intermediate-step supervision is the standard framing of the multi-hop KBQA difficulty, and the established remedy in the retrieved literature is learned intermediate supervision over entity distributions rather than richer context around the target fact.",
+  "kind": "evidence",
+  "evidence": [
+    {
+      "paper_id": "arxiv:2101.03737",
+      "experiment_run_id": null,
+      "location": "p. 1 (abstract)",
+      "quote": "A major challenge is the lack of supervision signals at intermediate steps.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in abstract"
+    },
+    {
+      "paper_id": "arxiv:2101.03737",
+      "experiment_run_id": null,
+      "location": "p. 1 (abstract)",
+      "quote": "we propose a novel teacher-student approach for the multi-hop KBQA task. In our approach, the student network aims to find the correct answer to the query, while the teacher network tries to learn intermediate supervision signals for improving the reasoning capacity of the student network.",
+      "support": "direct",
+      "verified": true,
+      "verification_note": "quote found in full text"
+    }
+  ],
+  "confidence": "high",
+  "phase": "analysis",
+  "tags": [
+    "intermediate-supervision",
+    "teacher-student",
+    "KBQA"
+  ],
+  "recorded_at": "2026-09-30T05:10:31.079725Z"
+}
