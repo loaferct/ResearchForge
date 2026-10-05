@@ -17,6 +17,7 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 
+from researchforge import _rust
 from researchforge.schemas import Claim, EvidenceItem
 from researchforge.workspace import Workspace
 
@@ -30,6 +31,8 @@ class EvidenceError(ValueError):
 
 
 def normalize(text: str) -> str:
+    if _rust.is_available():
+        return _rust.normalize(text)
     text = unicodedata.normalize("NFKC", text).translate(_DASHES).translate(_QUOTES)
     text = re.sub(r"-\s*\n\s*", "", text)  # de-hyphenate line breaks from PDF extraction
     text = re.sub(r"\s+", " ", text)
@@ -37,6 +40,8 @@ def normalize(text: str) -> str:
 
 
 def quote_in(quote: str, haystack: str) -> bool:
+    if _rust.is_available():
+        return _rust.quote_in(quote, haystack)
     q = normalize(quote).strip(" .,;:\"'")
     if len(q) < MIN_QUOTE_CHARS:
         return False
@@ -88,11 +93,18 @@ def verify_items(ws: Workspace, items: list[EvidenceItem]) -> EvidenceCheck:
                     f"evidence[{i}] cites {item.paper_id!r}, which was never retrieved. Only cite ids from search_papers/list_papers."
                 )
             if item.quote:
-                sources = [("abstract", paper.abstract or "")]
-                text = ws.paper_text(item.paper_id)
-                if text:
-                    sources.append(("full text", text))
-                found = next((label for label, hay in sources if hay and quote_in(item.quote, hay)), None)
+                found = None
+                if paper.abstract and quote_in(item.quote, paper.abstract):
+                    found = "abstract"
+                elif ws.has_paper_text(item.paper_id):
+                    # Zero-RAM path: verify quote directly against text file on disk using Rust!
+                    text_path = ws.text_path(item.paper_id)
+                    if _rust.is_available() and _rust.quote_in_file(item.quote, text_path):
+                        found = "full text"
+                    else:
+                        text = ws.paper_text(item.paper_id)
+                        if text and quote_in(item.quote, text):
+                            found = "full text"
                 if found == "abstract" and paper.metadata_warnings:
                     # The stored abstract may belong to another work; only the paper's own text can confirm the quote.
                     if item.support == "direct":

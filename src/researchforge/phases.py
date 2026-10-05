@@ -94,7 +94,7 @@ def _topical_searches(ws: Workspace) -> set[str]:
 
 def _check_literature(ws: Workspace, s: Settings) -> list[str]:
     missing = []
-    n = len(ws.papers())
+    n = ws.paper_count()
     if n < s.investigation.min_papers:
         missing.append(f"at least {s.investigation.min_papers} retrieved papers (have {n}); run more search_papers queries")
     q = len(_topical_searches(ws))
@@ -104,13 +104,13 @@ def _check_literature(ws: Workspace, s: Settings) -> list[str]:
 
 
 def _analysis_target(ws: Workspace, s: Settings) -> int:
-    return min(s.investigation.papers_to_analyze, len(ws.papers()))
+    return min(s.investigation.papers_to_analyze, ws.paper_count())
 
 
 def _check_analysis(ws: Workspace, s: Settings) -> list[str]:
-    if not ws.papers():
+    if not ws.paper_count():
         return ["retrieved papers to analyze (none were retrieved; run search_papers)"]
-    have, target = len(ws.analyses()), _analysis_target(ws, s)
+    have, target = ws.analysis_count(), _analysis_target(ws, s)
     if have < target:
         return [f"paper analyses for at least {target} of the most relevant papers (have {have}); call record_paper_analysis"]
     return []

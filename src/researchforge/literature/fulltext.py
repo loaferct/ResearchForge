@@ -54,8 +54,13 @@ async def fetch_full_text(http: CachedHttp, paper: Paper, max_bytes: int, first_
     return text
 
 
+from researchforge import _rust
+
+
 def find_passages(text: str, pattern: str, context: int = 300, limit: int = 8) -> list[dict]:
     """Case-insensitive search over extracted text, returning page-located passages."""
+    if _rust.is_available():
+        return _rust.find_passages(text, pattern, context, limit)
     try:
         regex = re.compile(pattern, re.I)
     except re.error:
@@ -74,6 +79,8 @@ def find_passages(text: str, pattern: str, context: int = 300, limit: int = 8) -
 
 def section_outline(text: str, limit: int = 40) -> list[dict]:
     """Guess section headings ("3 Method", "4.2 Results") with their pages."""
+    if _rust.is_available():
+        return _rust.section_outline(text, limit)
     outline, page = [], "1"
     for line in text.splitlines():
         pm = re.fullmatch(r"\[\[page (\d+)\]\]", line.strip())

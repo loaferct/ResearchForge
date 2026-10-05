@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import re
 
+from researchforge import _rust
 from researchforge.literature.sources import query_terms
 from researchforge.schemas import Paper
-
 
 DISAGREEMENT = 0.2  # word-set Jaccard below which two abstracts are treated as describing different works
 _NAME_RE = re.compile(r"[^a-z0-9]")
@@ -17,12 +17,16 @@ def _words(text: str) -> set[str]:
 
 
 def abstract_overlap(a: str, b: str) -> float:
+    if _rust.is_available():
+        return _rust.abstract_overlap(a, b)
     wa, wb = _words(a), _words(b)
     return len(wa & wb) / len(wa | wb) if wa and wb else 1.0
 
 
 def title_name(title: str) -> str | None:
     """The method name in titles like 'SnapKV: LLM Knows ...' (short prefix before a colon), normalised."""
+    if _rust.is_available():
+        return _rust.title_name(title)
     if ":" not in title:
         return None
     prefix = title.split(":", 1)[0]
@@ -34,6 +38,8 @@ def title_name(title: str) -> str | None:
 
 def title_fit(title: str, abstract: str) -> float:
     """Share of distinctive title words found in the abstract, plus 1 if the title's method name appears."""
+    if _rust.is_available():
+        return _rust.title_fit(title, abstract)
     words = _words(title)
     fit = len(words & _words(abstract)) / len(words) if words else 0.0
     name = title_name(title)
@@ -64,6 +70,8 @@ def consistency_warnings(paper: Paper) -> list[str]:
 
 
 def title_key(title: str) -> str:
+    if _rust.is_available():
+        return _rust.title_key(title)
     return re.sub(r"[^a-z0-9]", "", title.lower())
 
 
@@ -164,6 +172,8 @@ def relevance(paper: Paper, terms: list[str]) -> float:
     or abstract (weight 1). It is a ranking signal for triage only; the agent's
     paper analysis decides actual relevance.
     """
+    if _rust.is_available():
+        return _rust.relevance(paper.title, paper.abstract or "", terms)
     distinct = list(dict.fromkeys(t for t in terms if len(t) > 2))
     if not distinct:
         return 0.0

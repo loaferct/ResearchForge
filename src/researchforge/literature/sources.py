@@ -17,6 +17,8 @@ from researchforge.schemas import Paper
 
 ATOM = "{http://www.w3.org/2005/Atom}"
 ARXIV = "{http://arxiv.org/schemas/atom}"
+from researchforge import _rust
+
 _ARXIV_ID_RE = re.compile(r"arxiv\.org/(?:abs|pdf)/([0-9]{4}\.[0-9]{4,5}|[a-z\-]+(?:\.[A-Z]{2})?/[0-9]{7})(?:v\d+)?", re.I)
 _GITHUB_RE = re.compile(r"https?://(?:www\.)?github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", re.I)
 _STOP = frozenset(
@@ -26,6 +28,8 @@ _STOP = frozenset(
 
 
 def query_terms(query: str) -> list[str]:
+    if _rust.is_available():
+        return _rust.query_terms(query)
     return [t for t in re.findall(r"[A-Za-z0-9][A-Za-z0-9\-]*", query.lower()) if t not in _STOP]
 
 

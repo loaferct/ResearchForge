@@ -1,0 +1,10 @@
+[package]
+name = "researchforge_core"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# Zero external dependencies to minimize compilation time, binary size, and RAM overhead!

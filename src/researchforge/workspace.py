@@ -210,11 +210,27 @@ class Workspace:
     def papers(self) -> list[Paper]:
         return self._read_dir(self.root / "papers", Paper)
 
+    def paper_count(self) -> int:
+        directory = self.root / "papers"
+        if not directory.exists():
+            return 0
+        return sum(1 for p in directory.glob("*.json"))
+
+    def iter_papers(self) -> Iterator[Paper]:
+        directory = self.root / "papers"
+        if not directory.exists():
+            return
+        for p in sorted(directory.glob("*.json")):
+            yield Paper.model_validate_json(p.read_text(encoding="utf-8"))
+
     def has_paper(self, paper_id: str) -> bool:
         return self.paper_path(paper_id).exists()
 
     def text_path(self, paper_id: str) -> Path:
         return self.root / "papers" / "text" / f"{safe_name(paper_id)}.txt"
+
+    def has_paper_text(self, paper_id: str) -> bool:
+        return self.text_path(paper_id).exists()
 
     def paper_text(self, paper_id: str) -> str | None:
         path = self.text_path(paper_id)
@@ -229,6 +245,12 @@ class Workspace:
     def analyses(self) -> list[PaperAnalysis]:
         return self._read_dir(self.root / "papers" / "analyses", PaperAnalysis)
 
+    def analysis_count(self) -> int:
+        directory = self.root / "papers" / "analyses"
+        if not directory.exists():
+            return 0
+        return sum(1 for p in directory.glob("*.json"))
+
     def append_search(self, record: SearchRecord) -> None:
         with open(self.root / "search_log.jsonl", "a", encoding="utf-8") as fh:
             fh.write(record.model_dump_json() + "\n")
@@ -238,6 +260,19 @@ class Workspace:
         if not path.exists():
             return []
         return [SearchRecord.model_validate_json(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+    def search_count(self) -> int:
+        path = self.root / "search_log.jsonl"
+        if not path.exists():
+            return 0
+        with open(path, "rb") as fh:
+            return sum(1 for line in fh if line.strip())
+
+    def claim_count(self) -> int:
+        directory = self.root / "evidence" / "claims"
+        if not directory.exists():
+            return 0
+        return sum(1 for p in directory.glob("*.json"))
 
     # ------------------------------------------------------------ evidence & hypotheses
 

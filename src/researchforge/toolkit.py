@@ -193,9 +193,9 @@ class ResearchToolkit:
         if len(query_terms(query)) == 0:
             raise ToolError("query has no searchable terms")
         inv = self.settings.investigation
-        if len(self.ws.searches()) >= inv.max_searches:
+        if self.ws.search_count() >= inv.max_searches:
             raise ToolError(f"search budget reached ({inv.max_searches} searches). Work with the retrieved papers: compare, verify or record findings.")
-        if len(self.ws.papers()) >= inv.max_papers:
+        if self.ws.paper_count() >= inv.max_papers:
             raise ToolError(f"paper budget reached ({inv.max_papers} papers). Analyze and compare the retrieved papers instead of searching.")
         allowed = self.settings.literature.sources
         sources = [s for s in (sources or allowed) if s in allowed]
@@ -212,7 +212,7 @@ class ResearchToolkit:
                     "repeated": True,
                     "note": "This query was already run in this investigation; returning its stored results. Try a different formulation to find new work.",
                     "results": [_compact(p) for p in known],
-                    "total_papers": len(self.ws.papers()),
+                    "total_papers": self.ws.paper_count(),
                 }
 
         lit = self.settings.literature
@@ -236,7 +236,7 @@ class ResearchToolkit:
             "query": query,
             "sources": [s.model_dump() for s in statuses],
             "results": [_compact(p) for p in sorted(stored, key=lambda p: -p.relevance)],
-            "total_papers": len(self.ws.papers()),
+            "total_papers": self.ws.paper_count(),
         }
 
     def _store_papers(self, papers: list[Paper], query: str | None, terms: list[str]) -> list[Paper]:

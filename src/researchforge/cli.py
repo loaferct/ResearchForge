@@ -287,6 +287,8 @@ def cmd_doctor(args) -> int:
         print(f"{'✓' if passed else '✗'} {label}" + (f": {detail}" if detail else ""))
 
     check("Python >= 3.10", sys.version_info >= (3, 10), sys.version.split()[0])
+    from researchforge import _rust
+    check("Rust researchforge_core (low-RAM native engine)", _rust.is_available(), "loaded" if _rust.is_available() else "not found (falling back to pure Python)")
     cmd = settings.dsh.resolved_command()
     launcher = shutil.which(cmd[0])
     check(f"dsh launcher `{cmd[0]}` on PATH", launcher is not None, launcher or "install Node.js >= 22.19 and `npm i -g @deepseek-ai/dsh`")
