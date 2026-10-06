@@ -43,6 +43,7 @@ try:
 except ImportError:  # Windows: in-process lock only
     fcntl = None  # type: ignore[assignment]
 
+from researchforge import _rust
 from researchforge.schemas import (
     Claim,
     Critique,
@@ -211,6 +212,8 @@ class Workspace:
         return self._read_dir(self.root / "papers", Paper)
 
     def paper_count(self) -> int:
+        if _rust.is_available():
+            return _rust.count_papers(self.root)
         directory = self.root / "papers"
         if not directory.exists():
             return 0
@@ -262,6 +265,8 @@ class Workspace:
         return [SearchRecord.model_validate_json(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
     def search_count(self) -> int:
+        if _rust.is_available():
+            return _rust.count_searches(self.root)
         path = self.root / "search_log.jsonl"
         if not path.exists():
             return 0
@@ -269,6 +274,8 @@ class Workspace:
             return sum(1 for line in fh if line.strip())
 
     def claim_count(self) -> int:
+        if _rust.is_available():
+            return _rust.count_claims(self.root)
         directory = self.root / "evidence" / "claims"
         if not directory.exists():
             return 0

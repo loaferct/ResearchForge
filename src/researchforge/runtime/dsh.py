@@ -134,12 +134,19 @@ def write_overlay(ws: Workspace, settings: Settings, config_path: Path | None = 
     return path
 
 
+from researchforge import _rust
+
+
 def short_tool(name: str) -> str:
+    if _rust.is_available():
+        return _rust.short_tool(name)
     prefix = f"mcp__{MCP_SERVER_NAME}__"
     return name[len(prefix):] if name.startswith(prefix) else name
 
 
 def _summarize(value, limit: int = 400) -> str:
+    if _rust.is_available() and isinstance(value, str):
+        return _rust.summarize_str(value, limit)
     text = value if isinstance(value, str) else json.dumps(value, default=str)
     return text if len(text) <= limit else text[:limit] + "…"
 
@@ -253,6 +260,37 @@ class DshHeadlessRuntime:
 
     @staticmethod
     def _handle_line(line: str, out: RunOutcome, on_event: EventSink) -> None:
+        if _rust.is_available():
+            parsed = _rust.dsh_parse_event(line)
+            if parsed is not None:
+                kind = parsed.get("kind")
+                if kind == "session":
+                    out.session_id = parsed.get("sessionId")
+                elif kind == "tool_call":
+                    out.tool_calls += 1
+                    on_event("tool_call", {"tool": parsed.get("tool", ""), "input": parsed.get("input", "")})
+                elif kind == "tool_result":
+                    failed = bool(parsed.get("failed"))
+                    out.failed_tool_calls += failed
+                    on_event("tool_result", {"status": parsed.get("status"), "result": parsed.get("result", "")})
+                elif kind == "agent_text":
+                    on_event("agent_text", {"text": parsed.get("text", "")})
+                elif kind == "turn_end":
+                    out.finish_reason = parsed.get("finish_reason")
+                    if parsed.get("error"):
+                        out.error = parsed.get("error")
+                elif kind == "step_end":
+                    usage = parsed.get("usage")
+                    if isinstance(usage, dict):
+                        for k, v in usage.items():
+                            if isinstance(v, (int, float)):
+                                out.usage[k] = out.usage.get(k, 0) + v
+                elif kind == "final":
+                    out.final_text = parsed.get("text", "")
+                elif kind == "error":
+                    out.error = parsed.get("message")
+                return
+
         try:
             ev = json.loads(line)
         except json.JSONDecodeError:

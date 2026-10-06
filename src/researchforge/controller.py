@@ -41,7 +41,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from researchforge import phases
+from researchforge import _rust, phases
 from researchforge.actions import ACTION_PHASE
 from researchforge.config import Settings
 from researchforge.literature.sources import query_terms
@@ -90,6 +90,29 @@ class Snapshot:
 
     @classmethod
     def take(cls, ws: Workspace) -> "Snapshot":
+        if _rust.is_available():
+            snap = _rust.workspace_snapshot(ws.root)
+            if snap is not None:
+                return cls(
+                    papers=snap["papers"],
+                    relevant_papers=snap["relevant_papers"],
+                    searches=snap["searches"],
+                    analyses=snap["analyses"],
+                    claims=snap["claims"],
+                    verified_claims=snap["verified_claims"],
+                    landscape=snap["landscape"],
+                    critique=snap["critique"],
+                    gaps=snap["gaps"],
+                    no_gap=bool(snap["no_gap"]),
+                    modifications=snap["modifications"],
+                    directions=snap["directions"],
+                    plans=snap["plans"],
+                    evaluations=snap["evaluations"],
+                    idea=bool(snap["idea"]),
+                    plan=bool(snap["plan"]),
+                    uncertainties=tuple(tuple(x) for x in snap["uncertainties"]),
+                    contradicted=snap["contradicted"],
+                )
         lan, cri = ws.landscape(), ws.critique()
         papers, claims, us = ws.papers(), ws.claims(), ws.uncertainties()
         return cls(
@@ -221,6 +244,8 @@ def papers_since_critique(ws: Workspace) -> int:
     critique = ws.critique()
     if critique is None:
         return 0
+    if _rust.is_available() and critique.recorded_at:
+        return _rust.papers_since_critique(ws.root, critique.recorded_at.isoformat())
     return sum(1 for p in ws.papers() if p.retrieved_at > critique.recorded_at)
 
 
@@ -330,7 +355,7 @@ def expected_gain(action: str, u: Uncertainty, state: ResearchState, ws_papers: 
 def score_candidates(ws: Workspace, settings: Settings, state: ResearchState) -> list[Candidate]:
     inv = settings.investigation
     blocked = set(state.blocked_actions)
-    n_papers, n_searches = len(ws.papers()), len(ws.searches())
+    n_papers, n_searches = ws.paper_count(), ws.search_count()
     out: list[Candidate] = []
     for u in ws.uncertainties():
         if not eligible(u, state) or u.attempts >= inv.max_uncertainty_attempts:

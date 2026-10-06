@@ -21,6 +21,7 @@ from pydantic import BaseModel, Field
 
 from researchforge.config import Settings
 from researchforge.evaluation.tpad import CONDITIONS, Condition, TpadDataset, TpadItem, condition_settings, score_run, summarize
+from researchforge import _rust
 from researchforge.workspace import Workspace
 
 log = logging.getLogger("researchforge.bench")
@@ -93,6 +94,10 @@ def load_results(out: Path) -> dict[str, dict]:
     path = out / "results.jsonl"
     if not path.exists():
         return {}
+    if _rust.is_available():
+        res = _rust.load_results(path)
+        if res is not None:
+            return res
     rows = [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
     return {r["key"]: r for r in rows}
 

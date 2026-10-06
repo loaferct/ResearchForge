@@ -27,6 +27,7 @@ from researchforge.evidence import quote_in
 from researchforge.literature import controls
 from researchforge.literature.merge import paper_keys, title_key
 from researchforge.schemas import Paper
+from researchforge import _rust
 from researchforge.workspace import Workspace
 
 Condition = Literal["scooped", "prepub"]
@@ -87,6 +88,10 @@ def _find(ws: Workspace, ref: PaperRef) -> Paper | None:
 
 def _verified_cites(ws: Workspace) -> dict[str, int]:
     """paper id -> number of claims citing it with verified evidence."""
+    if _rust.is_available():
+        res = _rust.verified_cites(ws.root)
+        if res is not None:
+            return res
     counts: dict[str, int] = {}
     for c in ws.claims():
         for pid in {e.paper_id for e in c.evidence if e.paper_id and e.verified}:

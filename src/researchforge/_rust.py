@@ -1,7 +1,8 @@
 """Python bindings to the zero-dependency researchforge_core Rust library.
 
 Provides high-performance, low-RAM implementations for text processing, quote verification,
-passage search, paper deduplication, and lexical scoring.
+passage search, paper deduplication, lexical scoring, DeepSeek Harness event streaming,
+and workspace state snapshots.
 """
 
 from __future__ import annotations
@@ -44,10 +45,11 @@ def _load_library() -> ctypes.CDLL | None:
 
     try:
         lib = ctypes.CDLL(str(lib_path))
-        # Define argtypes and restype
+        # Memory freeing
         lib.rf_free_string.argtypes = [ctypes.c_void_p]
         lib.rf_free_string.restype = None
 
+        # Text & quotes
         lib.rf_normalize.argtypes = [ctypes.c_char_p]
         lib.rf_normalize.restype = ctypes.c_void_p
 
@@ -80,6 +82,38 @@ def _load_library() -> ctypes.CDLL | None:
 
         lib.rf_query_terms_json.argtypes = [ctypes.c_char_p]
         lib.rf_query_terms_json.restype = ctypes.c_void_p
+
+        # Harness & Summarization
+        lib.rf_short_tool.argtypes = [ctypes.c_char_p]
+        lib.rf_short_tool.restype = ctypes.c_void_p
+
+        lib.rf_summarize.argtypes = [ctypes.c_char_p, ctypes.c_size_t]
+        lib.rf_summarize.restype = ctypes.c_void_p
+
+        lib.rf_dsh_parse_event.argtypes = [ctypes.c_char_p]
+        lib.rf_dsh_parse_event.restype = ctypes.c_void_p
+
+        # Workspace & Benchmarking
+        lib.rf_workspace_snapshot.argtypes = [ctypes.c_char_p]
+        lib.rf_workspace_snapshot.restype = ctypes.c_void_p
+
+        lib.rf_papers_since_critique.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
+        lib.rf_papers_since_critique.restype = ctypes.c_size_t
+
+        lib.rf_verified_cites.argtypes = [ctypes.c_char_p]
+        lib.rf_verified_cites.restype = ctypes.c_void_p
+
+        lib.rf_count_papers.argtypes = [ctypes.c_char_p]
+        lib.rf_count_papers.restype = ctypes.c_size_t
+
+        lib.rf_count_searches.argtypes = [ctypes.c_char_p]
+        lib.rf_count_searches.restype = ctypes.c_size_t
+
+        lib.rf_count_claims.argtypes = [ctypes.c_char_p]
+        lib.rf_count_claims.restype = ctypes.c_size_t
+
+        lib.rf_load_results_json.argtypes = [ctypes.c_char_p]
+        lib.rf_load_results_json.restype = ctypes.c_void_p
 
         _LIB = lib
         return lib
@@ -191,3 +225,105 @@ def query_terms(query: str) -> list[str]:
     res = _consume_string(lib, ptr)
     return json.loads(res or "[]")
 
+
+def short_tool(name: str) -> str:
+    lib = _load_library()
+    if not lib:
+        prefix = "mcp__researchforge__"
+        return name[len(prefix):] if name.startswith(prefix) else name
+    ptr = lib.rf_short_tool(name.encode("utf-8"))
+    res = _consume_string(lib, ptr)
+    return res or name
+
+
+def summarize_str(text: str, limit: int = 400) -> str:
+    lib = _load_library()
+    if not lib:
+        return text if len(text) <= limit else text[:limit] + "…"
+    ptr = lib.rf_summarize(text.encode("utf-8"), limit)
+    res = _consume_string(lib, ptr)
+    return res if res is not None else (text if len(text) <= limit else text[:limit] + "…")
+
+
+def dsh_parse_event(line: str) -> dict[str, Any] | None:
+    lib = _load_library()
+    if not lib:
+        return None
+    ptr = lib.rf_dsh_parse_event(line.encode("utf-8"))
+    res = _consume_string(lib, ptr)
+    if not res:
+        return None
+    try:
+        return json.loads(res)
+    except Exception:
+        return None
+
+
+def workspace_snapshot(path: str | Path) -> dict[str, Any] | None:
+    lib = _load_library()
+    if not lib:
+        return None
+    ptr = lib.rf_workspace_snapshot(str(path).encode("utf-8"))
+    res = _consume_string(lib, ptr)
+    if not res:
+        return None
+    try:
+        return json.loads(res)
+    except Exception:
+        return None
+
+
+def papers_since_critique(path: str | Path, recorded_at: str) -> int:
+    lib = _load_library()
+    if not lib:
+        return 0
+    return int(lib.rf_papers_since_critique(str(path).encode("utf-8"), recorded_at.encode("utf-8")))
+
+
+def verified_cites(path: str | Path) -> dict[str, int] | None:
+    lib = _load_library()
+    if not lib:
+        return None
+    ptr = lib.rf_verified_cites(str(path).encode("utf-8"))
+    res = _consume_string(lib, ptr)
+    if not res:
+        return None
+    try:
+        return json.loads(res)
+    except Exception:
+        return None
+
+
+def count_papers(path: str | Path) -> int:
+    lib = _load_library()
+    if not lib:
+        return 0
+    return int(lib.rf_count_papers(str(path).encode("utf-8")))
+
+
+def count_searches(path: str | Path) -> int:
+    lib = _load_library()
+    if not lib:
+        return 0
+    return int(lib.rf_count_searches(str(path).encode("utf-8")))
+
+
+def count_claims(path: str | Path) -> int:
+    lib = _load_library()
+    if not lib:
+        return 0
+    return int(lib.rf_count_claims(str(path).encode("utf-8")))
+
+
+def load_results(path: str | Path) -> dict[str, dict] | None:
+    lib = _load_library()
+    if not lib:
+        return None
+    ptr = lib.rf_load_results_json(str(path).encode("utf-8"))
+    res = _consume_string(lib, ptr)
+    if not res:
+        return None
+    try:
+        return json.loads(res)
+    except Exception:
+        return None
