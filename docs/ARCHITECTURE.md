@@ -31,8 +31,8 @@ The same patch is also shipped as an installable **dsh bundle** (`dsh-bundle/`),
                         researchforge CLI / Web UI  (Python)
                                      │
                           ResearchOrchestrator
-             phases · completion gates · state digest · event log
-                                     │  one phase = one dsh turn (same session)
+      controller (next action) · coverage gates · state digest · event log
+                                     │  one action = one dsh turn (same session)
                                      ▼
  ┌──────────────── DeepSeek Harness (unmodified, dsh --profile headless) ────────────────┐
  │  agent-loop ── llm adapter (deepseek-official | pi-ai → Qwen/Llama/Mistral/… endpoint)│
@@ -46,6 +46,11 @@ The same patch is also shipped as an installable **dsh bundle** (`dsh-bundle/`),
         literature clients (arXiv · OpenAlex · Semantic Scholar · Crossref · GitHub)
         evidence manager (quote verification, paper-id validation)
         record_* tools → research workspace (idea.yaml, papers/, evidence/, …)
+                                     ┆
+             researchforge_core  (Rust cdylib via ctypes, optional)
+   normalization · quote matching · passage search · dedup · dsh event parsing · counts
+         used by evidence, literature, workspace, runtime and the controller;
+                 each call falls back to Python when the library is absent
 ```
 
 ## 3. Files that need modification in DeepSeek Harness
@@ -83,6 +88,8 @@ src/researchforge/
   evaluation/                    Retrieval, grounding, plan-completeness and efficiency metrics
   web/                           FastAPI app + dependency-free HTML/JS UI
   cli.py                         investigate · resume · report · experiment · status · serve · eval · doctor
+  _rust.py                       ctypes bindings to researchforge_core; callers fall back to Python without it
+crates/researchforge_core/       Zero-dependency Rust library: text, quotes, literature dedup, dsh events, workspace counts
 dsh-bundle/                      Installable dsh bundle (package.json with dsh.bundle + cordis.patch.yml)
 tests/                           Unit tests (mocked HTTP + scripted runtime) and an opt-in dsh e2e test
 docs/                            This file, evaluation guide

@@ -2,11 +2,9 @@
 
 **ResearchForge turns a research idea into an evidence-backed investigation.**
 
-![A real 29-minute investigation of "Does retrieval-augmented generation reduce hallucinations in clinical question answering compared with fine-tuning alone?", shown at 60x speed](docs/media/live-run.gif)
+![Overview of a finished investigation: assessment, research decision and the case in brief](docs/media/screenshots/rag-overview.png)
 
-*A real investigation at 60× speed: 173 papers retrieved, 46 analyzed, verdict "promising, but it needs experimental validation". Watch the [narrated demo](docs/media/demo-narrated.mp4) (2½ min, with sound).*
-
-![Overview of the finished investigation: assessment, research decision and the case in brief](docs/media/screenshots/rag-overview.png)
+*A real investigation of "Does retrieval-augmented generation reduce hallucinations in clinical question answering compared with fine-tuning alone?": 173 papers retrieved, 46 analyzed. Watch the [narrated demo](docs/media/demo-narrated.mp4) (2½ min, with sound).*
 
 Give it an idea such as *"Can request-aware dynamic KV-cache management reduce LLM inference memory and latency without significantly degrading accuracy?"* and it autonomously:
 
@@ -24,15 +22,9 @@ It never tells you an idea is novel because a model thinks so. A claim labelled 
 
 ResearchForge is built on [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (`dsh`) and requires no changes to it. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-```text
-researchforge CLI / web UI (Python)
-        │  one phase = one dsh headless turn, same dsh session throughout
-        ▼
-DeepSeek Harness (unmodified): agent loop · model adapters · sessions · compaction · sandbox
-        │  @deepseek-ai/dsh-mcp-client (stdio)
-        ▼
-researchforge.mcp_server → literature clients · evidence checks · research workspace
-```
+[![ResearchForge architecture: the ResearchForge app, the DeepSeek Harness agent runtime and the tool server, with one iteration of the research loop numbered 1 to 11](docs/diagrams/architecture.png)](docs/diagrams/architecture.png)
+
+Click the diagram for full size. Source: [docs/diagrams/architecture.drawio](docs/diagrams/architecture.drawio) (open it in [draw.io](https://app.diagrams.net)). The optional Rust core is a native library loaded through `ctypes`; when it is not built, the same functions run in pure Python.
 
 ## Quick start
 
@@ -91,13 +83,6 @@ ResearchForge does not run a fixed script. On each step, a controller reads the 
 ## Web UI
 
 `researchforge serve` starts a local, dependency-free UI. The home page is a single landing page (what ResearchForge does, how an investigation runs, what you get, how it runs on your terms) with the idea form in the hero. Enter an idea, press **Investigate research idea**, and follow progress in the numbered rail on the left. The rail doubles as navigation: **Overview, Literature, Research map, Critique, Potential gaps, Modifications, Experiments, Final report**, plus the **Evidence ledger** and an activity log. Every statement carries a margin rule that shows how certain it is: solid for evidence (a verified quote), dashed for inference, dotted for hypothesis, double for an experimental result. An executable experiment offers **Preview commands**, then **Approve and run**.
-
-| | |
-|---|---|
-| ![Home page with the idea form and an example from the evidence ledger](docs/media/screenshots/rag-home.png) | ![Critique: the strongest arguments for and against the idea](docs/media/screenshots/rag-critique.png) |
-| **Home.** Enter an idea and start an investigation. | **Critique.** The case against the idea, argued as seriously as the case for it. |
-| ![Potential gaps: one gap with its supporting quotes](docs/media/screenshots/rag-gaps.png) | ![Evidence ledger in dark mode, with verified quotes](docs/media/screenshots/rag-evidence.png) |
-| **Potential gaps.** Each gap is tied to the passages that suggest it. | **Evidence ledger** (dark mode). Every quote is checked word for word against the source. |
 
 The UI opens in light mode; **Dark mode** in the header switches it and the choice is remembered in the browser. The design follows Anthropic's `frontend-design` skill (Apache-2.0) and the `taste-skill` / `redesign-skill` pair from [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) (MIT), all vendored in `.claude/skills/`. The visual theme is the Atlas Admin design system, specified in [docs/DESIGN.md](docs/DESIGN.md). Fonts are self-hosted from `web/static/fonts/`: Inter for text and IBM Plex Mono for figures and labels, both under the SIL Open Font License (license files alongside).
 
