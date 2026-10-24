@@ -19,6 +19,7 @@ from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from researchforge.analytics import compute_all_graph_data
 from researchforge.config import Settings
 from researchforge.experiments.runner import ApprovalRequired, ExperimentRunner, UnsafeCommand
 from researchforge.orchestrator import investigate
@@ -191,12 +192,18 @@ def create_app(
             "directions": ws.directions,
             "evaluations": ws.evaluations,
         }
+        if kind == "graph_data":
+            return compute_all_graph_data(ws)
         if kind in single:
             record = single[kind]()
             return json.loads(record.model_dump_json()) if record else None
         if kind in many:
             return _dump(many[kind]())
         raise HTTPException(404, f"unknown data kind {kind!r}")
+
+    @app.get("/api/projects/{project}/graph_data")
+    def graph_data(project: str):
+        return compute_all_graph_data(ws_for(project))
 
     @app.get("/api/projects/{project}/report.{fmt}")
     def report(project: str, fmt: str, refresh: bool = False):
@@ -216,7 +223,7 @@ def create_app(
             raise HTTPException(404, "unknown plan")
         try:
             return ExperimentRunner(ws, settings).preview(plan)
-        except (ValueError, UnsafeCommand) as exc:
+        except ValueError as exc:
             raise HTTPException(400, str(exc)) from exc
 
     @app.post("/api/projects/{project}/experiments/{plan_id}/run")

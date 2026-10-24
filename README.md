@@ -4,7 +4,7 @@
 
 ![Overview of a finished investigation: assessment, research decision and the case in brief](docs/media/screenshots/rag-overview.png)
 
-*A real investigation of "Does retrieval-augmented generation reduce hallucinations in clinical question answering compared with fine-tuning alone?": 173 papers retrieved, 46 analyzed. Watch the [narrated demo](docs/media/demo-narrated.mp4) (2½ min, with sound).*
+*A real investigation of "Does retrieval-augmented generation reduce hallucinations in clinical question answering compared with fine-tuning alone?": 173 papers retrieved, 46 analyzed. Watch the [narrated demo](docs/media/demo-narrated.mp4) (2 min, with sound; the live-run part replays this investigation's recorded data so the concept network can be shown filling in).*
 
 Give it an idea such as *"Can request-aware dynamic KV-cache management reduce LLM inference memory and latency without significantly degrading accuracy?"* and it autonomously:
 

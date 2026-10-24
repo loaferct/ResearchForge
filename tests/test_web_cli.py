@@ -29,7 +29,7 @@ def wait_done(client, project, timeout=20):
 def test_web_investigation_lifecycle(client):
     assert client.get("/").status_code == 200
     assert "Investigate research idea" in client.get("/").text
-    assert client.get("/static/app.js").status_code == 200
+    assert client.get("/static/js/main.js").status_code == 200
     assert client.post("/api/projects", json={"idea": "short"}).status_code == 422
 
     res = client.post("/api/projects", json={"idea": "Can request-aware dynamic KV-cache management reduce memory?"})
