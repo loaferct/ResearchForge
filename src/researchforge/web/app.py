@@ -49,6 +49,16 @@ def create_app(
     runtime_factory: Callable[[], AgentRuntime] | None = None,
 ) -> FastAPI:
     app = FastAPI(title="ResearchForge", docs_url="/api/docs")
+
+    @app.middleware("http")
+    async def revalidate_ui(request, call_next):
+        # The UI is plain modules without hashed file names, so browsers must revalidate them (a cheap 304);
+        # otherwise a heuristically cached main.js can outlive an update to index.html and the views it loads.
+        response = await call_next(request)
+        path = request.url.path
+        if path == "/" or (path.startswith("/static/") and not path.startswith("/static/fonts/")):
+            response.headers["Cache-Control"] = "no-cache"
+        return response
     projects_dir = settings.resolved_projects_dir()
     projects_dir.mkdir(parents=True, exist_ok=True)
     jobs: dict[str, tuple[threading.Thread, threading.Event]] = {}

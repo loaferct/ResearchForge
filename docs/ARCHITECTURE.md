@@ -86,7 +86,8 @@ src/researchforge/
   experiments/                   Approval-gated runner (local or Docker) and result verification
   report.py                      Deterministic report built only from recorded evidence
   evaluation/                    Retrieval, grounding, plan-completeness and efficiency metrics
-  web/                           FastAPI app + dependency-free HTML/JS UI
+  analytics.py                   Chart data from saved records: novelty radar, similarity, concept network, timeline, grounding
+  web/                           FastAPI app + dependency-free UI: js/main.js shell, js/views/ and js/graphs/ modules loaded on first use
   cli.py                         investigate · resume · report · experiment · status · serve · eval · doctor
   _rust.py                       ctypes bindings to researchforge_core; callers fall back to Python without it
 crates/researchforge_core/       Zero-dependency Rust library: text, quotes, literature dedup, dsh events, workspace counts

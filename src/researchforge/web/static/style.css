@@ -700,3 +700,89 @@ iframe.report { width: 100%; height: 78vh; border: 1px solid var(--hairline); bo
   html { scroll-behavior: auto; }
   * { transition: none !important; animation: none !important; }
 }
+
+/* ---------------------------------------------------------------- architecture page */
+
+.arch { padding: 32px 0 24px; }
+.arch-head { max-width: 72ch; margin-bottom: 20px; }
+.arch-head h1 { font-size: clamp(1.75rem, 3vw, 2.25rem); letter-spacing: -0.02em; margin: 4px 0 10px; }
+.arch-kicker { font: 500 0.6875rem/1.4 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-60); margin: 0 0 6px; }
+.arch-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; }
+.arch-counter { font: 500 0.8125rem/1 var(--mono); color: var(--ink-60); font-variant-numeric: tabular-nums; min-width: 4.5em; text-align: center; }
+.arch-reset { margin-left: auto; }
+.arch-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+.arch-canvas { position: relative; background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-lg); box-shadow: var(--shadow-card); padding: 12px; overflow: hidden; }
+.arch-svg { display: block; width: 100%; height: auto; aspect-ratio: 1290 / 770; overflow: hidden; font-family: var(--sans); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.arch-svg.panning { cursor: grabbing; }
+.arch-svg.panning .arch-node, .arch-svg.panning .arch-badge, .arch-svg.panning .arch-edge-hit { cursor: grabbing; }
+.arch-zoom { position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; align-items: center; gap: 2px; background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md); padding: 3px; box-shadow: var(--shadow-card); }
+.arch-zoom button { min-width: 28px; height: 28px; padding: 0 6px; font-size: 0.875rem; background: transparent; border: none; box-shadow: none; color: var(--ink-60); border-radius: var(--r-sm); }
+.arch-zoom button:hover { background: var(--tint); color: var(--ink); filter: none; box-shadow: none; }
+.arch-zoom-level { font: 500 0.6875rem/1 var(--mono); color: var(--ink-60); min-width: 3.4em; text-align: center; font-variant-numeric: tabular-nums; }
+.arch-hint { margin: 0 -12px -12px; padding: 8px 16px; border-top: 1px solid var(--hairline); font: 400 0.75rem/1.4 var(--mono); color: var(--ink-60); }
+
+.arch-node rect { fill: var(--card); stroke: var(--hairline-strong); stroke-width: 1; transition: stroke var(--fast) var(--ease), opacity var(--fast) var(--ease); }
+.arch-node .arch-node-rule { stroke: none; }
+.arch-node.g-you .arch-node-rule { fill: var(--steel); }
+.arch-node.g-app .arch-node-rule { fill: var(--success); }
+.arch-node.g-agent .arch-node-rule { fill: var(--warn); }
+.arch-node.g-tools .arch-node-rule { fill: var(--ink-60); }
+.arch-node.g-outside rect:first-child { fill: var(--surface); stroke-dasharray: 4 3; stroke: var(--outline); }
+.arch-node.g-outside .arch-node-rule { fill: transparent; }
+.arch-node-title { font-size: 13px; font-weight: 600; fill: var(--ink); pointer-events: none; }
+.arch-node-sub { font-size: 11px; fill: var(--ink-60); pointer-events: none; }
+.arch-node { cursor: pointer; outline: none; transition: opacity var(--fast) var(--ease); }
+.arch-node:hover rect:first-child, .arch-node:focus-visible rect:first-child { stroke: var(--steel); stroke-width: 1.5; }
+.arch-node.selected rect:first-child { stroke: var(--ink); stroke-width: 2; }
+.has-focus .arch-node:not(.on) { opacity: 0.32; }
+
+.arch-edge { fill: none; stroke: var(--outline); stroke-width: 1.4; stroke-linejoin: round; transition: stroke var(--fast) var(--ease), opacity var(--fast) var(--ease); }
+.arch-edge.on { stroke: var(--success); stroke-width: 2.2; }
+.has-focus .arch-edge:not(.on) { opacity: 0.25; }
+.arch-edge-hit { fill: none; stroke: transparent; stroke-width: 14; cursor: pointer; }
+.arch-arrowhead { fill: var(--ink-60); }
+.arch-arrowhead.on { fill: var(--success); }
+.arch-badge { cursor: pointer; outline: none; transition: opacity var(--fast) var(--ease); }
+.arch-badge circle { fill: var(--card); stroke: var(--ink-60); stroke-width: 1.2; }
+.arch-badge text { font: 600 10px var(--mono); fill: var(--ink); pointer-events: none; }
+.arch-badge.on circle, .arch-badge:focus-visible circle { fill: var(--success); stroke: var(--success); }
+.arch-badge.on text, .arch-badge:focus-visible text { fill: var(--card); }
+.has-focus .arch-badge:not(.on) { opacity: 0.35; }
+.arch-dot { fill: var(--success); stroke: var(--card); stroke-width: 2; pointer-events: none; filter: drop-shadow(0 0 4px var(--success)); }
+
+.arch-card { position: sticky; top: 16px; background: var(--card); border: 1px solid var(--hairline); border-left: 2px solid var(--steel); border-radius: var(--r-lg); box-shadow: var(--shadow-card); padding: 20px; min-height: 260px; }
+.arch-card h2 { font-size: 1.125rem; margin: 2px 0 4px; }
+.arch-card h3 { font: 500 0.6875rem/1.4 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-60); margin: 16px 0 4px; }
+.arch-card p { font-size: 0.875rem; line-height: 1.55; margin: 0 0 8px; }
+.arch-card code { font-family: var(--mono); font-size: 0.75rem; background: var(--tint); padding: 2px 6px; border-radius: var(--r-sm); overflow-wrap: anywhere; }
+.arch-sub { color: var(--ink-60); font-family: var(--mono); font-size: 0.75rem !important; }
+.arch-route { font-weight: 600; }
+.arch-legend { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; font-size: 0.8125rem; color: var(--ink-60); }
+.arch-legend li { display: grid; gap: 2px; }
+.arch-chip { display: inline-flex; align-items: center; gap: 6px; font: 600 0.6875rem/1.4 var(--mono); color: var(--ink); text-transform: none; letter-spacing: 0; }
+.arch-chip::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--ink-60); }
+.arch-chip.g-you::before { background: var(--steel); }
+.arch-chip.g-app::before { background: var(--success); }
+.arch-chip.g-agent::before { background: var(--warn); }
+.arch-chip.g-outside::before { background: transparent; border: 1px dashed var(--ink-60); }
+.arch-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.arch-step-chip { font-size: 0.75rem; padding: 4px 10px; }
+
+.arch-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 28px; }
+.arch-steps h3 { font-size: 0.9375rem; margin-bottom: 8px; }
+.arch-range { font: 500 0.75rem var(--mono); color: var(--ink-60); }
+.arch-steps ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.arch-step { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; width: 100%; text-align: left; white-space: normal; height: auto; font: 400 0.8125rem/1.45 var(--sans); color: var(--ink-60); background: transparent; border: 1px solid transparent; border-radius: var(--r-md); padding: 6px 8px; box-shadow: none; }
+.arch-step b { color: var(--ink); font-weight: 600; }
+.arch-step:hover { background: var(--tint); filter: none; box-shadow: none; }
+.arch-step.on { background: var(--card); border-color: var(--success); }
+.arch-step-n { font: 600 0.75rem/1.6 var(--mono); color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 1100px) {
+  .arch-grid { grid-template-columns: minmax(0, 1fr); }
+  .arch-card { position: static; min-height: 0; }
+  .arch-steps { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arch-node, .arch-edge, .arch-badge, .arch-node rect { transition: none; }
+}

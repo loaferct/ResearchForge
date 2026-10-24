@@ -28,7 +28,13 @@ function route() {
   const m = location.hash.match(/^#\/p\/([^/?]+)(?:\/([a-zA-Z0-9_-]+))?(?:\/([a-zA-Z0-9_-]+))?/);
   const searchMatch = location.hash.match(/[?&]sub=([a-zA-Z0-9_-]+)/);
   document.body.classList.toggle("in-project", Boolean(m));
-  if (m) {
+  $("architecture").hidden = true;
+  if (location.hash === "#/architecture") {
+    S.project = null;
+    $("project").hidden = true;
+    $("home").hidden = true;
+    openArchitecture();
+  } else if (m) {
     const proj = decodeURIComponent(m[1]);
     const tab = m[2] || "overview";
     const subTab = m[3] || (searchMatch ? searchMatch[1] : null);
@@ -38,7 +44,11 @@ function route() {
     $("project").hidden = true;
     $("home").hidden = false;
     document.title = "ResearchForge: check a research idea against the literature";
+    document.querySelectorAll('.site-nav a[href="#/architecture"]').forEach((a) => a.removeAttribute("aria-current"));
     loadProjects();
+    // A section link followed from another page: home was hidden when the browser tried to scroll to it.
+    const target = /^#[a-z]+$/.test(location.hash) && document.getElementById(location.hash.slice(1));
+    if (target) target.scrollIntoView();
   }
 }
 window.addEventListener("hashchange", route);
@@ -52,7 +62,7 @@ document.querySelectorAll("[data-focus-idea]").forEach((a) => a.addEventListener
   $("idea").focus({ preventScroll: true });
 }));
 // Mark the landing-page nav link for the section in the middle of the viewport.
-const navLinks = [...document.querySelectorAll('.site-nav a[href^="#"]:not(.nav-cta)')];
+const navLinks = [...document.querySelectorAll('.site-nav a[href^="#"]:not(.nav-cta):not([href^="#/"])')];
 if ("IntersectionObserver" in window) {
   const spy = new IntersectionObserver((entries) => entries.forEach((en) => {
     const link = navLinks.find((a) => a.getAttribute("href") === "#" + en.target.id);
@@ -60,6 +70,25 @@ if ("IntersectionObserver" in window) {
     else if (link) link.removeAttribute("aria-current");
   }), { rootMargin: "-45% 0px -50% 0px" });
   navLinks.forEach((a) => { const el = document.querySelector(a.getAttribute("href")); if (el) spy.observe(el); });
+}
+
+// ---------------------------------------------------------------- architecture
+
+let architectureLoaded = null;
+async function openArchitecture() {
+  const page = $("architecture");
+  page.hidden = false;
+  document.title = "How ResearchForge works | ResearchForge";
+  document.querySelectorAll('.site-nav a[href="#/architecture"]').forEach((a) => a.setAttribute("aria-current", "page"));
+  window.scrollTo(0, 0);
+  if (!page.childElementCount) page.replaceChildren(skeleton());
+  try {
+    architectureLoaded ||= import("./views/architecture.js").then((mod) => page.replaceChildren(mod.default()));
+    await architectureLoaded;
+  } catch (e) {
+    architectureLoaded = null;
+    page.replaceChildren(h("p", { class: "error" }, `This page could not be loaded: ${e.message}`));
+  }
 }
 
 // ---------------------------------------------------------------- home
