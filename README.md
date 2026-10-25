@@ -26,6 +26,20 @@ ResearchForge is built on [DeepSeek Harness](https://github.com/deepseek-ai/deep
 
 Click the diagram for full size. Source: [docs/diagrams/architecture.drawio](docs/diagrams/architecture.drawio) (open it in [draw.io](https://app.diagrams.net)). The optional Rust core is a native library loaded through `ctypes`; when it is not built, the same functions run in pure Python.
 
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Agent runtime | [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (`dsh`, Node.js ≥ 22.19); research tools exposed over MCP with the `mcp` Python SDK |
+| Backend | Python ≥ 3.10, FastAPI + Uvicorn, Pydantic (tool schemas), httpx (async HTTP), PyYAML, Markdown |
+| Frontend | Vanilla HTML, CSS and JavaScript, no framework or build step; self-hosted Inter and IBM Plex Mono fonts |
+| Native core | Optional Rust library ([crates/researchforge_core](crates/researchforge_core)) loaded through `ctypes`, with a pure-Python fallback |
+| PDF text | `pypdf` (the optional `[pdf]` extra) |
+| Models | DeepSeek by default; any OpenAI-compatible endpoint such as vLLM, SGLang, Ollama or llama.cpp (see [Models](#models)) |
+| Data sources | arXiv, OpenAlex, Semantic Scholar, Crossref, GitHub (read-only) |
+| Storage | Plain files per project (JSON, JSONL, YAML, Markdown); no database |
+| Packaging and tests | Docker, pytest |
+
 ## Quick start
 
 Requirements: Python ≥ 3.10, Node.js ≥ 22.19 (for `dsh`), and a model endpoint (see [Models](#models)).
@@ -60,6 +74,14 @@ Status: complete
 Report: research_projects/can-dynamic-kv-cache-eviction-reduce-llm-inference/reports/report.md
 ```
 
+To use the web UI instead, start the server and open it in a browser:
+
+```sh
+researchforge serve                          # http://127.0.0.1:8765  (--port to change)
+```
+
+Enter an idea on the home page and press **Investigate research idea**. Projects created from the CLI appear there too.
+
 ## How the agent decides what to do
 
 ResearchForge does not run a fixed script. On each step, a controller reads the research state and picks one action: formalize, plan, search, read, synthesize, compare, verify, critique, refine, plan an experiment, analyze results, or finalize. The model records open questions (**uncertainties**) with an importance and the action that would resolve them, and the controller investigates the important ones before it finishes. Critique repeats when enough new evidence arrives. A refined direction is recorded alongside the original idea, never over it. The loop stops when the research conditions are met: question formalized, literature checked, overlap examined, important uncertainties investigated, idea critiqued, direction and experiment plan recorded. Budgets (steps, tool calls, searches, papers, time) are only safety limits. Every step is logged as a decision with its reason and observed outcome, and shown in the UI and in the report's investigation log. Details: [docs/AGENT_LOOP.md](docs/AGENT_LOOP.md).
@@ -82,7 +104,7 @@ ResearchForge does not run a fixed script. On each step, a controller reads the 
 
 ## Web UI
 
-`researchforge serve` starts a local, dependency-free UI. The home page is a single landing page (what ResearchForge does, how an investigation runs, what you get, how it runs on your terms) with the idea form in the hero. Enter an idea, press **Investigate research idea**, and follow progress in the numbered rail on the left. The rail doubles as navigation: **Overview, Literature, Research map, Critique, Potential gaps, Modifications, Experiments, Final report**, plus the **Evidence ledger** and an activity log. Every statement carries a margin rule that shows how certain it is: solid for evidence (a verified quote), dashed for inference, dotted for hypothesis, double for an experimental result. An executable experiment offers **Preview commands**, then **Approve and run**.
+`researchforge serve` starts a local web UI: a FastAPI backend and a frontend with no framework or build step. The home page is a single landing page (what ResearchForge does, how an investigation runs, what you get, how it runs on your terms) with the idea form in the hero. Enter an idea, press **Investigate research idea**, and follow progress in the numbered rail on the left. The rail doubles as navigation: **Overview, Literature, Research map, Critique, Potential gaps, Modifications, Experiments, Final report**, plus the **Evidence ledger** and an activity log. Every statement carries a margin rule that shows how certain it is: solid for evidence (a verified quote), dashed for inference, dotted for hypothesis, double for an experimental result. An executable experiment offers **Preview commands**, then **Approve and run**.
 
 **Visual graphs** holds a novelty and risk radar, a paper similarity matrix, a concept network, a publication timeline and evidence grounding. The concept network updates while an investigation runs: retrieved papers appear as faint nodes and fill in as they are analyzed. **Architecture** in the header (`#/architecture`) is an interactive map of the data flow in 23 steps; hover or tap any box to see what it does and where its code lives, or press **Play the flow**. Each view and chart is a separate script under `web/static/js/`, loaded the first time it is shown.
 
@@ -148,6 +170,16 @@ ResearchForge turns this into a `llm-pi-ai` provider row and selects it through 
 | Proposed experiment `execution` specs | Saved as `awaiting_approval` | Never executed without an explicit human `--approve` or UI approval. Commands run without a shell, in a confined directory, with a scrubbed environment and a timeout; Docker with `--network none` is optional. |
 | The report | Not written by the model | Built deterministically from validated records. |
 
+The exact code path, in order:
+
+1. **Entry point.** [`_record_tool()`](src/researchforge/mcp_server.py#L80) in `mcp_server.py` wraps every `record_*` MCP tool and hands the model's JSON arguments to `ResearchToolkit` in [`toolkit.py`](src/researchforge/toolkit.py).
+2. **Schema validation.** [`ResearchToolkit._build()`](src/researchforge/toolkit.py#L402) calls Pydantic `model_validate()` against the models in [`schemas.py`](src/researchforge/schemas.py). Invalid arguments go back to the model as a tool error, and nothing is written.
+3. **Grounding checks.** [`record_claim()`](src/researchforge/toolkit.py#L424) calls [`validate_claim()`](src/researchforge/evidence.py#L137) and [`verify_items()`](src/researchforge/evidence.py#L79) in `evidence.py`. They reject paper ids that were never retrieved, and require a `direct` quote to be found verbatim in the stored abstract or full text (`quote_in()`, or the Rust `quote_in_file()`). [`_check_ids()`](src/researchforge/toolkit.py#L633) applies the same paper-id rule to gaps, modifications and plans.
+4. **Experiment specs.** [`record_experiment_plan()`](src/researchforge/toolkit.py#L496) stores an execution spec as `awaiting_approval`. It runs only through [`ExperimentRunner.run(approved=True)`](src/researchforge/experiments/runner.py#L141), after `preview()` and `parse_command()` have validated every command.
+5. **Control flow.** [`progress()`](src/researchforge/controller.py#L176) and [`decide_next_action()`](src/researchforge/controller.py#L468) in `controller.py` choose the next step from the validated workspace records, never from the model's prose.
+6. **Free text.** [`_handle_line()`](src/researchforge/runtime/dsh.py#L262) in `runtime/dsh.py` sends the model's text only to `events.jsonl` and the activity feed. `RunOutcome.final_text` is captured but not read anywhere.
+7. **Report.** [`build_report()`](src/researchforge/report.py#L111) in `report.py` assembles the report from validated records only.
+
 ## Research workspace
 
 Every investigation is a directory that can be resumed and audited:
@@ -203,6 +235,28 @@ Settings come from `researchforge.toml` (or `--config`, or `$RESEARCHFORGE_CONFI
 | `RF_CONTACT_EMAIL` | optional; OpenAlex/Crossref "polite pool" contact |
 
 Anonymous literature APIs rate-limit aggressively; during development we observed HTTP 429 from Semantic Scholar and throttling from arXiv. ResearchForge retries with backoff, caches every response, and records a failing source as `error` in the search log instead of failing the phase. Setting the optional keys helps.
+
+## Limitations
+
+- **Open-access literature only.** Full text comes from arXiv or an open-access PDF URL. Paywalled papers are judged on their abstract alone, so they cannot supply a `direct` quote beyond it. Scanned PDFs without a text layer are rejected.
+- **Coverage depends on four public APIs.** arXiv, OpenAlex, Semantic Scholar and Crossref decide what can be found. Anonymous clients are rate-limited, and a source that keeps failing is recorded as `error`, which narrows the search for that run.
+- **Quality depends on the model's tool calling.** Weaker tool-callers need more repair prompts and may leave phases `incomplete`. The report marks such gaps but cannot fill them.
+- **Quote verification is strict.** A `direct` claim needs a verbatim quote, so a correct paraphrase must be recorded as `indirect` or `weak` support, which can understate the evidence.
+- **Built on a developer preview.** DeepSeek Harness is pinned to `0.1.7-rc.2`, and later releases may need overlay changes.
+- **Novelty is never proven.** ResearchForge reports the closest work it found and where the evidence stops. A relevant paper that no source returned is simply absent.
+- **Evaluation is limited.** There is one ground-truth dataset (`kv-cache`, 11 papers). It is not exhaustive, so precision@k is a lower bound. The automated checks run with a scripted model; runs with a real model are not part of CI.
+- **Experiments are local and opt-in.** Execution needs explicit approval and runs on the local machine (optionally in Docker with no network). There is no remote GPU or cluster runner.
+- **Local, single-user web UI.** The server binds to `127.0.0.1` with no authentication.
+
+## Future improvements
+
+- More sources, such as PubMed/Europe PMC, DBLP and ACL Anthology, plus Unpaywall lookups to find more open-access full text.
+- OCR for scanned PDFs, and section-aware parsing of tables and figures.
+- Semantic matching for paraphrased quotes, reported separately from verbatim verification.
+- More ground-truth datasets across fields, and model-to-model comparisons on them.
+- Remote experiment runners (GPU hosts, clusters) behind the same approval gate.
+- Authentication and shared projects, so a team can review one investigation.
+- Exporting references to BibTeX and Zotero, and the report to LaTeX.
 
 ## Development
 
